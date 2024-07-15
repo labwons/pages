@@ -8,6 +8,8 @@ header {
     left: 0;
     height: 50px;
     width: 100%;
+    margin: 0 0 60px 0;
+    padding: 0;
     background-color: #f8cbad;
 }
 
