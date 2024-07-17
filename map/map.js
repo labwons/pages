@@ -4,7 +4,7 @@ var map_type; var market_type; var option_type; var map_key;
 
 var map_layout = {
     height: 690,
-    margin:{l:2,r:2,t:2,b:25}
+    margin:{l:0,r:0,t:2,b:25}
 };
 var map_option = {
     displayModeBar:false,
@@ -99,20 +99,20 @@ function treemap(key){
     meta:tdat_caps,
     customdata:tdat_price,
     text:tdat_perf,
-	textposition:'middle center',
+	  textposition:'middle center',
     textfont:{
       family:'NanumGothic, Nanum Gothic, monospace',
       color:'#ffffff'
     },
     texttemplate: '%{label}<br>%{text}' + _u,
     hovertemplate: '%{label}<br>시총: %{meta}<br>종가: %{customdata}<br>' + _t + ': %{text}' + _u + '<extra></extra>',
-	hoverlabel: {
+    hoverlabel: {
       font: {
         family: 'NanumGothic, Nanum Gothic, monospace',
         color: '#ffffff'
       }
     },
-	opacity: 0.9,
+    opacity: 0.9,
     marker: {
       colors: tdat_color,
       visible: true
@@ -121,3 +121,70 @@ function treemap(key){
   }
   Plotly.newPlot('myMap', [_treemap], map_layout, map_option);
 }
+
+$(document).ready(function(){
+  // MAP type selection
+  $('.map-select').on('change', function(){
+      $('.option-select option[value="PER"]').remove();
+      $('.option-select option[value="PBR"]').remove();
+      $('.option-select option[value="DIV"]').remove();
+      map_type = $('.map-select').val()
+
+      if (map_type != 'etfful'){
+      $('.option-select').append('<option value="PER">PER</option>');
+      $('.option-select').append('<option value="PBR">PBR</option>');
+      $('.option-select').append('<option value="DIV">배당수익률</option>');
+      }
+
+      map_key = map_type;
+      treemap(map_key);
+      setSearch(map_key);
+  })
+
+  // Option selection
+  $(".option-select").on('change', function(){
+      option_type = $(".option-select").val();
+      treemap(map_key);
+  if ((option_type == 'PER') || (option_type == 'PBR')){
+      $("#s_red").html('고평가');
+      $("#navy").html('평균');
+      $("#s_grn").html('저평가');
+  } else if (option_type == 'DIV'){
+      $("#s_red").html('저배당');
+      $("#navy").html('평균');
+      $("#s_grn").html('고배당');
+  } else {
+      $("#s_red").html('하락');
+      $("#navy").html('보합');
+      $("#s_grn").html('상승');
+  }
+  })
+
+  // MAP Search
+  $('.map-search').on('select2:select', function (e) {
+      var username = e.params.data.text;
+      if (username == "") { return }
+
+      var i_start = username.indexOf('[');
+      if (i_start != -1){
+      var group = username.slice(i_start + 1, username.length - 1);
+      username = username.slice(0, i_start);
+      } else if (group_data.includes(username)) {
+      var group = username;
+      } else{
+      var idx = tdat_name.indexOf(username);
+      var group = tdat_covers[map_key][idx];
+      }
+
+      search_top(group);
+      if (username == group){return}
+      setTimeout(function(){
+      search_asset(username);
+      }, 1000)
+  });
+
+  // MAP Reset
+  $('#map-reset').click(function(){
+      treemap(map_key);
+  })
+})

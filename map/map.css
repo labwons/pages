@@ -1,10 +1,27 @@
+
+select {
+    height: 2.4em;
+    width: 180px;
+    color: #999;
+    padding-left: 8px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+input {
+    height: 2.4em;
+    width: 2.4em;
+}
+
 #market-map {
-    margin: 0 30px 0 30px;
+    margin: 0 30px;
 }
   
 .map-ads {
     width: 100%;
-    height: 240px;
+    height: 120px;
     background-color: #f6f9ff;
     border-top: 1px solid #e1ecff;
     border-bottom: 1px solid #e1ecff;
@@ -13,13 +30,50 @@
 .map-ads-content {
     width: 50%;
     margin: 10px auto;
-    height: 220px; /* Temporary - Originally, max-height: 220px */
+    height: 100px; /* Temporary */
     text-align: center; /* Temporary */
     background-color: lightblue; /* Temporary */
 }
 
-.map-nav {
-    margin-top:60px;
+.map-navi {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    height: 3em;
+    margin: 30px auto 0;
+    padding: 2px 0; 
+    border: 1px dashed black;
+}
+
+.map-select {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    height: 2.5em;
+}
+
+.map-type, .map-option {
+    margin-right: 4px;
+}
+
+.map-reset {
+    height: 32px;
+    width: 32px;
+    border: 1px solid #aaa;
+    background-color:white;
+    background-image:url('.src/img/reset.png');
+    background-size:contain;
+    background-repeat:no-repeat;
+    border-radius: 6px;
+}
+
+/* .map-nav {
+    margin-top: 30px;
     width: 100%;
 }
 
@@ -40,10 +94,9 @@
 }
 
 .map-select, .option-select {
-    height: 2em;
+    height: 32px;
     width: 180px;
     color: #999;
-    margin-right: 6px;
     padding-left: 8px;
     border: 1px solid #aaa;
     border-radius: 4px;
@@ -55,11 +108,12 @@
     background-size: 8px;
     background-color: #fff;
     text-align: left;
+    font-size: 16px;
 }
 
 .map-reset {
-    height: 2em;
-    width: 2em;
+    height: 32px;
+    width: 32px;
     border: 1px solid #aaa;
     background-color:white;
     background-image:url('https://raw.githubusercontent.com/Jehoshaphat-kr/tdatlib/master/front/deploy/img/icon_reset.png');
@@ -95,17 +149,19 @@
 
 .select2-container .select2-selection--single {
     height: 2em !important;
-}
+} */
 
 #myMap {
     position:relative;
     width:100%;
-    height: 700px;
-    margin-bottom: 10px;
+    height: 650px;
+    margin: 0 0 10px 0;
+    padding: 0;
     font-size: xx-small;
 }
 
 .map-guide {
+    margin-top: 20px;
     display:table;
 }
 
@@ -158,12 +214,14 @@
 
 .map-notice {
     display: table-cell;
+    position: relative;
+    z-index: 2;
     vertical-align: bottom;
     min-height: 35px;
     padding: 8px;
     font-size: 12px;
     text-align:left;
-    overflow:hidden;
+    overflow: hidden;
     line-height: 14px;
 }
 
