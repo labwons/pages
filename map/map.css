@@ -1,18 +1,19 @@
 
 select {
-    height: 2.4em;
+    height: 2.5em;
     width: 180px;
     color: #999;
-    padding-left: 8px;
+    padding: 2px 8px;
     border: 1px solid #aaa;
     border-radius: 4px;
     box-sizing: border-box;
     cursor: pointer;
+    font-size: 14px;
 }
 
 input {
-    height: 2.4em;
-    width: 2.4em;
+    height: 2.5em;
+    width: 2.5em;
 }
 
 #market-map {
@@ -42,10 +43,10 @@ input {
     justify-content: space-between;
     align-items: center;
     position: relative;
-    height: 3em;
+    height: 2.4em;
     margin: 30px auto 0;
-    padding: 2px 0; 
-    border: 1px dashed black;
+    padding: 0; 
+    /* border: 1px dashed black; */
 }
 
 .map-select {
@@ -54,7 +55,6 @@ input {
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: center;
-    height: 2.5em;
 }
 
 .map-type, .map-option {
@@ -62,11 +62,9 @@ input {
 }
 
 .map-reset {
-    height: 32px;
-    width: 32px;
     border: 1px solid #aaa;
     background-color:white;
-    background-image:url('.src/img/reset.png');
+    background-image:url('https://raw.githubusercontent.com/labwons/pages/main/map/src/img/reset.png');
     background-size:contain;
     background-repeat:no-repeat;
     border-radius: 6px;
