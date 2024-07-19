@@ -75,7 +75,7 @@ class _tradingDate(object):
             html = requests.get('https://www.wiseindex.com/Index/Index#/G1010.0.Components').text
             pin1 = html.find("기준일")
             pin2 = pin1 + html[pin1:].find("</p>")
-            return html[pin1 + 6 : pin2]
+            return html[pin1 + 6 : pin2].replace(".", "")
         except (JSONDecodeError, SSLError):
             return self.strf(-2)
     
