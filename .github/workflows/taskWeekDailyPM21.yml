@@ -6,8 +6,11 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: WISE INDEX
-on: workflow_dispatch
+name: WEEKDAY TASKS
+on: 
+  schedule:
+    - cron: '0 13 * * 1-5'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -36,7 +39,7 @@ jobs:
 
     - name: Commits
       run: |
-        git config --local user.email "jhlee_0319@naver.com"
+        git config --local user.email "snob.labwons@gmail.com"
         git config --local user.name "ACTIONS"
         git add -A
         git commit -m "WISE INDEX @ ${{ steps.ydate.outputs.ydate }}"
