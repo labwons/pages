@@ -35,7 +35,7 @@ jobs:
     - name: Run application
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)/app
-        python app/taskDailyTradingDay.py
+        python app/taskWeekDailyPM21.py
 
     - name: Commits
       run: |
