@@ -1,8 +1,8 @@
 try:
-    from ...common.tradingdate import TradingDate
+    from ...common.date import TradingDate
     import key
 except ImportError:
-    from app.common.tradingdate import TradingDate
+    from app.common.date import TradingDate
     from app.sector.core import key
 from pandas import concat, DataFrame
 import requests

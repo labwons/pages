@@ -1,8 +1,9 @@
 from datetime import date, datetime, timedelta
 from pandas import DataFrame, DateOffset
-from pykrx.stock import get_market_ohlcv_by_date
+from pykrx import stock
 from pytz import timezone
 from requests.exceptions import JSONDecodeError, SSLError
+from typing import Union
 from yfinance import Ticker
 import requests
 
@@ -13,7 +14,7 @@ class _tradingDate(object):
         end = datetime.now(timezone('Asia/Seoul')).date()
         start = end - timedelta(extension * 365)
         try:
-            base = get_market_ohlcv_by_date(
+            base = stock.get_market_ohlcv_by_date(
                 fromdate=start.strftime("%Y%m%d"), 
                 todate=end.strftime("%Y%m%d"), 
                 ticker="005930",
@@ -28,6 +29,9 @@ class _tradingDate(object):
             base = Ticker("005930.KS").history(interval="1d", start=start, end=end)
         self._base = base.index
         return
+    
+    def __call__(self, td:Union[date, datetime, str]=None) -> date:
+        return self.dateCheck(td=td)
     
     def __str__(self) -> str:
         return f'''Market Status: {self.isMarketOpen}
@@ -56,8 +60,8 @@ class _tradingDate(object):
     
     @property
     def periods(self) -> dict:
-        objs = {'0D': self.end}
-        find = {'1D': {'days':1}, '1W': {'weeks':1}, '1M': {'months':1}, '3M': {'months':3}, '6M': {'months':6}, '1Y': {'years':1}}
+        objs = {'D+0': self.end}
+        find = {'D-1': {'days':1}, 'W-1': {'weeks':1}, 'M-1': {'months':1}, 'M-3': {'months':3}, 'M-6': {'months':6}, 'Y-1': {'years':1}}
         for arg, kwarg in find.items():
             _find = self._base[-1] - DateOffset(**kwarg)
             while not _find in self._base:
@@ -85,6 +89,17 @@ class _tradingDate(object):
     
     def strf(self, n:int) -> str:
         return self[n].strftime("%Y%m%d")
+    
+    def dateCheck(self, td:Union[date, datetime, str]=None) -> date:
+        if not td:
+            return TradingDate.end
+        if isinstance(td, date):
+            return td
+        if isinstance(td, datetime):
+            return td.date()
+        if isinstance(td, str):
+            return datetime.strptime(td, "%Y%m%d")
+        raise KeyError(f'Wrong format {td}') 
     
     
         
