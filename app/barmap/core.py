@@ -1,45 +1,95 @@
-# try:
-#     from types import mapData
-# except ImportError:
-#     from app.barmap.types import mapData    
-# from pandas import DataFrame
+try:
+    from ..common.date import TradingDate
+except ImportError:
+    from app.common.date import TradingDate
+from datetime import date, datetime, timedelta
+from pandas import DataFrame
+from pykrx import stock
+from requests.exceptions import JSONDecodeError, SSLError
+from typing import Dict, Union, Iterable
+import pandas as pd
 
-# def align(data:mapData) -> mapData:
+
+def marketCap(td:Union[date, datetime, str]=None) -> DataFrame:
+    _cols_ = {'종가':'close', '시가총액':'marketCap', 
+              '거래량':'volume', '거래대금':'amount', '상장주식수':'shares'}
+    _date_ = TradingDate(td).strftime("%Y%m%d")
+    try:
+        _get_ = stock.get_market_cap_by_ticker(date=_date_, market="ALL", alternative=True)
+        _get_.rename(columns=_cols_, inplace=True)
+    except (KeyError, RecursionError, JSONDecodeError, SSLError):
+        _get_ = DataFrame(columns=_cols_)
+    _get_.index.name = "ticker"
+    return _get_
+
+def multiple(td:Union[date, datetime, str]=None) -> DataFrame:
+    _date_ = TradingDate(td).strftime("%Y%m%d")
+    try:
+        _get_ = stock.get_market_fundamental(date=_date_, market="ALL", alternative=True)
+    except (KeyError, RecursionError, JSONDecodeError, SSLError):
+        _get_ = DataFrame(columns=['BPS', 'PER', 'PBR', 'EPS', 'DIV', 'DPS'])
+    _get_.index.name = "ticker"
+    return _get_
+
+def ipo(td:Union[date, datetime, str]=None) -> DataFrame:
+    _url_ = 'http://kind.krx.co.kr/corpgeneral/corpList.do?method=download'
+    _cols_ = {'회사명':'name', '종목코드':'ticker', 
+              '상장일':'ipo', '주요제품':'products', '결산월':'settlementMonth'}
+    _date_ = TradingDate(td)
+    try:
+        _get_ = pd.read_html(io=_url_, header=0)[0][_cols_.keys()]
+        _get_.rename(columns=_cols_, inplace=True)
+    except (KeyError, RecursionError, JSONDecodeError, SSLError):
+        _get_ = DataFrame(columns=_cols_.values())
+    _get_.set_index(keys='ticker', inplace=True)
+    _get_.index = _get_.index.astype(str).str.zfill(6)
+    _get_['ipo'] = pd.to_datetime(_get_['ipo'])
+    return _get_[_get_['ipo'].dt.date <= td]
+
+def priceReturn() -> DataFrame:
+    def _base_return(periods:Dict[str, date]) -> DataFrame:
+        _objs = {}
+        _base = stock.get_market_ohlcv_by_ticker(date=periods['D+0'].strftime("%Y%m%d"), market="ALL")['종가']
+        for key, dt in periods.items():
+            _fetch = stock.get_market_ohlcv_by_ticker(date=dt.strftime("%Y%m%d"), market="ALL")['종가']
+            _objs[key] = round(100 * (_base / _fetch - 1), 2)
+        return pd.concat(objs=_objs, axis=1)
     
+    def _update_return(tickers:Iterable, periods:dict) -> DataFrame:
+        fromdate, todate = (periods['Y-1'] - timedelta(30)).strftime("%Y%m%d"), periods['D+0'].strftime("%Y%m%d")
+        data = []
+        for ticker in tickers:
+            src = stock.get_market_ohlcv_by_date(ticker=ticker, fromdate=fromdate, todate=todate)['종가']
+            data.append({
+                label: round(100 * src.pct_change(periods=dt)[-1], 2)
+                for label, dt in [('D-1', 1), ('W-1', 5), ('M-1', 21), ('M-3', 63), ('M-6', 126), ('Y-1', 252)]
+            })
+        return DataFrame(data, index=tickers)
     
-#     # level = [col for col in frm.columns if col in ['ticker', 'sectorName', 'indexName']]
-#     # ftr = [col for col in frm.columns if any([col.startswith(key) for key in ['R', 'B', 'P', 'D']])]
+    _periods = TradingDate.periods
+    _shares = pd.concat({dt: marketCap(_periods[dt])['shares'] for dt in ['D+0', 'Y-1']}, axis=1)
+    _shares = _shares[~_shares['D+0'].isna()]
+    _normal = _shares[_shares['D+0'] == _shares['Y-1']].index
+    _change = _shares[_shares['D+0'] != _shares['Y-1']].index
+    
+    _return = _base_return(_periods)
+    return pd.concat([_return[_return.index.isin(_normal)], _update_return(_change, _periods)])
 
-#     objs = list()
-#     for n, level in enumerate(data.level):
-#         # obj = pd.DataFrame() if n else frm.rename(columns={'섹터': '분류'})
-#         if level == 'ticker':
-#             obj = data.copy()
-#         else:
-#             layer = data.groupby(by=level[n:]).sum().reset_index()
-#             obj = DataFrame()            
-#             obj['ticker'] = layer[level] + f'_{self.name}{self.tag}'
-#             obj['name'] = layer[l]
-#             obj['classify'] = layer[lvl[n + 1]] if n < len(lvl) - 1 else self.name
-#             obj['size'] = layer['size']
-#             for name in obj['종목명']:
-#                 df = frm[frm[l] == name]
-#                 for f in ftr:
-#                     if f == 'DIV':
-#                         obj.loc[obj['종목명'] == name, f] = 0 if df.empty else df[f].mean()
-#                     else:
-#                         num = df[df['PER'] != 0].copy() if f == 'PER' else df
-#                         obj.loc[obj['종목명'] == name, f] = (num[f] * num['크기'] / num['크기'].sum()).sum()
-#         objs.append(obj)
-#     objs.append(pd.DataFrame(
-#         data=[[f'{self.name}{self.tag}', self.name, '', frm['크기'].sum()]],
-#         columns=['종목코드', '종목명', '분류', '크기'], index=['Cover']
-#     ))
-#     aligned = pd.concat(objs=objs, axis=0, ignore_index=True)
-#     dropper = [c for c in ['IPO', '거래량', '시가총액', '상장주식수', 'BPS', 'DPS', 'EPS'] if c in aligned.columns]
-#     aligned = aligned.drop(columns=dropper)
+def Properties() -> DataFrame:
+    return pd.concat(
+        objs=[
+            marketCap(), 
+            multiple(), 
+            ipo().drop(columns=["name", "products"]), 
+            priceReturn()
+        ],
+        axis=1
+    ).drop_duplicates()
 
-#     key = aligned[aligned['종목명'] == aligned['분류']].copy()
-#     if not key.empty:
-#         aligned = aligned.drop(index=key.index)
-#     return aligned
+
+
+if __name__ == "__main__":
+    print(marketCap())
+    print(multiple())
+    print(ipo())
+    # print(priceReturn())
