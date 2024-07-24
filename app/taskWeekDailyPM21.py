@@ -7,4 +7,8 @@ except ImportError:
     from app.sector.generic import wise
     from app.sector import core
 
-wise(core.WI26).set_index(keys='ticker').to_json(path.JSONWI26, orient='index')
+wise(core.WI26) \
+  .to_json(
+      path_or_buf=path.JSONWI26, 
+      orient='index'
+  )

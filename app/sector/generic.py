@@ -14,4 +14,5 @@ class wise(DataFrame):
                 axis=0, 
                 ignore_index=True
             ))
+        self.set_index(keys='ticker', inplace=True)
         return
