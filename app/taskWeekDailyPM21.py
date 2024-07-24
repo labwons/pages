@@ -7,6 +7,4 @@ except ImportError:
     from app.sector.wise import wise
     from app.sector.core import key
 
-wise(key.WICS).set_index(keys='ticker').to_json(path.JSONWICS, orient='index')
-# Deprecated WI26
-# wise(key.WI26).set_index(keys='ticker').to_json(path.JSONWI26, orient='index')
+wise(key.WI26).set_index(keys='ticker').to_json(path.JSONWI26, orient='index')
