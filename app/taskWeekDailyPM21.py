@@ -1,10 +1,10 @@
 try:
     from .common import path
-    from .sector.wise import wise
-    from .sector.core import key
+    from .sector.generic import wise
+    from .sector import core
 except ImportError:
     from app.common import path
-    from app.sector.wise import wise
-    from app.sector.core import key
+    from app.sector.generic import wise
+    from app.sector import core
 
-wise(key.WI26).set_index(keys='ticker').to_json(path.JSONWI26, orient='index')
+wise(core.WI26).set_index(keys='ticker').to_json(path.JSONWI26, orient='index')

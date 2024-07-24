@@ -1,7 +1,7 @@
 try:
-    from .core.fetch import sector
+    from .core import sector
 except ImportError:
-    from app.sector.core.fetch import sector
+    from app.sector.fetch import sector
 from pandas import concat, DataFrame
 from typing import Dict, Iterable, Union
 
