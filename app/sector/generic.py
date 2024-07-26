@@ -1,5 +1,3 @@
-import sys
-sys.path.append(r'D:\J.H.LEE\05. CODING\LABWONS\pages')
 try:
     from ..common import PATH
     from fetch import fetch

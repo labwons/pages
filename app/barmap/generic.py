@@ -20,10 +20,11 @@ import pandas as pd
 
 class baseDataFrame(Wise):
     
-    def __init__(self, key:Dict[str, str]):
+    def __init__(self, key:str):
         super().__init__(key)
         self['cover'] = self['industryName'].str.replace("WICS ", "").replace("WI26 ", "")
         self = self[['name', 'cover', 'industryCode', 'industryName', 'sectorCode', 'sectorName']]
+        
         super().__init__(
             self \
             .join(self.marketCap, how='left') \
