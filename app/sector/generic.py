@@ -1,16 +1,16 @@
 try:
-    from .core import sector
+    from fetch import fetch
 except ImportError:
-    from app.sector.fetch import sector
+    from app.sector.fetch import fetch
 from pandas import concat, DataFrame
 from typing import Dict, Iterable, Union
 
 
-class wise(DataFrame):
-    def __init__(self, index:Union[Dict, Iterable]):
+class Wise(DataFrame):
+    def __init__(self, index:Dict[str, str]):
         super().__init__(
             concat(
-                objs=[sector(cd) for cd in index], 
+                objs=[fetch(cd) for cd in index], 
                 axis=0, 
                 ignore_index=True
             ))

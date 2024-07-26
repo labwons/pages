@@ -1,43 +1,56 @@
+try:
+    from ..common.date import TradingDate
+    from ..common.deco import memorize
+    from ..sector.generic import Wise
+    import fetch
+except ImportError:
+    from app.common.date import TradingDate
+    from app.common.deco import memorize
+    from app.sector.generic import Wise
+    from app.barmap import fetch
+from datetime import date, datetime, timedelta
 from pandas import DataFrame
 from pykrx import stock
+from requests.exceptions import JSONDecodeError, SSLError
+from typing import Dict, List, Union, Iterable
+import pandas as pd
 
 
-class mapData(DataFrame):
-
-    _kq = stock.get_index_portfolio_deposit_file('2001')
-    _ks200 = stock.get_index_portfolio_deposit_file('1028')
-    _kq150 = stock.get_index_portfolio_deposit_file('2203')
-    def __init__(self, wiseIndex:DataFrame, properties:DataFrame):
-        if not str(wiseIndex.index.name) == 'ticker':
-            wiseIndex = wiseIndex.set_index(keys='ticker')
-        super().__init__(wiseIndex.join(properties, how='left'))
-
-        # self.drop(columns=self.dropper, inplace=True)
-        self.sort_values(by='marketCap', ascending=False, inplace=True)
-        self['indexName'] = self['indexName'].str.replace("WICS ", "")
-        self['name'] = self['name'].apply(lambda x: f"*{x}" if x in self._kq else x)
-        self['close'] = self['close'].apply(lambda x: f"{x:,}원")
-        self['size'] = self['marketCap'] / 100000000
-        self['marketCap'] = self['size'].apply(self._format_cap)
-        self[['DIV', 'PER', 'PBR']] = round(self[['DIV', 'PBR', 'PER']], 2)
-        return
-
-    @staticmethod
-    def _format_cap(x:int) -> str:
-        mod, res = int(x // 10000), int(x % 10000)
-        return f'{mod}조 {res}억원' if mod else f'{res}억원'
-
-    # @property
-    # def dropper(self) -> list:
-    #     return [
-    #         'indexCode', 'sectorCode', 'sectorCap', 'sectorWeight',
-    #         'shares', 'ipo', 'settlementMonth', 'D+0'
-    #     ]    
+class baseDataFrame(Wise):
     
-    @property
-    def largeCap(self) -> DataFrame:
-        return self[self.index.isin(self._ks200 + self._kq150)]
-
-    @property
-    def midCap(self) -> DataFrame:
-        return self[~self.index.isin(self._ks200 + self._kq150)].head(500)
+    def __init__(self, key:Dict[str, str]):
+        super().__init__(key)
+        self['cover'] = self['industryName'].str.replace("WICS ", "").replace("WI26 ", "")
+        self = self[['name', 'cover', 'industryCode', 'industryName', 'sectorCode', 'sectorName']]
+        super().__init__(
+            self \
+            .join(self.marketCap, how='left') \
+            .join(self.earningRate, how='left') \
+            .join(self.multiple, how='left')
+        )
+        return
+            
+    @memorize
+    def marketCap(self) -> DataFrame:
+        return fetch.marketCap(TradingDate.near)
+    
+    @memorize
+    def ipo(self) -> DataFrame:
+        return fetch.ipo(TradingDate.near)
+    
+    @memorize
+    def multiple(self) -> DataFrame:
+        return fetch.multiple(TradingDate.near)
+    
+    @memorize
+    def earningRate(self) -> DataFrame:
+        return fetch.earningRate(TradingDate.periods)
+    
+    @memorize
+    def largeCaps(self) -> List[str]:
+        return stock.get_index_portfolio_deposit_file('1028') + \
+               stock.get_index_portfolio_deposit_file('2203')
+    
+    def pickUp(self, style:str):
+    
+    

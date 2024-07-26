@@ -13,9 +13,14 @@ import pandas as pd
 def marketCap(td:Union[date, datetime, str]=None) -> DataFrame:
     _cols_ = {'종가':'close', '시가총액':'marketCap', 
               '거래량':'volume', '거래대금':'amount', '상장주식수':'shares'}
-    _date_ = TradingDate(td).strftime("%Y%m%d")
+    date = TradingDate(td) if td else f'{TradingDate}'
     try:
-        _get_ = stock.get_market_cap_by_ticker(date=_date_, market="ALL", alternative=True)
+        _get_ = stock. \
+                    get_market_cap_by_ticker(
+                        date=date, 
+                        market="ALL", 
+                        alternative=True
+                    )
         _get_.rename(columns=_cols_, inplace=True)
     except (KeyError, RecursionError, JSONDecodeError, SSLError):
         _get_ = DataFrame(columns=_cols_)
@@ -23,11 +28,17 @@ def marketCap(td:Union[date, datetime, str]=None) -> DataFrame:
     return _get_
 
 def multiple(td:Union[date, datetime, str]=None) -> DataFrame:
-    _date_ = TradingDate(td).strftime("%Y%m%d")
+    _cols_ = ['BPS', 'PER', 'PBR', 'EPS', 'DIV', 'DPS']
+    date = TradingDate(td) if td else f'{TradingDate}'
     try:
-        _get_ = stock.get_market_fundamental(date=_date_, market="ALL", alternative=True)
+        _get_ = stock. \
+                    get_market_fundamental(
+                        date=date, 
+                        market="ALL", 
+                        alternative=True
+                    )
     except (KeyError, RecursionError, JSONDecodeError, SSLError):
-        _get_ = DataFrame(columns=['BPS', 'PER', 'PBR', 'EPS', 'DIV', 'DPS'])
+        _get_ = DataFrame(columns=_cols_)
     _get_.index.name = "ticker"
     return _get_
 
@@ -46,8 +57,8 @@ def ipo(td:Union[date, datetime, str]=None) -> DataFrame:
     _get_['ipo'] = pd.to_datetime(_get_['ipo'])
     return _get_[_get_['ipo'].dt.date <= td]
 
-def priceReturn() -> DataFrame:
-    def _base_return(periods:Dict[str, date]) -> DataFrame:
+def earningRate(periods:Dict[str, date]) -> DataFrame:
+    def _base_return() -> DataFrame:
         _objs = {}
         _base = stock.get_market_ohlcv_by_ticker(date=periods['D+0'].strftime("%Y%m%d"), market="ALL")['종가']
         for key, dt in periods.items():
@@ -55,7 +66,7 @@ def priceReturn() -> DataFrame:
             _objs[key] = round(100 * (_base / _fetch - 1), 2)
         return pd.concat(objs=_objs, axis=1)
     
-    def _update_return(tickers:Iterable, periods:dict) -> DataFrame:
+    def _update_return(tickers:Iterable) -> DataFrame:
         fromdate, todate = (periods['Y-1'] - timedelta(30)).strftime("%Y%m%d"), periods['D+0'].strftime("%Y%m%d")
         data = []
         for ticker in tickers:
@@ -65,31 +76,18 @@ def priceReturn() -> DataFrame:
                 for label, dt in [('D-1', 1), ('W-1', 5), ('M-1', 21), ('M-3', 63), ('M-6', 126), ('Y-1', 252)]
             })
         return DataFrame(data, index=tickers)
-    
-    _periods = TradingDate.periods
-    _shares = pd.concat({dt: marketCap(_periods[dt])['shares'] for dt in ['D+0', 'Y-1']}, axis=1)
+
+    _shares = pd.concat({dt: marketCap(periods[dt])['shares'] for dt in ['D+0', 'Y-1']}, axis=1)
     _shares = _shares[~_shares['D+0'].isna()]
     _normal = _shares[_shares['D+0'] == _shares['Y-1']].index
     _change = _shares[_shares['D+0'] != _shares['Y-1']].index
     
-    _return = _base_return(_periods)
-    return pd.concat([_return[_return.index.isin(_normal)], _update_return(_change, _periods)])
-
-def Properties() -> DataFrame:
-    return pd.concat(
-        objs=[
-            marketCap(), 
-            multiple(), 
-            ipo().drop(columns=["name", "products"]), 
-            priceReturn()
-        ],
-        axis=1
-    ).drop_duplicates()
-
+    _return = _base_return()
+    return pd.concat([_return[_return.index.isin(_normal)], _update_return(_change)])
 
 
 if __name__ == "__main__":
     print(marketCap())
     print(multiple())
     print(ipo())
-    # print(priceReturn())
+    print(earningRate())

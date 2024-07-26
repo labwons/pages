@@ -32,5 +32,3 @@ def align(data:DataFrame, level:List[str]):
     # objs.append()
     return pd.concat(objs=objs, axis=0, ignore_index=True)
             
-        
-            
