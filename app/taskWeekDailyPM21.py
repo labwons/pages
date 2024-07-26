@@ -8,13 +8,13 @@ except ImportError:
     from app.sector.fetch import KEY
 
 if __name__ == "__main__":
-    Wise("WI26") \
+    Wise(KEY.WI26) \
     .to_json(
         path_or_buf=PATH.JSONWI26, 
         orient='index'
     )
     
-    Wise("WICS") \
+    Wise(KEY.WICS) \
     .to_json(
         path_or_buf=PATH.JSONWICS, 
         orient='index'

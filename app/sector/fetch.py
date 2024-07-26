@@ -3,7 +3,9 @@ try:
 except ImportError:
     from app.common.date import TradingDate
 from dataclasses import dataclass
-from pandas import concat, DataFrame
+from pandas import DataFrame
+from typing import Dict, Union
+import pandas as pd
 import requests
 import time
 
@@ -82,16 +84,30 @@ class KEY:
         'ALL_MKT_VAL': 'sectorCap',
         'WGT': 'sectorWeight',
     }
-    
-    def __call__(self, date:str, sec_cd:str) -> str:
-        return self.URL % (date, sec_cd)
-    
 
-def fetch(code:str, try_count:int=5) -> DataFrame:
-    for n in range(try_count):
-        resp = requests.get(KEY.URL(TradingDate.wiseDate, code))
-        if resp.status_code == 200:
-            data = DataFrame(resp.json()['list'])[KEY.COLUMNS.keys()]
-            return data.rename(columns=KEY.COLUMNS)
-        time.sleep(5)
-    raise TimeoutError(f'Unable to fetch WISE INDEX code: {code}')
+    
+def fetch(key:Union[str, Dict]) -> DataFrame:
+    def _fetch(code:str, try_count:int=5) -> DataFrame:
+        for n in range(try_count):
+            resp = requests.get(KEY.URL(TradingDate.wiseDate, code))
+            if resp.status_code == 200:
+                data = DataFrame(resp.json()['list'])[KEY.COLUMNS.keys()]
+                return data.rename(columns=KEY.COLUMNS)
+            time.sleep(5)
+        raise TimeoutError(f'Unable to fetch WISE INDEX code: {code}')
+
+    if isinstance(key, str):
+        if key.upper() == 'WICS':
+            index = KEY.WICS
+        elif key.upper() == 'WI26':
+            index = KEY.WI26
+        else:
+            raise KeyError(f'Unknown MAP Type: {key}')
+    elif isinstance(key, Dict):
+        index = key
+    return pd.concat(
+        objs=[_fetch(code) for code in index],
+        axis=0,
+        ignore_index=True
+    ).set_index(keys='ticker', inplace=True)
+        
