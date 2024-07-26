@@ -24,10 +24,10 @@ class _tradingDate(object):
         return self.near.strftime("%Y%m%d")
  
     def __getitem__(self, n:int) -> date:
-        return self._base[n].date()
+        return self.base.index[n].date()
 
     def __len__(self) -> int:
-        return len(self._base)
+        return len(self.base)
     
     @memorize
     def anchorDate(self) -> date:
@@ -59,14 +59,14 @@ class _tradingDate(object):
     
     @memorize
     def near(self) -> date:
-        return self._base.index[-1].date()    
+        return self[-1].date()    
 
     @memorize
     def periods(self) -> dict:
-        objs = {'D+0': self.end}
+        objs = {'D+0': datetime.strptime(self.wiseDate, "%Y%m%d")}
         find = {'D-1': {'days':1}, 'W-1': {'weeks':1}, 'M-1': {'months':1}, 'M-3': {'months':3}, 'M-6': {'months':6}, 'Y-1': {'years':1}}
         for arg, kwarg in find.items():
-            _find = self._base[-1] - DateOffset(**kwarg)
+            _find = objs['D+0'] - DateOffset(**kwarg)
             while not _find in self._base:
                 _find = _find - DateOffset(days=1)
             objs[arg] = _find.date()
@@ -84,10 +84,7 @@ class _tradingDate(object):
             pin2 = pin1 + html[pin1:].find("</p>")
             return html[pin1 + 6 : pin2].replace(".", "")
         except (JSONDecodeError, SSLError):
-            return self.strf(-2)
-
-    def strf(self, n:int) -> str:
-        return self[n].strftime("%Y%m%d")
+            return self[-2].strftime("%Y%m%d")
 
     def dateCheck(self, td:Union[date, datetime, str]=None) -> date:
         if not td:

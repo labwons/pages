@@ -2,11 +2,13 @@ try:
     from ..common.date import TradingDate
     from ..common.deco import memorize
     from ..sector.generic import Wise
+    from core import bmFrame
     import fetch
 except ImportError:
     from app.common.date import TradingDate
     from app.common.deco import memorize
     from app.sector.generic import Wise
+    from app.barmap.core import bmFrame
     from app.barmap import fetch
 from datetime import date, datetime, timedelta
 from pandas import DataFrame
@@ -47,10 +49,16 @@ class baseDataFrame(Wise):
         return fetch.earningRate(TradingDate.periods)
     
     @memorize
-    def largeCaps(self) -> List[str]:
-        return stock.get_index_portfolio_deposit_file('1028') + \
-               stock.get_index_portfolio_deposit_file('2203')
+    def largeIndex(self) -> List[str]:
+        return fetch.largeCaps()
     
-    def pickUp(self, style:str):
+    
+class BarMap(baseDataFrame):
+    
+    @memorize
+    def largeCaps(self) -> bmFrame:
+        return bmFrame(self[self['ticker'].isin(self.largeIndex)])
+    
+    
     
     

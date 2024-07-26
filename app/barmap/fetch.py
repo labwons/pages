@@ -6,7 +6,7 @@ from datetime import date, datetime, timedelta
 from pandas import DataFrame
 from pykrx import stock
 from requests.exceptions import JSONDecodeError, SSLError
-from typing import Dict, Union, Iterable
+from typing import Dict, List, Union, Iterable
 import pandas as pd
 
 
@@ -15,12 +15,12 @@ def marketCap(td:Union[date, datetime, str]=None) -> DataFrame:
               '거래량':'volume', '거래대금':'amount', '상장주식수':'shares'}
     date = TradingDate(td) if td else f'{TradingDate}'
     try:
-        _get_ = stock. \
-                    get_market_cap_by_ticker(
-                        date=date, 
-                        market="ALL", 
-                        alternative=True
-                    )
+        _get_ = stock \
+                .get_market_cap_by_ticker(
+                    date=date, 
+                    market="ALL", 
+                    alternative=True
+                )
         _get_.rename(columns=_cols_, inplace=True)
     except (KeyError, RecursionError, JSONDecodeError, SSLError):
         _get_ = DataFrame(columns=_cols_)
@@ -31,12 +31,12 @@ def multiple(td:Union[date, datetime, str]=None) -> DataFrame:
     _cols_ = ['BPS', 'PER', 'PBR', 'EPS', 'DIV', 'DPS']
     date = TradingDate(td) if td else f'{TradingDate}'
     try:
-        _get_ = stock. \
-                    get_market_fundamental(
-                        date=date, 
-                        market="ALL", 
-                        alternative=True
-                    )
+        _get_ = stock \
+                .get_market_fundamental(
+                    date=date, 
+                    market="ALL", 
+                    alternative=True
+                )
     except (KeyError, RecursionError, JSONDecodeError, SSLError):
         _get_ = DataFrame(columns=_cols_)
     _get_.index.name = "ticker"
@@ -84,6 +84,10 @@ def earningRate(periods:Dict[str, date]) -> DataFrame:
     
     _return = _base_return()
     return pd.concat([_return[_return.index.isin(_normal)], _update_return(_change)])
+
+def largeCaps(self) -> List[str]:
+    return stock.get_index_portfolio_deposit_file('1028') + \
+           stock.get_index_portfolio_deposit_file('2203')
 
 
 if __name__ == "__main__":
