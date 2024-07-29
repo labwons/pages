@@ -37,14 +37,20 @@ jobs:
         export PYTHONPATH=$PYTHONPATH:$(pwd)/app
         python app/taskWeekDailyPM21.py
 
+    - name: Update detection
+      run : |
+        git config --global user.name 'SNOB ACTIONS'
+        git config --global user.email 'snob.labwons@gmail.com'
+        git add -A
+        git diff-index --quiet HEAD || echo "Updated Detected"
+      id: changes
+
     - name: Commit and Push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      if: steps.changes.outputs.stdout != ''
       run: |
-        git config --global user.email "snob.labwons@gmail.com"
-        git config --global user.name "ACTIONS"
-        git add -A
         TIMESTAMP=$(date)
         git commit -m "WEEKDAY TASKS on $TIMESTAMP"
-        git push https://x-access-token:${GITHUB_TOKEN}@github.com/labwons/pages.git HEAD:main
+        git push origin main
 
