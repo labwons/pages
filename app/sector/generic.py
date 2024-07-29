@@ -23,10 +23,8 @@ class Wise(DataFrame):
             try:
                 data = pd.read_json(file, orient='index')
             except (FileNotFoundError, FileExistsError):
-                data = fetch(_type)        
-        elif isinstance(_type, Dict):
-            data = fetch(_type)
-        super().__init__(data)
+                pass
+        super().__init__(fetch(_type))
         return   
     
     

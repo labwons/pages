@@ -18,10 +18,10 @@ from typing import Dict, List, Union, Iterable
 import pandas as pd
 
 
-class baseDataFrame(Wise):
+class BarMap(Wise):
     
     def __init__(self, key:str):
-        super().__init__(key)
+        Wise.__init__(self, key)
         self['cover'] = self['industryName'].str.replace("WICS ", "").replace("WI26 ", "")
         self = self[['name', 'cover', 'industryCode', 'industryName', 'sectorCode', 'sectorName']]
         
@@ -31,6 +31,7 @@ class baseDataFrame(Wise):
             .join(self.earningRate, how='left') \
             .join(self.multiple, how='left')
         )
+        self.sort_values(by='marketCap', ascending=False, inplace=True)
         return
             
     @memorize
@@ -53,12 +54,13 @@ class baseDataFrame(Wise):
     def largeIndex(self) -> List[str]:
         return fetch.largeCaps()
     
-    
-class BarMap(baseDataFrame):
-    
     @memorize
     def largeCaps(self) -> bmFrame:
         return bmFrame(self[self['ticker'].isin(self.largeIndex)])
+    
+    @memorize
+    def midCaps(self) -> bmFrame:
+        return bmFrame(self[~self['ticker'].isin(self.largeIndex)].head(500))
     
     
     

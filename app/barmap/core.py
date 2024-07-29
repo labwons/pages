@@ -3,6 +3,7 @@ try:
 except ImportError:
     from app.common.deco import memorize
 from pandas import DataFrame
+import pandas as pd
 
 
 class bmFrame(DataFrame):
@@ -12,6 +13,12 @@ class bmFrame(DataFrame):
         super().__init__(stocks)
         self['size'] = (self['marketCap'] / 100000000).astype(int)
         self['close'] = self['close'].apply(lambda x: f"{x:,}원")
+        
+        objs = [self, self.industry]
+        if self._get_map_name() == "WICS":
+            objs.append(self.sector)
+        objs.append(self.header)
+        super().__init__(pd.concat(objs=objs, axis=0, ignore_index=True))
         return
     
     def _get_map_name(self) -> str:
