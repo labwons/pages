@@ -10,9 +10,34 @@ import requests
 import time
 
 
-@dataclass
-class KEY:
-    WICS = {
+def index_name(name:str) -> str:
+    if not name.upper() in ['WICS', 'WI26']:
+        raise KeyError(f'Unknown INDEX type: {name}')
+    return name.upper()
+
+def index_date() -> str:
+    html = requests.get('https://www.wiseindex.com/Index/Index#/G1010.0.Components').text
+    pin1 = html.find("기준일")
+    pin2 = pin1 + html[pin1:].find("</p>")
+    return html[pin1 + 6 : pin2].replace(".", "")
+
+def index_component(date:str, code:str, try_count:int=5) -> DataFrame:
+    columns = {
+        'CMP_CD': 'ticker', 'CMP_KOR': 'name',        
+        'SEC_CD': 'sectorCode', 'SEC_NM_KOR': 'sectorName', 'ALL_MKT_VAL': 'sectorCap', 'WGT': 'sectorWeight',
+        'IDX_CD': 'industryCode', 'IDX_NM_KOR': 'industryName',        
+    }
+    url = f'http://www.wiseindex.com/Index/GetIndexComponets?ceil_yn=0&dt={date}&sec_cd={code}'
+    for n in range(try_count):
+        resp = requests.get(url)
+        if resp.status_code == 200:
+            data = DataFrame(resp.json()['list'])[columns.keys()]
+            return data.rename(columns=columns).set_index(keys='ticker')
+        time.sleep(5)
+    raise TimeoutError(f'Unable to fetch WISE INDEX url: {url}')
+
+KEYS = {
+    "WICS": {
         'G1010': '에너지',
         'G1510': '소재',
         'G2010': '자본재',
@@ -41,9 +66,8 @@ class KEY:
         'G5010': '전기통신서비스',
         'G5020': '미디어와엔터테인먼트',
         'G5510': '유틸리티'
-    }
-
-    WI26 = {
+    },
+    "WI26": {
         'WI100': '에너지',
         'WI110': '화학',
         'WI200': '비철금속',
@@ -71,43 +95,29 @@ class KEY:
         'WI700': '통신서비스',
         'WI800': '유틸리티',
     }
+}
+# def fetch(key:Union[str, Dict]) -> DataFrame:
+#     def _fetch(code:str, try_count:int=5) -> DataFrame:
+#         for n in range(try_count):
+#             resp = requests.get(KEY.URL(TradingDate.wiseDate, code))
+#             if resp.status_code == 200:
+#                 data = DataFrame(resp.json()['list'])[KEY.COLUMNS.keys()]
+#                 return data.rename(columns=KEY.COLUMNS)
+#             time.sleep(5)
+#         raise TimeoutError(f'Unable to fetch WISE INDEX code: {code}')
 
-    URL = lambda dt, sec_cd: f'http://www.wiseindex.com/Index/GetIndexComponets?ceil_yn=0&dt={dt}&sec_cd={sec_cd}'
-
-    COLUMNS = {
-        'IDX_CD': 'industryCode',
-        'IDX_NM_KOR': 'industryName',
-        'CMP_CD': 'ticker',
-        'CMP_KOR': 'name',
-        'SEC_CD': 'sectorCode',
-        'SEC_NM_KOR': 'sectorName',
-        'ALL_MKT_VAL': 'sectorCap',
-        'WGT': 'sectorWeight',
-    }
-
-    
-def fetch(key:Union[str, Dict]) -> DataFrame:
-    def _fetch(code:str, try_count:int=5) -> DataFrame:
-        for n in range(try_count):
-            resp = requests.get(KEY.URL(TradingDate.wiseDate, code))
-            if resp.status_code == 200:
-                data = DataFrame(resp.json()['list'])[KEY.COLUMNS.keys()]
-                return data.rename(columns=KEY.COLUMNS)
-            time.sleep(5)
-        raise TimeoutError(f'Unable to fetch WISE INDEX code: {code}')
-
-    if isinstance(key, str):
-        if key.upper() == 'WICS':
-            index = KEY.WICS
-        elif key.upper() == 'WI26':
-            index = KEY.WI26
-        else:
-            raise KeyError(f'Unknown MAP Type: {key}')
-    elif isinstance(key, Dict):
-        index = key
-    return pd.concat(
-        objs=[_fetch(code) for code in index],
-        axis=0,
-        ignore_index=True
-    ).set_index(keys='ticker', inplace=True)
+#     if isinstance(key, str):
+#         if key.upper() == 'WICS':
+#             index = KEY.WICS
+#         elif key.upper() == 'WI26':
+#             index = KEY.WI26
+#         else:
+#             raise KeyError(f'Unknown MAP Type: {key}')
+#     elif isinstance(key, Dict):
+#         index = key
+#     return pd.concat(
+#         objs=[_fetch(code) for code in index],
+#         axis=0,
+#         ignore_index=True
+#     ).set_index(keys='ticker', inplace=True)
         

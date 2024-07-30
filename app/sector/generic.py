@@ -1,30 +1,32 @@
 try:
-    from ..common import PATH
-    from fetch import fetch
+    import fetch
 except ImportError:
-    from app.common import PATH
-    from app.sector.fetch import fetch
+    from app.sector import fetch
 from pandas import DataFrame
-from typing import Dict, Union
+from typing import Any, Dict
 import pandas as pd
+import os
 
 
 class Wise(DataFrame):
     
-    def __init__(self, _type:Union[str, Dict]):
-        if isinstance(_type, str):
-            if _type.upper() == 'WICS':
-                file = PATH.JSONWICS
-            elif _type.upper() == 'WI26':
-                file = PATH.JSONWI26
-            else:
-                raise KeyError(f'Unknown MAP Type: {_type}')
-            
-            try:
-                data = pd.read_json(file, orient='index')
-            except (FileNotFoundError, FileExistsError):
-                pass
-        super().__init__(fetch(_type))
+    def __init__(self, index:str):
+        _date = fetch.index_date()
+        _name = fetch.index_name(index)
+        _path = os.path.join(os.path.dirname(__file__), rf'archive/{_name.lower()}.json'),
+        _code = fetch.KEYS[_name]
+        
+        try:
+            super() \
+                .__init__(pd.read_json(_path, orient='index'))
+        except (FileNotFoundError, FileExistsError):
+            super() \
+                .__init__(pd.concat(
+                    objs=[fetch.index_component(_date, cd) for cd in _code],
+                    axis=0,
+                    ignore_index=False
+            ))
+            self.to_json(_path, orient='index')        
         return   
     
     
