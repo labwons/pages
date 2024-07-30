@@ -20,6 +20,8 @@ class Wise(DataFrame):
             _path = f"https://raw.githubusercontent.com/labwons/pages/main/app/sector/archive/{_name.lower()}.json"
         
         if auto_update:
+            if not self.__kq__:
+                self.__kq__ = get_index_portfolio_deposit_file('2001')
             _date = fetch.index_date()
             _code = fetch.KEYS[_name]
             super().__init__(
@@ -29,9 +31,12 @@ class Wise(DataFrame):
                     ignore_index=False
                 )
             )
-            if not self.__kq__:
-                self.__kq__ = get_index_portfolio_deposit_file('2001')
-            self['name'] = self.apply(lambda x: f'{x}*' if x.index in self.__kq__ else x, axis=1)
+            
+            self.index.name = 'ticker'
+            self.reset_index(inplace=True)            
+            self['name'] = self.apply(lambda x: f'{x}*' if x['ticker'] in self.__kq__ else x, axis=1)
+            self.set_index(keys='ticker', inplace=True)
+            
             self.to_json(_path, orient='index')
             return
     
