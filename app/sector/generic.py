@@ -4,8 +4,7 @@ except ImportError:
     from app.sector import fetch
 from pandas import DataFrame
 from typing import Any, Dict
-import pandas as pd
-import os
+import pandas, os
 
 
 class Wise(DataFrame):
@@ -17,15 +16,18 @@ class Wise(DataFrame):
         _code = fetch.KEYS[_name]
         
         try:
-            super() \
-                .__init__(pd.read_json(_path, orient='index'))
+            super().__init__(pandas.read_json(_path, orient='index'))
         except (FileExistsError, FileNotFoundError, ValueError):
-            super() \
-                .__init__(pd.concat(
+            super().__init__()
+            
+        if self.empty:
+            super().__init__(
+                pandas.concat(
                     objs=[fetch.index_component(_date, cd) for cd in _code],
                     axis=0,
                     ignore_index=False
-            ))
+                )
+            )
             self.to_json(_path, orient='index')        
         return   
     
