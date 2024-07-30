@@ -90,28 +90,3 @@ KEYS = {
         'WI800': '유틸리티',
     }
 }
-# def fetch(key:Union[str, Dict]) -> DataFrame:
-#     def _fetch(code:str, try_count:int=5) -> DataFrame:
-#         for n in range(try_count):
-#             resp = requests.get(KEY.URL(TradingDate.wiseDate, code))
-#             if resp.status_code == 200:
-#                 data = DataFrame(resp.json()['list'])[KEY.COLUMNS.keys()]
-#                 return data.rename(columns=KEY.COLUMNS)
-#             time.sleep(5)
-#         raise TimeoutError(f'Unable to fetch WISE INDEX code: {code}')
-
-#     if isinstance(key, str):
-#         if key.upper() == 'WICS':
-#             index = KEY.WICS
-#         elif key.upper() == 'WI26':
-#             index = KEY.WI26
-#         else:
-#             raise KeyError(f'Unknown MAP Type: {key}')
-#     elif isinstance(key, Dict):
-#         index = key
-#     return pd.concat(
-#         objs=[_fetch(code) for code in index],
-#         axis=0,
-#         ignore_index=True
-#     ).set_index(keys='ticker', inplace=True)
-        

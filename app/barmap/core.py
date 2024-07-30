@@ -1,7 +1,7 @@
 try:
-    from ..common.deco import memorize
+    from ..market.deco import memorize
 except ImportError:
-    from app.common.deco import memorize
+    from app.market.deco import memorize
 from pandas import DataFrame
 import pandas as pd
 

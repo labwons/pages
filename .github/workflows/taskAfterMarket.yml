@@ -6,10 +6,10 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: WEEKDAY TASKS
+name: After Market
 on: 
   schedule:
-    - cron: '0 12 * * 1-5'
+    - cron: '35 6 * * 1-5'
   workflow_dispatch:
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
     - name: Run application
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)/app
-        python app/taskWeekDailyPM21.py
+        python app/taskAfterMarket.py
 
     - name: Commit and Push changes
       env:
@@ -45,5 +45,5 @@ jobs:
         git config --global user.email 'snob.labwons@gmail.com'
         TIMESTAMP=$(date)
         git add .
-        git commit -m "WEEKDAY TASKS on $TIMESTAMP"
+        git commit -m "After Market on $TIMESTAMP"
         git push
