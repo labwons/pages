@@ -76,8 +76,9 @@ def earningRatio() -> DataFrame:
             src = stock.get_market_ohlcv_by_date(ticker=ticker, fromdate=fromdate, todate=todate)['종가']
             obj = {"ticker": ticker}
             for interval, date in TradingDate:
-                src_copy = src[src.index >= date]
-                obj[interval] = round(100 * (src_copy[-1] / src_copy[0] - 1), 2)
+                src_copy = src[src.index.date >= date]
+                obj[interval] = round(100 * (src_copy.iloc[-1] / src_copy.iloc[0] - 1), 2)
+            objs.append(obj)
         return DataFrame(objs).set_index(keys='ticker')
 
     _shares = pd.concat({dt: marketCap(TradingDate[dt].strftime("%Y%m%d"))['shares'] for dt in ['D-0', 'Y-1']}, axis=1)
