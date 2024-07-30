@@ -13,9 +13,6 @@ class Wise(DataFrame):
     __kq__:List[str] = []
     
     def __init__(self, index:str, auto_update:bool=False):
-        if not self.__kq__:
-            self.__kq__ = get_index_portfolio_deposit_file('2001')
-            
         _name = fetch.index_name(index)        
         try:
             _path = os.path.join(os.path.dirname(__file__), rf'archive/{_name.lower()}.json')
@@ -32,6 +29,8 @@ class Wise(DataFrame):
                     ignore_index=False
                 )
             )
+            if not self.__kq__:
+                self.__kq__ = get_index_portfolio_deposit_file('2001')
             self['name'] = self.apply(lambda x: f'{x}*' if x.index in self.__kq__ else x, axis=1)
             self.to_json(_path, orient='index')
             return
