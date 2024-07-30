@@ -51,7 +51,7 @@ def ipo() -> DataFrame:
               '상장일':'ipo', '주요제품':'products', '결산월':'settlementMonth'}
     try:
         _get_ = pd.read_html(io=_url_, header=0, encoding='euc-kr')[0][_cols_.keys()]
-        _get_.rename(columns=_cols_, inplace=True)
+        _get_ = _get_.rename(columns=_cols_)
     except (KeyError, RecursionError, JSONDecodeError, SSLError):
         _get_ = DataFrame(columns=_cols_.values())
     _get_ = _get_.set_index(keys='ticker').copy()
