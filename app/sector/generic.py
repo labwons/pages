@@ -19,7 +19,7 @@ class Wise(DataFrame):
         try:
             super() \
                 .__init__(pd.read_json(_path, orient='index'))
-        except (FileNotFoundError, FileExistsError):
+        except (FileExistsError, FileNotFoundError, ValueError):
             super() \
                 .__init__(pd.concat(
                     objs=[fetch.index_component(_date, cd) for cd in _code],
