@@ -34,7 +34,10 @@ class Wise(DataFrame):
             
             self.index.name = 'ticker'
             self.reset_index(inplace=True)            
-            self['name'] = self.apply(lambda x: f'{x}*' if x['ticker'] in self.__kq__ else x, axis=1)
+            self['name'] = self.apply(
+                lambda x: f"{x['name']}*" if x['ticker'] in self.__kq__ else x['name'], 
+                axis=1
+            )
             self.set_index(keys='ticker', inplace=True)
             
             self.to_json(_path, orient='index')
