@@ -87,7 +87,7 @@ class _tradingDate(object):
     
     def __iter__(self):
         for interval in ('D-1', 'W-1', 'M-1', 'M-3', 'M-6', 'Y-1'):
-            return interval, self[interval]
+            yield interval, self[interval]
 
     def __len__(self) -> int:
         return len(self.span)

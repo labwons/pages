@@ -50,7 +50,7 @@ def ipo() -> DataFrame:
     _cols_ = {'회사명':'name', '종목코드':'ticker', 
               '상장일':'ipo', '주요제품':'products', '결산월':'settlementMonth'}
     try:
-        _get_ = pd.read_html(io=_url_, header=0)[0][_cols_.keys()]
+        _get_ = pd.read_html(io=_url_, header=0, encoding='euc-kr')[0][_cols_.keys()]
         _get_.rename(columns=_cols_, inplace=True)
     except (KeyError, RecursionError, JSONDecodeError, SSLError):
         _get_ = DataFrame(columns=_cols_.values())
@@ -80,7 +80,7 @@ def earningRatio() -> DataFrame:
                 obj[interval] = round(100 * (src_copy[-1] / src_copy[0] - 1), 2)
         return DataFrame(objs).set_index(keys='ticker')
 
-    _shares = pd.concat({dt: marketCap(TradingDate[dt])['shares'] for dt in ['D-0', 'Y-1']}, axis=1)
+    _shares = pd.concat({dt: marketCap(TradingDate[dt].strftime("%Y%m%d"))['shares'] for dt in ['D-0', 'Y-1']}, axis=1)
     _shares = _shares[~_shares['D-0'].isna()]
     _normal = _shares[_shares['D-0'] == _shares['Y-1']].index
     _change = _shares[_shares['D-0'] != _shares['Y-1']].index
