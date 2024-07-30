@@ -13,7 +13,7 @@ class Wise(DataFrame):
     def __init__(self, index:str):
         _date = fetch.index_date()
         _name = fetch.index_name(index)
-        _path = os.path.join(os.path.dirname(__file__), rf'archive/{_name.lower()}.json'),
+        _path = os.path.join(os.path.dirname(__file__), rf'archive/{_name.lower()}.json')
         _code = fetch.KEYS[_name]
         
         try:
