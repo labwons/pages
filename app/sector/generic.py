@@ -12,11 +12,15 @@ class Wise(DataFrame):
     def __init__(self, index:str, read_only:bool=False):
         _date = fetch.index_date()
         _name = fetch.index_name(index)
-        _path = os.path.join(os.path.dirname(__file__), rf'archive/{_name.lower()}.json')
         _code = fetch.KEYS[_name]
+        _path = os.path.join(os.path.dirname(__file__), rf'archive/{_name.lower()}.json')
+        _root = f"https://raw.githubusercontent.com/labwons/pages/main/app/sector/archive/{_name.lower()}.json"
         
         if read_only:
-            super().__init__(pandas.read_json(_path, orient='index'))
+            try:
+                super().__init__(pandas.read_json(_path, orient='index'))
+            except (FileExistsError, FileNotFoundError):
+                super().__init__(pandas.read_json(_root, orient='index'))
             return
         
         super().__init__(
