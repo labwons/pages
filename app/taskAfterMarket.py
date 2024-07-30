@@ -11,4 +11,4 @@ except ImportError:
 if __name__ == "__main__":
     wics = Wise('wics', auto_update=False)
     market = Market(auto_update=True)
-    print(wics.join(market, how='left'))
+    # print(wics.join(market, how='left'))
