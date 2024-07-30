@@ -54,9 +54,9 @@ def ipo() -> DataFrame:
         _get_.rename(columns=_cols_, inplace=True)
     except (KeyError, RecursionError, JSONDecodeError, SSLError):
         _get_ = DataFrame(columns=_cols_.values())
-    _get_.set_index(keys='ticker', inplace=True)
-    _get_.index = _get_.index.astype(str).str.zfill(6)
+    _get_ = _get_.set_index(keys='ticker').copy()
     _get_['ipo'] = pd.to_datetime(_get_['ipo'])
+    _get_.index = _get_.index.astype(str).str.zfill(6)  
     return _get_
 
 
