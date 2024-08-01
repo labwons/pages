@@ -25,11 +25,14 @@ class Wise(DataFrame):
     # WISE INDEX VALID DATE
     __dt__ = fetch.index_date()
     
+    # WISE INDEX NAME
+    NAME = ""
+    
     # GITHUB REPOSITORY URL
     __rp__ = "https://raw.githubusercontent.com/labwons/pages/main/app/sector/archive"
 
     def __init__(self, index:str, auto_update:bool=False):
-        _name = fetch.index_name(index)
+        self.NAME = _name = fetch.index_name(index)
     
         try:
             _path = os.path.join(os.path.dirname(__file__), rf'archive/{_name.lower()}.json')

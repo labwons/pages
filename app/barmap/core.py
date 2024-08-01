@@ -127,7 +127,7 @@ class baseDataFrame(DataFrame):
 
             v = value.tolist()
             limit = [v[int(len(value) / 7) * i] for i in range(len(re_scale))] + [v[-1]]
-            _color = pd.cut(value, bins=limit[::-1], labels=re_scale, right=True)
+            _color = pandas.cut(value, bins=limit[::-1], labels=re_scale, right=True)
             _color.name = f"{f}-C"
             colored = colored.join(_color.astype(str), how='left').fillna(re_scale[0 if f == 'DIV' else -1])
             colored = colored.replace('nan', re_scale[0 if f == 'DIV' else -1])
