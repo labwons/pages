@@ -39,11 +39,12 @@ class Market(DataFrame):
                     ignore_index=False
                 )
             )
+            self['ipo'] = self['ipo'].astype(str)
             self.to_json(_path, orient='index')
             return
             
         super().__init__(pandas.read_json(_path, orient='index'))
         self.index = self.index.astype(str).str.zfill(6)
-        self.index.name = 'ticker'    
+        self.index.name = 'ticker'
         return
     

@@ -2,7 +2,7 @@ try:
     import fetch
 except ImportError:
     from app.sector import fetch
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from pykrx.stock import get_index_portfolio_deposit_file
 from typing import List
 import pandas, os
@@ -10,43 +10,52 @@ import pandas, os
 
 class Wise(DataFrame):
     
-    __kq__:List[str] = []
+    # A class variable is initialized only once when the class is loaded. 
+    # Therefore, if a class variable is the result of a complex and time-consuming computation, 
+    # that computation is performed only once, when the class is defined or first used. 
+    # After that, the value of the variable is shared among all instances, 
+    # so the computation is not repeated every time a new instance is created.
+
+    # KOSDAQ LIST
+    __kq__:List[str] = get_index_portfolio_deposit_file('2001')
+
+    # KOSPI200, KOSDAQ150 LIST
+    __lg__:List[str] = get_index_portfolio_deposit_file('2203') + get_index_portfolio_deposit_file('1028')
+
+    # WISE INDEX VALID DATE
+    __dt__ = fetch.index_date()
     
+    # GITHUB REPOSITORY URL
+    __rp__ = "https://raw.githubusercontent.com/labwons/pages/main/app/sector/archive"
+
     def __init__(self, index:str, auto_update:bool=False):
-        _name = fetch.index_name(index)        
+        _name = fetch.index_name(index)
+    
         try:
             _path = os.path.join(os.path.dirname(__file__), rf'archive/{_name.lower()}.json')
         except NameError:
-            _path = f"https://raw.githubusercontent.com/labwons/pages/main/app/sector/archive/{_name.lower()}.json"
+            _path = f"{self.__rp__}/{_name.lower()}.json"
         
         if auto_update:
-            if not self.__kq__:
-                self.__kq__ = get_index_portfolio_deposit_file('2001')
-            _date = fetch.index_date()
-            _code = fetch.KEYS[_name]
-            super().__init__(
-                pandas.concat(
-                    objs=[fetch.index_component(_date, cd) for cd in _code],
-                    axis=0,
-                    ignore_index=False
-                )
-            )
+            print(f"Fetching WISE/{_name} INDEX...", end="")
+            objs = [fetch.index_component(self.__dt__, cd) for cd in fetch.KEYS[_name]]
+            print("Success")
+
+            _data = pandas.concat(objs=objs, axis=0, ignore_index=False)
+
+            __kq__ = [ticker for ticker in _data.index if ticker in self.__kq__]
+            __lg__ = [ticker for ticker in _data.index if ticker in self.__lg__]
+            _data.loc[__kq__, 'name'] = _data.loc[__kq__, 'name'] + '*'            
+            _data.loc[__lg__, 'stockSize'] = 'large'
+            _data.to_json(_path, orient='index')
             
-            self.index.name = 'ticker'
-            self.reset_index(inplace=True)            
-            self['name'] = self.apply(
-                lambda x: f"{x['name']}*" if x['ticker'] in self.__kq__ else x['name'], 
-                axis=1
-            )
-            self.set_index(keys='ticker', inplace=True)
-            
-            self.to_json(_path, orient='index')
+            super().__init__(_data)            
             return
     
         super().__init__(pandas.read_json(_path, orient='index'))    
         self.index = self.index.astype(str).str.zfill(6)
         self.index.name = 'ticker'
-        return        
+        return          
     
     
 if __name__ == "__main__":
