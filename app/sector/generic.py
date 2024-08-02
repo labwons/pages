@@ -9,11 +9,11 @@ import pandas, os
 
 
 class Wise(DataFrame):
-    
-    # A class variable is initialized only once when the class is loaded. 
-    # Therefore, if a class variable is the result of a complex and time-consuming computation, 
-    # that computation is performed only once, when the class is defined or first used. 
-    # After that, the value of the variable is shared among all instances, 
+
+    # A class variable is initialized only once when the class is loaded.
+    # Therefore, if a class variable is the result of a complex and time-consuming computation,
+    # that computation is performed only once, when the class is defined or first used.
+    # After that, the value of the variable is shared among all instances,
     # so the computation is not repeated every time a new instance is created.
 
     # KOSDAQ LIST
@@ -24,21 +24,15 @@ class Wise(DataFrame):
 
     # WISE INDEX VALID DATE
     __dt__ = fetch.index_date()
-    
-    # WISE INDEX NAME
-    NAME = ""
-    
-    # GITHUB REPOSITORY URL
-    __rp__ = "https://raw.githubusercontent.com/labwons/pages/main/app/sector/archive"
 
     def __init__(self, index:str, auto_update:bool=False):
-        self.NAME = _name = fetch.index_name(index)
-    
+        _name = fetch.index_name(index)
+
         try:
             _path = os.path.join(os.path.dirname(__file__), rf'archive/{_name.lower()}.json')
         except NameError:
-            _path = f"{self.__rp__}/{_name.lower()}.json"
-        
+            _path = f"https://raw.githubusercontent.com/labwons/pages/main/app/sector/archive/{_name.lower()}.json"
+
         if auto_update:
             print(f"Fetching WISE/{_name} INDEX...", end="")
             objs = [fetch.index_component(self.__dt__, cd) for cd in fetch.KEYS[_name]]
@@ -48,17 +42,19 @@ class Wise(DataFrame):
 
             __kq__ = [ticker for ticker in _data.index if ticker in self.__kq__]
             __lg__ = [ticker for ticker in _data.index if ticker in self.__lg__]
-            _data.loc[__kq__, 'name'] = _data.loc[__kq__, 'name'] + '*'            
+            _data.loc[__kq__, 'name'] = _data.loc[__kq__, 'name'] + '*'
             _data.loc[__lg__, 'stockSize'] = 'large'
             _data.to_json(_path, orient='index')
-            
-            super().__init__(_data)            
+            _data['indexName'] = _name
+            super().__init__(_data)
             return
-    
-        super().__init__(pandas.read_json(_path, orient='index'))    
+
+        super().__init__(pandas.read_json(_path, orient='index'))
         self.index = self.index.astype(str).str.zfill(6)
         self.index.name = 'ticker'
-        return          
+        if not 'indexName' in self:
+            self['indexName'] = _name
+        return  
     
     
 if __name__ == "__main__":
