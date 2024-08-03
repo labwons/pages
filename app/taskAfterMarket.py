@@ -2,14 +2,15 @@ try:
     from .barmap.generic import MarketMap
 except ImportError:
     from app.barmap.generic import MarketMap
+import os
 
 
 if __name__ == "__main__":
-    WICS = MarketMap('WICS', update_index=False, update_market=True)
+    WICS = MarketMap('WICS', update_index=False, update_market=False)
     WI26 = MarketMap('WI26', update_index=False, update_market=False)
     
     bo, bc = "{", "}"
-    with open(r"./barmap/archive/marketmap.json", mode="w") as file:
+    with open(os.path.join(os.path.dirname(__file__), r"barmap/archive/marketmap.json"), mode="w") as file:
         file.write(f"""{bo}
     "WICSL": {WICS.largeCap.drop(columns=["kind"]).to_dict(orient='list')},
     "WI26L": {WI26.largeCap.drop(columns=["kind"]).to_dict(orient='list')},
