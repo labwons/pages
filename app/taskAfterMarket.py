@@ -6,7 +6,7 @@ import os
 
 
 if __name__ == "__main__":
-    WICS = MarketMap('WICS', update_index=False, update_market=False)
+    WICS = MarketMap('WICS', update_index=False, update_market=True)
     WI26 = MarketMap('WI26', update_index=False, update_market=False)
     
     bo, bc = "{", "}"
