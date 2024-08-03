@@ -7,11 +7,15 @@ except ImportError:
 if __name__ == "__main__":
     WICS = MarketMap('WICS', update_index=False, update_market=True)
     WI26 = MarketMap('WI26', update_index=False, update_market=False)
+    
     bo, bc = "{", "}"
     with open(r"./barmap/archive/marketmap.json", mode="w") as file:
-        file.write(f"""
-
-""")
+        file.write(f"""{bo}
+    "WICSL": {WICS.largeCap.drop(columns=["kind"]).to_dict(orient='list')},
+    "WI26L": {WI26.largeCap.drop(columns=["kind"]).to_dict(orient='list')},
+    "WICSM": {WICS.midCap.drop(columns=["kind"]).to_dict(orient='list')},
+    "WI26M": {WI26.midCap.drop(columns=["kind"]).to_dict(orient='list')},
+{bc}"""
     
     
     # print(wics.join(market, how='left'))
