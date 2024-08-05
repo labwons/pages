@@ -113,14 +113,68 @@
 }
 
 .maps-plotly {
-    /* height: 650px; */
+    height: 650px;
 }
 
 .maps-info {
     display: flex;
+    height: 40px;
+    font-size: 14px;
+}
+
+.maps-legend {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* width: 20%; */
+} 
+
+.maps-legend-item {
+    width: 40px;
+    padding: 4px;
+    text-align: center;
+    font-size: 14px;
+    border: 1px dotted black;
+}
+
+.maps-lowest {
+    background-color: #f63538;
+}
+
+.maps-lower {
+    background-color: #bf4045;
+}
+
+.maps-low {
+    background-color: #8b444e;
+}
+
+.maps-middle {
+    background-color: #414554;
+}
+
+.maps-high {
+    background-color: #35764e;
+}
+
+.maps-higher {
+    background-color: #2f9e4f;
+}
+
+.maps-highest {
+    background-color: #30cc5a;
+}
+
+.maps-notice {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
 }
 
 
+/* 
 
 #myMap {
     position:relative;
@@ -194,7 +248,7 @@
     text-align:left;
     overflow: hidden;
     line-height: 14px;
-}
+} */
 
 @media screen and (max-width: 1023px) {
     #market-map {

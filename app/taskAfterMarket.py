@@ -15,7 +15,7 @@ if __name__ == "__main__":
     "WICSL": {WICS.largeCap.drop(columns=["kind"]).to_dict(orient='list')},
     "WI26L": {WI26.largeCap.drop(columns=["kind"]).to_dict(orient='list')},
     "WICSM": {WICS.midCap.drop(columns=["kind"]).to_dict(orient='list')},
-    "WI26M": {WI26.midCap.drop(columns=["kind"]).to_dict(orient='list')},
+    "WI26M": {WI26.midCap.drop(columns=["kind"]).to_dict(orient='list')}
 {bc}""".replace("'", '"').replace("nan", '""'))
     
     
