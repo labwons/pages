@@ -123,6 +123,21 @@ function treemap(key){
 }
 
 $(document).ready(function(){
+
+  fetch('https://raw.githubusercontent.com/labwons/pages/main/app/market/archive/test.json')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return response.json();  // JSON 형식으로 변환
+  })
+  .then(data => {
+    console.log(data);  // 콘솔에 JSON 데이터 출력
+  })
+  .catch(error => {
+    console.error('There has been a problem with your fetch operation:', error);
+  });
+
   // MAP type selection
   $('.map-select').on('change', function(){
       $('.option-select option[value="PER"]').remove();

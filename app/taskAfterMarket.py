@@ -16,7 +16,7 @@ if __name__ == "__main__":
     "WI26L": {WI26.largeCap.drop(columns=["kind"]).to_dict(orient='list')},
     "WICSM": {WICS.midCap.drop(columns=["kind"]).to_dict(orient='list')},
     "WI26M": {WI26.midCap.drop(columns=["kind"]).to_dict(orient='list')},
-{bc}""")
+{bc}""".replace("'", '"').replace("nan", '""'))
     
     
     # print(wics.join(market, how='left'))
