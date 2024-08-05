@@ -27,7 +27,16 @@
 
         <section class="maps-nav">
             <div class="maps-nav-items map-selectors">
-                <select name="" class="map-selector map-type"></select>
+                <select name="" class="map-selector map-type">
+                    <optgroup label="섹터/산업 구분 ---">
+                        <option value="WICSL" selected="selected">대형주</option>
+                        <option value="WICSM">중형주</option>
+                    </optgroup>
+                    <optgroup label="업종 구분 ---">
+                        <option value="WI26L">대형주</option>
+                        <option value="WI26M">중형주</option>
+                    </optgroup>
+                </select>
                 <select name="" class="map-selector map-option"></select>
                 <input type="button" class="map-reset"/>
             </div>
@@ -38,8 +47,11 @@
             </div>
         </section>
 
-        <section class="maps">
-
+        <section class="maps-app">
+            <div class="maps-plotly" id="market-map"></div>
+            <div class="maps-info">
+                <!-- <div></div> -->
+            </div>
         </section>
 
         <!-- <section id="maps">

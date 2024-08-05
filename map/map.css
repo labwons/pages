@@ -95,39 +95,32 @@
     width: 100%;
     margin: 0;
     box-sizing: border-box;
-    background-image: url('https://raw.githubusercontent.com/Jehoshaphat-kr/tdatlib/master/front/deploy/img/icon_search.png');
+    background-image: url('https://raw.githubusercontent.com/labwons/pages/main/map/src/img/search.png');
     background-repeat: no-repeat;
     background-position: left 6px center;
     background-size: 1.5em;
 }
 
-
-
-
-.map-search {
-    float:right;
-    height: 2em;
-    width: 50%;
-    color: #999;
-    padding-left: 8px;
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    background-color: #fff;
-    box-sizing: border-box;
-    background-image: url('https://raw.githubusercontent.com/Jehoshaphat-kr/tdatlib/master/front/deploy/img/icon_search.png');
-    background-repeat: no-repeat;
-    background-position: left 6px center;
-    background-size: 1.5em;
-    text-align: left;
-}
-
-.select2-container {
-    float: right;
-}
-
-.select2-container .select2-selection--single {
+/* .select2-container .select2-selection--single {
     height: 2em !important;
 } */
+
+.maps-app {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin: 4px 30px 20px 30px;
+}
+
+.maps-plotly {
+    /* height: 650px; */
+}
+
+.maps-info {
+    display: flex;
+}
+
+
 
 #myMap {
     position:relative;
