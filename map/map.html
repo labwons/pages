@@ -28,17 +28,31 @@
         <section class="maps-nav">
             <div class="maps-nav-items map-selectors">
                 <select name="" class="map-selector map-type">
-                    <optgroup label="섹터/산업 구분 ---">
+                    <optgroup label="--- 섹터/산업 구분 ---">
                         <option value="WICSL" selected="selected">대형주</option>
                         <option value="WICSM">중형주</option>
                     </optgroup>
-                    <optgroup label="업종 구분 ---">
+                    <optgroup label="--- 업종 구분 ---">
                         <option value="WI26L">대형주</option>
                         <option value="WI26M">중형주</option>
                     </optgroup>
                 </select>
-                <select name="" class="map-selector map-option"></select>
-                <input type="button" class="map-reset"/>
+                <select name="" class="map-selector map-option">
+                    <optgroup label="--- 기간별 수익률 ---">
+                        <option value="D-1" selected="selected">1일 수익률</option>
+                        <option value="W-1">1주 수익률</option>
+                        <option value="M-1">1개월 수익률</option>
+                        <option value="M-3">3개월 수익률</option>
+                        <option value="M-6">1주 수익률</option>
+                        <option value="Y-1">1주 수익률</option>
+                    </optgroup>
+                    <optgroup label="--- 기타 지표 ---">
+                        <option value="DIV">배당 수익률</option>
+                        <option value="PER">PER(분기)</option>
+                        <option value="PBR">PBR(분기)</option>
+                    </optgroup>
+                </select>
+                <input type="button" value=" " class="map-reset"/>
             </div>
             <div class="maps-nav-items map-searchbar">
                 <select class="map-selector map-keyin">
@@ -51,111 +65,23 @@
             <div class="maps-plotly" id="market-map"></div>
             <div class="maps-info">
                 <div class="maps-legend">
-                    <span class="maps-legend-item maps-lowest">-3%</span>
-                    <span class="maps-legend-item maps-lower">-2%</span>
-                    <span class="maps-legend-item maps-low">-1%</span>
-                    <span class="maps-legend-item maps-middle">0%</span>
-                    <span class="maps-legend-item maps-high">1%</span>
-                    <span class="maps-legend-item maps-higher">2%</span>
-                    <span class="maps-legend-item maps-highes">3%</span>
+                    <span class="maps-legend-item maps-lowest"><strong>-3%</strong></span>
+                    <span class="maps-legend-item maps-lower"><strong>-2%</strong></span>
+                    <span class="maps-legend-item maps-low"><strong>-1%</strong></span>
+                    <span class="maps-legend-item maps-middle"><strong>0%</strong></span>
+                    <span class="maps-legend-item maps-high"><strong>1%</strong></span>
+                    <span class="maps-legend-item maps-higher"><strong>2%</strong></span>
+                    <span class="maps-legend-item maps-highest"><strong>3%</strong></span>
                 </div>
                 <div class="maps-notice">
-                    <span>본 자료는 투자 참고용입니다. 모든 투자의 책임은 당사자에게 있습니다. 종목에 커서를 올리거나 일정 시간 누르면 정보가 나타납니다(일부 기기 제외). 종목이나 섹터를 클릭하면 확대/재편됩니다. *표시는 코스닥 종목입니다.</span>
+                    <span>모든 투자의 책임은 당사자에게 있습니다. PC 환경에서 마우스 커서를 올리거나 모바일 기기에서 길게 누르면 세부 정보가 나타납니다. 종목이나 섹터를 클릭(탭)하면 확대/재편됩니다. *표시는 코스닥 종목입니다.</span>
                 </div>
             </div>
-        </section>
-
-        <!-- <section id="maps">
-            <div class="map-navi">
-                <div class="map-select">
-                    <select class="map-type" name="">
-                        <optgroup label="WICS">
-                            <option value="WICSL" selected="selected">WICS 대형주</option>
-                            <option value="WICSM">WICS 중형주</option>
-                        </optgroup>
-                        <optgroup label="WI26">
-                            <option value="WI26L">WI26 대형주</option>
-                            <option value="WI26M">WI26 중형주</option>
-                        </optgroup>
-                    </select>
-                    <select class="map-option" name="지표">
-                        <option value="D-1">1일 수익률</option>
-                        <option value="W-1">1주 수익률</option>
-                        <option value="M-1">1개월 수익률</option>
-                        <option value="M-3">3개월 수익률</option>
-                        <option value="M-6">6개월 수익률</option>
-                        <option value="Y-1">1년 수익률</option>
-                        <option value="PER">PER</option>
-                        <option value="PBR">PBR</option>
-                        <option value="DIV">배당 수익률</option>
-                    </select>
-                    <input id="map-reset" class="map-reset" type="button" value="&nbsp;" />
-                </div>
-                <div class="map-search">
-                    <select class="map-key">
-                        <option></option>
-                    </select>
-                </div>
-            </div> -->
-
-            <!-- <div class="map-nav">
-                <div class="map-nav-1">
-                    <div class="map-nav-mobi">
-                        <select class="map-select" name="">
-                            <optgroup label="WICS">
-                                <option value="indful" selected="selected">WICS 대형주</option>
-                                <option value="indksm">WICS 중형주</option>
-                            </optgroup>
-                            <optgroup label="WI26">
-                                <option value="secful">WI26 대형주</option>
-                                <option value="secksm">WI26 중형주</option>
-                            </optgroup>
-                            <optgroup label="ETF">
-                                <option value="etfful">ETF</option>
-                            </optgroup>
-                        </select>
-                        <select class="option-select" name="지표">
-                            <option value="R1D">1일 수익률</option>
-                            <option value="R1W">1주 수익률</option>
-                            <option value="R1M">1개월 수익률</option>
-                            <option value="R3M">3개월 수익률</option>
-                            <option value="R6M">6개월 수익률</option>
-                            <option value="R1Y">1년 수익률</option>
-                            <option value="PER">PER</option>
-                            <option value="PBR">PBR</option>
-                            <option value="DIV">배당 수익률</option>
-                        </select>
-                    </div>
-                    <input id="map-reset" class="map-reset" type="button" value="&nbsp;" />
-                </div>
-                <div class="map-nav-2">
-                    <select class="map-search">
-                        <option></option>
-                    </select>
-                </div>
-                <div style="clear: both;"></div>
-            </div> -->
-      
-            <!-- <div id="myMap"></div>
-            <div class="map-guide">
-                <div class="map-guide-bar">
-                    <div id="s_red" class="map-color-unit">하락</div>
-                    <div id="m_red" class="map-color-unit">&nbsp;</div>
-                    <div id="l_red" class="map-color-unit">&nbsp;</div>
-                    <div id="navy" class="map-color-unit">보합</div>
-                    <div id="l_grn" class="map-color-unit">&nbsp;</div>
-                    <div id="m_grn" class="map-color-unit">&nbsp;</div>
-                    <div id="s_grn" class="map-color-unit">상승</div>
-                </div>
-                <div class="map-notice">
-                    본 자료는 투자 참고용입니다. 모든 투자의 책임은 당사자에게 있습니다. 종목에 커서를 올리거나 일정 시간 누르면 정보가 나타납니다(일부 기기 제외). 종목이나 섹터를 클릭하면 확대/재편됩니다. *표시는 코스닥 종목입니다.
-                </div>
-            </div> -->
         </section>
       
     </main><!-- End #main -->
 
-    <script type="text/javascript" src="./map.js"></script>
+    <!-- <script type="text/javascript" src="./map.js"></script> -->
       
     
 </body>

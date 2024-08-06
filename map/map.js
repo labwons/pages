@@ -191,9 +191,27 @@ $(document).ready(async function(){
   }
 
   data = __SRC__[$('.map-type').val()];
-  spec = 'D-1';
-  console.log(data);
+  spec = $('.map-option').val();
   update_map();
+})
+
+
+$(document).ready(function() {
+  
+  $('.map-type').on('change', function() {
+    data = __SRC__[$('.map-type').val()];
+    update_map();
+  })
+
+  $('.map-option').on('change', function() {
+    spec = $('.map-option').val();
+    if ((spec == 'PER') || (spec == 'PBR')) {
+
+    } 
+    update_map();
+  })
+
+})
 
 //   // MAP type selection
 //   $('.map-select').on('change', function(){
