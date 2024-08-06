@@ -12,14 +12,12 @@ from typing import Dict
 
 class MarketMap(object):
 
-    _market_:Market = Market(auto_update=False)
-    def __init__(self, index:str, update_index:bool=False, update_market:bool=False):
-        wise = Wise(index, auto_update=update_index)
-        if update_market:
-            self._market_ = Market(auto_update=update_market)
-        self._market_ = self._market_.drop(columns=[col for col in self._market_ if col in wise])
+    def __init__(self, index:str, market_data:Market):
+        wise = Wise(index, auto_update=False)
+        data = market_data.copy()
+        data = data.drop(columns=[col for col in data if col in wise])
 
-        self._merge = wise.join(self._market_, how='left')
+        self._merge = wise.join(data, how='left')
         return
 
     @property

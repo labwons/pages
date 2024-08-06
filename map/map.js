@@ -206,8 +206,70 @@ $(document).ready(function() {
   $('.map-option').on('change', function() {
     spec = $('.map-option').val();
     if ((spec == 'PER') || (spec == 'PBR')) {
-
-    } 
+      $('.maps-lowest').html('고평가');
+      $('.maps-lower').html('');
+      $('.maps-low').html('');
+      $('.maps-middle').html('평균');
+      $('.maps-high').html('');
+      $('.maps-higher').html('');
+      $('.maps-highest').html('저평가');
+    } else if (spec == 'DIV') {
+      $('.maps-lowest').html('');
+      $('.maps-lower').html('');
+      $('.maps-low').html('');
+      $('.maps-middle').html('0%');
+      $('.maps-high').html('2%');
+      $('.maps-higher').html('4%');
+      $('.maps-highest').html('6%');
+    } else if (spec == 'D-1') {
+      $('.maps-lowest').html('-3%');
+      $('.maps-lower').html('-2%');
+      $('.maps-low').html('-1%');
+      $('.maps-middle').html('0%');
+      $('.maps-high').html('1%');
+      $('.maps-higher').html('2%');
+      $('.maps-highest').html('3%');
+    } else if (spec == 'W-1') {
+      $('.maps-lowest').html('-6%');
+      $('.maps-lower').html('-4%');
+      $('.maps-low').html('-2%');
+      $('.maps-middle').html('0%');
+      $('.maps-high').html('2%');
+      $('.maps-higher').html('4%');
+      $('.maps-highest').html('6%');
+    } else if (spec == 'M-1') {
+      $('.maps-lowest').html('-10%');
+      $('.maps-lower').html('-6.7%');
+      $('.maps-low').html('-3.3%');
+      $('.maps-middle').html('0%');
+      $('.maps-high').html('3.3%');
+      $('.maps-higher').html('6.7%');
+      $('.maps-highest').html('10%');
+    } else if (spec == 'M-3') {
+      $('.maps-lowest').html('-18%');
+      $('.maps-lower').html('-12%');
+      $('.maps-low').html('-6%');
+      $('.maps-middle').html('0%');
+      $('.maps-high').html('6%');
+      $('.maps-higher').html('12%');
+      $('.maps-highest').html('18%');
+    } else if (spec == 'M-6') {
+      $('.maps-lowest').html('-24%');
+      $('.maps-lower').html('-16%');
+      $('.maps-low').html('-8%');
+      $('.maps-middle').html('0%');
+      $('.maps-high').html('8%');
+      $('.maps-higher').html('16%');
+      $('.maps-highest').html('24%');
+    } else if (spec == 'Y-1') {
+      $('.maps-lowest').html('-30%');
+      $('.maps-lower').html('-20%');
+      $('.maps-low').html('-10%');
+      $('.maps-middle').html('0%');
+      $('.maps-high').html('10%');
+      $('.maps-higher').html('20%');
+      $('.maps-highest').html('30%');
+    }
     update_map();
   })
 
