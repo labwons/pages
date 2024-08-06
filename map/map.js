@@ -277,4 +277,3 @@ $(document).ready(function() {
 //   $('#map-reset').click(function(){
 //       treemap(map_key);
 //   })
-})
