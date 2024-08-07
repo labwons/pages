@@ -13,7 +13,7 @@ if __name__ == "__main__":
     WI26 = MarketMap('WI26', DATA)
     
     bo, bc = "{", "}"
-    with open(os.path.join(os.path.dirname(__file__), r"barmap/archive/marketmap.json"), mode="w") as file:
+    with open(os.path.join(os.path.dirname(__file__), r"../archive/treemap/treemap.json"), mode="w") as file:
         file.write(f"""{bo}
     "WICSL": {WICS.largeCap.drop(columns=["kind"]).to_dict(orient='list')},
     "WI26L": {WI26.largeCap.drop(columns=["kind"]).to_dict(orient='list')},
