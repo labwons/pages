@@ -65,7 +65,7 @@
     cursor: pointer;
     font-size: 14px;
 
-    /* background-image: url('https://raw.githubusercontent.com/labwons/pages/main/map/src/img/triangle_down.png');
+    /* background-image: url('https://raw.githubusercontent.com/labwons/pages/main/treemap/src/img/triangle_down.png');
     background-repeat: no-repeat;
     background-position: right 4px center;
     background-size: 8px;
@@ -77,7 +77,7 @@
     margin: 0;
     border: 1px solid #aaa;
     background-color:white;
-    background-image:url('https://raw.githubusercontent.com/labwons/pages/main/map/src/img/reset.png');
+    background-image:url('https://raw.githubusercontent.com/labwons/pages/main/treemap/src/img/reset.png');
     background-size:contain;
     background-repeat:no-repeat;
     border-radius: 6px;
@@ -96,7 +96,7 @@
     width: 100%;
     margin: 0;
     box-sizing: border-box;
-    background-image: url('https://raw.githubusercontent.com/labwons/pages/main/map/src/img/search.png');
+    background-image: url('https://raw.githubusercontent.com/labwons/pages/main/treemap/src/img/search.png');
     background-repeat: no-repeat;
     background-position: left 6px center;
     background-size: 1.5em;
@@ -213,7 +213,7 @@
         cursor: pointer;
         font-size: 14px;
     
-        /* background-image: url('https://raw.githubusercontent.com/labwons/pages/main/map/src/img/triangle_down.png');
+        /* background-image: url('https://raw.githubusercontent.com/labwons/pages/main/treemap/src/img/triangle_down.png');
         background-repeat: no-repeat;
         background-position: right 4px center;
         background-size: 8px;
@@ -225,7 +225,7 @@
         margin: 0;
         border: 1px solid #aaa;
         background-color:white;
-        background-image:url('https://raw.githubusercontent.com/labwons/pages/main/map/src/img/reset.png');
+        background-image:url('https://raw.githubusercontent.com/labwons/pages/main/treemap/src/img/reset.png');
         background-size:contain;
         background-repeat:no-repeat;
         border-radius: 6px;

@@ -1,4 +1,5 @@
-const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/app/barmap/archive/marketmap.json';
+// const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/app/barmap/archive/marketmap.json';
+const __URL__ = '../../../archive/treemap/treemap.json';
 
 
 let __SRC__ = null;
