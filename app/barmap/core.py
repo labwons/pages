@@ -1,18 +1,18 @@
+try:
+    from ..market.fetch.date import TradingDate
+    from color import SCALE, paint
+except ImportError:
+    from app.market.fetch.date import TradingDate
+    from app.barmap.color import SCALE, paint
 from pandas import DataFrame
 import pandas
 
+
 # PARAM
 MAP_KEYS = ['D-1', 'W-1', 'M-1', 'M-3', 'M-6', 'Y-1', 'PER', 'PBR', 'DIV']
-COLOR_SCALE = ['#F63538', '#BF4045', '#8B444E', '#414554', '#35764E', '#2F9E4F', '#30CC5A']  # Low <---> High
-COLOR_BOUND = {
-    'Y-1': ([-30, -20, -10, 0, 10, 20, 30], [-25, -15, -5, 5, 15, 25]),
-    'M-6': ([-24, -16, -8, 0, 8, 16, 24], [-20, -12, -4, 4, 12, 20]),
-    'M-3': ([-18, -12, -6, 0, 6, 12, 18], [-15, -9, 3, 3, 9, 15]),
-    'M-1': ([-10, -6.7, -3.3, 0, 3.3, 6.7, 10], [-8.35, -5, -1.65, 1.65, 5, 8.35]),
-    'W-1': ([-6, -4, -2, 0, 2, 4, 6], [-5, -3, -1, 1, 3, 5]),
-    'D-1': ([-3, -2, -1, 0, 1, 2, 3], [-2.5, -1.5, -0.1, 0.1, 1.5, 2.5])
-}
 
+
+# FUNCTIONS
 def num2cap(x:int) -> str:
     mod, res = int(x // 10000), int(x % 10000)
     if mod:
@@ -40,45 +40,52 @@ def grouping(*args):
 
 def coloring(data:DataFrame):
     colored = DataFrame(index=data.index)
-    for col, (na, bins) in COLOR_BOUND.items():
-        color = data[col].apply(
-            lambda rt:
-            COLOR_SCALE[3] if str(rt) == 'nan' else \
-            COLOR_SCALE[0] if rt <= bins[0] else \
-            COLOR_SCALE[1] if bins[0] < rt <= bins[1] else \
-            COLOR_SCALE[2] if bins[1] < rt <= bins[2] else \
-            COLOR_SCALE[3] if bins[2] < rt <= bins[3] else \
-            COLOR_SCALE[4] if bins[3] < rt <= bins[4] else \
-            COLOR_SCALE[5] if bins[4] < rt <= bins[5] else \
-            COLOR_SCALE[6]
-        )
+    for col in MAP_KEYS:
+        if col in ['PER', 'PBR']:
+            continue
+        color = data[col].apply(paint, args=(col,))
         color.name = f'{col}-C'
         colored = colored.join(color.astype(str), how='left')
+    # for col, (na, bins) in COLOR_BOUND.items():
+    #     color = data[col].apply(
+    #         lambda rt:
+    #         COLOR_SCALE[3] if str(rt) == 'nan' else \
+    #         COLOR_SCALE[0] if rt <= bins[0] else \
+    #         COLOR_SCALE[1] if bins[0] < rt <= bins[1] else \
+    #         COLOR_SCALE[2] if bins[1] < rt <= bins[2] else \
+    #         COLOR_SCALE[3] if bins[2] < rt <= bins[3] else \
+    #         COLOR_SCALE[4] if bins[3] < rt <= bins[4] else \
+    #         COLOR_SCALE[5] if bins[4] < rt <= bins[5] else \
+    #         COLOR_SCALE[6]
+    #     )
+    #     color.name = f'{col}-C'
+    #     colored = colored.join(color.astype(str), how='left')
 
-    for f in ['PBR', 'PER', 'DIV']:
-        re_scale = COLOR_SCALE if f == 'DIV' else COLOR_SCALE[::-1].copy()
+    for f in ['PBR', 'PER']:
+        re_scale = SCALE[::-1].copy()
         value = data[data[f] != 0][f].dropna().sort_values(ascending=False)
 
         v = value.tolist()
         limit = [v[int(len(value) / 7) * i] for i in range(len(re_scale))] + [v[-1]]
         _color = pandas.cut(value, bins=limit[::-1], labels=re_scale, right=True)
         _color.name = f"{f}-C"
-        colored = colored.join(_color.astype(str), how='left').fillna(re_scale[0 if f == 'DIV' else -1])
-        colored = colored.replace('nan', re_scale[0 if f == 'DIV' else -1])
-    colored = colored.fillna(COLOR_SCALE[3])
+        colored = colored.join(_color.astype(str), how='left').fillna(re_scale[-1])
+        colored = colored.replace('nan', re_scale[-1])
+    colored = colored.fillna(SCALE[3])
     for col in colored:
         colored.at[colored.index[-1], col] = "#C8C8C8"
     return data.join(colored, how='left')
 
 
+# CLASS: BASE DATAFRAME
 class baseDataFrame(DataFrame):
 
-    
     def __init__(self, stocks:DataFrame):
+        _date = f"{TradingDate.near.strftime('%Y-%m-%d')} 기준"
         _map_name = stocks.iloc[0]['indexName']
-        _cap_type = "Large Cap"
+        _cap_type = f"대형주({_date})"
         if not "005930" in stocks.index:
-            _cap_type = "Mid Cap"
+            _cap_type = f"중형주({_date})"
 
         stocks = stocks.copy()
         stocks.index.name = 'ticker'
