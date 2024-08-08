@@ -15,10 +15,36 @@ if __name__ == "__main__":
     bo, bc = "{", "}"
     with open(os.path.join(os.path.dirname(__file__), r"../archive/treemap/treemap.json"), mode="w") as file:
         file.write(f"""{bo}
-    "WICSL": {WICS.largeCap.drop(columns=["kind"]).to_dict(orient='list')},
-    "WI26L": {WI26.largeCap.drop(columns=["kind"]).to_dict(orient='list')},
-    "WICSM": {WICS.midCap.drop(columns=["kind"]).to_dict(orient='list')},
-    "WI26M": {WI26.midCap.drop(columns=["kind"]).to_dict(orient='list')}
+    "WICSL": {
+        WICS.largeCap \
+        .drop(columns=["kind"]) \
+        .to_dict(orient='list')
+    },
+    "WI26L": {
+        WI26.largeCap \
+        .drop(columns=["kind"]) \
+        .to_dict(orient='list')
+    },
+    "WICSM": {
+        WICS.midCap \
+        .drop(columns=["kind"]) \
+        .to_dict(orient='list')
+    },
+    "WI26M": {
+        WI26.midCap \
+        .drop(columns=["kind"]) \
+        .to_dict(orient='list')
+    }
+    "SEC": {
+        WICS.largeCap[WICS.largeCap["kind"] == "sector"] \
+        .drop(columns=["cover", "kind", "size"]) \
+        .to_dict(orient='list')
+    },
+    "IND": {
+        WI26.largeCap[WI26.largeCap["kind"] == "industry"] \
+        .drop(columns=["cover", "kind", "size"]) \
+        .to_dict(orient='list')
+    }
 {bc}""".replace("'", '"').replace("nan", '""'))
     
     

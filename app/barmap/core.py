@@ -46,31 +46,17 @@ def coloring(data:DataFrame):
         color = data[col].apply(paint, args=(col,))
         color.name = f'{col}-C'
         colored = colored.join(color.astype(str), how='left')
-    # for col, (na, bins) in COLOR_BOUND.items():
-    #     color = data[col].apply(
-    #         lambda rt:
-    #         COLOR_SCALE[3] if str(rt) == 'nan' else \
-    #         COLOR_SCALE[0] if rt <= bins[0] else \
-    #         COLOR_SCALE[1] if bins[0] < rt <= bins[1] else \
-    #         COLOR_SCALE[2] if bins[1] < rt <= bins[2] else \
-    #         COLOR_SCALE[3] if bins[2] < rt <= bins[3] else \
-    #         COLOR_SCALE[4] if bins[3] < rt <= bins[4] else \
-    #         COLOR_SCALE[5] if bins[4] < rt <= bins[5] else \
-    #         COLOR_SCALE[6]
-    #     )
-    #     color.name = f'{col}-C'
-    #     colored = colored.join(color.astype(str), how='left')
 
     for f in ['PBR', 'PER']:
-        re_scale = SCALE[::-1].copy()
+        scale = SCALE[::-1].copy()
         value = data[data[f] != 0][f].dropna().sort_values(ascending=False)
 
         v = value.tolist()
-        limit = [v[int(len(value) / 7) * i] for i in range(len(re_scale))] + [v[-1]]
-        _color = pandas.cut(value, bins=limit[::-1], labels=re_scale, right=True)
+        limit = [v[int(len(value) / 7) * i] for i in range(len(scale))] + [v[-1]]
+        _color = pandas.cut(value, bins=limit[::-1], labels=scale, right=True)
         _color.name = f"{f}-C"
-        colored = colored.join(_color.astype(str), how='left').fillna(re_scale[-1])
-        colored = colored.replace('nan', re_scale[-1])
+        colored = colored.join(_color.astype(str), how='left').fillna(scale[-1])
+        colored = colored.replace('nan', scale[-1])
     colored = colored.fillna(SCALE[3])
     for col in colored:
         colored.at[colored.index[-1], col] = "#C8C8C8"
