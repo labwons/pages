@@ -1,7 +1,7 @@
 try:
     from .sector.generic import Wise
 except ImportError:
-    from app.sector.generic import Wise
+    from __py__.sector.generic import Wise
 
 
 if __name__ == "__main__":

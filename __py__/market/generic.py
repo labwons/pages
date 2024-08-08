@@ -1,7 +1,7 @@
 try:
     from .fetch import krx
 except ImportError:
-    from app.market.fetch import krx
+    from __py__.market.fetch import krx
 from pandas import DataFrame
 from typing import List
 import pandas, os

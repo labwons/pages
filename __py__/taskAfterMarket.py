@@ -1,9 +1,9 @@
 try:
-    from .barmap.generic import MarketMap
+    from .treemap.generic import MarketMap
     from .market.generic import Market
 except ImportError:
-    from app.barmap.generic import MarketMap
-    from app.market.generic import Market
+    from __py__.treemap.generic import MarketMap
+    from __py__.market.generic import Market
 import os
 
 
@@ -11,6 +11,7 @@ if __name__ == "__main__":
     DATA = Market(auto_update=True)
     WICS = MarketMap('WICS', DATA)
     WI26 = MarketMap('WI26', DATA)
+    
     
     bo, bc = "{", "}"
     with open(os.path.join(os.path.dirname(__file__), r"../json/treemap/treemap.json"), mode="w") as file:

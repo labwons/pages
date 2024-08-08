@@ -3,10 +3,9 @@ try:
     from ..market.generic import Market
     from core import baseDataFrame
 except ImportError:
-    from app.sector.generic import Wise
-    from app.market.generic import Market
-    from app.barmap.core import baseDataFrame
-from pandas import DataFrame
+    from __py__.sector.generic import Wise
+    from __py__.market.generic import Market
+    from __py__.treemap.core import baseDataFrame
 from typing import Dict
 
 

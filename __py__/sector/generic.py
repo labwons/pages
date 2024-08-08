@@ -1,8 +1,8 @@
 try:
     import fetch
 except ImportError:
-    from app.sector import fetch
-from pandas import DataFrame, Series
+    from __py__.sector import fetch
+from pandas import DataFrame
 from pykrx.stock import get_index_portfolio_deposit_file
 from typing import List
 import pandas, os

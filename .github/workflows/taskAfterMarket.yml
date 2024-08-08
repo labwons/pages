@@ -34,8 +34,8 @@ jobs:
 
     - name: Run application
       run: |
-        export PYTHONPATH=$PYTHONPATH:$(pwd)/app
-        python app/taskAfterMarket.py
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/__py__
+        python __py__/taskAfterMarket.py
 
     - name: Commit and Push changes
       env:

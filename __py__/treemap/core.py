@@ -2,8 +2,8 @@ try:
     from ..market.fetch.date import TradingDate
     from color import SCALE, paint
 except ImportError:
-    from app.market.fetch.date import TradingDate
-    from app.barmap.color import SCALE, paint
+    from __py__.market.fetch.date import TradingDate
+    from __py__.treemap.color import SCALE, paint
 from pandas import DataFrame
 import pandas
 
