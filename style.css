@@ -8,6 +8,8 @@
 body {
     font-family: "NanumGothic", "Nanum Gothic", "Open Sans", sans-serif;
     color: #444444;
+    margin: 0;
+    padding: 0;
 }
 
 a {
@@ -24,26 +26,66 @@ h1, h2, h3, h4, h5, h6 {
     font-family: "NanumGothic", "Nanum Gothic", "Open Sans", sans-serif;
 }
 
+
 /*--------------------------------------------------------------
 # Header
 --------------------------------------------------------------*/
 header {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box; 
     position: fixed;
     top: 0;
     left: 0;
-    height: 50px;
     width: 100%;
-    margin: 0 0 60px 0;
-    padding: 0;
-    transition: all 0.2s;
-    z-index: 997;
-    padding: 20px 0;
+    /* transition: all 0.2s; */
+    z-index: 1000;
+    padding: 10px 20px;
+
+    background-color: #ccc;
 }
 
+.logo img {
+    height: 40px;
+}
+
+nav {
+    flex-grow: 1;
+    text-align: right;
+}
+
+nav ul {
+    list-style: none;
+    display: inline-flex;
+    gap: 15px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px;
+    transition: background 0.3s;
+}
+
+nav a:hover {
+    background: #555;
+    border-radius: px;
+}
+
+
+/*--------------------------------------------------------------
+# Main
+--------------------------------------------------------------*/
+main {
+    margin: 70px 0 0 0;
+    padding: 0;
+    width: 100%;
+    border: 1px solid black;
+    height: 1900px;
+}
 
 
 /*--------------------------------------------------------------
