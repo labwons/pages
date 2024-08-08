@@ -27,7 +27,7 @@ if __name__ == "__main__":
     },
     "WI26M": {
         WI26.midCap.drop(columns=["kind"]).to_dict(orient='list')
-    }
+    },
     "SEC": {
         WICS.largeCap[WICS.largeCap["kind"] == "sector"].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')
     },
