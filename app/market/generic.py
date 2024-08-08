@@ -11,9 +11,9 @@ class Market(DataFrame):
     
     def __init__(self, auto_update:bool=False):
         try:
-            _path = os.path.join(os.path.dirname(__file__), r"../../.src/market/market.json")                
+            _path = os.path.join(os.path.dirname(__file__), r"../../json/market/market.json")                
         except NameError:
-            _path = "https://raw.githubusercontent.com/labwons/pages/main/.src/market/market.json"
+            _path = "https://raw.githubusercontent.com/labwons/pages/main/json/market/market.json"
             
         if auto_update:
             print("Fetching Market Cap... ", end="")
