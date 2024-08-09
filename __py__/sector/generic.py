@@ -29,9 +29,9 @@ class Wise(DataFrame):
         _name = fetch.index_name(index)
 
         try:
-            _path = os.path.join(os.path.dirname(__file__), rf'../../json/market/{_name.lower()}.json')
+            _path = os.path.join(os.path.dirname(__file__), rf'../../src/json/market/{_name.lower()}.json')
         except NameError:
-            _path = f"https://raw.githubusercontent.com/labwons/pages/main/json/market/{_name.lower()}.json"
+            _path = f"https://raw.githubusercontent.com/labwons/pages/main/src/json/market/{_name.lower()}.json"
 
         if auto_update:
             print(f"Fetching WISE/{_name} INDEX...", end="")

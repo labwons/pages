@@ -14,7 +14,7 @@ if __name__ == "__main__":
     
     
     bo, bc = "{", "}"
-    with open(os.path.join(os.path.dirname(__file__), r"../json/treemap/treemap.json"), mode="w") as file:
+    with open(os.path.join(os.path.dirname(__file__), r"../src/json/treemap/treemap.json"), mode="w") as file:
         file.write(f"""{bo}
     "WICSL": {
         WICS.largeCap.drop(columns=["kind"]).to_dict(orient='list')
