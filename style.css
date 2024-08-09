@@ -59,11 +59,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .header .logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     line-height: 0;
+    text-decoration: none;
 }
 
 .header .logo img {
     max-height: 40px;
+}
+
+.header .logo span {
+    color: #000;
+    font-family: "Times New Roman", "NanumGothic", "Nanum Gothic", "Open Sans", sans-serif; 
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding-top: 2px;
+}
+
+.header .logo span i {
+    font-size: 22px;
 }
 
 
@@ -92,7 +109,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     justify-content: space-between;
     padding: 10px;
-    color: #013289;
+    color: #000;
     font-size: 16px;
     font-weight: 700;
     text-decoration: none;
@@ -107,7 +124,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar a:hover, .navbar li:hover > a {
-    color: #4154f1;
+    color: #888;
 }
 
 .navbar .dropdown ul {
@@ -174,7 +191,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .mobile-navbar {
-    color: #012970;
+    color: #000;
     font-size: 28px;
     cursor: pointer;
     display: none;
