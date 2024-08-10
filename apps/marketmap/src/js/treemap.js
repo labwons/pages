@@ -149,7 +149,10 @@ $(document).ready(async function(){
 
 
 $(document).ready(function() {
-  
+
+  if ($('#header').attr("class").includes("header-fix")) {
+    $('#header').removeClass('header-fix');
+  }
   $('.map-type').on('change', function() {
     data = __SRC__[$('.map-type').val()];
     update_map();

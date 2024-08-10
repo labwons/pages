@@ -5,8 +5,9 @@ $(document).ready(function(){
 
     if (window.innerWidth <= 991) {
         $('#header').removeClass('header-fix');
-        $('#header').css('margin-bottom', '10px');
-    } else {
+    } 
+    
+    if ($('#header').attr("class").includes("header-fix")) {
         $('#main').css('margin-top', $('#header').outerHeight(true) + 10);
     }
 
