@@ -7,7 +7,7 @@ $(document).ready(function(){
         $('#header').removeClass('header-fix');
         $('#header').css('margin-bottom', '10px');
     } else {
-        $('#main').css('margin-top', $('#header').outerHeight(true));
+        $('#main').css('margin-top', $('#header').outerHeight(true) + 10);
     }
 
     $('.navbar-button').click(function(){
