@@ -5,6 +5,7 @@ $(document).ready(function(){
 
     if (window.innerWidth <= 991) {
         $('#header').removeClass('header-fix');
+        $('#header').css('margin-bottom', '10px');
     } else {
         $('#main').css('margin-top', $('#header').outerHeight(true));
     }

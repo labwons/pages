@@ -70,17 +70,28 @@ h1, h2, h3, h4, h5, h6 {
     max-height: 40px;
 }
 
-.header .logo span {
-    color: #000;
-    font-family: "Times New Roman", "NanumGothic", "Nanum Gothic", "Open Sans", sans-serif; 
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    padding-top: 2px;
+@media (max-width: 1024px) {
+    .header .logo img {
+        max-height: 36px;
+    }
 }
 
-.header .logo span i {
-    font-size: 22px;
+@media (max-width: 768px) {
+    .header .logo img {
+        max-height: 32px;
+    }
+}
+
+@media (max-width: 425px) {
+    .header .logo img {
+        max-height: 28px;
+    }
+}
+
+@media (max-width: 320px) {
+    .header .logo img {
+        max-height: 24px;
+    }
 }
 
 
