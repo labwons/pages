@@ -2,8 +2,7 @@
 
 
 $(document).ready(function(){
-
-    fetch('../template/header.html')
+    fetch('../../src/template/header.html')
     .then(response => response.text())
     .then(data => {
         document.getElementById('header').innerHTML = data;
