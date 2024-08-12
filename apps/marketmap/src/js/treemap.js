@@ -1,6 +1,6 @@
 // const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
 const __URL__ = '../../../../src/json/treemap/treemap.json';
-
+const __ID__ = 'market-map';
 
 let __SRC__ = null;
 
@@ -8,27 +8,14 @@ let __SRC__ = null;
 var data = null;
 var spec = null;
 
-// var c_media = window.matchMedia('(max-width: 1023px)');
-// var tdat_name = []; var tdat_scale = []; var tdat_caps = []; var tdat_price = []; var tdat_perf = []; var tdat_color = [];
-// var map_type; var market_type; var option_type; var map_key;
 
-// var map_layout = {
-//     height: 690,
-//     margin:{l:0,r:0,t:2,b:25}
-// };
-// var map_option = {
-//     displayModeBar:false,
-//     responsive:true,
-//     showTips:false
-// };
-
-// function setSearch(key){
-// 	$('.map-search').empty();
-// 	$('.map-search').append('<option></option>');
-// 	for (var n = 0; n < tdat_ids[key].length; n++){
-// 		$('.map-search').append('<option>' + tdat_ids[key][n] + '</option>');
-// 	}
-// }
+function reset_search(){
+	$('.map-keyin').empty();
+	$('.map-keyin').append('<option></option>');
+	for (var n = 0; n < data.name.length; n++){
+		$('.map-keyin').append('<option>' + data.name[n] + '</option>');
+	}
+}
 
 // function search_top(__group__){
 //   var elems = $('.slicetext');
@@ -84,7 +71,7 @@ var spec = null;
 // 	}
 // }
 
-function update_map() {
+function update_map(id) {
   unit = (spec == 'PER' || spec == 'PBR') ? '' : '%';
   kwargs = {
     type:'treemap',
@@ -115,7 +102,7 @@ function update_map() {
     root_color:'lightgrey'
   }
   Plotly.newPlot(
-    'market-map', 
+    id, 
     [kwargs],
     {
       height: 650,
@@ -144,7 +131,8 @@ $(document).ready(async function(){
 
   data = __SRC__[$('.map-type').val()];
   spec = $('.map-option').val();
-  update_map();
+  update_map(__ID__);
+  reset_search();
 })
 
 
@@ -153,9 +141,14 @@ $(document).ready(function() {
   if ($('#header').attr("class").includes("header-fix")) {
     $('#header').removeClass('header-fix');
   }
+
+  $('.map-keyin').select2({
+    placeholder: "종목명 검색"
+  })
+
   $('.map-type').on('change', function() {
     data = __SRC__[$('.map-type').val()];
-    update_map();
+    update_map(__ID__);
   })
 
   $('.map-option').on('change', function() {
@@ -225,7 +218,7 @@ $(document).ready(function() {
       $('.maps-higher').html('20%');
       $('.maps-highest').html('30%');
     }
-    update_map();
+    update_map(__ID__);
   })
 
 })

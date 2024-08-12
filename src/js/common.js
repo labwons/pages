@@ -2,11 +2,6 @@
 
 
 $(document).ready(function(){
-    fetch('../../src/template/header.html')
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('header').innerHTML = data;
-    })
 
     if (window.innerWidth <= 991) {
         $('#header').removeClass('header-fix');
