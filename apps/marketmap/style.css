@@ -95,6 +95,7 @@
 .map-keyin {
     width: 100%;
     margin: 0;
+    padding: 2px 8px;
     box-sizing: border-box;
     background-image: url('./src/img/search.png');
     background-repeat: no-repeat;
@@ -114,7 +115,32 @@
 }
 
 .maps-plotly {
+    position: relative;
     height: 650px;
+}
+
+.map-rewind {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    border: 1px solid #aaa;
+    background-color:white;
+    background-image:url('./src/img/undo.png');
+    background-size:contain;
+    background-repeat:no-repeat;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.map-rewind.show {
+    opacity: 1;
+    visibility: visible;
 }
 
 .maps-info {
