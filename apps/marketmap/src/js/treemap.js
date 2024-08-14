@@ -3,11 +3,13 @@ const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/t
 
 
 let __SRC__ = null;
+let E_MOUSE = document.createEvent('MouseEvent');
 
 var base = null;
 var data = null;
 var spec = null;
 var tops = null;
+
 
 
 function setTops(){
@@ -27,69 +29,26 @@ function searchReset(){
 	}
 }
 
-// function searchObj(name) {
-//   var objs = $('.slicetext');
-//   for (var n = 0; n < objs.length; n++) {
-//     if ($(objs[n]).text().includes(name)) {
-//       return objs[n];
-//     }
-//   }
-// }
-
-function searchTop(top){
-  var elems = $('.slicetext');
-	var clicker = null;
-	var name = '';
-	for (var n = 0; n < elems.length; n++){
-		name = $(elems[n]).text();
-		if (name == top){
-			clicker = $(elems[n]).parent().get(0);
-			break;
+function clickTreemap(item){
+  var elements = $('g.slicetext');
+	for (var n = 0; n < elements.length; n++){
+		if ($(elements[n]).text().includes(item)){
+      !$(elements[n]).get(0).dispatchEvent(E_MOUSE);
+			return;
 		}
-	}
-	if (clicker == null) {return;}
-	if (document.createEvent) {
-			var event = document.createEvent('MouseEvents');
-			event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-			!clicker.dispatchEvent(event);
-	} else if (link.fireEvent) {
-		!clicker.fireEvent('onclick');
 	}
 }
 
-function searchAsset(asset){
-	var elems = $('.slicetext');
-	var clicker = null;
-	for (var n = 0; n < elems.length; n++){
-		var name = $(elems[n]).text();
-    if ((name.includes(asset)) && (name.slice(0, asset.length) == asset)){
-      var leftover = name.slice(asset.length, name.length)
-      var tail_cnt = 0;
-      var digits = leftover.match(/\d/g);
-      if (digits != null){
-  			tail_cnt += digits.length;
-  		}
-      if (leftover.includes('-')){ tail_cnt += 1 }
-      if (leftover.includes('.')){ tail_cnt += 1 }
-      if (leftover.includes('%')){ tail_cnt += 1 }
-      if ((leftover.length - tail_cnt) == 0){
-        clicker = $(elems[n]).parent().get(0);
-  		  break;
-      }
-    }
-	}
-	if (clicker == null){
-		return
-	}
-  console.log(clicker);
-  $(clicker).css("border", "3px solid white");
-	// if (document.createEvent) {
-	// 		var event = document.createEvent('MouseEvents');
-	// 		event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-	// 		!clicker.dispatchEvent(event);
-	// } else if (link.fireEvent) {
-	// 	!clicker.fireEvent('onclick');
-	// }
+function rewindOn(){
+  if( !$('.map-rewind').attr('class').includes('show') ) {
+    $('.map-rewind').toggleClass('show');
+  }
+}
+
+function rewindOff(){
+  if( $('.map-rewind').attr('class').includes('show') ) {
+    $('.map-rewind').toggleClass('show');
+  }
 }
 
 function update_map() {
@@ -140,6 +99,8 @@ function update_map() {
 
 $('.map-option').on('change', function() {
   spec = $('.map-option').val();
+  update_map();
+
   if ((spec == 'PER') || (spec == 'PBR')) {
     $('.maps-lowest').html('고평가');
     $('.maps-lower').html('');
@@ -205,39 +166,40 @@ $('.map-option').on('change', function() {
     $('.maps-higher').html('20%');
     $('.maps-highest').html('30%');
   }
-  update_map(__ID__);
 })
 
 $('.map-keyin').on('select2:select', function (e) {
-    var _select = e.params.data.text;
-    if (_select == "") { return }
+    var selected = e.params.data.text;
 
-    if (tops.includes(_select)) {
-      var group = _select;
-    } else{
-      var group = base.cover[base.name.indexOf(_select)];
-    }
-    searchTop(group);
+    if (tops.includes(selected)) {
+      clickTreemap(selected);
+      return;
+    } 
+    clickTreemap(base.cover[base.name.indexOf(selected)]);
 
-    if (_select == group){ return }
-    searchAsset(_select);
-    // setTimeout(function(){
-    //   searchAsset(username);
-    //   $('.map-rewind').toggleClass('show');
-    // }, 1000)
+    setTimeout(function(){
+      clickTreemap(selected);
+      rewindOn();
+      // $('.map-rewind').toggleClass('show');
+    }, 1000)
 });
 
 $('.map-reset').click(function(){
     update_map();
+    $('.map-keyin').val(null).trigger('change');
 })
 
 $('.map-rewind').click(function(){
-  $(this).toggleClass('show');
+  !$('.slice').get(0).dispatchEvent(E_MOUSE);
+  rewindOff();
+  // $(this).toggleClass('show');
 })
 
-// $('#market-map').on('plotly_click', function(e, d){
-//   console.log(d);
-// })
+$('#market-map').on('plotly_click', function(e, d){
+  console.log(d);
+  console.log(d.points[0]);
+  // $('.map-rewind').toggleClass('show');
+})
 
 $(document).ready(async function(){
 
@@ -264,14 +226,17 @@ $(document).ready(function() {
   if ($('#header').attr("class").includes("header-fix")) {
     $('#header').removeClass('header-fix');
   }
+
   $('.map-keyin').select2({
-    placeholder: "Testing"
+    placeholder: "종목명/섹터/업종 검색"
   })
+  
+  E_MOUSE.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 })
 
 $('.map-type').on('change', function() {
   base = __SRC__[$('.map-type').val()];
   tops = setTops();
-  update_map(__ID__);
+  update_map();
   searchReset();
 })
