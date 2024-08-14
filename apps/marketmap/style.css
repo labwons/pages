@@ -97,10 +97,6 @@
     margin: 0;
     padding: 2px 8px;
     box-sizing: border-box;
-    background-image: url('./src/img/search.png');
-    background-repeat: no-repeat;
-    background-position: left 6px center;
-    background-size: 1.5em;
 }
 
 /* .select2-container .select2-selection--single {
@@ -135,7 +131,7 @@
     cursor: pointer;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity 1.0s ease, visibility 1.0s ease;
 }
 
 .map-rewind.show {

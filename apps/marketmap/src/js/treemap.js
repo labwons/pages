@@ -11,14 +11,13 @@ var spec = null;
 var tops = null;
 
 
-
-function setTops(){
+function getCoverNames(){
   tops = [];
   for (var n = base.meta.length - 2; n > 0; n--) {
     tops.push(base.name[n]);
     if (base.meta[n].includes('종가')) { return tops; }
   }
-  return [];
+  return tops;
 }
 
 function searchReset(){
@@ -51,7 +50,7 @@ function rewindOff(){
   }
 }
 
-function update_map() {
+function updateMarketMap() {
   unit = (spec == 'PER' || spec == 'PBR') ? '' : '%';
   data = {
     type:'treemap',
@@ -96,10 +95,16 @@ function update_map() {
   );
 }
 
+$('.map-type').on('change', function() {
+  base = __SRC__[$('.map-type').val()];
+  tops = getCoverNames();
+  updateMarketMap();
+  searchReset();
+})
 
 $('.map-option').on('change', function() {
   spec = $('.map-option').val();
-  update_map();
+  updateMarketMap();
 
   if ((spec == 'PER') || (spec == 'PBR')) {
     $('.maps-lowest').html('고평가');
@@ -176,33 +181,34 @@ $('.map-keyin').on('select2:select', function (e) {
       return;
     } 
     clickTreemap(base.cover[base.name.indexOf(selected)]);
-
+    
     setTimeout(function(){
       clickTreemap(selected);
-      rewindOn();
-      // $('.map-rewind').toggleClass('show');
     }, 1000)
 });
 
 $('.map-reset').click(function(){
-    update_map();
+    updateMarketMap();
+    rewindOff();
     $('.map-keyin').val(null).trigger('change');
 })
 
 $('.map-rewind').click(function(){
   !$('.slice').get(0).dispatchEvent(E_MOUSE);
   rewindOff();
-  // $(this).toggleClass('show');
 })
 
 $('#market-map').on('plotly_click', function(e, d){
-  console.log(d);
-  console.log(d.points[0]);
-  // $('.map-rewind').toggleClass('show');
+  if ($('g.slice').length == 1) {
+    rewindOff();
+    return;
+  }
+  if (!tops.includes(d.points[0].label)){
+    rewindOn();
+  }
 })
 
 $(document).ready(async function(){
-
   try {
     const response = await fetch(__URL__);
     if (!response.ok) {
@@ -215,28 +221,20 @@ $(document).ready(async function(){
 
   base = __SRC__[$('.map-type').val()];
   spec = $('.map-option').val();
-  tops = setTops();
-  update_map();
+  tops = getCoverNames();
+  updateMarketMap();
   searchReset();
 })
 
 
 $(document).ready(function() {
-
   if ($('#header').attr("class").includes("header-fix")) {
     $('#header').removeClass('header-fix');
   }
 
   $('.map-keyin').select2({
-    placeholder: "종목명/섹터/업종 검색"
+    placeholder: "종목명/섹터/업종"
   })
   
   E_MOUSE.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-})
-
-$('.map-type').on('change', function() {
-  base = __SRC__[$('.map-type').val()];
-  tops = setTops();
-  update_map();
-  searchReset();
 })
