@@ -208,6 +208,11 @@ $('#market-map').on('plotly_click', function(e, d){
   }
 })
 
+$('.faq-question').click(function(){
+  var index = $(this).attr('class').slice(-2);
+  $('.faq-content' + index).toggleClass('collapse');
+})
+
 $(document).ready(async function(){
   try {
     const response = await fetch(__URL__);

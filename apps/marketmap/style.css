@@ -123,7 +123,7 @@
     height: 24px;
     margin: 0;
     border: 1px solid #aaa;
-    background-color:white;
+    background-color:#ccc;
     background-image:url('./src/img/undo.png');
     background-size:contain;
     background-repeat:no-repeat;
@@ -196,8 +196,52 @@
     display: flex;
     align-items: center;
     padding-left: 8px;
-    font-size: 10px;
+    font-size: 14px;
 }
+
+.faq {
+    margin: 0 30px;
+}
+
+.faq-header {
+    padding-bottom: 20px;
+}
+
+.faq-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.faq-column {
+    flex: 0 0 auto;
+    width: 50%;
+}
+
+.faq-item {
+    margin-right: 20px;
+    margin-bottom: 30px;
+    padding-right: 20px;
+    border-bottom: 1px solid lightgrey; 
+}
+
+.faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: 800;
+    padding-bottom: 20px; 
+    cursor: pointer;
+}
+
+.faq-content {
+    line-height: 2em;
+}
+
+.faq .collapse {
+    display: none;
+}
+
 
 
 @media screen and (max-width: 1023px) {
@@ -304,5 +348,6 @@
         display: flex;
         align-items: center;
         margin-top: 4px;
+        font-size: 10px;
     }
 }
