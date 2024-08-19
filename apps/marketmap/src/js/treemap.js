@@ -211,6 +211,8 @@ $('#market-map').on('plotly_click', function(e, d){
 $('.faq-question').click(function(){
   var index = $(this).attr('class').slice(-2);
   $('.faq-content' + index).toggleClass('collapse');
+  $(this).find('i').removeClass('fa-chevron-down');
+  $(this).find('i').addClass('fa-chevron-up');
 })
 
 $(document).ready(async function(){

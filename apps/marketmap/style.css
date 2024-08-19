@@ -200,7 +200,7 @@
 }
 
 .faq {
-    margin: 0 30px;
+    margin: 60px 30px;
 }
 
 .faq-header {
@@ -209,6 +209,7 @@
 
 .faq-container {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
 }
 
@@ -220,7 +221,7 @@
 .faq-item {
     margin-right: 20px;
     margin-bottom: 30px;
-    padding-right: 20px;
+    padding: 0 10px;
     border-bottom: 1px solid lightgrey; 
 }
 
@@ -236,6 +237,7 @@
 
 .faq-content {
     line-height: 2em;
+    
 }
 
 .faq .collapse {
@@ -342,6 +344,7 @@
         width: 14.2%;
         padding: 4px;
         color: white;
+        font-size: 12px;
     }
 
     .maps-notice {
@@ -349,5 +352,17 @@
         align-items: center;
         margin-top: 4px;
         font-size: 10px;
+    }
+
+    .faq {
+        margin: 40px 10px;
+    }
+
+    .faq-column {
+        width: 100%;
+    }
+
+    .faq-item {
+        margin-right: 0;
     }
 }
