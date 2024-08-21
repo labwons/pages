@@ -18,7 +18,6 @@ main {
     width: 100%;
 }
 
-
 section {
     margin: 0;
     padding: 0;
@@ -70,13 +69,12 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-.header-fix {
+/* .header-fix {
     position: fixed;
     top: 0;
     left: 0;
     z-index: 999;
-    /* transition: all 0.2s; */
-}
+} */
 
 .header .logo {
     display: flex;
@@ -218,32 +216,6 @@ h1, h2, h3, h4, h5, h6 {
     color: #888;
 }
 
-
-/*--------------------------------------------------------------
-# Poster
---------------------------------------------------------------*/
-.poster {
-    position: relative;
-    height: 100vh;
-    max-width: 100%;
-    overflow: hidden;
-    margin: auto;    
-}
-
-.poster .slides {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-}
-
-.poster .slides .slide {
-    min-width: 100%;
-    box-sizing: border-box;
-}
-
-.poster .slides .slide img {
-    width: 100%;
-    vertical-align: middle;
-}
 
 /*--------------------------------------------------------------
 # Footer
@@ -453,14 +425,6 @@ h1, h2, h3, h4, h5, h6 {
     .footer .footer-basis .footer-links .footer-link {
         width: 50%;
     }
-
-    /* .footer .footer-basis .footer-links h4 {
-        text-align: center;
-    }
-
-    .footer .footer-basis .footer-links .footer-link ul {
-        padding-left: 4px;
-    } */
 
     .footer .footer-basis .footer-contact {
         text-align: center;
