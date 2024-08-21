@@ -230,8 +230,8 @@ h1, h2, h3, h4, h5, h6 {
 .footer .footer-basis {
     background: white url(./src/img/footer-bg.png) no-repeat right top;
     background-size: contain;
-    border-top: 1px solid lightgrey;
-    border-bottom: 1px solid lightgrey;
+    border-top: 1.5px solid lightgrey;
+    border-bottom: 1.5px solid lightgrey;
     padding: 60px 0;
 }
   
@@ -289,12 +289,11 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;    
+    justify-content: space-evenly;    
 }
 
 .footer .footer-basis .footer-links .footer-link {
     flex: 0 0 auto;
-    width: 16.6666666667%;
 }
   
 .footer .footer-basis .footer-links .footer-link ul {
