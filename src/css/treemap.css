@@ -341,6 +341,7 @@
         display: flex;
         align-items: center;
         margin-top: 4px;
+        padding-left: 4px;
         font-size: 10px;
     }
 
