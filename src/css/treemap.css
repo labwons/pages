@@ -65,11 +65,11 @@
     cursor: pointer;
     font-size: 14px;
 
-    /* background-image: url('https://raw.githubusercontent.com/labwons/pages/main/treemap/src/img/triangle_down.png');
+    background-image: url('../img/triangle_down.png');
     background-repeat: no-repeat;
     background-position: right 4px center;
     background-size: 8px;
-    background-color: #fff; */
+    background-color: #fff;
 }
 
 .map-reset {
@@ -77,7 +77,7 @@
     margin: 0;
     border: 1px solid #aaa;
     background-color:white;
-    background-image:url('./src/img/reset.png');
+    background-image:url('../img/reset.png');
     background-size:contain;
     background-repeat:no-repeat;
     border-radius: 6px;
@@ -98,10 +98,6 @@
     padding: 2px 8px;
     box-sizing: border-box;
 }
-
-/* .select2-container .select2-selection--single {
-    height: 2em !important;
-} */
 
 .maps-app {
     display: flex;
@@ -124,7 +120,7 @@
     margin: 0;
     border: 1px solid #aaa;
     background-color:#ccc;
-    background-image:url('./src/img/undo.png');
+    background-image:url('../img/undo.png');
     background-size:contain;
     background-repeat:no-repeat;
     border-radius: 6px;
@@ -280,12 +276,6 @@
         box-sizing: border-box;
         cursor: pointer;
         font-size: 14px;
-    
-        /* background-image: url('https://raw.githubusercontent.com/labwons/pages/main/treemap/src/img/triangle_down.png');
-        background-repeat: no-repeat;
-        background-position: right 4px center;
-        background-size: 8px;
-        background-color: #fff; */
     }
     
     .map-reset {
@@ -293,7 +283,7 @@
         margin: 0;
         border: 1px solid #aaa;
         background-color:white;
-        background-image:url('./src/img/reset.png');
+        background-image:url('../img/reset.png');
         background-size:contain;
         background-repeat:no-repeat;
         border-radius: 6px;
