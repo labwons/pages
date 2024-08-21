@@ -28,8 +28,8 @@ $(document).ready(function(){
         $('#header').removeClass('header-fix');
     } 
     
-    if ($('#header').attr("class").includes("header-fix")) {
-        $('#main').css('margin-top', $('#header').outerHeight(true) + 10);
-    }
+    // if ($('#header').attr("class").includes("header-fix")) {
+    //     $('#main').css('margin-top', $('#header').outerHeight(true) + 10);
+    // }
 
 })
