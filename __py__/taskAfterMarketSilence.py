@@ -1,8 +1,8 @@
 try:
-    from .sector.generic import Wise
+    from .sector.generic import Sector
 except ImportError:
-    from __py__.sector.generic import Wise
+    from __py__.sector.generic import Sector
 
 
 if __name__ == "__main__":
-    Wise('WI26', auto_update=True)
+    Sector('WI26', auto_update=True)
