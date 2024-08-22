@@ -46,16 +46,9 @@
         <section class="maps-nav">
             <div class="maps-nav-items map-selectors">
                 <select name="" class="map-selector map-type">
-                    <optgroup label="--- 섹터/산업 구분 ---">
-                        <option value="WICSL" selected="selected">대형주</option>
-                        <!-- <option value="WICSLns">대형주(삼성전자 제외)</option> -->
-                        <option value="WICSM">중형주</option>
-                    </optgroup>
-                    <optgroup label="--- 업종 구분 ---">
-                        <option value="WI26L">대형주</option>
-                        <!-- <option value="WI26Lns">대형주(삼성전자 제외)</option> -->
-                        <option value="WI26M">중형주</option>
-                    </optgroup>
+                  <option value="LargeCap">대형주</option>
+                  <option value="LargeCapWithoutSamsung">대형주(삼성전자 제외)</option>
+                  <option value="MidCap">중형주</option>
                 </select>
                 <select name="" class="map-selector map-option">
                     <optgroup label="--- 기간별 수익률 ---">
@@ -115,7 +108,7 @@
                   <i class="fa fa-chevron-down"></i>
                 </div>
                 <div class="faq-content faq-content-1 collapse">
-                  섹터/업종 분류 자료는 WISE INDEX와 GICS 산업 분류를 참고하였습니다. 수익률 계산은 한국거래소(KRX)의 종가를 참고하였으며 PBR/PER/배당수익률은 분기 재무 보고서를 참고하였습니다.
+                  섹터/업종 분류는 WISE INDEX와 GICS 산업 분류를 참고 및 재구성하였습니다. 수익률과 PBR/PER/배당수익률은 한국거래소(KRX) 데이터를 참고하였으며 수익률은 종가를 기준으로 계산하였습니다.
                 </div>
               </div>
   
@@ -125,17 +118,18 @@
                   <i class="fa fa-chevron-down"></i>
                 </div>
                 <div class="faq-content faq-content-2 collapse">
-                  개장일 기준, 정규 시장 시간 마감(통상 15:30) 이후 15분~30분 내로 업데이트 됩니다. 휴장일에는 마지막 개장일 데이터가 유지됩니다.
+                  개장일 기준, 정규장 시간 마감(15:30) 이후 15분~30분 내로 업데이트 됩니다. 휴장일에는 마지막 개장일 데이터가 유지됩니다.
                 </div>
               </div>
   
               <div class="faq-item">
                 <div class="faq-question faq-question-3">
-                  <span>실시간 업데이트는 안 돼요?</span>
+                  <span>실시간 업데이트는 안 되나요?</span>
                   <i class="fa fa-chevron-down"></i>
                 </div>
                 <div class="faq-content faq-content-3 collapse">
-                  개발자가 최선을 다해 시도하고 있습니다만 쉽지 않다고 합니다. 응원을 보내주세요. 
+                  개발자가 최선을 다해 시도하고 있습니다만 쉽지 않다고 합니다. 응원을 보내주세요! 
+                  <i class="fa fa-smile-o"></i>
                 </div>
               </div>
             </div>
