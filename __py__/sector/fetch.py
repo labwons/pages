@@ -17,17 +17,30 @@ def index_date() -> str:
 
 def index_component(date:str, code:str, try_count:int=5) -> DataFrame:
     columns = {
-        'CMP_CD': 'ticker', 'CMP_KOR': 'name',        
+        'CMP_CD': 'ticker', 'CMP_KOR': 'name',
         'SEC_CD': 'sectorCode', 'SEC_NM_KOR': 'sectorName', 'ALL_MKT_VAL': 'sectorCap', 'WGT': 'sectorWeight',
-        'IDX_CD': 'industryCode', 'IDX_NM_KOR': 'industryName',        
+        'IDX_CD': 'industryCode', 'IDX_NM_KOR': 'industryName',
     }
     url = f'http://www.wiseindex.com/Index/GetIndexComponets?ceil_yn=0&dt={date}&sec_cd={code}'
     for n in range(try_count):
         resp = requests.get(url)
-        if resp.status_code == 200:
-            data = DataFrame(resp.json()['list'])[columns.keys()]
-            return data.rename(columns=columns).set_index(keys='ticker')
-        time.sleep(5)
+        if not resp.status_code == 200:
+            time.sleep(5)
+            continue
+        
+        src = resp.json()['list']
+        if code == 'WI330':
+            for obj in src:
+                key = ',교육' if obj['SEC_NM_KOR'] == '커뮤니케이션서비스' else '미디어,'
+                obj['IDX_NM_KOR'] = obj['IDX_NM_KOR'].replace(key, '')
+        elif code == 'WI600':
+            for obj in src:
+                if obj['SEC_NM_KOR'] == 'IT':
+                    obj['IDX_NM_KOR'] = 'WI26 IT서비스'
+            
+        data = DataFrame(src)[columns.keys()]
+        return data.rename(columns=columns).set_index(keys='ticker')
+        
     raise TimeoutError(f'Unable to fetch WISE INDEX url: {url}')
 
 KEYS = {
