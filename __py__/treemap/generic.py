@@ -1,9 +1,9 @@
 try:
-    from ..sector.generic import Wise
+    from ..sector.generic import Sector
     from ..market.generic import Market
     from core import baseDataFrame
 except ImportError:
-    from __py__.sector.generic import Wise
+    from __py__.sector.generic import Sector
     from __py__.market.generic import Market
     from __py__.treemap.core import baseDataFrame
 from typing import Dict
@@ -11,12 +11,10 @@ from typing import Dict
 
 class MarketMap(object):
 
-    def __init__(self, index:str, market_data:Market):
-        wise = Wise(index, auto_update=False)
-        data = market_data.copy()
-        data = data.drop(columns=[col for col in data if col in wise])
-
-        self._merge = wise.join(data, how='left')
+    def __init__(self, auto_update=False):
+        sector = Sector(auto_update=False)
+        number = Market(auto_update=auto_update)
+        self._merge = sector.join(number.drop(columns=[col for col in number if col in sector]))
         return
 
     @property

@@ -68,7 +68,7 @@ class baseDataFrame(DataFrame):
 
     def __init__(self, stocks:DataFrame):
         _date = f"{TradingDate.near.strftime('%Y-%m-%d')} 기준"
-        _map_name = stocks.iloc[0]['indexName']
+        # _map_name = stocks.iloc[0]['indexName']
         _cap_type = f"대형주({_date})"
         if not "005930" in stocks.index:
             _cap_type = f"중형주({_date})"
@@ -90,15 +90,15 @@ class baseDataFrame(DataFrame):
 
         industry = grouping(*stocks.groupby(by=['industryName']))
         industry['kind'] = 'industry'
-        if _map_name == 'WI26':
-            industry['cover'] = _cap_type
+        # if _map_name == 'WI26':
+        #     industry['cover'] = _cap_type
         objs.append(industry)
 
-        if _map_name == 'WICS':
-            sector = grouping(*stocks.groupby(by=['sectorName']))
-            sector['cover'] = _cap_type
-            sector['kind'] = 'sector'
-            objs.append(sector)
+        # if _map_name == 'WICS':
+        sector = grouping(*stocks.groupby(by=['sectorName']))
+        sector['cover'] = _cap_type
+        sector['kind'] = 'sector'
+        objs.append(sector)
 
         data = {
             'name': _cap_type,
