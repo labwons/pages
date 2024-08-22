@@ -1,11 +1,11 @@
 try:
     from ..sector.generic import Sector
     from ..market.generic import Market
-    from core import baseDataFrame
+    from core import baseTreeMap
 except ImportError:
     from __py__.sector.generic import Sector
     from __py__.market.generic import Market
-    from __py__.treemap.core import baseDataFrame
+    from __py__.treemap.core import baseTreeMap
 from typing import Dict
 
 
@@ -18,18 +18,27 @@ class MarketMap(object):
         return
 
     @property
-    def largeCap(self) -> baseDataFrame:
-        attr = f"_{self._merge['indexName'].iloc[0]}_large"
+    def largeCap(self) -> baseTreeMap:
+        attr = f"_large"
         if not hasattr(self, attr):
             base = self._merge[self._merge['stockSize'] == 'large']
-            self.__setattr__(attr, baseDataFrame(base))
+            self.__setattr__(attr, baseTreeMap(base))
         return self.__getattribute__(attr)
     
     @property
-    def midCap(self) -> baseDataFrame:
-        attr = f"_{self._merge['indexName'].iloc[0]}_mid"
+    def largeCapSamsungExcluded(self) -> baseTreeMap:
+        attr = f"_large_samsung_excluded"
+        if not hasattr(self, attr):
+            base = self._merge[self._merge['stockSize'] == 'large']
+            base = base.drop(index=['005930'])
+            self.__setattr__(attr, baseTreeMap(base))
+        return self.__getattribute__(attr)
+    
+    @property
+    def midCap(self) -> baseTreeMap:
+        attr = f"_mid"
         if not hasattr(self, attr):
             base = self._merge[self._merge['stockSize'] != 'large'].copy()
             base = base.sort_values(by="marketCap", ascending=False).head(400)
-            self.__setattr__(attr, baseDataFrame(base))
+            self.__setattr__(attr, baseTreeMap(base))
         return self.__getattribute__(attr)

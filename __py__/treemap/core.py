@@ -22,7 +22,7 @@ def num2cap(x:int) -> str:
 def grouping(*args):
     objs = []
     for (name, ), group in args:
-        name = name.replace("WICS ", "").replace("WI26 ", "")
+        name = name.replace("WI26 ", "")
         size = group['size'].sum()
         obj = {
             'name': name,
@@ -64,21 +64,18 @@ def coloring(data:DataFrame):
 
 
 # CLASS: BASE DATAFRAME
-class baseDataFrame(DataFrame):
+class baseTreeMap(DataFrame):
 
     def __init__(self, stocks:DataFrame):
         _date = f"{TradingDate.near.strftime('%Y-%m-%d')} 기준"
-        # _map_name = stocks.iloc[0]['indexName']
         _cap_type = f"대형주({_date})"
-        if not "005930" in stocks.index:
+        if not "000660" in stocks.index:
             _cap_type = f"중형주({_date})"
 
         stocks = stocks.copy()
         stocks.index.name = 'ticker'
         stocks.reset_index(inplace=True)
-        stocks['cover'] = stocks['industryName'] \
-                          .str.replace("WICS ", "") \
-                          .str.replace("WI26 ", "")
+        stocks['cover'] = stocks['industryName'].str.replace("WI26 ", "")
         stocks['size'] = (stocks['marketCap'] / 100000000).astype(int)
         stocks['close'] = stocks['close'].astype(int).apply(lambda x: f"{x:,d}")
         stocks['marketCap'] = stocks['size'].apply(num2cap)
@@ -90,11 +87,8 @@ class baseDataFrame(DataFrame):
 
         industry = grouping(*stocks.groupby(by=['industryName']))
         industry['kind'] = 'industry'
-        # if _map_name == 'WI26':
-        #     industry['cover'] = _cap_type
         objs.append(industry)
 
-        # if _map_name == 'WICS':
         sector = grouping(*stocks.groupby(by=['sectorName']))
         sector['cover'] = _cap_type
         sector['kind'] = 'sector'
