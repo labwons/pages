@@ -5,4 +5,4 @@ except ImportError:
 
 
 if __name__ == "__main__":
-    Sector('WI26', auto_update=True)
+    Sector(auto_update=True)
