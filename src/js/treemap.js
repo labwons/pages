@@ -211,8 +211,13 @@ $('#market-map').on('plotly_click', function(e, d){
 $('.faq-question').click(function(){
   var index = $(this).attr('class').slice(-2);
   $('.faq-content' + index).toggleClass('collapse');
-  $(this).find('i').removeClass('fa-chevron-down');
-  $(this).find('i').addClass('fa-chevron-up');
+  if ($(this).find('i').attr('class').includes('down')){
+    $(this).find('i').removeClass('fa-chevron-down');
+    $(this).find('i').addClass('fa-chevron-up');
+  } else {
+    $(this).find('i').removeClass('fa-chevron-up');
+    $(this).find('i').addClass('fa-chevron-down');
+  }
 })
 
 $(document).ready(async function(){
