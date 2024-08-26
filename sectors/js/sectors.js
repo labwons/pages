@@ -1,5 +1,5 @@
-const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
-// const __URL__ = '../../../src/json/treemap/treemap.json';
+// const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
+const __URL__ = '../../../src/json/treemap/treemap.json';
 const abs = (array) => {
     return array.map(Math.abs);
 }
@@ -17,8 +17,8 @@ function updateBar() {
     var unit = '%';
     var layout = {
         margin:{
-            l:125, 
-            r:5, 
+            l:115, 
+            r:10, 
             t:10, 
             b:22
         }, 
