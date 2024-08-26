@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>LAB￦ONS</title>
+    <title>LAB￦ONS: 섹터/산업</title>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
-    <link rel="icon" href="./src/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="../src/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="./src/css/marketmap.css">
 
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
@@ -23,7 +23,7 @@
       <!----------------------------------------------------------------------------------------------->
       <header id="header" class="header header-fix">
         <a href="/" class="logo">
-            <img src="./src/img/logo-text.png" alt="Logo">
+            <img src="../src/img/logo-text.png" alt="Logo">
         </a>
         <nav id="navbar" class="navbar">
             <ul>
@@ -38,12 +38,12 @@
     <!-------------------------------------------- MAIN --------------------------------------------->
     <!----------------------------------------------------------------------------------------------->
     <main id="main">
-      <section class="service-section">
-        <div class="ad-vertical">
+      <section class="map-section">
+        <div class="map-ad-box">
             <!-- Google Adsense -->
         </div>
-        <div class="service-box">
-          <div class="service-nav">
+        <div class="map-container">
+          <div class="map-navigation">
             <div class="map-options">
               <select name="type" class="map-type">
                 <option value="LargeCap" selected="selected">대형주</option>
@@ -72,13 +72,13 @@
             </select>
           </div>
 
-          <div class="service-app">
-            <div class="map-plotly" id="market-map">
+          <div class="map-app">
+            <!-- <div class="map-plotly" id="market-map">
               <input type="button" value=" " class="map-rewind">
-            </div>
+            </div> -->
           </div>
 
-          <div class="service-footer">
+          <!-- <div class="map-footer">
             <div class="map-legend">
               <span class="map-lowest">-3%</span>
               <span class="map-lower">-2%</span>
@@ -91,7 +91,7 @@
             <div class="map-notice">
               모든 투자의 책임은 당사자에게 있습니다. PC 환경에서 마우스 커서를 올리거나 모바일 기기에서 길게 누르면 세부 정보가 나타납니다. 종목이나 섹터를 클릭(탭)하면 확대/재편됩니다. *표시는 코스닥 종목입니다.
             </div>
-          </div>
+          </div> -->
         </div>
       </section>
 
@@ -182,7 +182,7 @@
         <div class="footer-container">
           <div class="footer-info">
             <a href="/" class="logo">
-              <img src="./src/img/logo-footer.png" alt="LAB￦ONS">
+              <img src="../src/img/logo-footer.png" alt="LAB￦ONS">
             </a>
             <p>GITHUB PAGE에 기반한 <b>개인 블로그</b>이며 본 사이트에서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다.
             참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.</p>
@@ -230,7 +230,7 @@
     </footer>
 
     <script type="text/javascript" src="./src/js/common.js"></script>
-    <script type="text/javascript" src="./src/js/treemap.min.js"></script>
+    <!-- <script type="text/javascript" src="./src/js/treemap.js"></script> -->
       
     
 </body>

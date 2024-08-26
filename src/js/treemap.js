@@ -1,5 +1,5 @@
-const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
-// const __URL__ = '../../../src/json/treemap/treemap.json';
+// const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
+const __URL__ = '../../../src/json/treemap/treemap.json';
 
 
 let __SRC__ = null;
@@ -208,17 +208,6 @@ $('#market-map').on('plotly_click', function(e, d){
   }
 })
 
-$('.faq-question').click(function(){
-  var index = $(this).attr('class').slice(-2);
-  $('.faq-content' + index).toggleClass('collapse');
-  if ($(this).find('i').attr('class').includes('down')){
-    $(this).find('i').removeClass('fa-chevron-down');
-    $(this).find('i').addClass('fa-chevron-up');
-  } else {
-    $(this).find('i').removeClass('fa-chevron-up');
-    $(this).find('i').addClass('fa-chevron-down');
-  }
-})
 
 $(document).ready(async function(){
   try {

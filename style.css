@@ -427,3 +427,172 @@ h1, h2, h3, h4, h5, h6 {
         text-align: center;
     }
 } 
+
+
+/*--------------------------------------------------------------
+# General Service
+--------------------------------------------------------------*/
+.service-section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: calc(100vh - 80px);
+    margin: 0 20px;
+    padding-top: 20px;
+}
+
+.service-section .ad-vertical {
+    flex: 0 0 auto;
+    width: 15%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    background: #f6f9ff;
+}
+
+.service-section .service-box {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.service-section .service-box .service-nav {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;    
+    font-size: 14px;
+
+    /* background: #abcdab; */
+}
+
+.service-section .service-box .service-app {
+    flex: 1 1 auto;
+    width: 100%;
+    height: calc(100vh - 80px - 60px);
+
+    /* background: #fff; */
+}
+
+.service-section .service-box .service-footer {
+    flex: 0 1 auto;
+    width: 100%;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+/* LAPTOP CASES */
+@media screen and (max-width: 1443px) {
+    .service-section .ad-vertical {
+        width: 18%;
+    }
+}
+
+/* TABLET CASES */
+@media screen and (max-width: 1023px) {
+    .service-section {
+        flex-direction: column;
+        height: auto;
+        margin: 0 20px;
+        padding-top: 0;
+    }
+
+    .service-section .ad-vertical {
+        width: 100%;
+        height: 120px;
+        margin: 10px 0;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .service-section {
+        flex-direction: column;
+        height: auto;
+        margin: 0 10px;
+        padding-top: 0;
+    }
+
+    .service-section .service-box .service-nav {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .service-section .service-box .service-app {
+        margin-top: 4px;
+    }
+
+    .service-section .service-box .service-footer {
+        height: auto;
+        flex-direction: column;
+    }
+}
+
+.faq {
+    margin: 60px 30px;
+}
+
+.faq-header {
+    padding-bottom: 20px;
+}
+
+.faq-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.faq-column {
+    flex: 0 0 auto;
+    width: 50%;
+}
+
+.faq-item {
+    margin-right: 20px;
+    margin-bottom: 30px;
+    padding: 0 10px;
+    border-bottom: 0.8px solid lightgrey; 
+}
+
+.faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: 800;
+    padding-bottom: 20px; 
+    cursor: pointer;
+}
+
+.faq-content {
+    line-height: 2em;
+    
+}
+
+.faq .collapse {
+    display: none;
+}
+
+/* MOBILE CASES */
+@media screen and (max-width: 767px) {
+    .faq {
+        margin: 40px 10px;
+    }
+
+    .faq-column {
+        width: 100%;
+    }
+
+    .faq-item {
+        margin-right: 0;
+    }
+}
