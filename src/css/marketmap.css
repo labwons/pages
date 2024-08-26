@@ -18,7 +18,7 @@
     box-sizing: border-box;
     cursor: pointer;
     
-    background-image: url('..img/triangle_down.png');
+    background-image: url('../img/triangle_down.png');
     background-repeat: no-repeat;
     background-position: right 4px center;
     background-size: 8px;
@@ -137,7 +137,7 @@
     align-items: center;
     justify-content: flex-start;
     padding-left: 4px;
-    font-size: 14px;
+    font-size: 12px;
     white-space: normal;
 }
 
@@ -148,7 +148,7 @@
     }
 
     .map-notice {
-        font-size: 12px;
+        font-size: 10px;
     }
 }
 
