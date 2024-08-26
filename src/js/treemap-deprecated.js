@@ -1,5 +1,5 @@
-const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
-// const __URL__ = '../../../src/json/treemap/treemap.json';
+// const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
+const __URL__ = '../../../src/json/treemap/treemap.json';
 
 
 let __SRC__ = null;
@@ -21,10 +21,10 @@ function getCoverNames(){
 }
 
 function searchReset(){
-	$('.map-searchbar').empty();
-	$('.map-searchbar').append('<option></option>');
+	$('.map-keyin').empty();
+	$('.map-keyin').append('<option></option>');
 	for (var n = 0; n < base.name.length; n++){
-		$('.map-searchbar').append('<option>' + base.name[n] + '</option>');
+		$('.map-keyin').append('<option>' + base.name[n] + '</option>');
 	}
 }
 
@@ -62,14 +62,14 @@ function updateMarketMap() {
     text:base[spec],
 	  textposition:'middle center',
     textfont:{
-      family:'NanumGothic, Nanum Gothic, Open Sans, sans-serif',
+      family:'NanumGothic, Nanum Gothic, monospace',
       color:'#ffffff'
     },
     texttemplate: '%{label}<br>%{text:.2f}' + unit,
     hovertemplate: '%{meta}<br>' + spec + ': %{text}' + unit + '<extra></extra>',
     hoverlabel: {
       font: {
-        family: 'NanumGothic, Nanum Gothic, Open Sans, sans-serif',
+        family: 'NanumGothic, Nanum Gothic, monospace',
         color: '#ffffff'
       }
     },
@@ -84,7 +84,7 @@ function updateMarketMap() {
     'market-map', 
     [data],
     {
-      // height: 650,
+      height: 650,
       margin:{l:0,r:0,t:0,b:25}
     },
     {
@@ -107,73 +107,73 @@ $('.map-option').on('change', function() {
   updateMarketMap();
 
   if ((spec == 'PER') || (spec == 'PBR')) {
-    $('.map-lowest').html('고평가');
-    $('.map-lower').html('');
-    $('.map-low').html('');
-    $('.map-middle').html('평균');
-    $('.map-high').html('');
-    $('.map-higher').html('');
-    $('.map-highest').html('저평가');
+    $('.maps-lowest').html('고평가');
+    $('.maps-lower').html('');
+    $('.maps-low').html('');
+    $('.maps-middle').html('평균');
+    $('.maps-high').html('');
+    $('.maps-higher').html('');
+    $('.maps-highest').html('저평가');
   } else if (spec == 'DIV') {
-    $('.map-lowest').html('');
-    $('.map-lower').html('');
-    $('.map-low').html('');
-    $('.map-middle').html('0%');
-    $('.map-high').html('2%');
-    $('.map-higher').html('4%');
-    $('.map-highest').html('6%');
+    $('.maps-lowest').html('');
+    $('.maps-lower').html('');
+    $('.maps-low').html('');
+    $('.maps-middle').html('0%');
+    $('.maps-high').html('2%');
+    $('.maps-higher').html('4%');
+    $('.maps-highest').html('6%');
   } else if (spec == 'D-1') {
-    $('.map-lowest').html('-3%');
-    $('.map-lower').html('-2%');
-    $('.map-low').html('-1%');
-    $('.map-middle').html('0%');
-    $('.map-high').html('1%');
-    $('.map-higher').html('2%');
-    $('.map-highest').html('3%');
+    $('.maps-lowest').html('-3%');
+    $('.maps-lower').html('-2%');
+    $('.maps-low').html('-1%');
+    $('.maps-middle').html('0%');
+    $('.maps-high').html('1%');
+    $('.maps-higher').html('2%');
+    $('.maps-highest').html('3%');
   } else if (spec == 'W-1') {
-    $('.map-lowest').html('-6%');
-    $('.map-lower').html('-4%');
-    $('.map-low').html('-2%');
-    $('.map-middle').html('0%');
-    $('.map-high').html('2%');
-    $('.map-higher').html('4%');
-    $('.map-highest').html('6%');
+    $('.maps-lowest').html('-6%');
+    $('.maps-lower').html('-4%');
+    $('.maps-low').html('-2%');
+    $('.maps-middle').html('0%');
+    $('.maps-high').html('2%');
+    $('.maps-higher').html('4%');
+    $('.maps-highest').html('6%');
   } else if (spec == 'M-1') {
-    $('.map-lowest').html('-10%');
-    $('.map-lower').html('-6.7%');
-    $('.map-low').html('-3.3%');
-    $('.map-middle').html('0%');
-    $('.map-high').html('3.3%');
-    $('.map-higher').html('6.7%');
-    $('.map-highest').html('10%');
+    $('.maps-lowest').html('-10%');
+    $('.maps-lower').html('-6.7%');
+    $('.maps-low').html('-3.3%');
+    $('.maps-middle').html('0%');
+    $('.maps-high').html('3.3%');
+    $('.maps-higher').html('6.7%');
+    $('.maps-highest').html('10%');
   } else if (spec == 'M-3') {
-    $('.map-lowest').html('-18%');
-    $('.map-lower').html('-12%');
-    $('.map-low').html('-6%');
-    $('.map-middle').html('0%');
-    $('.map-high').html('6%');
-    $('.map-higher').html('12%');
-    $('.map-highest').html('18%');
+    $('.maps-lowest').html('-18%');
+    $('.maps-lower').html('-12%');
+    $('.maps-low').html('-6%');
+    $('.maps-middle').html('0%');
+    $('.maps-high').html('6%');
+    $('.maps-higher').html('12%');
+    $('.maps-highest').html('18%');
   } else if (spec == 'M-6') {
-    $('.map-lowest').html('-24%');
-    $('.map-lower').html('-16%');
-    $('.map-low').html('-8%');
-    $('.map-middle').html('0%');
-    $('.map-high').html('8%');
-    $('.map-higher').html('16%');
-    $('.map-highest').html('24%');
+    $('.maps-lowest').html('-24%');
+    $('.maps-lower').html('-16%');
+    $('.maps-low').html('-8%');
+    $('.maps-middle').html('0%');
+    $('.maps-high').html('8%');
+    $('.maps-higher').html('16%');
+    $('.maps-highest').html('24%');
   } else if (spec == 'Y-1') {
-    $('.map-lowest').html('-30%');
-    $('.map-lower').html('-20%');
-    $('.map-low').html('-10%');
-    $('.map-middle').html('0%');
-    $('.map-high').html('10%');
-    $('.map-higher').html('20%');
-    $('.map-highest').html('30%');
+    $('.maps-lowest').html('-30%');
+    $('.maps-lower').html('-20%');
+    $('.maps-low').html('-10%');
+    $('.maps-middle').html('0%');
+    $('.maps-high').html('10%');
+    $('.maps-higher').html('20%');
+    $('.maps-highest').html('30%');
   }
 })
 
-$('.map-searchbar').on('select2:select', function (e) {
+$('.map-keyin').on('select2:select', function (e) {
     var selected = e.params.data.text;
 
     if (tops.includes(selected)) {
@@ -190,7 +190,7 @@ $('.map-searchbar').on('select2:select', function (e) {
 $('.map-reset').click(function(){
     updateMarketMap();
     rewindOff();
-    $('.map-searchbar').val(null).trigger('change');
+    $('.map-keyin').val(null).trigger('change');
 })
 
 $('.map-rewind').click(function(){
@@ -239,7 +239,7 @@ $(document).ready(function() {
     $('#header').removeClass('header-fix');
   }
 
-  $('.map-searchbar').select2({
+  $('.map-keyin').select2({
     placeholder: "종목명/섹터/업종"
   })
   
