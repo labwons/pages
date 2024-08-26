@@ -25,7 +25,7 @@ if __name__ == "__main__":
         MMAP.largeCap[MMAP.largeCap["kind"] == "sector"].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')
     },
     "Industries": {
-        MMAP.largeCap[MMAP.largeCap["kind"] == "industry"].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')
+        MMAP.largeCap[(MMAP.largeCap["kind"] == "industry") | (MMAP.largeCap["name"].isin(['에너지', '유틸리티']))].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')
     }
 {bc}""".replace("'", '"').replace("nan", '""'))
     
