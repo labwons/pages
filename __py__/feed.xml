@@ -1,0 +1,31 @@
+---
+layout: null
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LAB￦ONS</title>
+    <description>SNO￦BALL YOUR ASSET</description>
+    <link>https://labwons.com/</link>
+    <atom:link href="https://labwons.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Fri, 26 Jul 2024 12:00:00 +0900</pubDate>
+    <lastBuildDate>Tue, 27 Aug 2024 16:08:47 +0900</lastBuildDate>
+    <generator>Custom Python Script 1.0</generator>
+    <item>
+      <title>시장 지도</title>
+      <description>시장 지도</description>
+      <author>snob.labwons@gmail.com</author>
+      <pubDate>Tue, 27 Aug 2024 16:08:47 +0900</pubDate>
+      <link>https://labwons.com/</link>
+      <guid isPermaLink="true">https://labwons.com/</guid>
+    </item>
+    <item>
+      <title>시장 수익률</title>
+      <description>시장 수익률</description>
+      <author>snob.labwons@gmail.com</author>
+      <pubDate>Tue, 27 Aug 2024 16:08:47 +0900</pubDate>
+      <link>https://labwons.com/sectors/</link>
+      <guid isPermaLink="true">https://labwons.com/sectors/</guid>
+    </item>
+  </channel>
+</rss>
