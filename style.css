@@ -285,7 +285,8 @@ h1, h2, h3, h4, h5, h6 {
 .footer .footer-basis h4 {
     font-size: 16px;
     font-weight: bold;
-    color: #012970;
+    /* color: #012970; */
+    color: #000;
     text-transform: uppercase;
     position: relative;
     padding-bottom: 12px;
@@ -313,6 +314,7 @@ h1, h2, h3, h4, h5, h6 {
 .footer .footer-basis .footer-links .footer-link ul i {
     margin-right: 4px;
     color: #d0d4fc;
+    /* color: #000; */
     font-size: 12px;
     line-height: 0;
 }
@@ -328,14 +330,16 @@ h1, h2, h3, h4, h5, h6 {
 }
   
 .footer .footer-basis .footer-links .footer-link ul a {
-    color: #013289;
+    /* color: #013289; */
+    color: #000;
     transition: 0.3s;
     display: inline-block;
     line-height: 1;
 }
   
 .footer .footer-basis .footer-links .footer-link ul a:hover {
-    color: #4154f1;
+    /* color: #4154f1; */
+    color: #d0d4fc;
 }
 
 .footer .footer-basis .footer-contact {
@@ -349,7 +353,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .footer .footer-basis .footer-contact p i {
-    color: #013289;
+    /* color: #013289; */
+    color: #000;
 }
 
 .footer-bottom {
@@ -362,14 +367,16 @@ h1, h2, h3, h4, h5, h6 {
 .footer .copyright {
     text-align: center;
     padding-top: 30px;
-    color: #012970;
+    /* color: #012970; */
+    color: #000;
 }
   
 .footer .credits {
     padding: 10px 0;
     text-align: center;
     font-size: 13px;
-    color: #012970;
+    /* color: #012970; */
+    color: #000;
 }
 
 @media (max-width: 1024px) {
@@ -469,16 +476,12 @@ h1, h2, h3, h4, h5, h6 {
     align-items: stretch;
     justify-content: space-between;    
     font-size: 14px;
-
-    /* background: #abcdab; */
 }
 
 .service-section .service-box .service-app {
     flex: 1 1 auto;
     width: 100%;
     height: calc(100vh - 80px - 60px);
-
-    /* background: #fff; */
 }
 
 .service-section .service-box .service-footer {

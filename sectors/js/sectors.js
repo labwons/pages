@@ -1,19 +1,27 @@
-// const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
-const __URL__ = '../../../src/json/treemap/treemap.json';
+const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
+// const __URL__ = '../../../src/json/treemap/treemap.json';
 const abs = (array) => {
     return array.map(Math.abs);
 }
+const isLabTop = window.matchMedia('(max-width: 1443px)');
+const isTablet = window.matchMedia('(max-width: 1023px)');
+const isMobile = window.matchMedia('(max-width: 767px)');
+const isNarrow = window.matchMedia('(max-width: 374px)');
+
 
 let __SRC__ = null;
 
 var base = null;
 var data = null;
 var spec = null;
+var leftMargin = 115;
+var maxRange = 1.1;
 
 
 function updateBar() {
     let sorted = {};
     let indices = base[spec].map((value, index) => index);
+    var names = [];
     var unit = '%';
     var layout = {
         margin:{
@@ -24,16 +32,17 @@ function updateBar() {
         }, 
         autorange:false,
         xaxis:{
+            showticklabels: false,
+            showline: false,
             range:[0, 0], 
-            linecolor:'black', 
-            linewidth:1
         },
         yaxis:{
             linecolor:'black', 
             linewidth:1, 
             tickson:'boundaries', 
             ticklen:8
-        }
+        },
+
     }
     var option = {
         displayModeBar:false, 
@@ -50,7 +59,28 @@ function updateBar() {
     for (var key in base) {
         sorted[key] = indices.map(index => base[key][index]);
     }
-    layout.xaxis.range = [0, 1.15 * sorted[spec][sorted[spec].length - 1]];
+
+    if (isMobile.matches){
+        for (let i = 0; i < sorted.name.length; i++) {
+            if (sorted.name[i].includes("커뮤니케이션서비스")){
+                sorted.name[i] = "커뮤니케이션<br>서비스"
+            }
+            if (sorted.name[i].includes("경기관련소비재")){
+                sorted.name[i] = "경기관련<br>소비재"
+            }
+        }
+        layout.margin.l = 77;
+        if (isNarrow.matches) {
+            maxRange = 1.35;
+        } else {
+            maxRange = 1.3;
+        }
+    } else {
+        layout.margin.l = 115;
+        maxRange = 1.1;        
+    }
+
+    layout.xaxis.range = [0, maxRange * sorted[spec][sorted[spec].length - 1]];
 
     data = [{
         type: 'bar',
@@ -160,10 +190,10 @@ $(document).ready(async function(){
 
   base = __SRC__[$('.bar-type').val()];
   spec = $('.bar-option').val();
-  var size = __SRC__.LargeCap.name.length;
-  $('.trading-date').html(
-    __SRC__.LargeCap.name[size - 1].replace('대형주(', '* ').replace(')', '')
-  );
+//   var size = __SRC__.LargeCap.name.length;
+//   $('.trading-date').html(
+//     __SRC__.LargeCap.name[size - 1].replace('대형주(', '* ').replace(')', '')
+//   );
   updateBar();
 })
 
