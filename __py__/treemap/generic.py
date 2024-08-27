@@ -17,6 +17,16 @@ class MarketMap(object):
         self._merge = sector.join(number.drop(columns=[col for col in number if col in sector]))
         return
 
+    def __str__(self) -> str:
+        lc = self.largeCap.copy()
+        lcs = self.largeCapSamsungExcluded.copy()
+        return f"""\t"LargeCap": {lc.drop(columns=["kind"]).to_dict(orient='list')},
+\t"LargeCapWithoutSamsung" : {lcs.drop(columns=["kind"]).to_dict(orient='list')},
+\t"MidCap": {self.midCap.drop(columns=["kind"]).to_dict(orient='list')},
+\t"Sectors": {lc[lc["kind"] == "sector"].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')},
+\t"Industries": {lc[(lc["kind"] == "industry") | (lc["name"].isin(['에너지', '유틸리티']))].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')}
+""".replace("'", '"').replace("nan", '""')
+
     @property
     def largeCap(self) -> baseTreeMap:
         attr = f"_large"

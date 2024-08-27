@@ -81,7 +81,7 @@ class baseTreeMap(DataFrame):
         stocks['marketCap'] = stocks['size'].apply(num2cap)
         stocks['meta'] = stocks['name'] + "(" + stocks['ticker'] + ")" \
                         + "<br>시총: " + stocks['marketCap'] + '원'\
-                        + "<br>종가: " + stocks['close']
+                        + "<br>종가: " + stocks['close'] + '원'
         stocks['kind'] = 'stock'
         objs = [stocks]
 
