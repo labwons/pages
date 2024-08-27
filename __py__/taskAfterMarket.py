@@ -32,5 +32,5 @@ if __name__ == "__main__":
 {bc}""".replace("'", '"').replace("nan", '""'))
     
     updateSitemap()
-    updateRss()
+    updateRSS()
     print("Success.")
