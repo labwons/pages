@@ -46,10 +46,18 @@ layout: null
     <lastBuildDate>{timestamp}</lastBuildDate>
     <generator>Custom Python Script 1.0</generator>
     <item>
+      <title>시장 지도</title>
+      <description>시장 지도</description>
+      <author>snob.labwons@gmail.com</author>
+      <pubDate>{timestamp}</pubDate>
+      <link>https://labwons.com/</link>
+      <guid isPermaLink="true">https://labwons.com/</guid>
+    </item>
+    <item>
       <title>시장 수익률</title>
       <description>시장 수익률</description>
       <author>snob.labwons@gmail.com</author>
-      <pubDate>Wed, 21 Aug 2024 12:00:00 +0900</pubDate>
+      <pubDate>{timestamp}</pubDate>
       <link>https://labwons.com/sectors/</link>
       <guid isPermaLink="true">https://labwons.com/sectors/</guid>
     </item>
