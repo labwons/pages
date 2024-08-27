@@ -1,7 +1,9 @@
 try:
     from .treemap.generic import MarketMap
+    from .deploy.sitemap import updateSitemap
 except ImportError:
     from __py__.treemap.generic import MarketMap
+    from __py__.deploy.sitemap import updateSitemap
 import os
 
 
@@ -29,5 +31,5 @@ if __name__ == "__main__":
     }
 {bc}""".replace("'", '"').replace("nan", '""'))
     
-    
+    updateSitemap()
     print("Success.")
