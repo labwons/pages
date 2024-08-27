@@ -25,3 +25,10 @@ layout: null
     <priority>0.5</priority>
   </url>
 </urlset>""")
+    return
+  
+
+def updateRSS():
+    timestamp = datetime.now(timezone('Asia/Seoul'))
+    timestamp = timestamp.replace(microsecond=0)
+    
