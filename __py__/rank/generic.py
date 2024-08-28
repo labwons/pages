@@ -21,12 +21,14 @@ class Rank(object):
         _merge = sector.join(number.drop(columns=[col for col in number if col in sector]))
         _merge[MAP_KEYS] = round(_merge[MAP_KEYS], 2)
         self._merge = coloring(_merge)
+        self.sector_label = _merge['sectorName'].drop_duplicates().tolist()
+        self.industry_label = _merge['industryName'].str.replace('WI26 ', '').drop_duplicates().tolist()
         return
 
     def __str__(self) -> str:
         self.analyze('sectorName')
         self.analyze('industryName')
-        _str = ""
+        _str = f'\t"sectors": {self.sector_label},\n\t"industries": {self.industry_label},\n'
         for n, (var, data) in enumerate(self.__mem__.items()):
             _str += f'\t"{var}": {data}'
             if n < len(self.__mem__) - 1:
