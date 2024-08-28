@@ -1,5 +1,5 @@
-const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
-// const __URL__ = '../../../src/json/treemap/treemap.json';
+// const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
+const __URL__ = '../../../src/json/treemap/treemap.json';
 const isLabTop = window.matchMedia('(max-width: 1443px)');
 const isTablet = window.matchMedia('(max-width: 1023px)');
 const isMobile = window.matchMedia('(max-width: 767px)');
@@ -93,7 +93,6 @@ function updateMap() {
     'market-map', 
     data,
     {
-      // height: 650,
       margin:{l:0,r:0,t:0,b:25}
     },
     {
@@ -116,8 +115,8 @@ function updateBar() {
       t:10, 
       b:22
     }, 
-    autorange:false,
     xaxis:{
+      autorange: false,
       showticklabels: false,
       showline: false,
       range:[0, 0], 
@@ -185,7 +184,7 @@ function updateBar() {
     texttemplate:'%{text}' + unit,
     textposition:'outside',
     meta:sorted.meta,
-    hovertemplate:'%{meta}<br>' + spec + ': %{x}' + unit + '<extra></extra>',
+    hovertemplate:'%{meta}<br>' + spec + ': %{text}' + unit + '<extra></extra>',
     opacity:0.9
   }];
   Plotly.newPlot('market-map', data, layout, option);
@@ -385,6 +384,8 @@ $(document).ready(function() {
       if (!tops.includes(d.points[0].label)){
         rewindOn();
       }
+    } else {
+      return;
     }
   })
 })
