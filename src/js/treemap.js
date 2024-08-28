@@ -13,6 +13,7 @@ var base = null;
 var data = null;
 var spec = null;
 var tops = null;
+var view = 'map';
 var maxRange = 1.1;
 
 
@@ -133,9 +134,10 @@ function updateBar() {
     displayModeBar:false, 
     responsive:true, 
     showTips:false, 
-    modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'select2d', 'lasso2d'], // 기본 확대/축소 도구 제거
-    doubleClick: 'reset',
-    touchmode: 'none'
+    // modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'select2d', 'lasso2d'], // 기본 확대/축소 도구 제거
+    // doubleClick: 'reset',
+    // touchmode: 'none'
+    dragmode: false
     // staticPlot:true
   }
 
@@ -233,7 +235,7 @@ $(document).ready(function() {
   --------------------------------------------------------------*/
   $('.map-type').on('change', function() {
     base = __SRC__[$('.map-type').val()];
-    if ($('.map-switch').find(i).attr('class').includes('map')) {
+    if (view == 'map') {
       tops = getCoverNames();
       updateMap();
       searchReset();
@@ -244,7 +246,7 @@ $(document).ready(function() {
   
   $('.map-option').on('change', function() {
     spec = $('.map-option').val();
-    if ($('.map-switch').find(i).attr('class').includes('map')) {
+    if (view == 'map') {
       updateMap();
     } else {
       updateBar();
@@ -327,25 +329,32 @@ $(document).ready(function() {
     var button = $(this).find('i');
     if ( button.attr('class').includes('fa-map-marker') ) {
       $('.map-type').empty();
-      $('.map-type').append('<option value="LargeSectors">섹터(대형주)</option>');
+      $('.map-type').append('<option value="LargeSectors" selected="selected">섹터(대형주)</option>');
       $('.map-type').append('<option value="MidSectors">섹터(중형주)</option>');
       $('.map-type').append('<option value="LargeIndustries">업종(대형주)</option>');      
       $('.map-type').append('<option value="MidIndustries">업종(중형주)</option>');
-      base = __SRC__['LargeSectors'];;
-      updateBar();
+      view = 'bar';
       button.removeClass('fa-map-marker');
       button.addClass('fa-signal');
       $('.map-searchbar').prop('disabled', true);
+      if ($('.map-rewind').attr('class').includes('show')){
+        rewindOff();
+      }
     } else {
       $('.map-type').empty();
-      $('.map-type').append('<option value="LargeCap">대형주</option>');
+      $('.map-type').append('<option value="LargeCap" selected="selected">대형주</option>');
       $('.map-type').append('<option value="LargeCapWithoutSamsung">대형주(삼성전자 제외)</option>');
       $('.map-type').append('<option value="MidCap">중형주</option>');
-      base = __SRC__['LargeCap'];;
-      updateMap();
+      view = 'map';
       button.removeClass('fa-signal');
       button.addClass('fa-map-marker');
       $('.map-searchbar').prop('disabled', false);
+    }
+    base = __SRC__[$('.map-type').val()];
+    if (view == 'map') {
+      updateMap();
+    } else {
+      updateBar();
     }
   })
   
@@ -364,17 +373,21 @@ $(document).ready(function() {
   });
   
   $('.map-rewind').click(function(){
-    !$('.slice').get(0).dispatchEvent(E_MOUSE);
-    rewindOff();
+    if (view == 'map') {
+      !$('.slice').get(0).dispatchEvent(E_MOUSE);
+      rewindOff();
+    }
   })
   
   $('#market-map').on('plotly_click', function(e, d){
-    if ($('g.slice').length == 1) {
-      rewindOff();
-      return;
-    }
-    if (!tops.includes(d.points[0].label)){
-      rewindOn();
+    if (view == 'map'){
+      if ($('g.slice').length == 1) {
+        rewindOff();
+        return;
+      }
+      if (!tops.includes(d.points[0].label)){
+        rewindOn();
+      }
     }
   })
 })
