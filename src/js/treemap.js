@@ -134,7 +134,8 @@ function updateBar() {
     responsive:true, 
     showTips:false, 
     modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'select2d', 'lasso2d'], // 기본 확대/축소 도구 제거
-    doubleClick: 'reset'
+    doubleClick: 'reset',
+    touchmode: 'none'
     // staticPlot:true
   }
 
@@ -232,14 +233,22 @@ $(document).ready(function() {
   --------------------------------------------------------------*/
   $('.map-type').on('change', function() {
     base = __SRC__[$('.map-type').val()];
-    tops = getCoverNames();
-    updateMap();
-    searchReset();
+    if ($('.map-switch').find(i).attr('class').includes('map')) {
+      tops = getCoverNames();
+      updateMap();
+      searchReset();
+    } else{
+      updateBar();
+    }
   })
   
   $('.map-option').on('change', function() {
     spec = $('.map-option').val();
-    updateMap();
+    if ($('.map-switch').find(i).attr('class').includes('map')) {
+      updateMap();
+    } else {
+      updateBar();
+    }
   
     if ((spec == 'PER') || (spec == 'PBR')) {
       $('.map-lowest').html('고평가');
@@ -326,6 +335,7 @@ $(document).ready(function() {
       updateBar();
       button.removeClass('fa-map-marker');
       button.addClass('fa-signal');
+      $('.map-searchbar').prop('disabled', true);
     } else {
       $('.map-type').empty();
       $('.map-type').append('<option value="LargeCap">대형주</option>');
@@ -335,6 +345,7 @@ $(document).ready(function() {
       updateMap();
       button.removeClass('fa-signal');
       button.addClass('fa-map-marker');
+      $('.map-searchbar').prop('disabled', false);
     }
   })
   
