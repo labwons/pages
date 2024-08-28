@@ -107,7 +107,7 @@ function updateMap() {
 function updateBar() {
   let sorted = {};
   let indices = base[spec].map((value, index) => index);
-  var minbar = 1;
+  var minbar = 0;
   var unit = '%';
   var layout = {
     margin:{
@@ -127,18 +127,13 @@ function updateBar() {
       zeroline: false,
       showticklabels: false
     },
-
+    dragmode: false
   }
   var option = {
     scrollZoom: false,
     displayModeBar:false, 
     responsive:true, 
     showTips:false, 
-    // modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'select2d', 'lasso2d'], // 기본 확대/축소 도구 제거
-    // doubleClick: 'reset',
-    // touchmode: 'none'
-    dragmode: false
-    // staticPlot:true
   }
 
   if ((spec == 'PER') || (spec == 'PBR')) {
@@ -149,16 +144,18 @@ function updateBar() {
   for (var key in base) {
     sorted[key] = indices.map(index => base[key][index]);
   }
-
-  if (isMobile.matches){
-    maxRange = isNarrow.matches ? 1.35 : 1.3;
-    minbar = isNarrow.matches ? 2.4 : 1.8;
+  if (isNarrow.matches) {
+    maxRange = 1.35 * Math.max(...abs(sorted[spec]));
+  } else if (isMobile.matches) {
+    maxRange = 1.3 * Math.max(...abs(sorted[spec]));
+  } else if (isTablet.matches) {
+    maxRange = 1.2 * Math.max(...abs(sorted[spec]));
   } else {
-    minbar = 1;
-    maxRange = 1.1;        
+    maxRange = 1.1 * Math.max(...abs(sorted[spec]));
   }
+  minbar = 0.45 * maxRange;
 
-  layout.xaxis.range = [0, maxRange * sorted[spec][sorted[spec].length - 1] + minbar];
+  layout.xaxis.range = [0, maxRange + minbar];
   layout.annotations = sorted.name.map(function(y, i) {
     return {
       x: 0,
@@ -169,7 +166,7 @@ function updateBar() {
       showarrow: false,
       font: {
         color: 'white',
-        size: 14,
+        size: 13,
       },
       xanchor: 'left',
       yanchor: 'middle',
@@ -327,14 +324,14 @@ $(document).ready(function() {
   
   $('.map-switch').click(function(){
     var button = $(this).find('i');
-    if ( button.attr('class').includes('fa-map-marker') ) {
+    if ( button.attr('class').includes('fa-map-o') ) {
       $('.map-type').empty();
       $('.map-type').append('<option value="LargeSectors" selected="selected">섹터(대형주)</option>');
       $('.map-type').append('<option value="MidSectors">섹터(중형주)</option>');
       $('.map-type').append('<option value="LargeIndustries">업종(대형주)</option>');      
       $('.map-type').append('<option value="MidIndustries">업종(중형주)</option>');
       view = 'bar';
-      button.removeClass('fa-map-marker');
+      button.removeClass('fa-map-o');
       button.addClass('fa-signal');
       $('.map-searchbar').prop('disabled', true);
       if ($('.map-rewind').attr('class').includes('show')){
@@ -347,7 +344,7 @@ $(document).ready(function() {
       $('.map-type').append('<option value="MidCap">중형주</option>');
       view = 'map';
       button.removeClass('fa-signal');
-      button.addClass('fa-map-marker');
+      button.addClass('fa-map-o');
       $('.map-searchbar').prop('disabled', false);
     }
     base = __SRC__[$('.map-type').val()];
