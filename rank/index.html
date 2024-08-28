@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>LAB￦ONS</title>
+    <title>LAB￦ONS 순위</title>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="google-adsense-account" content="ca-pub-7507574593260609">
     
-    <link rel="icon" href="./src/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="../src/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
-    <link rel="stylesheet" href="./style.css">
-    <link rel="stylesheet" href="./src/css/marketmap.css">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="./css/sectors.css">
 
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
@@ -24,12 +23,12 @@
       <!----------------------------------------------------------------------------------------------->
       <header id="header" class="header header-fix">
         <a href="/" class="logo">
-            <img src="./src/img/logo-text.png" alt="Logo">
+            <img src="../src/img/logo-text.png" alt="Logo">
         </a>
         <nav id="navbar" class="navbar">
             <ul>
                 <li><a href="/">시장 지도</a></li>
-                <li><a href="/sectors">시장 수익률</a></li>
+                <li><a href="#">시장 수익률</a></li>
             </ul>
             <i class="fa fa-bars navbar-button"></i>
         </nav>
@@ -40,19 +39,18 @@
     <!----------------------------------------------------------------------------------------------->
     <main id="main">
       <section class="service-section">
-        <h1 style="display:none;">시장 지도</h1>
+        <h1 style="display:none;">시장 수익률</h1>
         <div class="ad-vertical">
             <!-- Google Adsense -->
         </div>
         <div class="service-box">
           <div class="service-nav">
-            <div class="map-options">
-              <select name="type" class="map-type">
-                <option value="LargeCap" selected="selected">대형주</option>
-                <option value="LargeCapWithoutSamsung">대형주(삼성전자 제외)</option>
-                <option value="MidCap">중형주</option>
+            <div class="bar-options">
+              <select name="type" class="bar-type">
+                <option value="Sectors" selected="selected">섹터</option>
+                <option value="Industries">업종</option>
               </select>
-              <select name="option" class="map-option">
+              <select name="option" class="bar-option">
                 <optgroup label="- 기간별 수익률 -">
                   <option value="D-1" selected="selected">1일 수익률</option>
                   <option value="W-1">1주 수익률</option>
@@ -67,32 +65,26 @@
                   <option value="PBR">PBR(분기)</option>
                 </optgroup>
               </select>
-              <i class="map-reset fa fa-refresh"></i>
-              <i class="map-bar-switch fa fa-map-marker"></i>
             </div>
-            <select class="map-searchbar">
-              <option></option>
-            </select>
           </div>
 
           <div class="service-app">
-            <div class="map-plotly" id="market-map">
-               <i class="map-rewind fa fa-undo"></i>
+            <div class="bar-plotly" id="sector-bar">
             </div>
           </div>
 
           <div class="service-footer">
-            <div class="map-legend">
-              <span class="map-lowest">-3%</span>
-              <span class="map-lower">-2%</span>
-              <span class="map-low">-1%</span>
-              <span class="map-middle">0%</span>
-              <span class="map-high">1%</span>
-              <span class="map-higher">2%</span>
-              <span class="map-highest">3%</span>
+            <div class="bar-legend">
+              <span class="bar-lowest">-3%</span>
+              <span class="bar-lower">-2%</span>
+              <span class="bar-low">-1%</span>
+              <span class="bar-middle">0%</span>
+              <span class="bar-high">1%</span>
+              <span class="bar-higher">2%</span>
+              <span class="bar-highest">3%</span>
             </div>
-            <div class="map-notice">
-              모든 투자의 책임은 당사자에게 있습니다. PC 환경에서 마우스 커서를 올리거나 모바일 기기에서 길게 누르면 세부 정보가 나타납니다. 종목이나 섹터를 클릭(탭)하면 확대/재편됩니다. *표시는 코스닥 종목입니다.
+            <div class="bar-notice">
+              모든 투자의 책임은 당사자에게 있습니다. PC 환경에서 마우스 커서를 올리면 세부 정보가 나타납니다. 섹터/업종은 전체 시장이 아닌 대형주(코스피200, 코스닥150) 기준으로 구성하였습니다.
             </div>
           </div>
         </div>
@@ -141,21 +133,21 @@
           <div class="faq-column">
             <div class="faq-item">
               <div class="faq-question faq-question-4">
-                <span>제가 찾는 종목이 없어요.</span>
+                <span>섹터/업종은 어떻게 구성되나요?</span>
                 <i class="fa fa-chevron-down"></i>
               </div>
               <div class="faq-content faq-content-4 collapse">
-                  가독성을 위해 대형주는 코스피200 지수와 코스닥150 지수 종목으로 구성하였으며 중형주는 그 외 시가총액 상위 400개로 제한하였습니다. 이외 종목은 제외됩니다.
+                섹터/업종은 전체 시장이 아닌 대형주(코스피200, 코스닥150) 기준으로 구성하였습니다.
               </div>
             </div>
 
             <div class="faq-item">
               <div class="faq-question faq-question-5">
-                <span>PER, PBR 기준 일자가 언제예요?</span>
+                <span>수익률은 어떻게 계산하나요?</span>
                 <i class="fa fa-chevron-down"></i>
               </div>
               <div class="faq-content faq-content-5 collapse">
-                한국거래소(KRX)에서 일괄 조회 가능한 최근 분기 실적 발표 기준입니다.
+                섹터/업종에 대해서 종목의 시가총액에 대한 가중평균으로 계산하였습니다. 단순 평균이 아님에 유의하십시오.
               </div>
             </div>
 
@@ -186,9 +178,9 @@
         <div class="footer-container">
           <div class="footer-info">
             <a href="/" class="logo">
-              <img src="./src/img/logo-footer.png" alt="LAB￦ONS">
+              <img src="../src/img/logo-footer.png" alt="LAB￦ONS">
             </a>
-            <p>본 홈페이지는 <b>개인 블로그</b>로 운영되며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다.
+            <p>GITHUB PAGE에 기반한 <b>개인 블로그</b>이며 본 사이트에서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다.
             참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.</p>
           </div>
             
@@ -208,7 +200,7 @@
               <h4>서비스 바로가기</h4>
               <ul>
                 <li><i class="fa fa-chevron-right"></i> <a href="/">시장 지도</a></li>
-                <li><i class="fa fa-chevron-right"></i> <a href="/sectors">시장 수익률</a></li>
+                <li><i class="fa fa-chevron-right"></i> <a href="#">시장 수익률</a></li>
               </ul>
             </div>
           </div>                  
@@ -233,8 +225,8 @@
       </div>
     </footer>
 
-    <script type="text/javascript" src="./src/js/common.js"></script>
-    <script type="text/javascript" src="./src/js/treemap.min.js"></script>
+    <script type="text/javascript" src="../src/js/common.js"></script>
+    <script type="text/javascript" src="./js/sectors.js"></script>
       
     
 </body>

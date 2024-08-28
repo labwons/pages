@@ -6,7 +6,7 @@ import os
 def updateSitemap():
     timestamp = datetime.now(timezone('Asia/Seoul'))
     timestamp = timestamp.replace(microsecond=0)
-    with open(os.path.join(os.path.dirname(__file__), r"../sitemap.xml"), mode="w") as file:
+    with open(os.path.join(os.path.dirname(__file__), r"../../sitemap.xml"), mode="w") as file:
         file.write(f"""---
 layout: null
 ---
@@ -31,7 +31,7 @@ layout: null
 def updateRSS():
     timestamp = datetime.now(timezone('Asia/Seoul'))
     timestamp = timestamp.strftime('%a, %d %b %Y %H:%M:%S %z')
-    with open(os.path.join(os.path.dirname(__file__), r"../feed.xml"), mode="w") as file:
+    with open(os.path.join(os.path.dirname(__file__), r"../../feed.xml"), mode="w") as file:
         file.write(f"""---
 layout: null
 ---

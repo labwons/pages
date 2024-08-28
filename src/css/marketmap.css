@@ -31,24 +31,35 @@
     /* height: 28px; */
 }
 
-.map-reset {
+.map-reset, .map-bar-switch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     box-sizing: border-box;
     width: 28px;
     height: 28px;
     margin: 0;
     padding: 0;
     border: 1px solid #aaa;
-    background-color:white;
-    background-image:url('../img/reset.png');
-    background-size: contain;
-    background-repeat:no-repeat;
     border-radius: 6px;
     cursor: pointer;
+    font-size: 18px;
+    color: #444;
 }
 
-.map-reset:hover{
-    background-color:rgba(200, 200, 200, 0.5)
+.map-reset {
+    margin-right: 2px;
 }
+
+/* .map-bar-switch {
+    transform: scaleX(-1) rotate(-90deg);
+} */
+
+.map-reset:hover,
+.map-bar-switch:hover {
+    color: #aaa;
+}
+
 
 .map-searchbar {
     width: 25%;
@@ -60,6 +71,9 @@
 }
 
 .map-rewind {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
     top: 6px;
     left: 6px;
@@ -67,10 +81,10 @@
     height: 24px;
     margin: 0;
     border: 1px solid #aaa;
-    background-color:#ddd;
+    /* background-color:#ddd;
     background-image:url('../img/undo.png');
     background-size:contain;
-    background-repeat:no-repeat;
+    background-repeat:no-repeat; */
     border-radius: 6px;
     cursor: pointer;
     opacity: 0;

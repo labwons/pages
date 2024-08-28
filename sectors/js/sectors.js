@@ -14,18 +14,18 @@ let __SRC__ = null;
 var base = null;
 var data = null;
 var spec = null;
-var leftMargin = 115;
+// var leftMargin = 115;
 var maxRange = 1.1;
 
 
 function updateBar() {
     let sorted = {};
     let indices = base[spec].map((value, index) => index);
-    var names = [];
+    var minbar = 1;
     var unit = '%';
     var layout = {
         margin:{
-            l:115, 
+            l:10, 
             r:10, 
             t:10, 
             b:22
@@ -37,18 +37,24 @@ function updateBar() {
             range:[0, 0], 
         },
         yaxis:{
-            linecolor:'black', 
-            linewidth:1, 
-            tickson:'boundaries', 
-            ticklen:8
+            showline: false,
+            zeroline: false,
+            showticklabels: false
+            // linecolor:'black', 
+            // linewidth:1, 
+            // tickson:'boundaries', 
+            // ticklen:8
         },
 
     }
     var option = {
+        scrollZoom: false,
         displayModeBar:false, 
         responsive:true, 
         showTips:false, 
-        staticPlot:true
+        // modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'select2d', 'lasso2d'], // 기본 확대/축소 도구 제거
+        doubleClick: 'reset'
+        // staticPlot:true
     }
 
     if ((spec == 'PER') || (spec == 'PBR')) {
@@ -61,30 +67,36 @@ function updateBar() {
     }
 
     if (isMobile.matches){
-        for (let i = 0; i < sorted.name.length; i++) {
-            if (sorted.name[i].includes("커뮤니케이션서비스")){
-                sorted.name[i] = "커뮤니케이션<br>서비스"
-            }
-            if (sorted.name[i].includes("경기관련소비재")){
-                sorted.name[i] = "경기관련<br>소비재"
-            }
-        }
-        layout.margin.l = 77;
-        if (isNarrow.matches) {
-            maxRange = 1.35;
-        } else {
-            maxRange = 1.3;
-        }
+        maxRange = isNarrow.matches ? 1.35 : 1.3;
+        minbar = isNarrow.matches ? 2.4 : 1.8;
+        
     } else {
-        layout.margin.l = 115;
+        minbar = 1;
         maxRange = 1.1;        
     }
 
-    layout.xaxis.range = [0, maxRange * sorted[spec][sorted[spec].length - 1]];
+    layout.xaxis.range = [0, maxRange * sorted[spec][sorted[spec].length - 1] + minbar];
+
+    layout.annotations = sorted.name.map(function(y, i) {
+        return {
+          x: 0,
+          y: y,
+          xref: 'x',
+          yref: 'y',
+          text: y,
+          showarrow: false,
+          font: {
+            color: 'white',
+            size: 14,
+          },
+          xanchor: 'left',
+          yanchor: 'middle',
+        };
+      });
 
     data = [{
         type: 'bar',
-        x: abs(sorted[spec]),
+        x: abs(sorted[spec]).map(function(x) {return x += minbar;}),
         y: sorted.name,
         orientation:'h',
 		marker:{

@@ -173,6 +173,22 @@ $('.map-option').on('change', function() {
   }
 })
 
+$('.map-reset').click(function(){
+  updateMarketMap();
+  rewindOff();
+  $('.map-searchbar').val(null).trigger('change');
+})
+
+$('.map-bar-switch').click(function(){
+  if ( $(this).attr('class').includes('fa-map-marker') ) {
+    $(this).removeClass('fa-map-marker');
+    $(this).addClass('fa-signal');
+  } else {
+    $(this).removeClass('fa-signal');
+    $(this).addClass('fa-map-marker');
+  }
+})
+
 $('.map-searchbar').on('select2:select', function (e) {
     var selected = e.params.data.text;
 
@@ -186,12 +202,6 @@ $('.map-searchbar').on('select2:select', function (e) {
       clickTreemap(selected);
     }, 1000)
 });
-
-$('.map-reset').click(function(){
-    updateMarketMap();
-    rewindOff();
-    $('.map-searchbar').val(null).trigger('change');
-})
 
 $('.map-rewind').click(function(){
   !$('.slice').get(0).dispatchEvent(E_MOUSE);
