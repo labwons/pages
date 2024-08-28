@@ -20,11 +20,14 @@ class MarketMap(object):
     def __str__(self) -> str:
         lc = self.largeCap.copy()
         lcs = self.largeCapSamsungExcluded.copy()
+        md = self.midCap.copy()
         return f"""\t"LargeCap": {lc.drop(columns=["kind"]).to_dict(orient='list')},
 \t"LargeCapWithoutSamsung" : {lcs.drop(columns=["kind"]).to_dict(orient='list')},
-\t"MidCap": {self.midCap.drop(columns=["kind"]).to_dict(orient='list')},
-\t"Sectors": {lc[lc["kind"] == "sector"].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')},
-\t"Industries": {lc[(lc["kind"] == "industry") | (lc["name"].isin(['에너지', '유틸리티']))].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')}
+\t"MidCap": {md.drop(columns=["kind"]).to_dict(orient='list')},
+\t"LargeSectors": {lc[lc["kind"] == "sector"].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')},
+\t"MidSectors": {md[md["kind"] == "sector"].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')},
+\t"LargeIndustries": {lc[(lc["kind"] == "industry") | (lc["name"].isin(['에너지', '유틸리티']))].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')},
+\t"MidIndustries": {md[(md["kind"] == "industry") | (md["name"].isin(['에너지', '유틸리티']))].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')}
 """.replace("'", '"').replace("nan", '""')
 
     @property
