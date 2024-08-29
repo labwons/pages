@@ -19,7 +19,7 @@ layout: null
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://labwons.com/sectors</loc>
+    <loc>https://labwons.com/rank</loc>
     <lastmod>{timestamp.isoformat()}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -54,12 +54,12 @@ layout: null
       <guid isPermaLink="true">https://labwons.com/</guid>
     </item>
     <item>
-      <title>시장 수익률</title>
-      <description>시장 수익률</description>
+      <title>수익률 순위</title>
+      <description>수익률 순위</description>
       <author>snob.labwons@gmail.com</author>
       <pubDate>{timestamp}</pubDate>
-      <link>https://labwons.com/sectors/</link>
-      <guid isPermaLink="true">https://labwons.com/sectors/</guid>
+      <link>https://labwons.com/rank/</link>
+      <guid isPermaLink="true">https://labwons.com/rank/</guid>
     </item>
   </channel>
 </rss>""")
