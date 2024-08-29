@@ -29,7 +29,8 @@ class Rank(object):
         return
 
     def __str__(self) -> str:
-        _str = f'\t"sectors: {self.sector_label},\n\tindustries: {self.industry_label},\n'
+        date = f"{TradingDate.near.strftime('%Y-%m-%d')} 종가 기준"
+        _str = f'\t"date":"{date}","sectors": {self.sector_label},\n\t"industries": {self.industry_label},\n'
         for n, (var, data) in enumerate(self.__mem__.items()):
             _str += f'\t"{var}": {data}'
             if n < len(self.__mem__) - 1:
