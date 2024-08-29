@@ -88,6 +88,20 @@ function updateBar() {
       yanchor: 'middle',
     };
   });
+  layout.annotations.push({
+    x: maxRange + minbar,
+    y: sorted.name[parseInt(sorted.name.length / 2)],
+    xref: 'x',
+    yref: 'y',
+    text: base.count,
+    showarrow: false,
+    font: {
+      color: 'black',
+      size: 14,
+    },
+    xanchor: 'right',
+    yanchor: 'middle'
+  })
 
   data = [{
     type: 'bar',
