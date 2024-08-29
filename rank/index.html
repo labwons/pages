@@ -14,7 +14,6 @@
 
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 <body>
 
@@ -46,10 +45,7 @@
         <div class="service-box">
           <div class="service-nav">
             <div class="bar-options">
-              <select name="type" class="bar-type">
-                <!-- <option value="Sectors" selected="selected">섹터</option>
-                <option value="Industries">업종</option> -->
-              </select>
+              <select name="type" class="bar-type"></select>
               <select name="option" class="bar-option">
                 <optgroup label="- 기간별 수익률 -">
                   <option value="D-1" selected="selected">1일 수익률</option>
@@ -69,7 +65,7 @@
           </div>
 
           <div class="service-app">
-            <div class="bar-plotly" id="sector-bar">
+            <div class="bar-plotly" id="stock-rank">
             </div>
           </div>
 
@@ -84,7 +80,7 @@
               <span class="bar-highest">3%</span>
             </div>
             <div class="bar-notice">
-              모든 투자의 책임은 당사자에게 있습니다. PC 환경에서 마우스 커서를 올리면 세부 정보가 나타납니다. 섹터/업종은 전체 시장이 아닌 대형주(코스피200, 코스닥150) 기준으로 구성하였습니다.
+              모든 투자의 책임은 당사자에게 있습니다. PC 환경에서 마우스 커서를 올리면 세부 정보가 나타납니다. 섹터/업종은 시가총액 1천억 이상 상장주식수 1백만주 이상에 대해 구성하였습니다.
             </div>
           </div>
         </div>
@@ -180,8 +176,8 @@
             <a href="/" class="logo">
               <img src="../src/img/logo-footer.png" alt="LAB￦ONS">
             </a>
-            <p>GITHUB PAGE에 기반한 <b>개인 블로그</b>이며 본 사이트에서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다.
-            참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.</p>
+            <p>본 홈페이지는 <b>개인 블로그</b>로 운영되며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다.
+              참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.</p>
           </div>
             
           <div class="footer-links">
@@ -226,7 +222,7 @@
     </footer>
 
     <script type="text/javascript" src="../src/js/common.js"></script>
-    <script type="text/javascript" src="./js/sectors.js"></script>
+    <script type="text/javascript" src="./js/rank.js"></script>
       
     
 </body>

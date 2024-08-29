@@ -20,6 +20,7 @@ class Rank(object):
         number = Market(auto_update=False)
         _merge = sector.join(number.drop(columns=[col for col in number if col in sector]))
         _merge[MAP_KEYS] = round(_merge[MAP_KEYS], 2)
+        _merge = _merge[(_merge["시가총액"] >= 100000000000) & (_merge["상장주식수"] >= 1000000)]
         self._merge = coloring(_merge)
         self.sector_label = _merge['sectorName'].drop_duplicates().tolist()
         self.industry_label = _merge['industryName'].str.replace('WI26 ', '').drop_duplicates().tolist()
