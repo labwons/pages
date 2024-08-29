@@ -325,10 +325,12 @@ $(document).ready(function() {
     var button = $(this).find('i');
     if ( button.attr('class').includes('fa-map-o') ) {
       $('.map-type').empty();
-      $('.map-type').append('<option value="LargeSectors" selected="selected">섹터(대형주)</option>');
-      $('.map-type').append('<option value="MidSectors">섹터(중형주)</option>');
-      $('.map-type').append('<option value="LargeIndustries">업종(대형주)</option>');      
-      $('.map-type').append('<option value="MidIndustries">업종(중형주)</option>');
+      $('.map-type').append('<optgroup label="---- [대형주 / Large Cap]">');
+      $('.map-type').append('<option value="LargeSectors" selected="selected">섹터</option>');
+      $('.map-type').append('<option value="LargeIndustries">업종</option>');      
+      $('.map-type').append('<optgroup label="---- [중형주 / Mid Cap]">');
+      $('.map-type').append('<option value="MidSectors">섹터</option>');      
+      $('.map-type').append('<option value="MidIndustries">업종</option>');
       view = 'bar';
       button.removeClass('fa-map-o');
       button.addClass('fa-signal');

@@ -1,8 +1,10 @@
 try:
+    from ..market.fetch.date import TradingDate
     from ..treemap.core import MAP_KEYS, coloring, num2cap
     from ..market.generic import Market
     from ..sector.generic import Sector
 except ImportError:
+    from __py__.market.fetch.date import TradingDate
     from __py__.treemap.core import MAP_KEYS, coloring, num2cap
     from __py__.market.generic import Market
     from __py__.sector.generic import Sector
@@ -29,7 +31,8 @@ class Rank(object):
     def __str__(self) -> str:
         self.analyze('sectorName')
         self.analyze('industryName')
-        _str = f'\t"sectors": {self.sector_label},\n\t"industries": {self.industry_label},\n'
+        date = f"{TradingDate.near.strftime('%Y-%m-%d')} 기준"
+        _str = f'\t"date": {date},\n\t"sectors": {self.sector_label},\n\t"industries": {self.industry_label},\n'
         for n, (var, data) in enumerate(self.__mem__.items()):
             _str += f'\t"{var}": {data}'
             if n < len(self.__mem__) - 1:

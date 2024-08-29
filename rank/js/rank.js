@@ -1,5 +1,5 @@
-const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/rank/rank.json';
-// const __URL__ = '../../../src/json/treemap/treemap.json';
+// const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/rank/rank.json';
+const __URL__ = '../../../src/json/rank/rank.json';
 const abs = (array) => {
     return array.map(Math.abs);
 }
@@ -93,11 +93,11 @@ function updateBar() {
     y: sorted.name[parseInt(sorted.name.length / 2)],
     xref: 'x',
     yref: 'y',
-    text: base.count,
+    text: base.date + "<br>상하위" + base.count,
     showarrow: false,
     font: {
       color: 'black',
-      size: 14,
+      size: 13,
     },
     xanchor: 'right',
     yanchor: 'middle'
@@ -132,11 +132,11 @@ $(document).ready(async function(){
   } catch (error) {
       console.error('Fetch error:', error);
   }
-  $('.bar-type').append('<optgroup label="[섹터 / SECTOR]">');
+  $('.bar-type').append('<optgroup label="---- [섹터 / SECTOR]">');
   for (let sector of __SRC__.sectors){
     $('.bar-type').append('<option value="' + sector + '">' + sector + '</option>');
   }
-  $('.bar-type').append('<optgroup label="[업종 / INDUSTRY]">');
+  $('.bar-type').append('<optgroup label="---- [업종 / INDUSTRY]">');
   for (let industry of __SRC__.industries){
     $('.bar-type').append('<option value="' + industry + '">' + industry + '</option>');
   }
