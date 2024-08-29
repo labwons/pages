@@ -12,9 +12,10 @@ import os, json
 if __name__ == "__main__":
     
     treemap = json.dumps(json.loads("{" + str(MarketMap(True)) + "}"), separators=(',', ':'))
-    ranking = json.dumps(json.loads("{" + str(Rank()) + "}"), separators=(',', ':'))
     with open(os.path.join(os.path.dirname(__file__), r"../src/json/treemap/treemap.json"), mode="w") as file:
         file.write(treemap)
+        
+    ranking = json.dumps(json.loads("{" + str(Rank()) + "}"), separators=(',', ':'))    
     with open(os.path.join(os.path.dirname(__file__), r"../src/json/rank/rank.json"), mode="w") as file:
         file.write(ranking)
     
