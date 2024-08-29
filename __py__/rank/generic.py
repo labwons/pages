@@ -29,10 +29,7 @@ class Rank(object):
         return
 
     def __str__(self) -> str:
-        self.analyze('sectorName')
-        self.analyze('industryName')
-        date = f"{TradingDate.near.strftime('%Y-%m-%d')} 기준"
-        _str = f'\t"date": {date},\n\t"sectors": {self.sector_label},\n\t"industries": {self.industry_label},\n'
+        _str = f'\t"sectors: {self.sector_label},\n\tindustries: {self.industry_label},\n'
         for n, (var, data) in enumerate(self.__mem__.items()):
             _str += f'\t"{var}": {data}'
             if n < len(self.__mem__) - 1:
@@ -44,13 +41,12 @@ class Rank(object):
         for key in MAP_KEYS:
             if key in ['PER', 'PBR']:
                 df = df[df[key] > 0]
-            _sort = df.sort_values(by=key, ascending=False)
+            _sort = df.sort_values(by=key, ascending=False).reset_index()
             point = int(len(_sort) / 2) if len(_sort) < 20 else 10
             if key == "DIV":
                 _join = _sort.head(2 * point).copy()
-            else:            
+            else:
                 _join = pd.concat(objs=[_sort.head(point), _sort.tail(point)], axis=0).copy()
-            _join['count'] = f'{len(_join)} / {len(_sort)} 종목'
             _join['meta'] = "시가총액: " + (_join['marketCap']/100000000).apply(num2cap) + '원<br>' \
                             '종가: ' + _join['close'].astype(int).apply(lambda x: f"{x:,d}원")
             if key == "PER":
@@ -59,7 +55,8 @@ class Rank(object):
                 _join['meta'] = _join['meta'] + '<br>BPS: ' + _join['BPS'].astype(int).apply(lambda x: f"{x:,d}원")
             else:
                 pass
-            _join = _join[['name', 'meta', key, f'{key}-C', 'count']]
+            _join["name"] = (_join.index + 1).astype(str) + ". " + _join['name']
+            _join = _join[['name', 'meta', key, f'{key}-C']]
             final[key] = _join
         return final
 
@@ -67,9 +64,6 @@ class Rank(object):
         for (name, ), group in self._merge.groupby(by=[column]):
             _sorted = self._sort(group)
             for key, data in _sorted.items():
-                count = data['count'].values[0]
-                data = data.drop(columns=['count'])
                 json = data.to_dict(orient='list')
-                json['count'] = count
                 self.__mem__[f"{name.replace('WI26 ', '')}_{key}"] = json
         return

@@ -1,5 +1,5 @@
-// const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/rank/rank.json';
-const __URL__ = '../../../src/json/rank/rank.json';
+const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/rank/rank.json';
+// const __URL__ = '../../../src/json/rank/rank.json';
 const abs = (array) => {
     return array.map(Math.abs);
 }
@@ -20,7 +20,6 @@ var maxRange = 1.1;
 
 function updateBar() {
   base = __SRC__[$('.bar-type').val() + '_' + $('.bar-option').val()];
-  console.log(base);
   let sorted = {};
   let indices = base[spec].map((value, index) => index);
   var minbar = 0;
@@ -93,7 +92,7 @@ function updateBar() {
     y: sorted.name[parseInt(sorted.name.length / 2)],
     xref: 'x',
     yref: 'y',
-    text: base.date + "<br>상하위" + base.count,
+    text: __SRC__.date,
     showarrow: false,
     font: {
       color: 'black',
