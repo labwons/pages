@@ -1,10 +1,13 @@
-let id_a = "WI100";
-let url_a = "https://raw.githubusercontent.com/labwons/pages/main/src/json/indices/" + id_a + ".json";
-var data_a = null;
+const INDEX_KEY = {'WI100': '에너지', 'WI110': '화학', 'WI200': '비철금속', 'WI210': '철강', 'WI220': '건설', 'WI230': '기계', 'WI240': '조선', 'WI250': '상사,자본재',
+  'WI260': '운송', 'WI300': '자동차', 'WI310': '화장품,의류', 'WI320': '호텔,레저', 'WI330': '미디어,교육', 'WI340': '소매(유통)', 'WI400': '필수소비재',
+  'WI410': '건강관리', 'WI500': '은행', 'WI510': '증권', 'WI520': '보험', 'WI600': '소프트웨어', 'WI610': 'IT하드웨어', 'WI620': '반도체', 'WI630': 'IT가전',
+  'WI640': '디스플레이', 'WI700': '통신서비스', 'WI800': '유틸리티'}
+let url_index = "https://raw.githubusercontent.com/labwons/pages/main/src/json/indices/indices.json";
+var index = null;
 
 function chart() {
   var asset = {
-    x: data_a.date,
+    x: index.Date,
     y: data_a.value,
     type: "scatter",
     mode: "lines",
@@ -30,9 +33,13 @@ $(document).ready(async function(){
       if (!response.ok) {
           throw new Error('Network response was not ok');
       }
-      data_a = await response.json();
+      index = await response.json();
     } catch (error) {
         console.error('Fetch error:', error);
     }
     chart();
-  })
+})
+
+$(docuemnt).ready(function(){
+  
+})
