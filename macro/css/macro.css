@@ -89,6 +89,10 @@
 
 /* MOBILE CASES */
 @media screen and (max-width: 767px) {
+    .service-box {
+        height: 60vh;
+    }
+
     .bar-options, .bar-searchbar {
         width: 100%;
         height: 30px;

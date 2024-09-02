@@ -1,4 +1,5 @@
 from pandas import DataFrame, Series
+from requests.exceptions import JSONDecodeError
 from typing import Dict, Union
 import pandas as pd
 import re, requests, time
@@ -23,8 +24,11 @@ def index_data(date:str, code:str) -> Union[DataFrame, Series]:
     for n in range(5):
         req = requests.get(URL(code))
         if req.status_code == 200:
-            data = DataFrame(req.json())
-            break
+            try:
+                data = DataFrame(req.json())
+                break
+            except JSONDecodeError:
+                pass
         time.sleep(5)
     if data.empty:
         return data
