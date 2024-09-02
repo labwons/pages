@@ -18,7 +18,7 @@ def index_date() -> str:
 
 def index_data(date:str, code:str) -> Union[DataFrame, Series]:
     date = f"{date[:4]}-{date[4:6]}-{date[6:]}"
-    URL = lambda code: f"http://www.wiseindex.com/DataCenter/GridData?currentPage=1&endDT=20{date}&fromDT=2000-01-01&index_ids={code}&isEnd=1&itemType=1&perPage=10000&term=1"
+    URL = lambda cd: f"http://www.wiseindex.com/DataCenter/GridData?currentPage=1&endDT={date}&fromDT=2000-01-01&index_ids={cd}&isEnd=1&itemType=1&perPage=10000&term=1"
     data = Series()
     for n in range(5):
         req = requests.get(URL(code))
