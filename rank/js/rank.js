@@ -1,5 +1,5 @@
-const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/rank/rank.json';
-// const __URL__ = '../../../src/json/rank/rank.json';
+// const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/rank/rank.json';
+const __URL__ = '../../../src/json/rank/rank.json';
 const abs = (array) => {
     return array.map(Math.abs);
 }
