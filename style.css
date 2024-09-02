@@ -456,12 +456,10 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     justify-content: center;
     text-align: center;
-
-    background: #f6f9ff;
 }
 
 .service-section .ad-vertical .adsbygoogle {
-    flex: 1 250px;
+    flex: 1 0 250px;
 }
 
 .service-section .service-box {

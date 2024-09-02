@@ -1,0 +1,135 @@
+
+.bar-options {
+    flex: 0 0 auto;
+    width: 25%;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+}
+
+.bar-type, .bar-option {
+    height: 28px;
+    color: #999;
+    margin: 0;
+    padding: 2px 8px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+    
+    background-image: url('../../src/img/triangle_down.png');
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    background-size: 8px;
+    background-color: #fff;
+}
+
+.bar-type, .bar-option {
+    flex: 1 0 auto;
+    margin-right: 2px;
+    /* height: 28px; */
+}
+
+.bar-plotly {
+    position: relative;
+    height: 100%;
+}
+
+.bar-legend {
+    flex: 0 0 auto;
+    width: 40%;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+}
+
+.bar-legend span {
+    flex: 1 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.bar-lowest {
+    background-color: #f63538;
+}
+
+.bar-lower {
+    background-color: #bf4045;
+}
+
+.bar-low {
+    background-color: #8b444e;
+}
+
+.bar-middle {
+    background-color: #414554;
+}
+
+.bar-high {
+    background-color: #35764e;
+}
+
+.bar-higher {
+    background-color: #2f9e4f;
+}
+
+.bar-highest {
+    background-color: #30cc5a;
+}
+
+.bar-notice {
+    flex: 0 1 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 4px;
+    font-size: 12px;
+    white-space: normal;
+}
+
+/* LAPTOP CASES */
+@media screen and (max-width: 1443px) {
+    .bar-options {
+        width: 50%;
+    }
+
+    .bar-notice {
+        font-size: 10px;
+    }
+}
+
+/* TABLET CASES */
+@media screen and (max-width: 1023px) {
+    .bar-searchbar {
+        width: 33.3333333333%;
+    }
+
+    .bar-legend {
+        width: 45%;
+    }
+
+    .bar-notice {
+        font-size: 8.5px;
+    }
+}
+
+/* MOBILE CASES */
+@media screen and (max-width: 767px) {
+    .bar-options, .bar-searchbar {
+        width: 100%;
+        height: 30px;
+    }
+
+    .bar-legend {
+        width: 100%;
+        height: 28px;
+        margin-bottom: 4px;
+    }
+}

@@ -1,14 +1,36 @@
-from pandas import DataFrame
-from typing import Dict
-import requests
-import time
+from pandas import DataFrame, Series
+from typing import Dict, Union
+import pandas as pd
+import re, requests, time
 
+
+def _nettime2datetime(timestamp:str) -> str:
+    timestamp = int(re.search(r'\((\d+)\)', timestamp).group(1))
+    return pd.to_datetime(timestamp, unit='ms', utc=True) \
+            .tz_convert('Asia/Seoul') \
+            .strtime('%Y-%m-%d')
 
 def index_date() -> str:
     html = requests.get('https://www.wiseindex.com/Index/Index#/G1010.0.Components').text
     pin1 = html.find("기준일")
     pin2 = pin1 + html[pin1:].find("</p>")
     return html[pin1 + 6 : pin2].replace(".", "")
+
+def index_data(date:str, code:str) -> Union[DataFrame, Series]:
+    URL = lambda code: f"http://www.wiseindex.com/DataCenter/GridData?currentPage=1&endDT={date}&fromDT=2000-01-01&index_ids={code}&isEnd=1&itemType=1&perPage=10000&term=1"
+    data = Series()
+    for n in range(5):
+        req = requests.url(URL(code))
+        if req.status_code == 200:
+            data = DataFrame(req.json())
+            break
+        time.sleep(5)
+    if data.empty:
+        return data
+    data = data[["TRD_DT", "IDX1_VAL1"]]
+    data["TRD_DT"] = data["TRD_DT"].apply(_nettime2datetime)
+    data = data.rename(columns={"IDX1_VAL1": code, "TRD_DT": "date"})
+    return data.set_index(keys="date")
 
 def index_component(date:str, code:str, try_count:int=5) -> DataFrame:
     columns = {
