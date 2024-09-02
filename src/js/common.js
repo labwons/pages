@@ -35,13 +35,14 @@ $('.faq-question').click(function(){
   DOCUMENT READY
 *******************************************************************************************/
 $(document).ready(function(){
+  if (window.innerWidth <= 991) {
+    $('#header').removeClass('header-fix');
+  } 
+})
 
-    if (window.innerWidth <= 991) {
-        $('#header').removeClass('header-fix');
-    } 
-    
-    // if ($('#header').attr("class").includes("header-fix")) {
-    //     $('#main').css('margin-top', $('#header').outerHeight(true) + 10);
-    // }
-
+/*******************************************************************************************
+  WINDOW READY
+*******************************************************************************************/
+$(window).on('load', function(){
+  (adsbygoogle = window.adsbygoogle || []).push({});
 })
