@@ -4,28 +4,111 @@ const INDEX_KEY = {'WI100': '에너지', 'WI110': '화학', 'WI200': '비철금�
   'WI640': '디스플레이', 'WI700': '통신서비스', 'WI800': '유틸리티'}
 const INDEX_URL = "https://raw.githubusercontent.com/labwons/pages/main/src/json/macro/index.json";
 var index_data = null;
+var macro_data = null;
 var index = null;
+var macro = null;
+var layout = {
+  margin:{
+    l:80, 
+    r:80, 
+    t:10, 
+    b:30
+  }, 
+  legend: {
+    bgcolor:'white',
+    borderwidth:0,
+    itemclick:'toggle',
+    itemdoubleclick:'toggleothers',
+    orientation:'h',
+    valign:'middle',
+    xanchor:'right',
+    x:1.0,
+    yanchor:'top',
+    y:1.0
+  },
+  xaxis:{
+    title: '날짜',
+    tickformat: "%Y/%m/%d",
+    range:['2021-01-01', '2024-08-29'],
+    showticklabels: true,
+    showline: true,
+    rangeselector: {
+      buttons: [
+        { count: 1, label: '1Y', step: 'year', stepmode: 'backward' },
+        { count: 3, label: '3Y', step: 'year', stepmode: 'backward' },
+        { count: 5, label: '5Y', step: 'year', stepmode: 'backward' },
+        { step: 'all', label: 'All' }
+      ]
+    },
+    
+  },
+  yaxis:{
+    title: index,
+    // range: [Math.min(...index_data[index]), Math.min(...index_data[index])],
+    showline: true,
+    zeroline: false,
+    showticklabels: true
+  },
+  yaxis2: {
+    title:macro,
+    overlaying:'y',
+    side:'right',
+    zeroline:false,
+    showline:false,
+    showgrid:false
+  },
+  dragmode: false
+}
 
-
-function chart() {
-  var asset = {
+function traceAsset() {
+  if (index == null){
+    return {};
+  }
+  layout.yaxis.title = INDEX_KEY[index];
+  return {
     x: index_data.date,
     y: index_data[index],
     type: "scatter",
     mode: "lines",
-    name: "test", // #TODO <select>의 html 값으로 채울 것
+    name: INDEX_KEY[index],
+    line: {
+      color: 'black'
+    },
     yaxis: 'y'
   };
-  // var macro =
-  var layout = {
-    xaxis: {
-      title: '날짜',
-    },
-    yaxis: {
-      title: 'INDEX',
-    }
-  };
-  Plotly.newPlot('data', [asset], layout);
+}
+
+function traceMacro() {
+  if (macro == null) {
+    return {};
+  }
+  if (macro in INDEX_KEY) {
+    var src = index_data;
+    var nm = INDEX_KEY[macro];
+  } else {
+    var src = macro_data;
+    var nm = MACRO_KEY[macro];
+  }
+  layout.yaxis2.title = nm;
+  return {
+    x: src.date,
+    y: src[macro],
+    type: "scatter",
+    mode: "lines",
+    name: nm,
+    yaxis: 'y2'
+  }
+}
+
+function chart() {
+  var option = {
+    // scrollZoom: false,
+    displayModeBar:false, 
+    responsive:true, 
+    showTips:false, 
+  }
+
+  Plotly.newPlot('industry-macro', [traceAsset(), traceMacro()], layout, option);
 }
 
 
@@ -45,11 +128,17 @@ $(document).ready(async function(){
 $(document).ready(function(){
   for(let key in INDEX_KEY){
     $('.industry').append('<option value="' + key + '">' + INDEX_KEY[key] + '</option>');
+    $('.option-industry').append('<option value="' + key + '">' + INDEX_KEY[key] + '</option>');
   }
   
   $('.industry').on('change', function(){
     $('#industry-macro').html('');
     index = $(this).val();
+    chart();
+  })
+
+  $('.macro').on('change', function(){
+    macro = $(this).val();
     chart();
   })
 })

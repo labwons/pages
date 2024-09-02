@@ -8,7 +8,7 @@ def _nettime2datetime(timestamp:str) -> str:
     timestamp = int(re.search(r'\((\d+)\)', timestamp).group(1))
     return pd.to_datetime(timestamp, unit='ms', utc=True) \
             .tz_convert('Asia/Seoul') \
-            .strtime('%Y-%m-%d')
+            .strftime('%Y-%m-%d')
 
 def index_date() -> str:
     html = requests.get('https://www.wiseindex.com/Index/Index#/G1010.0.Components').text
@@ -20,7 +20,7 @@ def index_data(date:str, code:str) -> Union[DataFrame, Series]:
     URL = lambda code: f"http://www.wiseindex.com/DataCenter/GridData?currentPage=1&endDT={date}&fromDT=2000-01-01&index_ids={code}&isEnd=1&itemType=1&perPage=10000&term=1"
     data = Series()
     for n in range(5):
-        req = requests.url(URL(code))
+        req = requests.get(URL(code))
         if req.status_code == 200:
             data = DataFrame(req.json())
             break

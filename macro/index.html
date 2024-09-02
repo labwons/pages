@@ -13,6 +13,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
+    <script data-ad-client="ca-pub-7507574593260609" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 <body>
 
@@ -49,8 +50,14 @@
         <div class="service-box">
           <div class="service-nav">
             <div class="bar-options">
-              <select name="type" class="industry"></select>
-              <select name="option" class="macro"></select>
+              <select name="type" class="industry">
+                <option value="" disabled selected>업종 선택</option>
+              </select>
+              <select name="option" class="macro">
+                <option value="" disabled selected>업종/지표 선택</option>
+                <optgroup label="- 업종 -" class="option-industry"></optgroup>
+                <optgroup label="- 지표 -" class="option-indicator"></optgroup>
+              </select>
             </div>
           </div>
           <div class="service-app">

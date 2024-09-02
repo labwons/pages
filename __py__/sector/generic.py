@@ -2,8 +2,10 @@ try:
     import fetch
 except ImportError:
     from __py__.sector import fetch
+from datetime import datetime
 from pandas import DataFrame
-from pykrx.stock import get_index_portfolio_deposit_file
+from pykrx.stock import get_index_portfolio_deposit_file, get_index_ohlcv_by_date
+from pytz import timezone
 from typing import List
 import pandas, os, json
 
@@ -61,19 +63,31 @@ class Index(object):
     
     # WISE INDEX VALID DATE
     __dt__ = fetch.index_date()
-    
+    __td__ = datetime.now(timezone('Asia/Seoul')).strftime("%Y%m%d")
     def __init__(self):
         try:
             _path = os.path.join(os.path.dirname(__file__), rf'../../src/json/macro.index.json')
         except NameError:
             _path = f"https://raw.githubusercontent.com/labwons/pages/main/src/json/macro/index.json"
+        print("Fetching KS/KQ...", end="")
+        ks = get_index_ohlcv_by_date(ticker="1001", fromdate="20000101", todate=self.__td__, name_display=False)
+        ks = ks.rename(columns={'종가':'KOSPI'})[['KOSPI']]
+        ks.index = pandas.to_datetime(ks.index).strftime('%Y-%m-%d')
+        kq = get_index_ohlcv_by_date(ticker="2001", fromdate="20000101", todate=self.__td__, name_display=False)
+        kq = kq.rename(columns={'종가':'KOSDAQ'})[['KOSDAQ']]
+        kq.index = pandas.to_datetime(kq.index).strftime('%Y-%m-%d')
+        data1 = pandas.concat([ks, kq], axis=1)
+        print("Success")
+        
         print(f"Fetching WISE INDEX...", end="")
-        data = pandas.concat([fetch.index_data(self.__dt__, cd) for cd in fetch.KEYS], axis=1)
+        data2 = pandas.concat([fetch.index_data(self.__dt__, cd) for cd in fetch.KEYS], axis=1)
+        print("Success")
+        
+        data = pandas.concat([data1, data2], axis=1)
         data = data.reset_index(level=0)
         src = json.dumps(data.to_dict(orient='list'), separators=(',', ':'))
         with open(_path, mode='w') as file:
             file.write(src)
-        print("Success")
         return
         
     
