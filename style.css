@@ -444,12 +444,13 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: row;
     flex-wrap: nowrap;
     height: calc(100vh - 80px);
+    width: 100%;
     margin: 0 20px;
     padding-top: 20px;
 }
 
 .service-section .ad-vertical {
-    flex: 0 0 auto;
+    flex: 0 0 250px;
     width: 15%;
     display: flex;
     align-items: center;
