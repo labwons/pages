@@ -5,7 +5,7 @@ except ImportError:
 from pandas import DataFrame
 from pykrx.stock import get_index_portfolio_deposit_file
 from typing import List
-import pandas, os
+import pandas, os, json
 
 
 class Sector(DataFrame):
@@ -34,7 +34,7 @@ class Sector(DataFrame):
             _path = f"https://raw.githubusercontent.com/labwons/pages/main/src/json/market/sector.json"
 
         if auto_update:
-            print(f"Fetching WISE INDEX...", end="")
+            print(f"Fetching WISE INDEX GROUP...", end="")
             objs = [fetch.index_component(self.__dt__, cd) for cd in fetch.KEYS]
             print("Success")
 
@@ -56,6 +56,26 @@ class Sector(DataFrame):
         #     self['indexName'] = _name
         return  
     
+    
+class Index(object):
+    
+    # WISE INDEX VALID DATE
+    __dt__ = fetch.index_date()
+    
+    def __init__(self):
+        try:
+            _path = os.path.join(os.path.dirname(__file__), rf'../../src/json/macro.index.json')
+        except NameError:
+            _path = f"https://raw.githubusercontent.com/labwons/pages/main/src/json/macro/index.json"
+        print(f"Fetching WISE INDEX...", end="")
+        data = pandas.concat([fetch.index_data(self.__dt__, cd) for cd in fetch.KEYS], axis=1)
+        data = data.reset_index(level=0)
+        src = json.dumps(data.to_dict(orient='list'), separators=(',', ':'))
+        with open(_path, mode='w') as file:
+            file.write(src)
+        print("Success")
+        return
+        
     
 if __name__ == "__main__":
     
