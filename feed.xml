@@ -9,13 +9,13 @@ layout: null
     <link>https://labwons.com/</link>
     <atom:link href="https://labwons.com/feed.xml" rel="self" type="application/rss+xml"/>
     <pubDate>Fri, 26 Jul 2024 12:00:00 +0900</pubDate>
-    <lastBuildDate>Fri, 30 Aug 2024 16:35:28 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 02 Sep 2024 15:58:04 +0900</lastBuildDate>
     <generator>Custom Python Script 1.0</generator>
     <item>
       <title>시장 지도</title>
       <description>시장 지도</description>
       <author>snob.labwons@gmail.com</author>
-      <pubDate>Fri, 30 Aug 2024 16:35:28 +0900</pubDate>
+      <pubDate>Mon, 02 Sep 2024 15:58:04 +0900</pubDate>
       <link>https://labwons.com/</link>
       <guid isPermaLink="true">https://labwons.com/</guid>
     </item>
@@ -23,7 +23,7 @@ layout: null
       <title>수익률 순위</title>
       <description>수익률 순위</description>
       <author>snob.labwons@gmail.com</author>
-      <pubDate>Fri, 30 Aug 2024 16:35:28 +0900</pubDate>
+      <pubDate>Mon, 02 Sep 2024 15:58:04 +0900</pubDate>
       <link>https://labwons.com/rank/</link>
       <guid isPermaLink="true">https://labwons.com/rank/</guid>
     </item>
