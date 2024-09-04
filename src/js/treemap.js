@@ -93,7 +93,22 @@ function updateMap() {
     'market-map', 
     data,
     {
-      margin:{l:0,r:0,t:0,b:25}
+      margin:{l:0,r:0,t:0,b:25},
+      annotations: [{
+        x: 1,
+        y: 1,
+        xref: 'paper',
+        yref: 'paper',
+        text: __SRC__.Date,
+        showarrow: false,
+        xanchor: 'right',
+        yanchor: 'top',
+        font: {
+            size: 12,
+            color: 'white'
+        }
+        
+      }]
     },
     {
       displayModeBar:false,

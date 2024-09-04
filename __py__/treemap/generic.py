@@ -23,7 +23,7 @@ class MarketMap(object):
         lc = self.largeCap.copy()
         lcs = self.largeCapSamsungExcluded.copy()
         md = self.midCap.copy()
-        return f"""\t"Date": "{TradingDate.near.strftime('%Y-%m-%d')} 종가 기준",
+        return f"""\t"Date": "{TradingDate.near.strftime('%Y.%m.%d')[2:]} 기준 ",
     "LargeCap": {lc.drop(columns=["kind"]).to_dict(orient='list')},
     "LargeCapWithoutSamsung" : {lcs.drop(columns=["kind"]).to_dict(orient='list')},
     "MidCap": {md.drop(columns=["kind"]).to_dict(orient='list')},
