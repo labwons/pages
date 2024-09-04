@@ -104,7 +104,7 @@ function updateMap() {
         xanchor: 'right',
         yanchor: 'top',
         font: {
-            size: 12,
+            size: 10,
             color: 'white'
         }
         

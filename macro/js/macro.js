@@ -8,6 +8,7 @@ const isLabTop = window.matchMedia('(max-width: 1443px)');
 const isTablet = window.matchMedia('(max-width: 1023px)');
 const isMobile = window.matchMedia('(max-width: 767px)');
 const isNarrow = window.matchMedia('(max-width: 374px)');
+const parseDate = (dateStr) => new Date(dateStr + 'T00:00:00Z')
 
 var index_data = null;
 var index = null;
@@ -22,7 +23,7 @@ var layout = {
     l:20, 
     r:20, 
     t:10, 
-    b:30
+    b:20
   }, 
   hovermode: 'x unified',
   legend: {
@@ -40,7 +41,6 @@ var layout = {
   xaxis:{
     // title: '날짜',
     tickformat: "%Y/%m/%d",
-    // range:[index_data.date[index_data.date.length-252*3], index_data.date[index_data.date.length-1]],
     showticklabels: true,
     showline: true,
     rangeselector: {
@@ -55,26 +55,22 @@ var layout = {
       xanchor: 'left',
       x: 0,
       yanchor: 'top',
-      y:1.0
+      y:1.025
     },
     
   },
   yaxis:{
-    // title: index,
-    // range: [Math.min(...index_data[index]), Math.min(...index_data[index])],
-    // autorange: true,
     side: 'left',
-    position: 0,
+    // position: 0.01,
     showline: true,
     zeroline: false,
     showticklabels: true,
     tickangle: -90
   },
   yaxis2: {
-    // title:macro,
     overlaying:'y',
-    side:'left',
-    position: 0.1,
+    side:'right',
+    // position: 0,
     zeroline:false,
     showline:true,
     showgrid:false,
@@ -117,6 +113,25 @@ function traceMacro() {
     var src = macro_data;
     var nm = MACRO_KEY[macro];
   }
+  const date_look_for = parseDate(index_data.date[index_start]);
+  const dates = src.date.map(parseDate);
+  const macro_start = (() => {
+    const findClosestDateIndex = (targetDate, dates) => {
+      let closestIndex = 0;
+      let minDiff = Math.abs(targetDate - dates[0]);
+
+      for (let i = 1; i < dates.length; i++) {
+        const diff = Math.abs(targetDate - dates[i]);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestIndex = i;
+        }
+      }
+      return closestIndex;
+    };
+    return findClosestDateIndex(targetDate, dates);
+  })();
+
   return {
     x: src.date,
     y: src[macro],
