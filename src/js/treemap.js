@@ -111,7 +111,7 @@ function updateBar() {
   var layout = {
     margin:{
       l:10, 
-      r:10, 
+      r:0, 
       t:10, 
       b:22
     }, 
