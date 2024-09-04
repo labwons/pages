@@ -534,6 +534,7 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     .service-section .service-box .service-app {
+        height: calc(100vh - 160px);
         margin-top: 4px;
     }
 
