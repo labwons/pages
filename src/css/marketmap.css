@@ -66,7 +66,9 @@
 }
 
 .map-date {
-    flex: 1 0 100%;
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto;
     display: flex;
     justify-content: center;
     align-items: center;
