@@ -153,7 +153,7 @@ $(document).ready(async function(){
 })
 
 $(document).ready(function(){
-  for(let key in INDEX_KEY){
+  for(let key in index_data){
     $('.industry').append('<option value="' + key + '">' + INDEX_KEY[key] + '</option>');
     $('.option-industry').append('<option value="' + key + '">' + INDEX_KEY[key] + '</option>');
   }

@@ -66,7 +66,7 @@ class Index(object):
     __td__ = datetime.now(timezone('Asia/Seoul')).strftime("%Y%m%d")
     def __init__(self):
         try:
-            _path = os.path.join(os.path.dirname(__file__), rf'../../src/json/macro.index.json')
+            _path = os.path.join(os.path.dirname(__file__), rf'../../src/json/macro/index.json')
         except NameError:
             _path = f"https://raw.githubusercontent.com/labwons/pages/main/src/json/macro/index.json"
         print("Fetching KS/KQ...", end="")
@@ -84,6 +84,7 @@ class Index(object):
         print("Success")
         
         data = pandas.concat([data1, data2], axis=1)
+        data.index.name = 'date'
         data = data.reset_index(level=0)
         src = json.dumps(data.to_dict(orient='list'), separators=(',', ':'))
         with open(_path, mode='w') as file:
