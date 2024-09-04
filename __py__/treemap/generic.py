@@ -1,8 +1,10 @@
 try:
+    from ..market.fetch.date import TradingDate
     from ..sector.generic import Sector
     from ..market.generic import Market
     from core import baseTreeMap
 except ImportError:
+    from __py__.market.fetch.date import TradingDate
     from __py__.sector.generic import Sector
     from __py__.market.generic import Market
     from __py__.treemap.core import baseTreeMap
@@ -21,13 +23,14 @@ class MarketMap(object):
         lc = self.largeCap.copy()
         lcs = self.largeCapSamsungExcluded.copy()
         md = self.midCap.copy()
-        return f"""\t"LargeCap": {lc.drop(columns=["kind"]).to_dict(orient='list')},
-\t"LargeCapWithoutSamsung" : {lcs.drop(columns=["kind"]).to_dict(orient='list')},
-\t"MidCap": {md.drop(columns=["kind"]).to_dict(orient='list')},
-\t"LargeSectors": {lc[lc["kind"] == "sector"].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')},
-\t"MidSectors": {md[md["kind"] == "sector"].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')},
-\t"LargeIndustries": {lc[(lc["kind"] == "industry") | (lc["name"].isin(['에너지', '유틸리티']))].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')},
-\t"MidIndustries": {md[(md["kind"] == "industry") | (md["name"].isin(['에너지', '유틸리티']))].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')}
+        return f"""\t"Date": "{TradingDate.near.strftime('%Y-%m-%d')} 종가 기준",
+    "LargeCap": {lc.drop(columns=["kind"]).to_dict(orient='list')},
+    "LargeCapWithoutSamsung" : {lcs.drop(columns=["kind"]).to_dict(orient='list')},
+    "MidCap": {md.drop(columns=["kind"]).to_dict(orient='list')},
+    "LargeSectors": {lc[lc["kind"] == "sector"].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')},
+    "MidSectors": {md[md["kind"] == "sector"].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')},
+    "LargeIndustries": {lc[(lc["kind"] == "industry") | (lc["name"].isin(['에너지', '유틸리티']))].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')},
+    "MidIndustries": {md[(md["kind"] == "industry") | (md["name"].isin(['에너지', '유틸리티']))].drop(columns=["cover", "kind", "size"]).to_dict(orient='list')}
 """.replace("'", '"').replace("nan", '""')
 
     @property

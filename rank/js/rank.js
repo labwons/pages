@@ -87,20 +87,6 @@ function updateBar() {
       yanchor: 'middle',
     };
   });
-  layout.annotations.push({
-    x: maxRange + minbar,
-    y: sorted.name[parseInt(sorted.name.length / 2)],
-    xref: 'x',
-    yref: 'y',
-    text: __SRC__.date,
-    showarrow: false,
-    font: {
-      color: 'black',
-      size: 13,
-    },
-    xanchor: 'right',
-    yanchor: 'middle'
-  })
 
   data = [{
     type: 'bar',
@@ -139,6 +125,7 @@ $(document).ready(async function(){
   for (let industry of __SRC__.industries){
     $('.bar-type').append('<option value="' + industry + '">' + industry + '</option>');
   }
+  $('.bar-date').html(__SRC__.date);
   spec = $('.bar-option').val();
   base = __SRC__[__SRC__.sectors[0] + '_' + spec];
   updateBar();

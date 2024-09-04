@@ -201,7 +201,7 @@ $(document).ready(async function(){
   } catch (error) {
       console.error('Fetch error:', error);
   }
-
+  $('.map-date').html(__SRC__.Date);
   base = __SRC__[$('.map-type').val()];
   spec = $('.map-option').val();
   tops = getCoverNames();

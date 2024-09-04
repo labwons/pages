@@ -1,8 +1,6 @@
 try:
-    from ..market.fetch.date import TradingDate
     from color import SCALE, paint
 except ImportError:
-    from __py__.market.fetch.date import TradingDate
     from __py__.treemap.color import SCALE, paint
 from pandas import DataFrame
 import pandas
@@ -67,10 +65,9 @@ def coloring(data:DataFrame):
 class baseTreeMap(DataFrame):
 
     def __init__(self, stocks:DataFrame):
-        _date = f"{TradingDate.near.strftime('%Y-%m-%d')} 기준"
-        _cap_type = f"대형주({_date})"
+        _cap_type = f"대형주"
         if not "000660" in stocks.index:
-            _cap_type = f"중형주({_date})"
+            _cap_type = f"중형주"
 
         stocks = stocks.copy()
         stocks.index.name = 'ticker'

@@ -31,6 +31,16 @@
     /* height: 28px; */
 }
 
+.bar-date {
+    flex: 1 0 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #c8c8c8;
+    font-size: 14px;
+    color: white;
+}
+
 .bar-plotly {
     position: relative;
     height: 100%;
