@@ -27,8 +27,17 @@
 }
 
 .bar-plotly {
-    position: relative;
+    height: 100%; 
+}
+
+.bar-before {
     height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e5edf4;
+    font-size: 18px;
 }
 
 .bar-legend {

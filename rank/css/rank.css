@@ -56,31 +56,38 @@
 }
 
 .bar-lowest {
-    background-color: #f63538;
+    /* background-color: #f63538; */
+    background-color: #1861A8;
 }
 
 .bar-lower {
-    background-color: #bf4045;
+    /* background-color: #bf4045; */
+    background-color: #228BE6;
 }
 
 .bar-low {
-    background-color: #8b444e;
+    /* background-color: #8b444e; */
+    background-color: #74C0FC;
 }
 
 .bar-middle {
-    background-color: #414554;
+    /* background-color: #414554; */
+    background-color: #a6a6a6;
 }
 
 .bar-high {
-    background-color: #35764e;
+    /* background-color: #35764e; */
+    background-color: #FF8787;
 }
 
 .bar-higher {
-    background-color: #2f9e4f;
+    /* background-color: #2f9e4f; */
+    background-color: #F03E3E;
 }
 
 .bar-highest {
-    background-color: #30cc5a;
+    /* background-color: #30cc5a; */
+    background-color: #C92A2A;
 }
 
 .bar-notice {
