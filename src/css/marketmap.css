@@ -9,6 +9,10 @@
 }
 
 .map-type, .map-option, .map-searchbar {
+    -webkit-appearance: none; /* 크롬, 사파리 */
+    -moz-appearance: none;    /* 파이어폭스 */
+    appearance: none;         /* 기본 */
+    
     height: 28px;
     color: #999;
     margin: 0;
