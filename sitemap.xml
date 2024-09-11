@@ -5,13 +5,13 @@ layout: null
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://labwons.com</loc>
-    <lastmod>2024-09-10T15:55:19+09:00</lastmod>
+    <lastmod>2024-09-11T15:58:04+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://labwons.com/rank</loc>
-    <lastmod>2024-09-10T15:55:19+09:00</lastmod>
+    <lastmod>2024-09-11T15:58:04+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
