@@ -5,7 +5,7 @@ except ImportError:
     from dev.task.bubble.generic import Basis
     from dev.task.treemap.generic import MarketMap
 
-basis = Basis()
+basis = Basis(offline=False)
 basis.dump()
 
 marketMap = MarketMap(basis)

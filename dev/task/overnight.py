@@ -5,6 +5,6 @@ except ImportError:
     from dev.common.logger import Log
     from dev.module.wise.generic import Groups, Indices
 
-runGroup = Groups().dump()
-runIndex = Indices().dump()
+runGroup = Groups(offline=False).dump()
+runIndex = Indices(offline=False).dump()
 Log.send()
