@@ -67,9 +67,8 @@ class Groups(DataFrame):
 class Indices(DataFrame):
 
     def __init__(self, offline:bool=True):
-        df = pd.read_json(PATH.INDEX)
-        df['date'] = df['date'].dt.date
-        df = df.set_index(keys='date')
+        df = pd.read_json(PATH.INDEX, orient='index')
+        df.index = df.index.date
         if offline:
             super().__init__(df)
             return
