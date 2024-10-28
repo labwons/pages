@@ -1,47 +1,159 @@
-// const __URL__ = 'https://raw.githubusercontent.com/labwons/pages/main/src/json/treemap/treemap.json';
-const __URL__ = '../../../src/json/treemap/treemap.json';
+/*--------------------------------------------------------------
+# GLOBALS
+--------------------------------------------------------------*/
 const isLabTop = window.matchMedia('(max-width: 1443px)');
 const isTablet = window.matchMedia('(max-width: 1023px)');
 const isMobile = window.matchMedia('(max-width: 767px)');
 const isNarrow = window.matchMedia('(max-width: 374px)');
 const abs = (array) => {return array.map(Math.abs);}
 
-let __SRC__ = null;
-let E_MOUSE = document.createEvent('MouseEvent');
+let SRC = null;
+let EVE = document.createEvent('MouseEvent');
 
-var base = null;
-var data = null;
-var spec = null;
-var tops = null;
-var view = 'map';
-var maxRange = 1.1;
+var mapTyp = 'WS';
+var mapFrm = null;
+var barTyp = 'industry';
+var comOpt = 'D-1';
+var viewMd = 'treemap';
+
+EVE.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 
 
 /*--------------------------------------------------------------
 # Functions
 --------------------------------------------------------------*/
-function getCoverNames(){
-  tops = [];
-  for (var n = base.meta.length - 2; n > 0; n--) {
-    tops.push(base.name[n]);
-    if (base.meta[n].includes('종가')) { return tops; }
-  }
-  return tops;
+function setFrame(){
+  mapFrm = SRC.TICKERS;
+  Object.values(SRC[mapTyp]).forEach(val => {
+    mapFrm = Object.assign({}, mapFrm, val);
+  })
 }
 
-function searchReset(){
-	$('.map-searchbar').empty();
-	$('.map-searchbar').append('<option></option>');
-	for (var n = 0; n < base.name.length; n++){
-		$('.map-searchbar').append('<option>' + base.name[n] + '</option>');
-	}
+function setTypeSelector() {
+  if (viewMd == 'treemap') {
+    $('.map-type')
+    .empty()
+    .append('<option value="WS"">대형주</option>')
+    .append('<option value="NS">대형주(삼성전자 제외)</option>')
+    $('.map-type option[value="' + mapTyp + '"]').prop('selected', true);
+  } else {
+    $('.map-type')
+    .empty()
+    .append('<option value="sector">섹터 Sector</option>')
+    .append('<option value="industry">업종 Industry</option>')
+    $('.map-type option[value="' + barTyp + '"]').prop('selected', true);
+  }
+}
+
+function setOptionSelector() {
+  Object.entries(SRC.METADATA).forEach(([key, val]) => {
+    if((key == "DATE") || (key == "DUPLICATEDGROUP")) {
+      return
+    }
+    $('.map-option').append('<option value="' + key + '">' + val.label + '</option>');
+  })
+  $('.map-option option[value="' + comOpt + '"]').prop('selected', true);
+}
+
+function setSearchSelector(){
+  $('.map-searchbar')
+    .select2({placeholder: "종목명/섹터/업종"})
+    .empty()
+	  .append('<option></option>');
+  
+  $('.map-searchbar').append('<optgroup label="[종목 / Stocks]">');
+  Object.entries(SRC.TICKERS)
+  .sort((a, b) => b[1].size - a[1].size)
+  .forEach(item => {
+    if ((mapTyp === "NS") && (item[0] === '005930')) {
+      return;
+    }
+    $('.map-searchbar').append('<option value="' + item[0] + '">' + item[1].name + '</option>');
+  })
+
+  $('.map-searchbar').append('<optgroup label="[섹터 / Sectors]">');
+  Object.entries(SRC[mapTyp].sector).forEach(([key, val]) => {
+    $('.map-searchbar').append('<option value="' + key + '">' + val.name + '</option>');
+  })
+  $('.map-searchbar').append('<optgroup label="[업종 / Industries]">');
+  Object.entries(SRC[mapTyp].industry).forEach(([key, val]) => {
+    $('.map-searchbar').append('<option value="' + key + '">' + val.name + '</option>');
+  })
+}
+
+function setScale(){
+  var tag = SRC.METADATA[comOpt];
+  $('.map-legend span').each(function(n){
+    if(tag.bound[n] == null){
+      $(this).html('&nbsp; - &nbsp;');
+    } else {
+      $(this).html(String(tag.bound[n]) + tag.unit);
+    }
+    $(this).css('background-color', tag.scale[n]);
+  })
+}
+
+function setTreemapLayout() {
+  return {
+    margin:{l:0, r:0, t:0, b:25},
+    annotations: [{
+      x: 1,
+      y: 1,
+      xref: 'paper',
+      yref: 'paper',
+      text: SRC.METADATA.DATE,
+      showarrow: false,
+      xanchor: 'right',
+      yanchor: 'top',
+      font: {
+          size: 12,
+          color: 'white'
+      }
+      
+    }]
+  }
+}
+
+function setBarLayout() {
+  return {
+    margin:{l:10, r:0, t:10, b:22}, 
+    xaxis:{
+      autorange: false,
+      showticklabels: false,
+      showline: false,
+      range:[0, 0], 
+    },
+    yaxis:{
+      showline: false,
+      zeroline: false,
+      showticklabels: false
+    },
+    dragmode: false
+  }
+}
+
+function setTreecomOption() {
+  return {
+    displayModeBar:false,
+    responsive:true,
+    showTips:false
+  }
+}
+
+function setBarOption() {
+  return {
+    scrollZoom: false,
+    displayModeBar:false, 
+    responsive:true, 
+    showTips:false, 
+  }
 }
 
 function clickTreemap(item){
   var elements = $('g.slicetext');
 	for (var n = 0; n < elements.length; n++){
 		if ($(elements[n]).text().includes(item)){
-      !$(elements[n]).get(0).dispatchEvent(E_MOUSE);
+      !$(elements[n]).get(0).dispatchEvent(EVE);
 			return;
 		}
 	}
@@ -59,124 +171,118 @@ function rewindOff(){
   }
 }
 
-function updateMap() {
-  unit = (spec == 'PER' || spec == 'PBR') ? '' : '%';
-  data = [{
-    type:'treemap',
-    branchvalues:'total',
-    labels:base.name,
-    parents:base.cover,
-    values:base.size,
-    meta:base.meta,
-    text:base[spec],
-	  textposition:'middle center',
-    textfont:{
-      family:'NanumGothic, Nanum Gothic, Open Sans, sans-serif',
-      color:'#ffffff'
-    },
-    texttemplate: '%{label}<br>%{text:.2f}' + unit,
-    hovertemplate: '%{meta}<br>' + spec + ': %{text}' + unit + '<extra></extra>',
-    hoverlabel: {
-      font: {
-        family: 'NanumGothic, Nanum Gothic, Open Sans, sans-serif',
-        color: '#ffffff'
-      }
-    },
-    opacity: 0.9,
-    marker: {
-      colors: base[spec + '-C'],
-      visible: true
-    },
-    root_color:'lightgrey'
-  }];
+function setTreemap() {
+  var tag = SRC.METADATA[comOpt];
+  var layout = setTreemapLayout();
+  var option = setTreecomOption();
+  var font = 'NanumGothic, Nanum Gothic, Open Sans, sans-serif';
+
+  var customdata = [];
+  var labels = [];
+  var parents = [];
+  var values = [];
+  var meta = [];
+  var text = [];
+  var colors = [];
+  Object.entries(mapFrm).forEach(([key, val]) => {
+    if ((mapTyp == "NS") && (val.name == "\uc0bc\uc131\uc804\uc790")) {
+      return;
+    }
+    labels.push(val.name);
+    parents.push(val.ceiling);
+    values.push(val.size);
+    customdata.push(key);
+    meta.push(val.meta);
+    text.push(val[comOpt][0]);
+    colors.push(val[comOpt][1]);
+  })
+
   Plotly.newPlot(
     'market-map', 
-    data,
-    {
-      margin:{l:0,r:0,t:0,b:25},
-      annotations: [{
-        x: 1,
-        y: 1,
-        xref: 'paper',
-        yref: 'paper',
-        text: __SRC__.Date,
-        showarrow: false,
-        xanchor: 'right',
-        yanchor: 'top',
+    [{
+      type:'treemap',
+      branchvalues:'total',
+      labels:labels,
+      parents:parents,
+      values:values,
+      customdata: customdata,
+      meta:meta,
+      text:text,
+      textposition:'middle center',
+      textfont:{
+        family:font,
+        color:'#ffffff'
+      },
+      texttemplate: '%{label}<br>%{text}',
+      hovertemplate: '%{meta}' + tag.label + ': %{text}<extra></extra>',
+      hoverlabel: {
         font: {
-            size: 10,
-            color: 'white'
+          family: font,
+          color: '#ffffff'
         }
-        
-      }]
-    },
-    {
-      displayModeBar:false,
-      responsive:true,
-      showTips:false
-    }
+      },
+      opacity: 0.9,
+      marker: {
+        colors: colors,
+        visible: true
+      },
+    }],
+    layout,
+    option
   );
 }
 
-function updateBar() {
-  let sorted = {};
-  let indices = base[spec].map((value, index) => index);
-  var minbar = 0;
-  var unit = '%';
-  var layout = {
-    margin:{
-      l:10, 
-      r:0, 
-      t:10, 
-      b:22
-    }, 
-    xaxis:{
-      autorange: false,
-      showticklabels: false,
-      showline: false,
-      range:[0, 0], 
-    },
-    yaxis:{
-      showline: false,
-      zeroline: false,
-      showticklabels: false
-    },
-    dragmode: false
+function setBarChart() {
+  var tag = SRC.METADATA[comOpt];
+  var layout = setBarLayout();
+  var option = setBarOption();
+  var data = Object.values(SRC.WS[barTyp]);
+  var x = [];
+  var y = [];
+  var text = [];
+  var meta = [];
+  var color = [];
+  if (barTyp == 'industry') {
+    SRC.METADATA.DUPLICATEDGROUP.forEach(item => {
+      data.push(SRC.WS.sector[item]);
+    })
   }
-  var option = {
-    scrollZoom: false,
-    displayModeBar:false, 
-    responsive:true, 
-    showTips:false, 
-  }
+  console.log(data);
 
-  if ((spec == 'PER') || (spec == 'PBR')) {
-    unit = '';
-  }
+  data.forEach(item => {
+    item.n = parseFloat(item[comOpt][0].replace(tag.unit, ''));
+    item.x = Math.abs(item.n);
+  });
+  data.sort((a, b) => b.n - a.n);
 
-  indices.sort((i, j) => base[spec][i] - base[spec][j]);
-  for (var key in base) {
-    sorted[key] = indices.map(index => base[key][index]);
-  }
+  var maxX = Math.max(...data.map(item => item.x));
+  console.log(maxX);
+  data.forEach(item => {
+    x.push(item.x + 0.45 * maxX);
+    y.push(item.name);
+    text.push(item[comOpt][0]);
+    meta.push(item.meta);
+    color.push(item[comOpt][1]);
+  })  
+
   if (isNarrow.matches) {
-    maxRange = 1.35 * Math.max(...abs(sorted[spec]));
+    var xrange = 1.35 * maxX;
   } else if (isMobile.matches) {
-    maxRange = 1.3 * Math.max(...abs(sorted[spec]));
+    var xrange = 1.3 * maxX;
   } else if (isTablet.matches) {
-    maxRange = 1.2 * Math.max(...abs(sorted[spec]));
+    var xrange = 1.2 * maxX;
   } else {
-    maxRange = 1.1 * Math.max(...abs(sorted[spec]));
+    var xrange = 1.1 * maxX;
   }
-  minbar = 0.45 * maxRange;
 
-  layout.xaxis.range = [0, maxRange + minbar];
-  layout.annotations = sorted.name.map(function(y, i) {
+  layout.xaxis.range = [0, 1.45 * xrange];
+  layout.annotations = y.map(item => {
     return {
       x: 0,
-      y: y,
+      y: item,
       xref: 'x',
       yref: 'y',
-      text: y,
+      text: item,
       showarrow: false,
       font: {
         color: 'white',
@@ -187,220 +293,132 @@ function updateBar() {
     };
   });
 
-  data = [{
-    type: 'bar',
-    x: abs(sorted[spec]).map(function(x) {return x += minbar;}),
-    y: sorted.name,
-    orientation:'h',
-    marker:{
-      color:sorted[spec + '-C']
-    },
-    text:sorted[spec],
-    texttemplate:'%{text}' + unit,
-    textposition:'outside',
-    meta:sorted.meta,
-    hovertemplate:'%{meta}<br>' + spec + ': %{text}' + unit + '<extra></extra>',
-    opacity:0.9
-  }];
-  Plotly.newPlot('market-map', data, layout, option);
+  Plotly.newPlot(
+    'market-map', 
+    [{
+      type:'bar',
+      x: x.reverse(),
+      y: y.reverse(),
+      orientation: 'h',
+      marker: {
+        color: color.reverse()
+      },
+      text: text.reverse(),
+      textposition: 'outside',
+      meta: meta.reverse(),
+      hovertemplate: '%{meta}' + tag.label + ': %{text}<extra></extra>',
+      opacity: 0.9
+    }], 
+    layout, 
+    option
+  );
 }
 
 
+/*--------------------------------------------------------------
+# FETCH & BINDINGS
+--------------------------------------------------------------*/
 $(document).ready(async function(){
   try {
-    const response = await fetch(__URL__);
+    const response = await fetch('../../dev/json/service/treemap.json');
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
-    __SRC__ = await response.json();
+    
+    SRC = await response.json();
+    setTypeSelector();
+    setOptionSelector();
+    setFrame();
+    setTreemap();
+    setScale();
+    setSearchSelector();
   } catch (error) {
       console.error('Fetch error:', error);
   }
-  $('.map-date').html(__SRC__.Date);
-  base = __SRC__[$('.map-type').val()];
-  spec = $('.map-option').val();
-  tops = getCoverNames();
-  updateMap();
-  searchReset();
-})
 
-
-$(document).ready(function() {
-
-  /*--------------------------------------------------------------
-  # Initialize
-  --------------------------------------------------------------*/
-  if ($('#header').attr("class").includes("header-fix")) {
-    $('#header').removeClass('header-fix');
-  }
-
-  $('.map-searchbar').select2({
-    placeholder: "종목명/섹터/업종"
+  $('.map-type').on('change', function() {   
+    if (viewMd == 'treemap') {
+      mapTyp = $(this).val();
+      setFrame(); 
+      setTreemap();
+      setSearchSelector();
+    } else {
+      barTyp = $(this).val();
+      setBarChart();
+    }    
   })
-  
-  E_MOUSE.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 
-
-  /*--------------------------------------------------------------
-  # Event Bindings
-  --------------------------------------------------------------*/
-  $('.map-type').on('change', function() {
-    base = __SRC__[$('.map-type').val()];
-    if (view == 'map') {
-      tops = getCoverNames();
-      updateMap();
-      searchReset();
-    } else{
-      updateBar();
-    }
-  })
-  
   $('.map-option').on('change', function() {
-    spec = $('.map-option').val();
-    if (view == 'map') {
-      updateMap();
+    comOpt = $(this).val();
+    if (viewMd == 'treemap') {
+      setTreemap();
     } else {
-      updateBar();
-    }
-  
-    if ((spec == 'PER') || (spec == 'PBR')) {
-      $('.map-lowest').html('고평가');
-      $('.map-lower').html('');
-      $('.map-low').html('');
-      $('.map-middle').html('평균');
-      $('.map-high').html('');
-      $('.map-higher').html('');
-      $('.map-highest').html('저평가');
-    } else if (spec == 'DIV') {
-      $('.map-lowest').html('');
-      $('.map-lower').html('');
-      $('.map-low').html('');
-      $('.map-middle').html('0%');
-      $('.map-high').html('2%');
-      $('.map-higher').html('4%');
-      $('.map-highest').html('6%');
-    } else if (spec == 'D-1') {
-      $('.map-lowest').html('-3%');
-      $('.map-lower').html('-2%');
-      $('.map-low').html('-1%');
-      $('.map-middle').html('0%');
-      $('.map-high').html('1%');
-      $('.map-higher').html('2%');
-      $('.map-highest').html('3%');
-    } else if (spec == 'W-1') {
-      $('.map-lowest').html('-6%');
-      $('.map-lower').html('-4%');
-      $('.map-low').html('-2%');
-      $('.map-middle').html('0%');
-      $('.map-high').html('2%');
-      $('.map-higher').html('4%');
-      $('.map-highest').html('6%');
-    } else if (spec == 'M-1') {
-      $('.map-lowest').html('-10%');
-      $('.map-lower').html('-6.7%');
-      $('.map-low').html('-3.3%');
-      $('.map-middle').html('0%');
-      $('.map-high').html('3.3%');
-      $('.map-higher').html('6.7%');
-      $('.map-highest').html('10%');
-    } else if (spec == 'M-3') {
-      $('.map-lowest').html('-18%');
-      $('.map-lower').html('-12%');
-      $('.map-low').html('-6%');
-      $('.map-middle').html('0%');
-      $('.map-high').html('6%');
-      $('.map-higher').html('12%');
-      $('.map-highest').html('18%');
-    } else if (spec == 'M-6') {
-      $('.map-lowest').html('-24%');
-      $('.map-lower').html('-16%');
-      $('.map-low').html('-8%');
-      $('.map-middle').html('0%');
-      $('.map-high').html('8%');
-      $('.map-higher').html('16%');
-      $('.map-highest').html('24%');
-    } else if (spec == 'Y-1') {
-      $('.map-lowest').html('-30%');
-      $('.map-lower').html('-20%');
-      $('.map-low').html('-10%');
-      $('.map-middle').html('0%');
-      $('.map-high').html('10%');
-      $('.map-higher').html('20%');
-      $('.map-highest').html('30%');
-    }
+      setBarChart();
+    }    
+    setScale();
   })
-  
+
   $('.map-reset').click(function(){
-    updateMap();
-    rewindOff();
-    $('.map-searchbar').val(null).trigger('change');
+    setTreemap();
+    rewindOff(); 
+    setSearchSelector();   
   })
-  
-  $('.map-switch').click(function(){
-    var button = $(this).find('i');
-    if ( button.attr('class').includes('fa-map-o') ) {
-      $('.map-type').empty();
-      $('.map-type').append('<optgroup label="---- [대형주 / Large Cap]">');
-      $('.map-type').append('<option value="LargeSectors" selected="selected">섹터</option>');
-      $('.map-type').append('<option value="LargeIndustries">업종</option>');      
-      $('.map-type').append('<optgroup label="---- [중형주 / Mid Cap]">');
-      $('.map-type').append('<option value="MidSectors">섹터</option>');      
-      $('.map-type').append('<option value="MidIndustries">업종</option>');
-      view = 'bar';
-      button.removeClass('fa-map-o');
-      button.addClass('fa-signal');
-      $('.map-searchbar').prop('disabled', true);
-      if ($('.map-rewind').attr('class').includes('show')){
-        rewindOff();
-      }
+
+  $('.map-switch i').click(function(){
+    if ( $(this).attr('class').includes('fa-map-o') ) {
+      viewMd = 'bar';
+      setBarChart();
+      rewindOff();
+      $(this).removeClass('fa-map-o').addClass('fa-signal');
+      $('.map-searchbar').prop('disabled', true);      
     } else {
-      $('.map-type').empty();
-      $('.map-type').append('<option value="LargeCap" selected="selected">대형주</option>');
-      $('.map-type').append('<option value="LargeCapWithoutSamsung">대형주(삼성전자 제외)</option>');
-      $('.map-type').append('<option value="MidCap">중형주</option>');
-      view = 'map';
-      button.removeClass('fa-signal');
-      button.addClass('fa-map-o');
+      viewMd = 'treemap';
+      setTreemap();
+      $(this).removeClass('fa-signal').addClass('fa-map-o');
       $('.map-searchbar').prop('disabled', false);
     }
-    base = __SRC__[$('.map-type').val()];
-    if (view == 'map') {
-      updateMap();
-    } else {
-      updateBar();
-    }
+    setTypeSelector();
   })
-  
+
   $('.map-searchbar').on('select2:select', function (e) {
-    var selected = e.params.data.text;
-  
-    if (tops.includes(selected)) {
-      clickTreemap(selected);
-      return;
-    } 
-    clickTreemap(base.cover[base.name.indexOf(selected)]);
-    
-    setTimeout(function(){
-      clickTreemap(selected);
-    }, 1000)
+    var ticker = e.params.data.id;
+    if (ticker.startsWith('W')) {
+      var elem = SRC[mapTyp].industry[ticker];
+      clickTreemap(elem.name);
+      return
+    } else if (ticker.startsWith('G')) {
+      var elem = SRC[mapTyp].sector[ticker];
+      clickTreemap(elem.name);
+      return
+    } else {
+      var elem = SRC.TICKERS[ticker];
+      clickTreemap(elem.ceiling);
+      setTimeout(function(){
+        clickTreemap(elem.name);
+      }, 1000);      
+    }
   });
   
   $('.map-rewind').click(function(){
-    if (view == 'map') {
-      !$('.slice').get(0).dispatchEvent(E_MOUSE);
-      rewindOff();
+    if (viewMd == 'bar') {
+      return;
     }
+    !$('.slice').get(0).dispatchEvent(EVE);
+    rewindOff();
   })
   
   $('#market-map').on('plotly_click', function(e, d){
-    if (view == 'map'){
-      if ($('g.slice').length == 1) {
-        rewindOff();
-        return;
-      }
-      if (!tops.includes(d.points[0].label)){
-        rewindOn();
-      }
+    if (viewMd == 'bar') {
+      return;
+    }    
+    if ($('g.slice').length == 1) {
+      rewindOff();
+    } else if (
+      (!d.points[0].customdata.startsWith('W')) && 
+      (!d.points[0].customdata.startsWith('G')) && 
+      (!d.points[0].customdata.startsWith('T'))
+    ) {
+      rewindOn();
     } else {
       return;
     }

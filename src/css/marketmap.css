@@ -22,7 +22,7 @@
     box-sizing: border-box;
     cursor: pointer;
     
-    background-image: url('../img/triangle_down.png');
+    background-image: url('/src/img/triangle_down.png');
     background-repeat: no-repeat;
     background-position: right 4px center;
     background-size: 8px;
@@ -114,46 +114,12 @@
     flex: 1 0 auto;
     height: 100%;
     display: flex;
+    box-sizing: border-box;
     align-items: center;
     justify-content: center;
     color: #fff;
     font-size: 14px;
     font-weight: 700;
-}
-
-.map-lowest {
-    /* background-color: #f63538; */
-    background-color: #1861A8;
-}
-
-.map-lower {
-    /* background-color: #bf4045; */
-    background-color: #228BE6;
-}
-
-.map-low {
-    /* background-color: #8b444e; */
-    background-color: #74C0FC;
-}
-
-.map-middle {
-    /* background-color: #414554; */
-    background-color: #a6a6a6;
-}
-
-.map-high {
-    /* background-color: #35764e; */
-    background-color: #FF8787;
-}
-
-.map-higher {
-    /* background-color: #2f9e4f; */
-    background-color: #F03E3E;
-}
-
-.map-highest {
-    /* background-color: #30cc5a; */
-    background-color: #C92A2A;
 }
 
 .map-notice {

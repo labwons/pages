@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link rel="stylesheet" href="./style.css">
-    <link rel="stylesheet" href="./src/css/marketmap.css">
+    <link rel="stylesheet" href="./src/css/marketmap.min.css">
 
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.34.0.min.js"></script>
@@ -62,26 +62,8 @@
         <div class="service-box">
           <div class="service-nav">
             <div class="map-options">
-              <select name="type" class="map-type">
-                <option value="LargeCap" selected="selected">대형주</option>
-                <option value="LargeCapWithoutSamsung">대형주(삼성전자 제외)</option>
-                <option value="MidCap">중형주</option>
-              </select>
-              <select name="option" class="map-option">
-                <optgroup label="- 기간별 수익률 -">
-                  <option value="D-1" selected="selected">1일 수익률</option>
-                  <option value="W-1">1주 수익률</option>
-                  <option value="M-1">1개월 수익률</option>
-                  <option value="M-3">3개월 수익률</option>
-                  <option value="M-6">6개월 수익률</option>
-                  <option value="Y-1">1년 수익률</option>
-                </optgroup>
-                <optgroup label="- 기타 지표 -">
-                  <option value="DIV">배당 수익률</option>
-                  <option value="PER">PER</option>
-                  <option value="PBR">PBR</option>
-                </optgroup>
-              </select>
+              <select name="type" class="map-type"></select>
+              <select name="option" class="map-option"></select>
               <div class="map-reset"><i class="fa fa-refresh"></i></div>
               <div class="map-switch"><i class="fa fa-map-o"></i></div>
             </div>
@@ -93,28 +75,28 @@
 
           <div class="service-app">
             <div class="map-plotly" id="market-map">
-              <span class="map-date">2024-09-03 종가 기준</span>
               <i class="map-rewind fa fa-undo"></i>
             </div>
           </div>
           <!-- <div style="clear:both;"></div> -->
           <div class="service-footer">
             <div class="map-legend">
-              <span class="map-lowest">-3%</span>
-              <span class="map-lower">-2%</span>
-              <span class="map-low">-1%</span>
-              <span class="map-middle">0%</span>
-              <span class="map-high">1%</span>
-              <span class="map-higher">2%</span>
-              <span class="map-highest">3%</span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
             <div class="map-notice">
               모든 투자의 책임은 당사자에게 있습니다. PC 환경에서 마우스 커서를 올리거나 모바일 기기에서 길게 누르면 세부 정보가 나타납니다. 종목이나 섹터를 클릭(탭)하면 확대/재편됩니다. *표시는 코스닥 종목입니다.
             </div>
           </div>
+          
         </div>
       </section>
-
+      
       <section id="faq" class="faq">
     
         <div class="faq-header">
@@ -250,8 +232,8 @@
       </div>
     </footer>
 
+
     <script type="text/javascript" src="./src/js/common.js"></script>
-    <!-- <script type="text/javascript" src="./src/js/treemap.js"></script> -->
     <script type="text/javascript" src="./src/js/treemap.min.js"></script>
       
     
