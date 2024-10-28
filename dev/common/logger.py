@@ -36,7 +36,7 @@ class Log:
         message.attach(MIMEText(cls.text))
         try:
             with smtplib.SMTP('smtp.gmail.com', 587) as server:
-                server.ehlo
+                server.ehlo()
                 server.starttls()
                 server.login(cls.SENDER, "puiz yxql tnoe ivaa")
                 server.send_message(message)
