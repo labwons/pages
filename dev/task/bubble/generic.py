@@ -69,7 +69,7 @@ class Basis(DataFrame):
 
         invOrDivByZeroProtection = ['trailingPS', 'trailingPE', 'estimatedPE']
         for col in invOrDivByZeroProtection:
-            bs.loc[(bs[col] <= 0) | (bs[col] == np.Inf), col] = np.nan
+            bs.loc[(bs[col] <= 0) | (bs[col] == np.inf), col] = np.nan
 
         bs = bs[[
             'name',  'close', 'marketCap', 'foreignRate', 'volume',
