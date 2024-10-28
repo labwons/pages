@@ -35,7 +35,7 @@ jobs:
     - name: Run application
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)/dev
-        python dev/build/task/overnight.py
+        python dev/task/overnight.py
 
     - name: Commit and Push changes
       env:

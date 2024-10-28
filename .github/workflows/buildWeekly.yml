@@ -35,7 +35,7 @@ jobs:
     - name: Run application
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)/dev
-        python dev/build/task/weekly.py
+        python dev/task/weekly.py
 
     - name: Commit and Push changes
       env:
