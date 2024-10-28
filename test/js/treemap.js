@@ -320,7 +320,7 @@ function setBarChart() {
 --------------------------------------------------------------*/
 $(document).ready(async function(){
   try {
-    const response = await fetch('/_data/json/service/treemap.json');
+    const response = await fetch('../../dev/json/service/treemap.json');
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
