@@ -9,12 +9,12 @@ class PATH:
     except NameError:
         ROOT = 'https://raw.githubusercontent.com/labwons/pages/main/'
 
-    GROUP = os.path.join(ROOT, r'build\json\group\group.json')
-    STATE = os.path.join(ROOT, r'build\json\group\state.json')
-    PRICE = os.path.join(ROOT, r'build\json\group\price.json')
-    SPECS = os.path.join(ROOT, r'build\json\group\specs.json')
-    INDEX = os.path.join(ROOT, r'build\json\macro\index.json')
-    TRMAP = os.path.join(ROOT, r'build\json\service\treemap.json')
+    GROUP = os.path.join(ROOT, r'dev\json\group\group.json')
+    STATE = os.path.join(ROOT, r'dev\json\group\state.json')
+    PRICE = os.path.join(ROOT, r'dev\json\group\price.json')
+    SPECS = os.path.join(ROOT, r'dev\json\group\specs.json')
+    INDEX = os.path.join(ROOT, r'dev\json\macro\index.json')
+    TRMAP = os.path.join(ROOT, r'dev\json\service\treemap.json')
     
 
 
