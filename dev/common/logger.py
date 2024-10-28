@@ -19,6 +19,7 @@ class Log:
     RECEIVER:str = 'jhlee_0319@naver.com'
 
     active: bool = True
+    title:str = f"{Calendar} Log"
     text:str = ''
 
     @classmethod
@@ -26,11 +27,16 @@ class Log:
         if cls.active:
             cls.text += message
         return
+    
+    @classmethod
+    def set_title(cls, title:str):
+        cls.title = title
+        return
 
     @classmethod
     def send(cls):
         message = MIMEMultipart()
-        message['Subject'] = f"{Calendar} Log"
+        message['Subject'] = cls.title
         message['From'] = cls.SENDER
         message['To'] = cls.RECEIVER
         message.attach(MIMEText(cls.text))

@@ -1,15 +1,19 @@
 try:
     from ...common.path import PATH
-    from .fetch import fetchIpo, fetchOverviewSpec, fetchOverviewStatement
+    from ...common.logger import Log
+    from .fetch import fetchOverviewSpec, fetchOverviewStatement
 except ImportError:
-    from dev.module.fng.fetch import fetchIpo, fetchOverviewSpec, fetchOverviewStatement
+    from dev.module.fng.fetch import fetchOverviewSpec, fetchOverviewStatement
     from dev.common.path import PATH
+    from dev.common.logger import Log
+from datetime import datetime
 from pandas import DataFrame
 from typing import Iterable
 import numpy as np
 import pandas as pd
 
 
+Log.set_title(f"[LW][LOG] UPDATE Fundamentals @{datetime.now().date()}")
 class Stat(DataFrame):
 
     def __init__(self):
@@ -23,6 +27,9 @@ class Stat(DataFrame):
             tickers = self.index
 
         for ticker in tickers:
+            # TODO 
+            # try except 추가
+            # exception 종류 파악 중 2024-10-28
             base = fetchOverviewSpec(ticker)
 
             ifrs = 'con'

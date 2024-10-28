@@ -15,6 +15,7 @@ from pykrx import stock
 import pandas as pd
 
 
+Log.set_title(f"[LW][LOG] UPDATE WISE/INDEX @{Calendar}")
 GEN_TIME = fetchWiseDate()
 
 class Groups(DataFrame):
@@ -54,6 +55,7 @@ class Groups(DataFrame):
         wrap.loc[kq, 'name'] = wrap.loc[kq, 'name'] + '*'
         wrap.loc[lg, 'stockSize'] = 'large'
         super().__init__(wrap)
+        Log.append("--- \n\n")
         return
 
     def dump(self) -> str:
@@ -73,8 +75,12 @@ class Indices(DataFrame):
             super().__init__(df)
             return
 
+        Log.active = not offline
+        Log.append(f"\nFetching INDEX @Date: {GEN_TIME}\n")
         df = df.iloc[:-1]
-        for col in df:
+        for n, col in enumerate(df):
+            name = CDSEC[col] if col in CDSEC else col
+            Log.append(f"... ({n + 1} / {len(df.columns)}) {col} / {name}: ")
             latest = Calendar[-1] if col in ["KOSPI", "KOSDAQ"] else GEN_TIME
             index = df[col].dropna()
             if latest == index.index[-1]:
@@ -97,7 +103,9 @@ class Indices(DataFrame):
                 )
             for i in fetch.index:
                 df.loc[i, col] = fetch.loc[i, col]
+            Log.append("Success\n")
         super().__init__(df)
+        Log.append("--- \n\n")
         return
 
     def dump(self) -> str:
