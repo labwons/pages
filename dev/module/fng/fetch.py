@@ -70,7 +70,7 @@ def fetchOverviewStatement(
         data.append([val.text for val in elem.findall('value')])
     df = DataFrame(index=index, columns=cols, data=data)
     if not include_estimated:
-        df = df[~df.index.str.endswith('(E)')]
+        df = df[(~df.index.str.endswith('(E)')) & (~df.index.str.endswith('(P)'))]
     return df.applymap(str2num)
 
 

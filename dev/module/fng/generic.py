@@ -73,6 +73,11 @@ class Stat(DataFrame):
 
 
 if __name__ == "__main__":
+    from pandas import set_option
+    set_option('display.expand_frame_repr', False)
+
     df = Stat()
-    df.dataUpdate(['395400'])
-    df.dump()
+    # df.dataUpdate(['395400'])
+    # df.dump()
+    print(df)
+    print(df.loc['105560'])

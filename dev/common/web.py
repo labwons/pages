@@ -14,7 +14,7 @@ class Web:
     def get(cls, url:str, encoding:str='', **kwargs):
         if not url in cls.__req__:
             resp = requests.get(url)
-            if not resp.status_code is 200:
+            if not resp.status_code == 200:
                 return
             if encoding:
                 resp.encoding = encoding

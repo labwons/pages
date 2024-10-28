@@ -1,6 +1,7 @@
 bs4
 numpy
 pandas
+pandas_datareader
 pykrx
 pytz
 requests
