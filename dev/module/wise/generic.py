@@ -15,7 +15,7 @@ from pykrx import stock
 import pandas as pd
 
 
-GENTIME = fetchWiseDate()
+GEN_TIME = fetchWiseDate()
 
 class Groups(DataFrame):
 
@@ -27,12 +27,12 @@ class Groups(DataFrame):
             return
 
         Log.active = not offline
-        Log.append(f"Fetching WISE Group @Date: {GENTIME}\n")
+        Log.append(f"Fetching WISE Group @Date: {GEN_TIME}\n")
 
         objs = []
         for n, (code, name) in enumerate(CDSEC.items()):
             Log.append(f"... ({n + 1} / {len(CDSEC)}) {code} / {name}: ")
-            fetch = fetchWiseGroup(code, GENTIME.strftime("%Y%m%d"))
+            fetch = fetchWiseGroup(code, GEN_TIME.strftime("%Y%m%d"))
             if fetch.empty:
                 Log.append("Failed\n")
                 continue
@@ -76,7 +76,7 @@ class Indices(DataFrame):
 
         df = df.iloc[:-1]
         for col in df:
-            latest = Calendar[-1] if col in ["KOSPI", "KOSDAQ"] else GENTIME
+            latest = Calendar[-1] if col in ["KOSPI", "KOSDAQ"] else GEN_TIME
             index = df[col].dropna()
             if latest == index.index[-1]:
                 continue
@@ -94,7 +94,7 @@ class Indices(DataFrame):
                 fetch = fetchWiseSeries(
                     code=col,
                     fromDT=str(index.index[-1]),
-                    endDT=GENTIME.strftime("%Y-%m-%d")
+                    endDT=GEN_TIME.strftime("%Y-%m-%d")
                 )
             for i in fetch.index:
                 df.loc[i, col] = fetch.loc[i, col]
