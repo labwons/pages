@@ -8,8 +8,6 @@
 
 name: After Market
 on: 
-  schedule:
-    - cron: '35 6 * * 1-5'
   workflow_dispatch:
 
 jobs:
