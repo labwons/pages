@@ -14,6 +14,7 @@ class PATH:
     PRICE = os.path.join(ROOT, r'dev/json/group/price.json')
     SPECS = os.path.join(ROOT, r'dev/json/group/specs.json')
     INDEX = os.path.join(ROOT, r'dev/json/macro/index.json')
+    ECOS  = os.path.join(ROOT, r'dev/json/macro/ecos.json')
     TRMAP = os.path.join(ROOT, r'dev/json/service/treemap.json')
     
 

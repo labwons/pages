@@ -1,28 +1,28 @@
 try:
-    from .core import xml2df
+    from ...common.path import PATH
+    from .core import PREDEF, xml2df
 except ImportError:
-    from dev.module.ecos.core import xml2df
-from pandas import DataFrame, Index, Series
-from typing import Dict, Union
+    from dev.common.path import PATH
+    from dev.module.ecos.core import PREDEF, xml2df
+from pandas import DataFrame, Series
 import pandas as pd
+import json
 
 
 class _ecos:
 
     def __init__(self, api:str=""):
         self.__api__:str = api
-        self.__mem__:Dict[str, Union[DataFrame, Series]] = {}
-        self.__sym__:DataFrame = DataFrame()
         return
 
     def __call__(self) -> DataFrame:
-        return self.metadata
+        return self.serviceData
 
-    def __contains__(self, item):
-        return item in self.metadata.index
+    def __getitem__(self, item: str) -> Series:
+        return self.userDefine[item]
 
     def __repr__(self) -> repr:
-        return repr(self.metadata)
+        return repr(self.serviceData)
 
     @property
     def api(self):
@@ -34,7 +34,7 @@ class _ecos:
         return
 
     @property
-    def metadata(self) -> DataFrame:
+    def serviceData(self) -> DataFrame:
         """
         return:
                                                    name cycle        by
@@ -51,7 +51,7 @@ class _ecos:
         252Y001                            시장물가지수     Q  한국은행
         252Y002                                시장환율     Q  한국은행
         """
-        if self.__sym__.empty:
+        if not hasattr(self, "__meta__"):
             columns = {
                 "STAT_CODE": "symbol",
                 "STAT_NAME": "name",
@@ -63,12 +63,30 @@ class _ecos:
             data = data[data.SRCH_YN == 'Y'].copy()
             data['STAT_NAME'] = data["STAT_NAME"].apply(lambda x: x[x.find(' ') + 1:])
             data = data.rename(columns=columns)
-            self.__sym__ = data[columns.values()].set_index(keys='symbol')
-        return self.__sym__
+            self.__setattr__("__meta__", data[columns.values()].set_index(keys='symbol'))
+        return self.__getattribute__("__meta__")
 
     @property
-    def symbols(self) -> Index:
-        return self.metadata.index
+    def userDefine(self) -> DataFrame:
+        if not hasattr(self, "__user__"):
+            objs = {}
+            for symbol, attr in PREDEF.items():
+                for code, name in attr["code"].items():
+                    objs[f"{symbol}_{code}"] = self.data(symbol, code)
+            self.__setattr__("__user__", pd.concat(objs=objs, axis=1))
+        return self.__getattribute__("__user__")
+
+    @property
+    def METADATA(self) -> dict:
+        meta = {}
+        for symbol, attr in PREDEF.items():
+            for code, name in attr["code"].items():
+                meta[f'{symbol}_{code.replace("*", "")}'] = {
+                    "name": f"{attr['name']}/{name}",
+                    "unit": attr["unit"],
+                    "category": attr["category"]
+                }
+        return meta
 
     def container(self, symbol:str, **kwargs):
         columns = {
@@ -77,7 +95,8 @@ class _ecos:
             "CYCLE": 'freq',
             "START_TIME": 'startdate',
             "END_TIME": 'enddate',
-            "DATA_CNT": 'count'
+            "DATA_CNT": 'count',
+            "UNIT_NAME": "unit"
         }
         url = f"http://ecos.bok.or.kr/api/StatisticItemList/{self.api}/xml/kr/1/10000/{symbol}"
         get = xml2df(url=url, parser="xml")
@@ -98,7 +117,7 @@ class _ecos:
                 if _freq in layer['freq'].values:
                     layer = layer[layer['freq'] == _freq]
                     break
-        layer = layer.loc[code].to_dict()
+        layer = layer.loc[code.split("/")[0]].to_dict()
 
         url = f'http://ecos.bok.or.kr/api/StatisticSearch/{self.api}/' \
               f'xml/' \
@@ -124,6 +143,20 @@ class _ecos:
             series.index = series.index.to_period("M").to_timestamp("M")
         return series
 
+    def dump(self):
+        objs = {}
+        for col in self.userDefine:
+            series = self.userDefine[col].dropna()
+            objs[col] = {
+                'date': series.index.strftime("%Y-%m-%d").tolist(),
+                'data': series.tolist()
+            }
+        string = json.dumps(objs)
+        if not PATH.ECOS.startswith('http'):
+            with open(PATH.ECOS, 'w') as f:
+                f.write(string)
+        return objs
+
 
 # Alias
 Ecos = _ecos()
@@ -136,9 +169,15 @@ if __name__ == "__main__":
 
     Ecos.api = "CEW3KQU603E6GA8VX0O9"
     # print(Ecos)
-    cont = Ecos.container('403Y001')
-    print(cont[cont["name"] == '가정용전기기기'])
-    # print(Ecos.container('403Y001'))
+    # cont = Ecos.container('901Y027')
+    # print(cont)
+    # print(cont[cont["name"] == '가정용전기기기'])
+
     # print(Ecos.data('731Y003', '0000002'))
     # print(Ecos.data('403Y001', '31211AA'))
-    # print(Ecos.data('403Y001', '3121AA'))
+    # print(Ecos.data('101Y003', 'BBHS00'))
+    # print(Ecos.data('512Y014', 'C0000/BY'))
+    # print(Ecos.data('511Y002', "FME/99988"))
+    # print(Ecos.userDefine)
+    # print(Ecos.METADATA)
+    print(Ecos.dump())
