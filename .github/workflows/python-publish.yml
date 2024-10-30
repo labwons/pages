@@ -1,0 +1,13 @@
+name: Cleanup Stuck Workflows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Running Workflows
+        run: |
+          echo "Cleaning up any stuck workflows"
+          pkill -9 -f "runner" || true  # 실제 실행되는 프로세스를 종료하는 예시
