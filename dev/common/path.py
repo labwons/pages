@@ -16,6 +16,7 @@ class PATH:
     INDEX = os.path.join(ROOT, r'dev/json/macro/index.json')
     ECOS  = os.path.join(ROOT, r'dev/json/macro/ecos.json')
     TRMAP = os.path.join(ROOT, r'dev/json/service/treemap.json')
+    RANK  = os.path.join(ROOT, r'dev/json/service/rank.json')
     
 
 

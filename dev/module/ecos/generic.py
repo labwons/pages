@@ -1,9 +1,9 @@
 try:
     from ...common.path import PATH
-    from .core import PREDEF, xml2df
+    from .core import METADATA, xml2df
 except ImportError:
     from dev.common.path import PATH
-    from dev.module.ecos.core import PREDEF, xml2df
+    from dev.module.ecos.core import METADATA, xml2df
 from pandas import DataFrame, Series
 import pandas as pd
 import json
@@ -70,23 +70,10 @@ class _ecos:
     def userDefine(self) -> DataFrame:
         if not hasattr(self, "__user__"):
             objs = {}
-            for symbol, attr in PREDEF.items():
-                for code, name in attr["code"].items():
-                    objs[f"{symbol}_{code}"] = self.data(symbol, code)
+            for name, meta in METADATA.items():
+                objs[name] = self.data(meta['symbol'], meta['code'])
             self.__setattr__("__user__", pd.concat(objs=objs, axis=1))
         return self.__getattribute__("__user__")
-
-    @property
-    def METADATA(self) -> dict:
-        meta = {}
-        for symbol, attr in PREDEF.items():
-            for code, name in attr["code"].items():
-                meta[f'{symbol}_{code.replace("*", "")}'] = {
-                    "name": f"{attr['name']}/{name}",
-                    "unit": attr["unit"],
-                    "category": attr["category"]
-                }
-        return meta
 
     def container(self, symbol:str, **kwargs):
         columns = {
@@ -177,7 +164,7 @@ if __name__ == "__main__":
     # print(Ecos.data('403Y001', '31211AA'))
     # print(Ecos.data('101Y003', 'BBHS00'))
     # print(Ecos.data('512Y014', 'C0000/BY'))
-    # print(Ecos.data('511Y002', "FME/99988"))
+    # print(Ecos.data('101Y004', "BBHA00"))
     # print(Ecos.userDefine)
     # print(Ecos.METADATA)
     print(Ecos.dump())

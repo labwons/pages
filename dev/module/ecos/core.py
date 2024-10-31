@@ -6,297 +6,510 @@ from pandas import DataFrame
 from xml.etree.ElementTree import  ElementTree, fromstring
 
 
-__all__ = ["PREDEF", "xml2df"]
+__all__ = ["METADATA", "xml2df"]
 
-PREDEF = {
-    "731Y003" : {
-        'name': '원달러환율',
-        'code': {
-            "0000002":'시가',
-            "0000005":'고가',
-            "0000004":'저가',
-            "0000003":'종가'
-        },
-        'category': '통화공급',
+METADATA = {
+    '기준금리': {
+        'symbol': '722Y001',
+        'code': '0101000',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    'KORIBOR(3개월)': {
+        'symbol': '817Y002',
+        'code': '010150000',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    'KORIBOR(6개월)': {
+        'symbol': '817Y002',
+        'code': '010151000',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '국고채1년': {
+        'symbol': '817Y002',
+        'code': '010190000',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '국고채2년': {
+        'symbol': '817Y002',
+        'code': '010195000',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '국고채5년': {
+        'symbol': '817Y002',
+        'code': '010200001',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '국고채10년': {
+        'symbol': '817Y002',
+        'code': '010210000',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '회사채3년(AA-)': {
+        'symbol': '817Y002',
+        'code': '010300000',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '회사채3년(BBB-)': {
+        'symbol': '817Y002',
+        'code': '010320000',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '은행수신금리(신규)': {
+        'symbol': '121Y002',
+        'code': 'BEABAA2',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '은행수신금리(잔액)': {
+        'symbol': '121Y013',
+        'code': 'BEABAB2',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '은행대출금리(신규)': {
+        'symbol': '121Y006',
+        'code': 'BECBLA01',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '은행대출금리(잔액)': {
+        'symbol': '121Y015',
+        'code': 'BECBLB01',
+        'unit': '%',
+        'category': '금리지표',
+        'YoY': False,
+        'MoM': False
+    },
+
+
+    '원/달러환율': {
+        'symbol': '731Y003',
+        'code': '0000003',
         'unit': '원',
+        'category': '통화/유동성지표',
+        'YoY': False,
+        'MoM': False
     },
-    "403Y001": {
-        "name": '수출지수', # 금액
-        "code": {
-            '*AA': '총지수',
-            '3091AA': '반도체',
-            '31124AA': '반도체및디스플레이제조기계',
-            '309512AA': '이동전화기',
-            '3121AA': '자동차',
-            '31213AA': '자동차부품',
-            '310131AA': '전지',
-            '31015AA': '가정용전기기기'
-        },
-        'category': '수출입',
-        'unit': '-'
+    'M2(평잔, 원계열)': {
+        'symbol': '101Y004',
+        'code': 'BBHA00',
+        'unit': '십억원',
+        'category': '통화/유동성지표',
+        'YoY': True,
+        'MoM': False
     },
-    "403Y003": {
-        "name": '수입지수', # 금액
-        "code": {
-            '*AA': '총지수',
-        },
-        'category': '수출입',
-        'unit': '-'
+    'M2(평잔, 계절조정)': {
+        'symbol': '101Y003',
+        'code': 'BBHS00',
+        'unit': '십억원',
+        'category': '통화/유동성지표',
+        'YoY': True,
+        'MoM': False
     },
-    "101Y003": {
-        "name": "M2",
-        "code" :{
-            'BBHS00': '계절조정'
-        },
-        "category": "통화공급",
-        "unit": "십억원"
+    '은행수신(말잔)': {
+        'symbol': '104Y013',
+        'code': 'BCB8',
+        'unit': '십억원',
+        'category': '통화/유동성지표',
+        'YoY': True,
+        'MoM': False
     },
-    "101Y004": {
-        "name": "M2",
-        "code" :{
-            'BBHA00': '원계열'
-        },
-        "category": "통화공급",
-        "unit": "십억원"
+    '은행수신(평잔)': {
+        'symbol': '104Y014',
+        'code': 'BCA8',
+        'unit': '십억원',
+        'category': '통화/유동성지표',
+        'YoY': True,
+        'MoM': False
     },
-    "104Y013" : {
-        "name": "은행수신",
-        "code": {
-            "BCB8": "말잔",
-        },
-        "category": "통화공급",
-        "unit": "십억원"
+    '비은행수신(말잔)': {
+        'symbol': '111Y007',
+        'code': '1000000',
+        'unit': '십억원',
+        'category': '통화/유동성지표',
+        'YoY': True,
+        'MoM': False
     },
-    "104Y014" : {
-        "name": "은행수신",
-        "code": {
-            "BCA8": "평잔",
-        },
-        "category": "통화공급",
-        "unit": "십억원"
+    '비은행수신(평잔)': {
+        'symbol': '111Y008',
+        'code': '1000000',
+        'unit': '십억원',
+        'category': '통화/유동성지표',
+        'YoY': True,
+        'MoM': False
     },
-    "111Y008" : {
-        "name": "비은행수신",
-        "code": {
-            "1000000": "평잔"
-        },
-        "category": "통화공급",
-        "unit": "십억원"
+    '은행여신(말잔)': {
+        'symbol': '104Y016',
+        'code': 'BDCA1',
+        'unit': '십억원',
+        'category': '통화/유동성지표',
+        'YoY': True,
+        'MoM': False
     },
-    "111Y007": {
-        "name": "비은행수신",
-        "code": {
-            "1000000": "말잔"
-        },
-        "category": "통화공급",
-        "unit": "십억원"
+    '비은행여신(말잔)': {
+        'symbol': '111Y009',
+        'code': '1000000',
+        'unit': '십억원',
+        'category': '통화/유동성지표',
+        'YoY': True,
+        'MoM': True
     },
-    "104Y016": {
-        "name": "은행여신",
-        "code": {
-            "BDCA1": "말잔"
-        },
-        "category": "통화공급",
-        "unit": "십억원"
+    '증시예탁금': {
+        'symbol': '901Y056',
+        'code': 'S23A',
+        'unit': '백만원',
+        'category': '통화/유동성지표',
+        'YoY': True,
+        'MoM': False
     },
-    "111Y009": {
-        "name": "비은행여신",
-        "code": {
-            "1000000": "말잔"
-        },
-        "category": "통화공급",
-        "unit": "십억원"
+    '신용융자잔고': {
+        'symbol': '901Y056',
+        'code': 'S23E',
+        'unit': '백만원',
+        'category': '통화/유동성지표',
+        'YoY': True,
+        'MoM': False
     },
-    "722Y001": {
-        "name": "기준금리",
-        "code": {
-            "0101000": "일간"
-        },
-        "category": "금리",
-        "unit": "십억원"
+    '신용대주잔고': {
+        'symbol': '901Y056',
+        'code': 'S23F',
+        'unit': '백만원',
+        'category': '통화/유동성지표',
+        'YoY': True,
+        'MoM': False
     },
-    "817Y002" : {
-        "name": "시장금리",
-        "code": {
-            "010101000": "콜금리",
-            "010151000": "KORIBOR(6M)",
-            "010190000": "국고채1년",
-            "010195000": "국고채2년",
-            "010200001": "국고채5년",
-            "010210000": "국고채10년",
-            "010300000": "회사채3년(AA-)",
-            "010320000": "회사채3년(BBB-)"
-        },
-        "category": "금리",
-        "unit": "%"
+
+
+    '수출지수': {
+        'symbol': '403Y001',
+        'code': '*AA',
+        'unit': '-',
+        'category': '수출지표',
+        'YoY': True,
+        'MoM': False
     },
-    "121Y002": {
-        "name": "은행수신금리",
-        "code": {
-            "BEABAA2": "신규기준",
-            "BEABAA1": "신규기준(금융채제외)"
-        },
-        "category": "금리",
-        "unit": "%"
+    '반도체수출': {
+        'symbol': '403Y001',
+        'code': '3091AA',
+        'unit': '-',
+        'category': '수출지표',
+        'YoY': True,
+        'MoM': False
     },
-    "121Y013": {
-        "name": "은행수신금리",
-        "code": {
-            "BEABAB2": "잔액기준",
-            "BEABAB1": "잔액기준(금융채제외)"
-        },
-        "category": "금리",
-        "unit": "%"
+    '반도체/디스플레이장비수출': {
+        'symbol': '403Y001',
+        'code': '3091AA',
+        'unit': '-',
+        'category': '수출지표',
+        'YoY': True,
+        'MoM': False
     },
-    "121Y006": {
-        "name": "은행대출금리",
-        "code": {
-            "BECBLA01": "신규기준",
-            "BECBLA02": "신규기준(기업)",
-            "BECBLA03": "신규기준(가계)"
-        },
-        "category": "금리",
-        "unit": "%"
+    '스마트폰/무선전화기수출': {
+        'symbol': '403Y001',
+        'code': '309512AA',
+        'unit': '-',
+        'category': '수출지표',
+        'YoY': True,
+        'MoM': False
     },
-    "121Y015": {
-        "name": "은행대출금리",
-        "code": {
-            "BECBLB01": "잔액기준",
-            "BECBLB0201": "잔액기준(기업)",
-            "BECBLB0202": "잔액기준(가계)"
-        },
-        "category": "금리",
-        "unit": "%"
+    '자동차수출': {
+        'symbol': '403Y001',
+        'code': '3121AA',
+        'unit': '-',
+        'category': '수출지표',
+        'YoY': True,
+        'MoM': False
     },
-    "901Y056":  {
-        "name": "증시자금",
-        "code": {
-            "S23A": "예탁금",
-            "S23E": "신용융자잔고",
-            "S23F": "신용대주잔고"
-        },
-        "category": "통화공급",
-        "unit": "백만원"
+    '자동차부품수출': {
+        'symbol': '403Y001',
+        'code': '31213AA',
+        'unit': '-',
+        'category': '수출지표',
+        'YoY': True,
+        'MoM': False
     },
-    "404Y014": {
-        "name": "생산자물가지수",
-        "code": {
-            "*AA": "전체"
-        },
-        "category": "물가",
-        "unit": "-"
+    '음식료품수출': {
+        'symbol': '403Y001',
+        'code': '301AA',
+        'unit': '-',
+        'category': '수출지표',
+        'YoY': True,
+        'MoM': False
     },
-    "901Y009": {
-        "name": "소비자물가지수",
-        "code": {
-            "0": "전체"
-        },
-        "category": "물가",
-        "unit": "-"
+    '석탄및석유제품수출': {
+        'symbol': '403Y001',
+        'code': '304AA',
+        'unit': '-',
+        'category': '수출지표',
+        'YoY': True,
+        'MoM': False
     },
-    "901Y062": {
-        "name": "KB부동산매매지수",
-        "code": {
-            "P63AC": "아파트(전국)",
-            "P63ACA": "아파트(서울)",
-        },
-        "category": "부동산",
-        "unit": "-"
+    '철강수출': {
+        'symbol': '403Y001',
+        'code': '3071AA',
+        'unit': '-',
+        'category': '수출지표',
+        'YoY': True,
+        'MoM': False
     },
-    "901Y063": {
-        "name": "KB부동산전세지수",
-        "code": {
-            "P64AC": "아파트(전국)",
-            "P64ACA": "아파트(서울)",
-        },
-        "category": "부동산",
-        "unit": "-"
+    '전지수출': {
+        'symbol': '403Y001',
+        'code': '31013AA',
+        'unit': '-',
+        'category': '수출지표',
+        'YoY': True,
+        'MoM': False
     },
-    "901Y089": {
-        "name": "아파트실거래지수",
-        "code": {
-            "100": "전국",
-            "200": "서울",
-            "210": "서울도심",
-            "220": "서울동북",
-            "230": "서울동남",
-            "240": "서울서북",
-            "250": "서울서남",
-            "300": "수도권",
-            "C00": "경기",
-            "B00": "세종",
-            "400": "지방",
-            "M00": "지방광역시"
-        },
-        "category": "부동산",
-        "unit": "-"
+    '가전수출': {
+        'symbol': '403Y001',
+        'code': '31015AA',
+        'unit': '-',
+        'category': '수출지표',
+        'YoY': True,
+        'MoM': False
     },
-    "512Y014": {
-        "name": "경기전망",
-        "code": {
-            "C0000/BA": "제조업업황전망",
-            "C0000/BD": "제조업신규수주전망",
-            "C0000/BM": "제조업수출전망",
-            "C0000/BY": "제조업심리지수",
-            "X8000/BA": "수출기업업황전망",
-            "X8000/BD": "수출기업신규수주전망",
-            "X8000/BM": "수출기업수출전망",
-        },
-        "category": "심리지수",
-        "unit": "-"
+
+
+    '소비자물가지수': {
+        'symbol': '901Y009',
+        'code': '0',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': False
     },
-    "511Y002": {
-        "name": "소비자동향",
-        "code": {
-            "FME/99988": "심리지수"
-        },
-        "category": "심리지수",
-        "unit": "-"
+    '소비자물가지수(식료품 및 에너지 제외)': {
+        'symbol': '901Y010',
+        'code': 'DB',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': False
     },
-    "513Y001": {
-        "name": "경제심리지수",
-        "code": {
-            "E2000": "순환변동"
-        },
-        "category": "심리지수",
-        "unit": "-"
+    '소비자물가지수(서비스)': {
+        'symbol': '901Y010',
+        'code': '22',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': False
     },
-    "521Y001": {
-        "name": "뉴스심리지수",
-        "code": {
-            "A001": "실험통계"
-        },
-        "category": "심리지수",
-        "unit": "-"
+    '생산자물가지수': {
+        'symbol': '404Y014',
+        'code': '*AA',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': False
     },
-    "901Y067": {
-        "name": "경기종합지수",
-        "code": {
-            "I16E": "선행지수순환변동",
-            "I16D": "동행지수순환변동",
-        },
-        "category": "종합지수",
-        "unit": "-"
+    '생산자물가지수(식료품 및 에너지 제외)': {
+        'symbol': '404Y015',
+        'code': 'S620AA',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': False
     },
-    "901Y027": {
-        "name": "실업률",
-        "code": {
-            "I61BC/I28A": "원계열",
-            "I61BC/I28B": "계절조정"
-        },
-        "category": "기타",
-        "unit": "%"
+    '생산자물가지수(서비스)': {
+        'symbol': '404Y014',
+        'code': '5AA',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': False
     },
-    "901Y014": {
-        "name": "월별주가지수",
-        "code": {
-            "1070000": "코스피",
-            "2090000": "코스닥"
-        },
-        "category": "주가지수",
-        "unit": "-"
-    }
+
+
+    'KB부동산매매지수(아파트, 전국)': {
+        'symbol': '901Y062',
+        'code': 'P63AC',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': True
+    },
+    'KB부동산매매지수(아파트, 서울)': {
+        'symbol': '901Y062',
+        'code': 'P63ACA',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': True
+    },
+    'KB부동산전세지수(아파트, 전국)': {
+        'symbol': '901Y063',
+        'code': 'P64AC',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': True
+    },
+    'KB부동산전세지수(아파트, 서울)': {
+        'symbol': '901Y063',
+        'code': 'P64ACA',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': True
+    },
+    '아파트실거래지수(전국)': {
+        'symbol': '901Y089',
+        'code': '100',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': True
+    },
+    '아파트실거래지수(서울)': {
+        'symbol': '901Y089',
+        'code': '200',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': True
+    },
+    '아파트실거래지수(수도권)': {
+        'symbol': '901Y089',
+        'code': '300',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': True
+    },
+    '아파트실거래지수(경기)': {
+        'symbol': '901Y089',
+        'code': 'C00',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': True
+    },
+    '아파트실거래지수(지방광역시)': {
+        'symbol': '901Y089',
+        'code': 'M00',
+        'unit': '-',
+        'category': '물가/부동산지표',
+        'YoY': True,
+        'MoM': True
+    },
+
+    '경기선행지수순환변동': {
+        'symbol': '901Y067',
+        'code': 'I16E',
+        'unit': '-',
+        'category': '경제/심리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '경기동행지수순환변동': {
+        'symbol': '901Y067',
+        'code': 'I16D',
+        'unit': '-',
+        'category': '경제/심리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '제조업업황전망': {
+        'symbol': '512Y014',
+        'code': 'C0000/BA',
+        'unit': '-',
+        'category': '경제/심리지표',
+        'YoY': True,
+        'MoM': True
+    },
+    '제조업신규수주전망': {
+        'symbol': '512Y014',
+        'code': 'C0000/BD',
+        'unit': '-',
+        'category': '경제/심리지표',
+        'YoY': True,
+        'MoM': True
+    },
+    '제조업수출전망': {
+        'symbol': '512Y014',
+        'code': 'C0000/BM',
+        'unit': '-',
+        'category': '경제/심리지표',
+        'YoY': True,
+        'MoM': True
+    },
+    '제조업심리지수': {
+        'symbol': '512Y014',
+        'code': 'C0000/BY',
+        'unit': '-',
+        'category': '경제/심리지표',
+        'YoY': True,
+        'MoM': True
+    },
+    '소비자심리지수': {
+        'symbol': '511Y002',
+        'code': 'FME/99988',
+        'unit': '-',
+        'category': '경제/심리지표',
+        'YoY': True,
+        'MoM': True
+    },
+    '뉴스심리지수(실험통계)': {
+        'symbol': '521Y001',
+        'code': 'A001',
+        'unit': '-',
+        'category': '경제/심리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '실업률(원계열)': {
+        'symbol': '901Y027',
+        'code': 'I61BC/I28A',
+        'unit': '%',
+        'category': '경제/심리지표',
+        'YoY': False,
+        'MoM': False
+    },
+    '실업률(계절조정)': {
+        'symbol': '901Y027',
+        'code': 'I61BC/I28B',
+        'unit': '%',
+        'category': '경제/심리지표',
+        'YoY': False,
+        'MoM': False
+    },
 }
+
+
+
 
 
 def xml2df(url: str, parser:str="") -> DataFrame:

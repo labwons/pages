@@ -25,7 +25,7 @@ RED2GREEN = [
 HEX2RGB = lambda x: (int(x[1:3], 16), int(x[3:5], 16), int(x[5:], 16))
 CONNECT = lambda x, x1, y1, x2, y2: ( (y2 - y1) / (x2 - x1) ) * (x - x1) + y1
 
-def paint(data:Series, tag:dict) -> Series:
+def paint(data:Series, tag:dict, replace_last:bool=True) -> Series:
     scale = tag['scale']
     scaleNa = tag['scaleNa']
     bound = tag['bound'].copy()
@@ -52,5 +52,6 @@ def paint(data:Series, tag:dict) -> Series:
         b = CONNECT(val, bound[n], b1, bound[n + 1], b2)
         return f'#{hex(int(r))[2:]}{hex(int(g))[2:]}{hex(int(b))[2:]}'.upper()
     color = data.apply(_paint)
-    color.iloc[-1] = '#C8C8C8'
+    if replace_last:
+        color.iloc[-1] = '#C8C8C8'
     return color
