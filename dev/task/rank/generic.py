@@ -32,7 +32,11 @@ class Rank(object):
         for col in self.KEY:
             basis[f'{col}-C'] = paint(basis[col], KEYS[col], False)
 
-        self.objs = {'Date': str(Calendar), 'ALL': {col: self.align(basis, col) for col in self.KEY}}
+        self.objs = {
+            'Date': str(Calendar),
+            'Meta': KEYS,
+            'ALL': {col: self.align(basis, col) for col in self.KEY}
+        }
         for (code, ), group in basis.groupby(by=['industryCode']):
             self.objs[code] = {col: self.align(group, col) for col in self.KEY}
         return
