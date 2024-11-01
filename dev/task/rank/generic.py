@@ -62,12 +62,13 @@ class Rank(object):
         upper = data[data[by] >= 0].iloc[:10]
         lower = data[data[by] < 0].iloc[-10:]
         return {
+            'xmax': max(upper[by].tolist() + lower[by].abs().tolist()),
             'upper': {
                 'name': upper['name'].tolist(),
                 'meta': upper['meta'].tolist(),
                 'text': round(upper[by], 2).tolist(),
                 'color': upper[f'{by}-C'].tolist(),
-                'x': upper[by].abs().tolist(),
+                'x': round(upper[by], 2).tolist(),
                 'y': [n for n in range(1, len(lower) + 1)][::-1]
             },
             'lower': {
@@ -75,7 +76,7 @@ class Rank(object):
                 'meta': lower['meta'].tolist(),
                 'text': round(lower[by], 2).tolist(),
                 'color': lower[f'{by}-C'].tolist(),
-                'x': (-1 * lower[by].abs()).tolist(),
+                'x': round(lower[by], 2).tolist(),
                 'y': [n for n in range(1, len(lower) + 1)][::-1]
             }
         }
