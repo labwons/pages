@@ -24,23 +24,26 @@ class Rank(object):
         basis = basis.copy()
         basis['meta'] = basis['name'] + '(' + basis.index + ')<br>' \
                          + '시가총액: ' + basis['marketCap'] + '원<br>' \
-                         + '종가: ' + basis['close'].apply(lambda x: f"{x:,d}") + '원<extra></extra>'
+                         + '종가: ' + basis['close'].apply(lambda x: f"{x:,d}") + '원'
         basis = basis[[
             'name', 'industryCode', 'industryName', 'sectorCode', 'sectorName', 'meta',
             'D-1', 'W-1', 'M-1', 'M-3', 'M-6', 'Y-1'
         ]]
         for col in self.KEY:
             basis[f'{col}-C'] = paint(basis[col], KEYS[col], False)
+        keys = {key: KEYS[key] for key in self.KEY}
 
         self.objs = {
             'Date': str(Calendar),
             'Data': {
                 'ALL': {col: self.align(basis, col) for col in self.KEY},
             },
-            'Meta': KEYS,
+            'Meta': keys,
         }
-        for (code, ), group in basis.groupby(by=['industryCode']):
+        self.objs['Data']['ALL']['label'] = '전체'
+        for (code, label, ), group in basis.groupby(by=['industryCode', 'industryName']):
             self.objs['Data'][code] = {col: self.align(group, col) for col in self.KEY}
+            self.objs['Data'][code]['label'] = label
         return
 
     def __getitem__(self, item):
@@ -56,12 +59,8 @@ class Rank(object):
     @staticmethod
     def align(data:DataFrame, by:str) -> dict:
         data = data.sort_values(by=by, ascending=False)
-        if len(data) < 20:
-            upper = data.iloc[:int(len(data)/2)]
-            lower = data.iloc[-(len(data) - len(upper)):]
-        else:
-            upper = data.iloc[:10]
-            lower = data.iloc[-10:]
+        upper = data[data[by] >= 0].iloc[:10]
+        lower = data[data[by] < 0].iloc[-10:]
         return {
             'upper': {
                 'name': upper['name'].tolist(),
@@ -81,63 +80,6 @@ class Rank(object):
             }
         }
 
-    
-class Deprecated(object):
-
-    __mem__ = {}
-    def __init__(self):
-        sector = Sector(auto_update=False)
-        number = Market(auto_update=False)
-        _merge = sector.join(number.drop(columns=[col for col in number if col in sector]))
-        _merge[MAP_KEYS] = round(_merge[MAP_KEYS], 2)
-        _merge = _merge[(_merge["marketCap"] >= 100000000000) & (_merge["shares"] >= 1000000)]
-        self._merge = coloring(_merge)
-        self.sector_label = _merge['sectorName'].drop_duplicates().tolist()
-        self.industry_label = _merge['industryName'].str.replace('WI26 ', '').drop_duplicates().tolist()
-        return
-
-    def __str__(self) -> str:
-        self.analyze('sectorName')
-        self.analyze('industryName')
-        date = f"{TradingDate.near.strftime('%Y-%m-%d')} 종가 기준"
-        _str = f'\t"date":"{date}",\n\t"sectors": {self.sector_label},\n\t"industries": {self.industry_label},\n'
-        for n, (var, data) in enumerate(self.__mem__.items()):
-            _str += f'\t"{var}": {data}'
-            if n < len(self.__mem__) - 1:
-                _str += ",\n"
-        return _str.replace("'", '"')
-
-    def _sort(self, df:DataFrame) -> Dict[str, DataFrame]:
-        final = {}
-        for key in MAP_KEYS:
-            if key in ['PER', 'PBR']:
-                df = df[df[key] > 0]
-            _sort = df.sort_values(by=key, ascending=False).reset_index()
-            point = int(len(_sort) / 2) if len(_sort) < 20 else 10
-            if key == "DIV":
-                _join = _sort.head(2 * point).copy()
-            else:
-                _join = pd.concat(objs=[_sort.head(point), _sort.tail(point)], axis=0).copy()
-            _join['meta'] = "시가총액: " + (_join['marketCap']/100000000).apply(num2cap) + '원<br>' \
-                            '종가: ' + _join['close'].astype(int).apply(lambda x: f"{x:,d}원")
-            if key == "PER":
-                _join['meta'] = _join['meta'] + '<br>EPS: ' + _join['EPS'].astype(int).apply(lambda x: f"{x:,d}원")
-            elif key == 'PBR':
-                _join['meta'] = _join['meta'] + '<br>BPS: ' + _join['BPS'].astype(int).apply(lambda x: f"{x:,d}원")
-            else:
-                pass
-            _join["name"] = (_join.index + 1).astype(str) + ". " + _join['name']
-            _join = _join[['name', 'meta', key, f'{key}-C']]
-            final[key] = _join
-        return final
-
-    def analyze(self, column:str):
-        for (name, ), group in self._merge.groupby(by=[column]):
-            _sorted = self._sort(group)
-            for key, data in _sorted.items():
-                json = data.to_dict(orient='list')
-                self.__mem__[f"{name.replace('WI26 ', '')}_{key}"] = json
-        return
 
 
 if __name__ == "__main__":
