@@ -78,7 +78,7 @@ function setRankDesktop() {
   var upperMax = Math.max(...data.upper.x);
   var lowerMin = Math.min(...data.lower.x);
 
-  layout.xaxis.range = [1.1 * lowerMin, 1.1 * upperMax];
+  layout.xaxis.range = [-1.1 * data.xmax, 1.1 * data.xmax];
   Plotly.newPlot(
     'stock-rank', 
     [{
