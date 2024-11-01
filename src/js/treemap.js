@@ -33,7 +33,7 @@ function setTypeSelector() {
   if (viewMd == 'treemap') {
     $('.map-type')
     .empty()
-    .append('<option value="WS"">대형주</option>')
+    .append('<option value="WS">대형주</option>')
     .append('<option value="NS">대형주(삼성전자 제외)</option>')
     $('.map-type option[value="' + mapTyp + '"]').prop('selected', true);
   } else {
@@ -247,7 +247,6 @@ function setBarChart() {
       data.push(SRC.WS.sector[item]);
     })
   }
-  console.log(data);
 
   data.forEach(item => {
     item.n = parseFloat(item[comOpt][0].replace(tag.unit, ''));
@@ -256,7 +255,6 @@ function setBarChart() {
   data.sort((a, b) => b.n - a.n);
 
   var maxX = Math.max(...data.map(item => item.x));
-  console.log(maxX);
   data.forEach(item => {
     x.push(item.x + 0.45 * maxX);
     y.push(item.name);
