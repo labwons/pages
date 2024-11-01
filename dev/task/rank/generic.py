@@ -34,11 +34,13 @@ class Rank(object):
 
         self.objs = {
             'Date': str(Calendar),
+            'Data': {
+                'ALL': {col: self.align(basis, col) for col in self.KEY},
+            },
             'Meta': KEYS,
-            'ALL': {col: self.align(basis, col) for col in self.KEY}
         }
         for (code, ), group in basis.groupby(by=['industryCode']):
-            self.objs[code] = {col: self.align(group, col) for col in self.KEY}
+            self.objs['Data'][code] = {col: self.align(group, col) for col in self.KEY}
         return
 
     def __getitem__(self, item):
