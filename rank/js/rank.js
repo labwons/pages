@@ -108,7 +108,7 @@ function setRankDesktop() {
     }, {
       type: 'scatter',
       orientation: 'h',
-      x: data.lower.x,
+      x: data.lower.x.map(item => item - nameSpace),
       y: data.lower.y,
       showlegend: false,
       mode: 'text',
@@ -138,7 +138,7 @@ function setRankDesktop() {
     }, {
       type: 'scatter',
       orientation: 'h',
-      x: data.upper.x,
+      x: data.upper.x.map(item => item + nameSpace),
       y: data.upper.y,
       showlegend: false,
       mode: 'text',
