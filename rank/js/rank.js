@@ -75,16 +75,25 @@ function setRankDesktop() {
   var font = 'NanumGothic, Nanum Gothic, Open Sans, sans-serif';
   var layout = setLayout();
   var option = setOption();
-  var upperMax = Math.max(...data.upper.x);
-  var lowerMin = Math.min(...data.lower.x);
+  var kRange = 1.1;
+  var nameSpace = 0;
+  if (isNarrow.matches) {
+    kRange = 1.35;
+  } else if (isMobile.matches) {
+    kRange = 1.3;
+  } else if (isTablet.matches) {
+    kRange = 1.2;
+  } 
+  nameSpace = 0.3333 * kRange * data.xmax;
+  kRange += 0.3333;
 
-  layout.xaxis.range = [-1.1 * data.xmax, 1.1 * data.xmax];
+  layout.xaxis.range = [-kRange * data.xmax, kRange * data.xmax];
   Plotly.newPlot(
     'stock-rank', 
     [{
       type: 'bar',
       orientation: 'h',
-      x: data.lower.x,
+      x: data.lower.x.map(item => item - nameSpace),
       y: data.lower.y,
       showlegend: false,
       text: data.lower.text,
@@ -114,7 +123,7 @@ function setRankDesktop() {
     }, {
       type: 'bar',
       orientation: 'h',
-      x: data.upper.x,
+      x: data.upper.x.map(item => item + nameSpace),
       y: data.upper.y,
       showlegend: false,
       text: data.upper.text,
