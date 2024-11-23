@@ -449,9 +449,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .service-section .ad-vertical {
-    flex: 0 0 15%;
-    /* width: 250px; */
-    /* width: 15%; */
+    /* flex: 0 0 15%; */
+    flex: 0 0 250px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -484,7 +483,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .service-section .service-box .service-app {
     flex: 1 1 auto;
-    width: 100%;
+    /* width: 100%; */
     height: calc(100vh - 80px - 60px);
 }
 
