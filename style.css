@@ -449,16 +449,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .service-section .ad-vertical {
-    /* flex: 0 0 15%; */
-    flex: 0 0 250px;
+    flex: 0 0 15%;
+    /* flex: 0 0 250px; */
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
 }
 
-.service-section .ad-vertical .ad-main {
-    /* max-width: 100%; */
+.service-section .ad-vertical .adsbygoogle {
+    max-width: 100%;
     overflow: hidden;
 }
 
