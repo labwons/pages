@@ -22,9 +22,6 @@ class Rank(object):
             basis = pd.read_json(PATH.SPECS, orient='index')
             basis.index = basis.index.astype(str).str.zfill(6)
         basis = basis.copy()
-        basis['meta'] = basis['name'] + '(' + basis.index + ')<br>' \
-                         + '시가총액: ' + basis['marketCap'] + '원<br>' \
-                         + '종가: ' + basis['close'].apply(lambda x: f"{x:,d}") + '원'
         basis = basis[[
             'name', 'industryCode', 'industryName', 'sectorCode', 'sectorName', 'meta',
             'D-1', 'W-1', 'M-1', 'M-3', 'M-6', 'Y-1'

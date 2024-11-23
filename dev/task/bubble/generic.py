@@ -66,6 +66,9 @@ class Basis(DataFrame):
         bs['trailingPE'] = round(bs['close'] / bs['trailingEps'], 2)
         bs['fiscalPE'] = round(bs['close'] / bs['fiscalEps'], 2)
         bs['fiscalDividends'] = round(bs['fiscalDividends'], 2)
+        bs['meta'] = bs['name'] + '(' + bs.index + ')<br>' \
+                     + '시가총액: ' + bs['marketCap'] + '원<br>' \
+                     + '종가: ' + bs['close'].apply(lambda x: f"{x:,d}") + '원'
 
         invOrDivByZeroProtection = ['trailingPS', 'trailingPE', 'estimatedPE']
         for col in invOrDivByZeroProtection:

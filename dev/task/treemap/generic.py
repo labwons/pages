@@ -26,9 +26,6 @@ class MarketMap(DataFrame):
 
         large_ws = basis[basis['stockSize'] == 'large']
         large_ws['ceiling'] = large_ws['industryName']
-        large_ws['meta'] = large_ws['name'] + '(' + large_ws.index + ')<br>' \
-                         + '시가총액: ' + large_ws['marketCap'] + '원<br>' \
-                         + '종가: ' + large_ws['close'].apply(lambda x: f"{x:,d}") + '원<br>'
 
         section = '대형주'
         ii, si = large_ws.groupby(by=['industryName']), large_ws.groupby(by=['sectorName'])
