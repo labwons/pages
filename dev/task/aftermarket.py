@@ -13,5 +13,5 @@ basis.dump()
 marketMap = MarketMap(basis)
 marketMap.dump()
 
-rank = Rank(basis)
-rank.dump()
+# rank = Rank(basis)
+# rank.dump()
