@@ -458,8 +458,9 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
 }
 
-.service-section .ad-vertical .adsbygoogle {
-    flex: 1 0 250px;
+.service-section .ad-vertical .ad-main {
+    max-width:100%;
+    overflow:hiddne;
 }
 
 .service-section .service-box {

@@ -85,7 +85,7 @@ function setRankDesktop() {
     kRange = 1.2;
   } 
   nameSpace = 0.3333 * kRange * data.xmax;
-  kRange += 0.3333;
+  kRange += 0.4444;
 
   layout.xaxis.range = [-kRange * data.xmax, kRange * data.xmax];
   Plotly.newPlot(
