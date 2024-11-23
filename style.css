@@ -459,8 +459,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .service-section .ad-vertical .ad-main {
-    max-width:100%;
-    overflow:hiddne;
+    /* max-width: 100%; */
+    overflow: hidden;
 }
 
 .service-section .service-box {
