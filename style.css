@@ -458,7 +458,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .service-section .ad-vertical .adsbygoogle {
-    max-width: 100%;
+    width: 100%;
     overflow: hidden;
 }
 
