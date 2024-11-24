@@ -101,7 +101,7 @@ function setTreemapLayout() {
       y: 1,
       xref: 'paper',
       yref: 'paper',
-      text: SRC.METADATA.DATE,
+      text: SRC.METADATA.DATE + ' ',
       showarrow: false,
       xanchor: 'right',
       yanchor: 'top',

@@ -33,7 +33,7 @@ function setTypeSelector() {
   if (viewMd == 'treemap') {
     $('.map-type')
     .empty()
-    .append('<option value="WS"">대형주</option>')
+    .append('<option value="WS">대형주</option>')
     .append('<option value="NS">대형주(삼성전자 제외)</option>')
     $('.map-type option[value="' + mapTyp + '"]').prop('selected', true);
   } else {
@@ -101,7 +101,7 @@ function setTreemapLayout() {
       y: 1,
       xref: 'paper',
       yref: 'paper',
-      text: SRC.METADATA.DATE,
+      text: SRC.METADATA.DATE + ' ',
       showarrow: false,
       xanchor: 'right',
       yanchor: 'top',
@@ -171,50 +171,48 @@ function rewindOff(){
   }
 }
 
-function setTreemap() {
-  var tag = SRC.METADATA[comOpt];
-  var layout = setTreemapLayout();
-  var option = setTreecomOption();
+function setScatter() {
+  var xLabel = "D-1";
+  var yLabel = "Y-1";
+  // var tag = SRC.METADATA[comOpt];
+  // var layout = setTreemapLayout();
+  // var option = setTreecomOption();
   var font = 'NanumGothic, Nanum Gothic, Open Sans, sans-serif';
 
-  var customdata = [];
-  var labels = [];
+  var x = [];
+  var y = [];
   var parents = [];
   var values = [];
   var meta = [];
   var text = [];
   var colors = [];
-  Object.entries(mapFrm).forEach(([key, val]) => {
-    if ((mapTyp == "NS") && (val.name == "\uc0bc\uc131\uc804\uc790")) {
-      return;
-    }
-    labels.push(val.name);
-    parents.push(val.ceiling);
-    values.push(val.size);
-    customdata.push(key);
-    meta.push(val.meta);
-    text.push(val[comOpt][0]);
-    colors.push(val[comOpt][1]);
+  Object.entries(SRC).forEach(([ticker, spec]) => {
+    x.push(spec[xLabel]);
+    y.push(spec[yLabel]);
+    // values.push(val.size);
+    // customdata.push(key);
+    // meta.push(val.meta);
+    // text.push(val[comOpt][0]);
+    // colors.push(val[comOpt][1]);
   })
 
   Plotly.newPlot(
-    'market-map', 
+    'scatter', 
     [{
-      type:'treemap',
-      branchvalues:'total',
-      labels:labels,
-      parents:parents,
-      values:values,
-      customdata: customdata,
-      meta:meta,
-      text:text,
-      textposition:'middle center',
-      textfont:{
-        family:font,
-        color:'#ffffff'
-      },
-      texttemplate: '%{label}<br>%{text}',
-      hovertemplate: '%{meta}' + tag.label + ': %{text}<extra></extra>',
+      type:'scatter',
+      x:x,
+      y:y,
+      mode:'markers',
+      // customdata: customdata,
+      // meta:meta,
+      // text:text,
+      // textposition:'middle center',
+      // textfont:{
+      //   family:font,
+      //   color:'#ffffff'
+      // },
+      // texttemplate: '%{label}<br>%{text}',
+      // hovertemplate: '%{meta}' + tag.label + ': %{text}<extra></extra>',
       hoverlabel: {
         font: {
           family: font,
@@ -222,97 +220,16 @@ function setTreemap() {
         }
       },
       opacity: 0.9,
-      marker: {
-        colors: colors,
-        visible: true
-      },
+      // marker: {
+      //   colors: colors,
+      //   visible: true
+      // },
     }],
-    layout,
-    option
+    // layout,
+    // option
   );
 }
 
-function setBarChart() {
-  var tag = SRC.METADATA[comOpt];
-  var layout = setBarLayout();
-  var option = setBarOption();
-  var data = Object.values(SRC.WS[barTyp]);
-  var x = [];
-  var y = [];
-  var text = [];
-  var meta = [];
-  var color = [];
-  if (barTyp == 'industry') {
-    SRC.METADATA.DUPLICATEDGROUP.forEach(item => {
-      data.push(SRC.WS.sector[item]);
-    })
-  }
-  console.log(data);
-
-  data.forEach(item => {
-    item.n = parseFloat(item[comOpt][0].replace(tag.unit, ''));
-    item.x = Math.abs(item.n);
-  });
-  data.sort((a, b) => b.n - a.n);
-
-  var maxX = Math.max(...data.map(item => item.x));
-  console.log(maxX);
-  data.forEach(item => {
-    x.push(item.x + 0.45 * maxX);
-    y.push(item.name);
-    text.push(item[comOpt][0]);
-    meta.push(item.meta);
-    color.push(item[comOpt][1]);
-  })  
-
-  if (isNarrow.matches) {
-    var xrange = 1.35 * maxX;
-  } else if (isMobile.matches) {
-    var xrange = 1.3 * maxX;
-  } else if (isTablet.matches) {
-    var xrange = 1.2 * maxX;
-  } else {
-    var xrange = 1.1 * maxX;
-  }
-
-  layout.xaxis.range = [0, 1.45 * xrange];
-  layout.annotations = y.map(item => {
-    return {
-      x: 0,
-      y: item,
-      xref: 'x',
-      yref: 'y',
-      text: item,
-      showarrow: false,
-      font: {
-        color: 'white',
-        size: 13,
-      },
-      xanchor: 'left',
-      yanchor: 'middle',
-    };
-  });
-
-  Plotly.newPlot(
-    'market-map', 
-    [{
-      type:'bar',
-      x: x.reverse(),
-      y: y.reverse(),
-      orientation: 'h',
-      marker: {
-        color: color.reverse()
-      },
-      text: text.reverse(),
-      textposition: 'outside',
-      meta: meta.reverse(),
-      hovertemplate: '%{meta}' + tag.label + ': %{text}<extra></extra>',
-      opacity: 0.9
-    }], 
-    layout, 
-    option
-  );
-}
 
 
 /*--------------------------------------------------------------
@@ -320,107 +237,59 @@ function setBarChart() {
 --------------------------------------------------------------*/
 $(document).ready(async function(){
   try {
-    const response = await fetch('../../dev/json/service/treemap.json');
+    const response = await fetch('../../dev/json/group/specs.json');
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
     
     SRC = await response.json();
-    setTypeSelector();
-    setOptionSelector();
-    setFrame();
-    setTreemap();
-    setScale();
-    setSearchSelector();
+    // console.log(SRC);
+    // setTypeSelector();
+    // setOptionSelector();
+    // setFrame();
+    setScatter();
+    // setScale();
+    // setSearchSelector();
   } catch (error) {
       console.error('Fetch error:', error);
   }
 
-  $('.map-type').on('change', function() {   
-    if (viewMd == 'treemap') {
-      mapTyp = $(this).val();
-      setFrame(); 
-      setTreemap();
-      setSearchSelector();
-    } else {
-      barTyp = $(this).val();
-      setBarChart();
-    }    
+  $('.scatter-sector').on('change', function() {   
+    
   })
 
-  $('.map-option').on('change', function() {
-    comOpt = $(this).val();
-    if (viewMd == 'treemap') {
-      setTreemap();
-    } else {
-      setBarChart();
-    }    
-    setScale();
+  $('.scatter-x').on('change', function() {
+    
+  })
+
+  $('.scatter-y').on('change', function() {
+    
   })
 
   $('.map-reset').click(function(){
-    setTreemap();
-    rewindOff(); 
-    setSearchSelector();   
+       
   })
 
-  $('.map-switch i').click(function(){
-    if ( $(this).attr('class').includes('fa-map-o') ) {
-      viewMd = 'bar';
-      setBarChart();
-      rewindOff();
-      $(this).removeClass('fa-map-o').addClass('fa-signal');
-      $('.map-searchbar').prop('disabled', true);      
-    } else {
-      viewMd = 'treemap';
-      setTreemap();
-      $(this).removeClass('fa-signal').addClass('fa-map-o');
-      $('.map-searchbar').prop('disabled', false);
-    }
-    setTypeSelector();
-  })
-
-  $('.map-searchbar').on('select2:select', function (e) {
-    var ticker = e.params.data.id;
-    if (ticker.startsWith('W')) {
-      var elem = SRC[mapTyp].industry[ticker];
-      clickTreemap(elem.name);
-      return
-    } else if (ticker.startsWith('G')) {
-      var elem = SRC[mapTyp].sector[ticker];
-      clickTreemap(elem.name);
-      return
-    } else {
-      var elem = SRC.TICKERS[ticker];
-      clickTreemap(elem.ceiling);
-      setTimeout(function(){
-        clickTreemap(elem.name);
-      }, 1000);      
-    }
+  $('.scatter-searchbar').on('select2:select', function (e) {
+    // var ticker = e.params.data.id;
+    // if (ticker.startsWith('W')) {
+    //   var elem = SRC[mapTyp].industry[ticker];
+    //   clickTreemap(elem.name);
+    //   return
+    // } else if (ticker.startsWith('G')) {
+    //   var elem = SRC[mapTyp].sector[ticker];
+    //   clickTreemap(elem.name);
+    //   return
+    // } else {
+    //   var elem = SRC.TICKERS[ticker];
+    //   clickTreemap(elem.ceiling);
+    //   setTimeout(function(){
+    //     clickTreemap(elem.name);
+    //   }, 1000);      
+    // }
   });
   
-  $('.map-rewind').click(function(){
-    if (viewMd == 'bar') {
-      return;
-    }
-    !$('.slice').get(0).dispatchEvent(EVE);
-    rewindOff();
-  })
-  
   $('#market-map').on('plotly_click', function(e, d){
-    if (viewMd == 'bar') {
-      return;
-    }    
-    if ($('g.slice').length == 1) {
-      rewindOff();
-    } else if (
-      (!d.points[0].customdata.startsWith('W')) && 
-      (!d.points[0].customdata.startsWith('G')) && 
-      (!d.points[0].customdata.startsWith('T'))
-    ) {
-      rewindOn();
-    } else {
-      return;
-    }
+    
   })
 })

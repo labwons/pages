@@ -1,5 +1,5 @@
 
-.map-options {
+.scatter-options {
     flex: 0 0 auto;
     width: 25%;
     display: flex;
@@ -8,7 +8,10 @@
     justify-content: space-between;
 }
 
-.map-type, .map-option, .map-searchbar {
+.scatter-sector, 
+.scatter-x,
+.scatter-y, 
+.scatter-searchbar {
     -webkit-appearance: none; /* 크롬, 사파리 */
     -moz-appearance: none;    /* 파이어폭스 */
     appearance: none;         /* 기본 */
@@ -29,13 +32,15 @@
     background-color: #fff;
 }
 
-.map-type, .map-option {
+.scatter-sector, 
+.scatter-x,
+.scatter-y {
     flex: 1 0 auto;
     margin-right: 2px;
     /* height: 28px; */
 }
 
-.map-reset, .map-switch {
+.scatter-reset {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -51,58 +56,24 @@
     color: #444;
 }
 
-.map-reset {
+.scatter-reset {
     margin-right: 2px;
 }
 
-.fa-signal {
-    transform: scaleX(-1) rotate(-90deg);
-}
-
-.map-reset:hover,
-.map-bar:hover {
+.scatter-reset:hover {
     color: #aaa;
 }
 
-
-.map-searchbar {
+.scatter-searchbar {
     width: 25%;
 }
 
-.map-plotly {
+.scatter-plotly {
     position: relative;
     height: 100%;
 }
-.map-date {
-    color: white;
-    font-size: 12px;
-}
 
-.map-rewind {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 24px;
-    height: 24px;
-    margin: 0;
-    border: 1px solid #fff;
-    border-radius: 6px;
-    color: #fff;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 1.0s ease, visibility 1.0s ease;
-}
-
-.map-rewind.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-.map-legend {
+.scatter-legend {
     flex: 0 0 auto;
     width: 40%;
     display: flex;
@@ -110,7 +81,7 @@
     align-items: stretch;
 }
 
-.map-legend span {
+.scatter-legend span {
     flex: 1 0 auto;
     height: 100%;
     display: flex;
@@ -122,7 +93,7 @@
     font-weight: 700;
 }
 
-.map-notice {
+.scatter-notice {
     flex: 0 1 auto;
     display: flex;
     flex-wrap: wrap;
@@ -135,38 +106,38 @@
 
 /* LAPTOP CASES */
 @media screen and (max-width: 1443px) {
-    .map-options {
+    .scatter-options {
         width: 50%;
     }
 
-    .map-notice {
+    .scatter-notice {
         font-size: 10px;
     }
 }
 
 /* TABLET CASES */
 @media screen and (max-width: 1023px) {
-    .map-searchbar {
+    .scatter-searchbar {
         width: 33.3333333333%;
     }
 
-    .map-legend {
+    .scatter-legend {
         width: 45%;
     }
 
-    .map-notice {
+    .scatter-notice {
         font-size: 8.5px;
     }
 }
 
 /* MOBILE CASES */
 @media screen and (max-width: 767px) {
-    .map-options, .map-searchbar {
+    .scatter-options, .scatter-searchbar {
         width: 100%;
         height: 30px;
     }
 
-    .map-legend {
+    .scatter-legend {
         width: 100%;
         height: 28px;
         margin-bottom: 4px;

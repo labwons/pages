@@ -75,7 +75,7 @@ class Basis(DataFrame):
             bs.loc[(bs[col] <= 0) | (bs[col] == np.inf), col] = np.nan
 
         bs = bs[[
-            'name',  'close', 'marketCap', 'foreignRate', 'volume',
+            'name',  'close', 'marketCap', 'meta', 'foreignRate', 'volume',
             'sectorCode', 'industryCode', 'sectorName', 'industryName',
             'D-1', 'W-1', 'M-1', 'M-3', 'M-6', 'Y-1',
             'high52PR', 'low52PR', 'estimatedPR',
