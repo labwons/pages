@@ -93,46 +93,39 @@ function setScale(){
   })
 }
 
-function setTreemapLayout() {
+function setScatterLayout() {
   return {
-    margin:{l:0, r:0, t:0, b:25},
+    margin:{l:2, r:2, t:0, b:25},
+    xaxis:{
+      showline:true,
+      zerolinecolor:"lightgrey",
+      gridcolor:"lightgrey",
+    },
+    yaxis:{
+      ticklabelposition: 'inside',
+      showline:true,
+      zerolinecolor:"lightgrey",
+      gridcolor:"lightgrey",
+    },
     annotations: [{
+      text: '2024-11-25 ',
       x: 1,
       y: 1,
       xref: 'paper',
-      yref: 'paper',
-      text: SRC.METADATA.DATE + ' ',
-      showarrow: false,
+      yref: 'paper',      
       xanchor: 'right',
       yanchor: 'top',
+      showarrow: false,      
       font: {
           size: 12,
           color: 'white'
       }
-      
     }]
   }
 }
 
-function setBarLayout() {
-  return {
-    margin:{l:10, r:0, t:10, b:22}, 
-    xaxis:{
-      autorange: false,
-      showticklabels: false,
-      showline: false,
-      range:[0, 0], 
-    },
-    yaxis:{
-      showline: false,
-      zeroline: false,
-      showticklabels: false
-    },
-    dragmode: false
-  }
-}
 
-function setTreecomOption() {
+function setScatterOption() {
   return {
     displayModeBar:false,
     responsive:true,
@@ -140,43 +133,12 @@ function setTreecomOption() {
   }
 }
 
-function setBarOption() {
-  return {
-    scrollZoom: false,
-    displayModeBar:false, 
-    responsive:true, 
-    showTips:false, 
-  }
-}
-
-function clickTreemap(item){
-  var elements = $('g.slicetext');
-	for (var n = 0; n < elements.length; n++){
-		if ($(elements[n]).text().includes(item)){
-      !$(elements[n]).get(0).dispatchEvent(EVE);
-			return;
-		}
-	}
-}
-
-function rewindOn(){
-  if( !$('.map-rewind').attr('class').includes('show') ) {
-    $('.map-rewind').toggleClass('show');
-  }
-}
-
-function rewindOff(){
-  if( $('.map-rewind').attr('class').includes('show') ) {
-    $('.map-rewind').toggleClass('show');
-  }
-}
-
 function setScatter() {
   var xLabel = "D-1";
   var yLabel = "Y-1";
   // var tag = SRC.METADATA[comOpt];
-  // var layout = setTreemapLayout();
-  // var option = setTreecomOption();
+  var layout = setScatterLayout();
+  var option = setScatterOption();
   var font = 'NanumGothic, Nanum Gothic, Open Sans, sans-serif';
 
   var x = [];
@@ -189,6 +151,7 @@ function setScatter() {
   Object.entries(SRC).forEach(([ticker, spec]) => {
     x.push(spec[xLabel]);
     y.push(spec[yLabel]);
+    meta.push(spec["meta"]);
     // values.push(val.size);
     // customdata.push(key);
     // meta.push(val.meta);
@@ -204,7 +167,7 @@ function setScatter() {
       y:y,
       mode:'markers',
       // customdata: customdata,
-      // meta:meta,
+      meta:meta,
       // text:text,
       // textposition:'middle center',
       // textfont:{
@@ -213,6 +176,7 @@ function setScatter() {
       // },
       // texttemplate: '%{label}<br>%{text}',
       // hovertemplate: '%{meta}' + tag.label + ': %{text}<extra></extra>',
+      hovertemplate: '%{meta}<br>' + xLabel + ': %{x}<br>' + yLabel + ': %{y}<extra></extra>',
       hoverlabel: {
         font: {
           family: font,
@@ -225,8 +189,8 @@ function setScatter() {
       //   visible: true
       // },
     }],
-    // layout,
-    // option
+    layout,
+    option
   );
 }
 

@@ -132,7 +132,7 @@ function setBarLayout() {
   }
 }
 
-function setTreecomOption() {
+function setTreemapOption() {
   return {
     displayModeBar:false,
     responsive:true,
@@ -174,7 +174,7 @@ function rewindOff(){
 function setTreemap() {
   var tag = SRC.METADATA[comOpt];
   var layout = setTreemapLayout();
-  var option = setTreecomOption();
+  var option = setTreemapOption();
   var font = 'NanumGothic, Nanum Gothic, Open Sans, sans-serif';
 
   var customdata = [];
