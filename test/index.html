@@ -31,18 +31,17 @@
     <!----------------------------------------------------------------------------------------------->
     <!------------------------------------------- HEADER -------------------------------------------->
     <!----------------------------------------------------------------------------------------------->
-    <header id="header" class="header header-fix">
+    <!-- <header id="header" class="header header-fix">
       <a href="/" class="logo">
         <img src="../src/img/logo-text.png" alt="Logo">
       </a>
       <nav id="navbar" class="navbar">
         <ul>
           <li><a href="/">시장 지도</a></li>
-          <!-- <li><a href="/rank">수익률 순위</a></li> -->
         </ul>
         <i class="fa fa-bars navbar-button"></i>
       </nav>
-    </header>
+    </header> -->
 
     <!----------------------------------------------------------------------------------------------->
     <!-------------------------------------------- MAIN --------------------------------------------->
@@ -75,9 +74,25 @@
           </div>
 
           <div class="service-app">
-            <div class="scatter-plotly" id="scatter"></div>
+            <div class="scatter-app">
+              <div class="slider-container">
+                <div class="range-slider">
+                  <div class="line"></div>
+                  <div class="circle-1" draggable="false"></div>
+                  <div class="circle-2" draggable="false"></div>
+                </div>
+              </div>
+              <div class="scatter-plotly" id="scatter">
+                <!-- <div class="x-range-container">
+                  <div class="x-sliders">
+                     <input id="x-range-left" type="range" value="0" min="0" max="100"/>
+                     <input id="x-range-right" type="range" value="100" min="0" max="100"/>
+                  </div> 
+                </div> -->
+              </div>
+              
+            </div>
           </div>
-          <!-- <div style="clear:both;"></div> -->
           <div class="service-footer">
             <div class="scatter-legend">
               <span></span>

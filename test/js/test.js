@@ -8,7 +8,6 @@ const isNarrow = window.matchMedia('(max-width: 374px)');
 const abs = (array) => {return array.map(Math.abs);}
 
 let SRC = null;
-let EVE = document.createEvent('MouseEvent');
 
 var mapTyp = 'WS';
 var mapFrm = null;
@@ -16,7 +15,11 @@ var barTyp = 'industry';
 var comOpt = 'D-1';
 var viewMd = 'treemap';
 
-EVE.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+var ymax_active = false;
+var ymax = 100;
+var ymin = 0;
+var xmax = 100;
+var xmin = 0;
 
 
 /*--------------------------------------------------------------
@@ -95,32 +98,34 @@ function setScale(){
 
 function setScatterLayout() {
   return {
-    margin:{l:2, r:2, t:0, b:25},
+    margin:{l:50, r:2, t:0, b:15},
     xaxis:{
       showline:true,
       zerolinecolor:"lightgrey",
       gridcolor:"lightgrey",
+      rangeslider: {},
     },
     yaxis:{
       ticklabelposition: 'inside',
       showline:true,
       zerolinecolor:"lightgrey",
       gridcolor:"lightgrey",
+      rangeslider: {}
     },
-    annotations: [{
-      text: '2024-11-25 ',
-      x: 1,
-      y: 1,
-      xref: 'paper',
-      yref: 'paper',      
-      xanchor: 'right',
-      yanchor: 'top',
-      showarrow: false,      
-      font: {
-          size: 12,
-          color: 'white'
-      }
-    }]
+    // annotations: [{
+    //   text: '2024-11-25 ',
+    //   x: 1,
+    //   y: 1,
+    //   xref: 'paper',
+    //   yref: 'paper',      
+    //   xanchor: 'right',
+    //   yanchor: 'top',
+    //   showarrow: false,      
+    //   font: {
+    //       size: 12,
+    //       color: 'white'
+    //   }
+    // }]
   }
 }
 
@@ -158,6 +163,9 @@ function setScatter() {
     // text.push(val[comOpt][0]);
     // colors.push(val[comOpt][1]);
   })
+
+  // $("#x-range-max").attr("max", Math.max(...x));
+  // $("#x-range-max").attr("min", Math.max(...x));
 
   Plotly.newPlot(
     'scatter', 
@@ -211,12 +219,16 @@ $(document).ready(async function(){
     // setTypeSelector();
     // setOptionSelector();
     // setFrame();
-    setScatter();
+    // setScatter();
     // setScale();
     // setSearchSelector();
   } catch (error) {
       console.error('Fetch error:', error);
   }
+
+  $('.circle-1').on('mousedown', function(e) {
+    ymax_active = true;
+  })
 
   $('.scatter-sector').on('change', function() {   
     
@@ -256,4 +268,21 @@ $(document).ready(async function(){
   $('#market-map').on('plotly_click', function(e, d){
     
   })
+})
+
+$(document).on('mousemove', function(e) {
+  if (ymax_active) {
+    let yrange = $('.range-slider');
+    let ylimit = yrange.height() - 20;
+    let newY = e.pageY - yrange.offset().top;
+    
+    if (newY <= 0) newY = 0;
+    if (newY >= ylimit) newY = ylimit;
+    $('.circle-1').css('top', newY + 'px');
+  }
+
+})
+
+$(document).on('mouseup', function() {
+  ymax_active = false;
 })
