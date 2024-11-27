@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="google-adsense-account" content="ca-pub-7507574593260609">
     
-    <link rel="icon" href="./src/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="../src/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link rel="stylesheet" href="../style.css">
@@ -16,15 +16,15 @@
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.34.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script data-ad-client="ca-pub-7507574593260609" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- <script data-ad-client="ca-pub-7507574593260609" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script> -->
     <!-- Google Tag Manager -->
-    <script>
+    <!-- <script>
       (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
       new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
       j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
       })(window,document,'script','dataLayer','GTM-KJFQ72Z8');
-    </script>
+    </script> -->
     <!-- End Google Tag Manager -->
 </head>
 <body>
@@ -50,13 +50,13 @@
       <section class="service-section">
         <h1 style="display:none;">시장 지도</h1>
         <div class="ad-vertical">
-          <ins class="adsbygoogle"
+          <!-- <ins class="adsbygoogle"
             style="display:block"
             data-ad-client="ca-pub-7507574593260609"
             data-ad-slot="9705057757"
             data-ad-format="auto"
             data-full-width-responsive="true">
-          </ins>
+          </ins> -->
         </div>
         <div class="service-box">
           <div class="service-nav">
@@ -75,12 +75,10 @@
 
           <div class="service-app">
             <div class="scatter-app">
-              <div class="slider-container">
-                <div class="range-slider">
-                  <div class="line"></div>
-                  <div class="circle-1" draggable="false"></div>
-                  <div class="circle-2" draggable="false"></div>
-                </div>
+              <div class="y-range-slider">
+                <div class="y-range"></div>
+                <div class="y-range-upper" draggable="false"></div>
+                <div class="y-range-lower" draggable="false"></div>
               </div>
               <div class="scatter-plotly" id="scatter">
                 <!-- <div class="x-range-container">
