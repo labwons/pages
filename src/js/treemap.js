@@ -214,7 +214,7 @@ function setTreemap() {
         color:'#ffffff'
       },
       texttemplate: '%{label}<br>%{text}',
-      hovertemplate: '%{meta}' + tag.label + ': %{text}<extra></extra>',
+      hovertemplate: '%{meta}<br>' + tag.label + ': %{text}<extra></extra>',
       hoverlabel: {
         font: {
           family: font,

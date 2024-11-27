@@ -7,10 +7,10 @@ const isMobile = window.matchMedia('(max-width: 767px)');
 const isNarrow = window.matchMedia('(max-width: 374px)');
 
 const sliderCircleSize = 16;
-const yObjOffset       = $('.scatter-app').offset().top;
+const yObjOffset       = $('.y-range-slider').offset().top;
 const yObjHeight       = $('.scatter-app').height();
-const yObjHeightFactor = 0.95;
-const yHeight          = yObjHeightFactor * yObjHeight;
+// const yObjHeightFactor = 0.95;
+// const yHeight          = yObjHeightFactor * yObjHeight;
 
 let SRC = null;
 
@@ -20,12 +20,17 @@ var barTyp = 'industry';
 var comOpt = 'D-1';
 var viewMd = 'treemap';
 
+var yHeight = null;
 var yMaxActv = false;
 var yMinActv = false;
-var yMaxPosInit = ((yObjHeight - yHeight) / 2) - (sliderCircleSize / 2);
-var yMinPosInit = (yObjHeight + yHeight) / 2 - (sliderCircleSize / 2);
-var yMaxPos = yMaxPosInit
-var yMinPos = yMinPosInit
+// var yMaxPosInit = ((yObjHeight - yHeight) / 2) - (sliderCircleSize / 2);
+// var yMinPosInit = (yObjHeight + yHeight) / 2 - (sliderCircleSize / 2);
+// var yMaxPos = yMaxPosInit
+// var yMinPos = yMinPosInit
+// var yMaxPosInit = yObjOffset;
+// var yMinPosInit = null;
+var yMaxPos = null;
+var yMinPos = null;
 var xmax = 100;
 var xmin = 0;
 
@@ -34,21 +39,30 @@ var xmin = 0;
 # Functions
 --------------------------------------------------------------*/
 function setYRangeSlider(){
+  var plotlyObj = $('#scatter .nsewdrag');
+  if (plotlyObj.length) {
+      yHeight = plotlyObj.attr('height');
+      yMaxPos = 0;
+      yMinPos = yObjHeight - (yObjHeight - yHeight) - sliderCircleSize / 2;
+  } else {
+    return
+  }
+
   $('.y-range').css({
     "position": "absolute",
     "width": "2px",
     "height": yHeight,
     "background-color": "#c8c8c8",
-    "z-index": 10 // Deprecated
+    // "z-index": 10 // Deprecated
   });
 
   $('.y-range-upper, .y-range-lower').css({
     "position": "absolute",
     "width": sliderCircleSize + "px",
-    "height": sliderCircleSize + "px",
+    "height": sliderCircleSize / 2 + "px",
     "background-color": "#fff",
     "border": "0.5px solid grey",
-    "border-radius": "50%",
+    "border-radius": "30%",
     "cursor": "pointer",
     "transform": "translateX(-50%)"
   });
@@ -56,13 +70,13 @@ function setYRangeSlider(){
   $('.y-range-upper').css({
     'top': yMaxPos,
     'left': '50%',
-    "background-color": "#fff",
+    "background-color": "#fff", // Deprecated
   });
 
   $('.y-range-lower').css({
     'top': yMinPos,
     'left': '50%',
-    "background-color": "#fff",
+    "background-color": "#fff", // Deprecated
   });
 }
 
@@ -140,7 +154,7 @@ function setScale(){
 
 function setScatterLayout() {
   return {
-    margin:{l:50, r:2, t:0, b:15},
+    margin:{l:10, r:2, t:0, b:20},
     xaxis:{
       showline:true,
       zerolinecolor:"lightgrey",
@@ -239,7 +253,9 @@ function setScatter() {
     }],
     layout,
     option
-  );
+  ).then(function() {
+    setYRangeSlider();
+});
 }
 
 
@@ -256,7 +272,7 @@ $(document).ready(async function(){
     
     SRC = await response.json();
     // console.log(SRC);
-    setYRangeSlider();
+    // setYRangeSlider();
     // setTypeSelector();
     // setOptionSelector();
     // setFrame();
@@ -266,6 +282,10 @@ $(document).ready(async function(){
   } catch (error) {
       console.error('Fetch error:', error);
   }
+
+  $(window).on('resize', function() {
+    setYRangeSlider();
+});
 
   $('.y-range-upper').on('mousedown', function(e) {
     yMaxActv = true;
@@ -315,23 +335,23 @@ $(document).ready(async function(){
   })
 })
 
-$(document).on('mousemove', function(e) {
-  if (yMaxActv) {
-    yMaxPos = e.pageY - yObjOffset - (sliderCircleSize / 2);
-    if (yMaxPos <= yMaxPosInit) yMaxPos = yMaxPosInit;
-    if (yMaxPos >= (yMinPos - sliderCircleSize)) yMaxPos = yMinPos - sliderCircleSize;    
-    $('.y-range-upper').css('top', yMaxPos);
-  } else if (yMinActv) {
-    yMinPos = e.pageY - yObjOffset - (sliderCircleSize / 2);
-    if (yMinPos >= yMinPosInit) yMinPos = yMinPosInit;
-    if (yMinPos <= (yMaxPos + sliderCircleSize)) yMinPos = yMaxPos + sliderCircleSize;
-    $('.y-range-lower').css('top', yMinPos);
-  }
+// $(document).on('mousemove', function(e) {
+//   if (yMaxActv) {
+//     yMaxPos = e.pageY - yObjOffset - (sliderCircleSize / 2);
+//     if (yMaxPos <= yMaxPosInit) yMaxPos = yMaxPosInit;
+//     if (yMaxPos >= (yMinPos - sliderCircleSize)) yMaxPos = yMinPos - sliderCircleSize;    
+//     $('.y-range-upper').css('top', yMaxPos);
+//   } else if (yMinActv) {
+//     yMinPos = e.pageY - yObjOffset - (sliderCircleSize / 2);
+//     if (yMinPos >= yMinPosInit) yMinPos = yMinPosInit;
+//     if (yMinPos <= (yMaxPos + sliderCircleSize)) yMinPos = yMaxPos + sliderCircleSize;
+//     $('.y-range-lower').css('top', yMinPos);
+//   }
   
   
-})
+// })
 
-$(document).on('mouseup', function() {
-  yMaxActv = false;
-  yMinActv = false;
-})
+// $(document).on('mouseup', function() {
+//   yMaxActv = false;
+//   yMinActv = false;
+// })
