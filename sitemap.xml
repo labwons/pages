@@ -9,10 +9,10 @@ layout: null
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  <url>
+  <!-- <url>
     <loc>https://labwons.com/rank</loc>
     <lastmod>2024-10-28T16:01:12+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
+  </url> -->
 </urlset>

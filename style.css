@@ -455,6 +455,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     justify-content: center;
     text-align: center;
+    padding-right: 4px;
 }
 
 .service-section .ad-vertical .adsbygoogle {
