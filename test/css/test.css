@@ -81,13 +81,22 @@
 
 .y-range-slider {
     position: relative;
-    height: 100%; /* 부모 요소의 높이 */
-    width: 20px; /* 직선의 폭 */
+    height: 100%;
+    width: 20px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
 }
 
+.y-range-upper-block, .y-range-lower-block {
+    position: absolute;
+    transform: translateX(-50%);
+    top: 0;
+    left: 50%;
+    width: 20px;    
+    height: 0;
+    background-color: rgba(200, 200, 200, 0.5);
+}
 
 .scatter-plotly {
     flex: 1 0 auto;

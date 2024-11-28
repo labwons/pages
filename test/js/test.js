@@ -6,11 +6,11 @@ const isTablet = window.matchMedia('(max-width: 1023px)');
 const isMobile = window.matchMedia('(max-width: 767px)');
 const isNarrow = window.matchMedia('(max-width: 374px)');
 
-const sliderCircleSize = 16;
-const yObjOffset       = $('.y-range-slider').offset().top;
-const yObjHeight       = $('.scatter-app').height();
-// const yObjHeightFactor = 0.95;
-// const yHeight          = yObjHeightFactor * yObjHeight;
+const ySliderWidth  = 16;
+const ySliderHeight = ySliderWidth / 2;
+const yDomOffset = parseFloat($('.y-range-slider').offset().top);
+const yDomHeight = parseFloat($('.y-range-slider').height());
+
 
 let SRC = null;
 
@@ -20,17 +20,15 @@ var barTyp = 'industry';
 var comOpt = 'D-1';
 var viewMd = 'treemap';
 
-var yHeight = null;
+var ySlope = null;
+var yRange = null;
 var yMaxActv = false;
 var yMinActv = false;
-// var yMaxPosInit = ((yObjHeight - yHeight) / 2) - (sliderCircleSize / 2);
-// var yMinPosInit = (yObjHeight + yHeight) / 2 - (sliderCircleSize / 2);
-// var yMaxPos = yMaxPosInit
-// var yMinPos = yMinPosInit
-// var yMaxPosInit = yObjOffset;
-// var yMinPosInit = null;
-var yMaxPos = null;
-var yMinPos = null;
+var yHeight = null; // [px]
+var yMaxPos = null; // [px] Absolute Position with respect to Window
+var yMinPos = null; // [px] Absolute Position with respect to Window
+var yMax = null;
+var yMin = null;
 var xmax = 100;
 var xmin = 0;
 
@@ -38,12 +36,22 @@ var xmin = 0;
 /*--------------------------------------------------------------
 # Functions
 --------------------------------------------------------------*/
+function yAbsolutePx2RelativePercent(px) {
+  return 100 * (px - yDomOffset) / yDomHeight;
+}
+
 function setYRangeSlider(){
   var plotlyObj = $('#scatter .nsewdrag');
+
+  yRange = $('#scatter')[0].layout.yaxis.range;
+  yMax = yRange[1];
+  yMin = yRange[0];
+
   if (plotlyObj.length) {
-      yHeight = plotlyObj.attr('height');
-      yMaxPos = 0;
-      yMinPos = yObjHeight - (yObjHeight - yHeight) - sliderCircleSize / 2;
+      yHeight = parseFloat(plotlyObj.attr('height'));
+      yMaxPos = yDomOffset;
+      yMinPos = yDomOffset + yHeight;
+      ySlope = (yRange[0] - yRange[1]) / yHeight;
   } else {
     return
   }
@@ -58,25 +66,32 @@ function setYRangeSlider(){
 
   $('.y-range-upper, .y-range-lower').css({
     "position": "absolute",
-    "width": sliderCircleSize + "px",
-    "height": sliderCircleSize / 2 + "px",
+    "width": ySliderWidth + "px",
+    "height": ySliderHeight+ "px",
     "background-color": "#fff",
     "border": "0.5px solid grey",
     "border-radius": "30%",
-    "cursor": "pointer",
-    "transform": "translateX(-50%)"
+    "cursor": "ns-resize",
+    'transform': "translateX(-50%)"
   });
 
   $('.y-range-upper').css({
-    'top': yMaxPos,
+    'top': yAbsolutePx2RelativePercent(yMaxPos) + '%',
     'left': '50%',
-    "background-color": "#fff", // Deprecated
+    // "background-color": "#f00", // Deprecated
   });
 
   $('.y-range-lower').css({
-    'top': yMinPos,
+    'top': yAbsolutePx2RelativePercent(yMinPos - ySliderHeight) + '%',
     'left': '50%',
-    "background-color": "#fff", // Deprecated
+    // "background-color": "#0f0", // Deprecated
+  });
+
+  $('.y-range-upper-block').css({
+    'height': 0
+  });
+  $('.y-range-lower-block').css({
+    'height': 0
   });
 }
 
@@ -154,6 +169,7 @@ function setScale(){
 
 function setScatterLayout() {
   return {
+    dragmode: false,
     margin:{l:10, r:2, t:0, b:20},
     xaxis:{
       showline:true,
@@ -194,7 +210,7 @@ function setScatterOption() {
 
 function setScatter() {
   var xLabel = "D-1";
-  var yLabel = "Y-1";
+  var yLabel = "M-1";
   // var tag = SRC.METADATA[comOpt];
   var layout = setScatterLayout();
   var option = setScatterOption();
@@ -202,24 +218,16 @@ function setScatter() {
 
   var x = [];
   var y = [];
-  var parents = [];
-  var values = [];
   var meta = [];
-  var text = [];
+  var size = [];  
   var colors = [];
   Object.entries(SRC).forEach(([ticker, spec]) => {
     x.push(spec[xLabel]);
     y.push(spec[yLabel]);
     meta.push(spec["meta"]);
-    // values.push(val.size);
-    // customdata.push(key);
-    // meta.push(val.meta);
-    // text.push(val[comOpt][0]);
+    // size.push(val.size);
     // colors.push(val[comOpt][1]);
   })
-
-  // $("#x-range-max").attr("max", Math.max(...x));
-  // $("#x-range-max").attr("min", Math.max(...x));
 
   Plotly.newPlot(
     'scatter', 
@@ -228,16 +236,7 @@ function setScatter() {
       x:x,
       y:y,
       mode:'markers',
-      // customdata: customdata,
       meta:meta,
-      // text:text,
-      // textposition:'middle center',
-      // textfont:{
-      //   family:font,
-      //   color:'#ffffff'
-      // },
-      // texttemplate: '%{label}<br>%{text}',
-      // hovertemplate: '%{meta}' + tag.label + ': %{text}<extra></extra>',
       hovertemplate: '%{meta}<br>' + xLabel + ': %{x}<br>' + yLabel + ': %{y}<extra></extra>',
       hoverlabel: {
         font: {
@@ -330,28 +329,52 @@ $(document).ready(async function(){
     // }
   });
   
-  $('#market-map').on('plotly_click', function(e, d){
-    
-  })
 })
 
-// $(document).on('mousemove', function(e) {
-//   if (yMaxActv) {
-//     yMaxPos = e.pageY - yObjOffset - (sliderCircleSize / 2);
-//     if (yMaxPos <= yMaxPosInit) yMaxPos = yMaxPosInit;
-//     if (yMaxPos >= (yMinPos - sliderCircleSize)) yMaxPos = yMinPos - sliderCircleSize;    
-//     $('.y-range-upper').css('top', yMaxPos);
-//   } else if (yMinActv) {
-//     yMinPos = e.pageY - yObjOffset - (sliderCircleSize / 2);
-//     if (yMinPos >= yMinPosInit) yMinPos = yMinPosInit;
-//     if (yMinPos <= (yMaxPos + sliderCircleSize)) yMinPos = yMaxPos + sliderCircleSize;
-//     $('.y-range-lower').css('top', yMinPos);
-//   }
-  
-  
-// })
+$(document).on('mousemove', function(e) {
+  if (yMaxActv) {
+    var yLimHigh = yDomOffset;
+    var yLimLow = yMinPos - 2 * ySliderHeight;
+    yMaxPos = e.pageY;
+    if (yMaxPos <= yLimHigh) yMaxPos = yLimHigh;
+    if (yMaxPos >= yLimLow) yMaxPos = yLimLow;
+    $('.y-range-upper').css('top', yAbsolutePx2RelativePercent(yMaxPos) + '%');
+    $('.y-range-upper-block')
+    .css({
+      'top': '0%',
+      'height': yMaxPos - yDomOffset
+    });
 
-// $(document).on('mouseup', function() {
-//   yMaxActv = false;
-//   yMinActv = false;
-// })
+    yRange[1] = ySlope * (yMaxPos - yDomOffset) + yMax;
+    Plotly.relayout('scatter', {
+      'yaxis.range': yRange
+    })
+  } else if (yMinActv) {
+    var yLimHigh = yMaxPos + ySliderHeight;
+    var yLimLow  = yDomOffset + yHeight - ySliderHeight;
+    yMinPos = e.pageY;
+    if (yMinPos >= yLimLow) yMinPos = yLimLow;
+    if (yMinPos <= yLimHigh) yMinPos = yLimHigh;
+    $('.y-range-lower').css('top', yAbsolutePx2RelativePercent(yMinPos) + '%');
+    $('.y-range-lower-block')
+    .css({
+      'top': yAbsolutePx2RelativePercent(yMinPos + ySliderHeight) + '%',
+      'height': yDomHeight - yMinPos + ySliderHeight
+    });
+    
+    yRange[0] = ySlope * (yMinPos - yDomOffset) + yMax;
+    Plotly.relayout('scatter', {
+      'yaxis.range': yRange
+    })
+  }
+})
+
+
+$(document).on('mouseup', function() {
+  yMaxActv = false;
+  yMinActv = false;
+})
+
+$('#scatter').on('plotly_doubleclick', function() {
+  setYRangeSlider();
+})
