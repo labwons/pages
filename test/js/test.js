@@ -6,12 +6,6 @@ const isTablet = window.matchMedia('(max-width: 1023px)');
 const isMobile = window.matchMedia('(max-width: 767px)');
 const isNarrow = window.matchMedia('(max-width: 374px)');
 
-const ySliderWidth  = 16;
-const ySliderHeight = ySliderWidth / 2;
-const yDomOffset = parseFloat($('.y-range-slider').offset().top);
-const yDomHeight = parseFloat($('.y-range-slider').height());
-
-
 let SRC = null;
 
 var mapTyp = 'WS';
@@ -20,80 +14,12 @@ var barTyp = 'industry';
 var comOpt = 'D-1';
 var viewMd = 'treemap';
 
-var ySlope = null;
-var yRange = null;
-var yMaxActv = false;
-var yMinActv = false;
-var yHeight = null; // [px]
-var yMaxPos = null; // [px] Absolute Position with respect to Window
-var yMinPos = null; // [px] Absolute Position with respect to Window
-var yMax = null;
-var yMin = null;
-var xmax = 100;
-var xmin = 0;
 
 
 /*--------------------------------------------------------------
 # Functions
 --------------------------------------------------------------*/
-function yAbsolutePx2RelativePercent(px) {
-  return 100 * (px - yDomOffset) / yDomHeight;
-}
 
-function setYRangeSlider(){
-  var plotlyObj = $('#scatter .nsewdrag');
-
-  yRange = $('#scatter')[0].layout.yaxis.range;
-  yMax = yRange[1];
-  yMin = yRange[0];
-
-  if (plotlyObj.length) {
-      yHeight = parseFloat(plotlyObj.attr('height'));
-      yMaxPos = yDomOffset;
-      yMinPos = yDomOffset + yHeight;
-      ySlope = (yRange[0] - yRange[1]) / yHeight;
-  } else {
-    return
-  }
-
-  $('.y-range').css({
-    "position": "absolute",
-    "width": "2px",
-    "height": yHeight,
-    "background-color": "#c8c8c8",
-    // "z-index": 10 // Deprecated
-  });
-
-  $('.y-range-upper, .y-range-lower').css({
-    "position": "absolute",
-    "width": ySliderWidth + "px",
-    "height": ySliderHeight+ "px",
-    "background-color": "#fff",
-    "border": "0.5px solid grey",
-    "border-radius": "30%",
-    "cursor": "ns-resize",
-    'transform': "translateX(-50%)"
-  });
-
-  $('.y-range-upper').css({
-    'top': yAbsolutePx2RelativePercent(yMaxPos) + '%',
-    'left': '50%',
-    // "background-color": "#f00", // Deprecated
-  });
-
-  $('.y-range-lower').css({
-    'top': yAbsolutePx2RelativePercent(yMinPos - ySliderHeight) + '%',
-    'left': '50%',
-    // "background-color": "#0f0", // Deprecated
-  });
-
-  $('.y-range-upper-block').css({
-    'height': 0
-  });
-  $('.y-range-lower-block').css({
-    'height': 0
-  });
-}
 
 
 function setFrame(){
@@ -202,9 +128,12 @@ function setScatterLayout() {
 
 function setScatterOption() {
   return {
-    displayModeBar:false,
+    showTips:false,
     responsive:true,
-    showTips:false
+    displayModeBar:true,
+    modeBarButtonsToRemove: [
+
+    ]    
   }
 }
 
@@ -252,9 +181,9 @@ function setScatter() {
     }],
     layout,
     option
-  ).then(function() {
-    setYRangeSlider();
-});
+  ).then(function(){
+    $('.js-plotly-plot .plotly .modebar').css({'display':'none'})
+  });
 }
 
 
@@ -306,8 +235,10 @@ $(document).ready(async function(){
     
   })
 
-  $('.map-reset').click(function(){
-       
+  $('.scatter-reset').on('click touch', function(){
+    Plotly.relayout('scatter', {
+      'dragmode': "zoom"
+    })
   })
 
   $('.scatter-searchbar').on('select2:select', function (e) {
@@ -329,68 +260,4 @@ $(document).ready(async function(){
     // }
   });
   
-})
-
-function updateSliderYMax(event) {
-  var yLimHigh = yDomOffset;
-  var yLimLow = yMinPos - 2 * ySliderHeight;
-  yMaxPos = event.pageY;
-  if (!yMaxPos) {
-    event.preventDefault();
-    yMaxPos = event.touches[0].pageY;
-  }
-  console.log(yMaxPos);
-  if (yMaxPos <= yLimHigh) yMaxPos = yLimHigh;
-  if (yMaxPos >= yLimLow) yMaxPos = yLimLow;
-  $('.y-range-upper').css('top', yAbsolutePx2RelativePercent(yMaxPos) + '%');
-  $('.y-range-upper-block').css({
-    'top': '0%',
-    'height': yMaxPos - yDomOffset
-  });
-
-  yRange[1] = ySlope * (yMaxPos - yDomOffset) + yMax;
-  Plotly.relayout('scatter', {
-    'yaxis.range': yRange
-  })
-}
-
-function updateSliderYMin(event) {
-  var yLimHigh = yMaxPos + ySliderHeight;
-  var yLimLow  = yDomOffset + yHeight - ySliderHeight;
-  yMinPos = event.pageY;
-  if (!yMinPos) {
-    event.preventDefault();
-    yMinPos = event.touches[0].pageY;
-  }
-  console.log(yMinPos);
-  if (yMinPos >= yLimLow) yMinPos = yLimLow;
-  if (yMinPos <= yLimHigh) yMinPos = yLimHigh;
-  $('.y-range-lower').css('top', yAbsolutePx2RelativePercent(yMinPos) + '%');
-  $('.y-range-lower-block').css({
-    'top': yAbsolutePx2RelativePercent(yMinPos + ySliderHeight) + '%',
-    'height': yDomHeight - yMinPos + ySliderHeight
-  });
-  
-  yRange[0] = ySlope * (yMinPos - yDomOffset) + yMax;
-  Plotly.relayout('scatter', {
-    'yaxis.range': yRange
-  })
-}
-
-$(document).on('mousemove touchmove', function(e) {
-  if (yMaxActv) {
-    updateSliderYMax(e);
-  } else if (yMinActv) {
-    updateSliderYMin(e);
-  }
-})
-
-
-$(document).on('mouseup touchend', function() {
-  yMaxActv = false;
-  yMinActv = false;
-})
-
-$('#scatter').on('plotly_doubleclick', function() {
-  setYRangeSlider();
 })
