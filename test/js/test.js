@@ -286,11 +286,11 @@ $(document).ready(async function(){
     setYRangeSlider();
 });
 
-  $('.y-range-upper').on('mousedown', function(e) {
+  $('.y-range-upper').on('mousedown touchstart', function(e) {
     yMaxActv = true;
   })
 
-  $('.y-range-lower').on('mousedown', function(e) {
+  $('.y-range-lower').on('mousedown touchstart', function(e) {
     yMinActv = true;
   })
 
@@ -331,46 +331,62 @@ $(document).ready(async function(){
   
 })
 
-$(document).on('mousemove', function(e) {
-  if (yMaxActv) {
-    var yLimHigh = yDomOffset;
-    var yLimLow = yMinPos - 2 * ySliderHeight;
-    yMaxPos = e.pageY;
-    if (yMaxPos <= yLimHigh) yMaxPos = yLimHigh;
-    if (yMaxPos >= yLimLow) yMaxPos = yLimLow;
-    $('.y-range-upper').css('top', yAbsolutePx2RelativePercent(yMaxPos) + '%');
-    $('.y-range-upper-block')
-    .css({
-      'top': '0%',
-      'height': yMaxPos - yDomOffset
-    });
+function updateSliderYMax(event) {
+  var yLimHigh = yDomOffset;
+  var yLimLow = yMinPos - 2 * ySliderHeight;
+  yMaxPos = event.pageY;
+  if (!yMaxPos) {
+    event.preventDefault();
+    yMaxPos = event.touches[0].pageY;
+  }
+  console.log(yMaxPos);
+  if (yMaxPos <= yLimHigh) yMaxPos = yLimHigh;
+  if (yMaxPos >= yLimLow) yMaxPos = yLimLow;
+  $('.y-range-upper').css('top', yAbsolutePx2RelativePercent(yMaxPos) + '%');
+  $('.y-range-upper-block').css({
+    'top': '0%',
+    'height': yMaxPos - yDomOffset
+  });
 
-    yRange[1] = ySlope * (yMaxPos - yDomOffset) + yMax;
-    Plotly.relayout('scatter', {
-      'yaxis.range': yRange
-    })
+  yRange[1] = ySlope * (yMaxPos - yDomOffset) + yMax;
+  Plotly.relayout('scatter', {
+    'yaxis.range': yRange
+  })
+}
+
+function updateSliderYMin(event) {
+  var yLimHigh = yMaxPos + ySliderHeight;
+  var yLimLow  = yDomOffset + yHeight - ySliderHeight;
+  yMinPos = event.pageY;
+  if (!yMinPos) {
+    event.preventDefault();
+    yMinPos = event.touches[0].pageY;
+  }
+  console.log(yMinPos);
+  if (yMinPos >= yLimLow) yMinPos = yLimLow;
+  if (yMinPos <= yLimHigh) yMinPos = yLimHigh;
+  $('.y-range-lower').css('top', yAbsolutePx2RelativePercent(yMinPos) + '%');
+  $('.y-range-lower-block').css({
+    'top': yAbsolutePx2RelativePercent(yMinPos + ySliderHeight) + '%',
+    'height': yDomHeight - yMinPos + ySliderHeight
+  });
+  
+  yRange[0] = ySlope * (yMinPos - yDomOffset) + yMax;
+  Plotly.relayout('scatter', {
+    'yaxis.range': yRange
+  })
+}
+
+$(document).on('mousemove touchmove', function(e) {
+  if (yMaxActv) {
+    updateSliderYMax(e);
   } else if (yMinActv) {
-    var yLimHigh = yMaxPos + ySliderHeight;
-    var yLimLow  = yDomOffset + yHeight - ySliderHeight;
-    yMinPos = e.pageY;
-    if (yMinPos >= yLimLow) yMinPos = yLimLow;
-    if (yMinPos <= yLimHigh) yMinPos = yLimHigh;
-    $('.y-range-lower').css('top', yAbsolutePx2RelativePercent(yMinPos) + '%');
-    $('.y-range-lower-block')
-    .css({
-      'top': yAbsolutePx2RelativePercent(yMinPos + ySliderHeight) + '%',
-      'height': yDomHeight - yMinPos + ySliderHeight
-    });
-    
-    yRange[0] = ySlope * (yMinPos - yDomOffset) + yMax;
-    Plotly.relayout('scatter', {
-      'yaxis.range': yRange
-    })
+    updateSliderYMin(e);
   }
 })
 
 
-$(document).on('mouseup', function() {
+$(document).on('mouseup touchend', function() {
   yMaxActv = false;
   yMinActv = false;
 })
