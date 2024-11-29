@@ -1,6 +1,7 @@
+from typing import Union
 import numpy as np
 
-def str2num(src:str) -> int or float:
+def str2num(src:str) -> Union[int, float]:
     if not src:
         return np.nan
     try:

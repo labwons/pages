@@ -1,8 +1,8 @@
 try:
-    from ..bubble.core import num2cap
+    from ..basis.core import num2cap
     from .color import BLUE2RED, RED2GREEN
 except ImportError:
-    from dev.task.bubble.core import num2cap
+    from dev.task.basis.core import num2cap
     from dev.task.treemap.color import BLUE2RED, RED2GREEN
 from pandas import DataFrame, Series
 

@@ -13,7 +13,7 @@ var mapFrm = null;
 var barTyp = 'industry';
 var comOpt = 'D-1';
 var viewMd = 'treemap';
-
+var toolbox = false;
 
 
 /*--------------------------------------------------------------
@@ -81,22 +81,10 @@ function setSearchSelector(){
   })
 }
 
-function setScale(){
-  var tag = SRC.METADATA[comOpt];
-  $('.map-legend span').each(function(n){
-    if(tag.bound[n] == null){
-      $(this).html('&nbsp; - &nbsp;');
-    } else {
-      $(this).html(String(tag.bound[n]) + tag.unit);
-    }
-    $(this).css('background-color', tag.scale[n]);
-  })
-}
-
 function setScatterLayout() {
   return {
     dragmode: false,
-    margin:{l:10, r:2, t:0, b:20},
+    margin:{l:20, r:2, t:0, b:35},
     xaxis:{
       showline:true,
       zerolinecolor:"lightgrey",
@@ -108,20 +96,35 @@ function setScatterLayout() {
       zerolinecolor:"lightgrey",
       gridcolor:"lightgrey",
     },
-    // annotations: [{
-    //   text: '2024-11-25 ',
-    //   x: 1,
-    //   y: 1,
-    //   xref: 'paper',
-    //   yref: 'paper',      
-    //   xanchor: 'right',
-    //   yanchor: 'top',
-    //   showarrow: false,      
-    //   font: {
-    //       size: 12,
-    //       color: 'white'
-    //   }
-    // }]
+    annotations: [{
+      text: SRC.DATE,
+      x: 1,
+      y: 0,
+      xref: 'paper',
+      yref: 'paper',      
+      xanchor: 'right',
+      yanchor: 'bottom',
+      showarrow: false,
+      align: 'right',
+      font: {
+          size: 12,
+          color: 'black'
+      }
+    }, {
+      text: 'LAB￦ONS',
+      x: 0,
+      y: 0,
+      xref: 'paper',
+      yref: 'paper',      
+      xanchor: 'left',
+      yanchor: 'bottom',
+      showarrow: false,
+      align: 'left',
+      font: {
+          size: 12,
+          color: 'black'
+      }
+    }]
   }
 }
 
@@ -131,15 +134,18 @@ function setScatterOption() {
     showTips:false,
     responsive:true,
     displayModeBar:true,
+    displaylogo:false,
     modeBarButtonsToRemove: [
-
+      'toImage','select2d','lasso2d','zoomOut2d','zoomIn2d','resetScale2d'
     ]    
   }
 }
 
 function setScatter() {
-  var xLabel = "D-1";
-  var yLabel = "M-1";
+  var xKey = 'D-1';
+  var yKey = 'M-1';
+  var xLabel = SRC.LABEL[xKey];
+  var yLabel = SRC.LABEL[yKey];
   // var tag = SRC.METADATA[comOpt];
   var layout = setScatterLayout();
   var option = setScatterOption();
@@ -150,14 +156,16 @@ function setScatter() {
   var meta = [];
   var size = [];  
   var colors = [];
-  Object.entries(SRC).forEach(([ticker, spec]) => {
-    x.push(spec[xLabel]);
-    y.push(spec[yLabel]);
+  Object.entries(SRC.DATA).forEach(([ticker, spec]) => {
+    x.push(spec[xKey]);
+    y.push(spec[yKey]);
     meta.push(spec["meta"]);
-    // size.push(val.size);
+    size.push(spec["size"]);
     // colors.push(val[comOpt][1]);
   })
 
+  layout.xaxis.title = xLabel;
+  layout.yaxis.title = yLabel;
   Plotly.newPlot(
     'scatter', 
     [{
@@ -173,16 +181,20 @@ function setScatter() {
           color: '#ffffff'
         }
       },
-      opacity: 0.9,
-      // marker: {
-      //   colors: colors,
-      //   visible: true
-      // },
+      marker: {
+        size:size,
+        color: 'rolayblue',
+        line: {
+          width:1.0,
+          color:'blue'
+        },
+        opacity: 0.6,        
+      },
     }],
     layout,
     option
   ).then(function(){
-    $('.js-plotly-plot .plotly .modebar').css({'display':'none'})
+    $('.js-plotly-plot .plotly .modebar').css({'display':'none'});    
   });
 }
 
@@ -193,7 +205,7 @@ function setScatter() {
 --------------------------------------------------------------*/
 $(document).ready(async function(){
   try {
-    const response = await fetch('../../dev/json/group/specs.json');
+    const response = await fetch('../../dev/json/service/bubble.json');
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
@@ -211,18 +223,6 @@ $(document).ready(async function(){
       console.error('Fetch error:', error);
   }
 
-  $(window).on('resize', function() {
-    setYRangeSlider();
-});
-
-  $('.y-range-upper').on('mousedown touchstart', function(e) {
-    yMaxActv = true;
-  })
-
-  $('.y-range-lower').on('mousedown touchstart', function(e) {
-    yMinActv = true;
-  })
-
   $('.scatter-sector').on('change', function() {   
     
   })
@@ -235,10 +235,35 @@ $(document).ready(async function(){
     
   })
 
-  $('.scatter-reset').on('click touch', function(){
-    Plotly.relayout('scatter', {
-      'dragmode': "zoom"
-    })
+  $('.scatter-edit').on('click touch', function(){
+    toolbox = !toolbox;
+    if (toolbox) {
+      $('.scatter-edit i')
+      .removeClass('fa-pencil')
+      .addClass('fa-lock');
+      $('.js-plotly-plot .plotly .modebar').css({
+        'display':'flex',
+        'background-color':'rgba(200, 200, 200, 0.4)'
+      })
+      $('.js-plotly-plot .plotly .modebar-group').css({
+        'padding':'0'
+      })
+      $('.js-plotly-plot .plotly .modebar-btn').css({
+        'padding':'0 5px'
+      })
+      Plotly.relayout('scatter', {
+        'dragmode': "zoom",
+      })
+    } else {
+      $('.scatter-edit i')
+      .removeClass('fa-lock')
+      .addClass('fa-pencil');
+      $('.js-plotly-plot .plotly .modebar').css({'display':'none'})
+      Plotly.relayout('scatter', {
+        'dragmode': false,
+      })
+    }
+    
   })
 
   $('.scatter-searchbar').on('select2:select', function (e) {

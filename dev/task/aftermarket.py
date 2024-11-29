@@ -1,11 +1,11 @@
 try:
-    from .bubble.generic import Basis
+    from .basis.generic import Basis
     from .treemap.generic import MarketMap
-    from .rank.generic import Rank
+    from .bubble.generic import Bubble
 except ImportError:
-    from dev.task.bubble.generic import Basis
+    from dev.task.basis.generic import Basis
     from dev.task.treemap.generic import MarketMap
-    from dev.task.rank.generic import Rank
+    from dev.task.bubble.generic import Bubble
 
 basis = Basis(offline=False)
 basis.dump()
@@ -13,5 +13,5 @@ basis.dump()
 marketMap = MarketMap(basis)
 marketMap.dump()
 
-# rank = Rank(basis)
-# rank.dump()
+bubble = Bubble(basis)
+bubble.dump()

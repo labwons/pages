@@ -1,103 +1,130 @@
 try:
     from ...common.path import PATH
-    from ..module.fng.generic import Stat
-    from ..module.wise.generic import Groups
-    from ..module.krx.generic import Price
-    from .core import RELTs, num2cap
+    from ...common.calendar import Calendar
 except ImportError:
-    from dev.module.fng.generic import Stat
-    from dev.module.wise.generic import Groups
-    from dev.module.krx.generic import Price
-    from dev.task.bubble.core import RELTs, num2cap
     from dev.common.path import PATH
+    from dev.common.calendar import Calendar
 from pandas import DataFrame
-import numpy as np
+from typing import Dict
+import pandas as pd
+import json
 
 
-class Basis(DataFrame):
-
-    def __init__(self, offline:bool=False):
-        bs = Price(offline=offline) \
-             .join(Groups(offline=True))
-
-        # Preferred stocks, suspended stocks, and other stocks
-        # that are not classified due to various reasons are not included.
-        # Real estate (REITs) stocks are not provided by default,
-        # So they are included at our discretion.
-        dump = bs[bs['sectorCode'].isna() | bs['industryCode'].isna()]
-        dump = dump[~dump.index.isin(RELTs.index)]
-        bs = bs[~bs.index.isin(dump.index)]
-        bs.loc[RELTs.index, 'name'] = RELTs.values
-        bs.loc[RELTs.index, 'sectorCode'] = 'G99'
-        bs.loc[RELTs.index, 'industryCode'] = 'WI999'
-        bs.loc[RELTs.index, ['sectorName', 'industryName']] = "부동산"
-
-        # State update
-        # fifty-two week price is daily updated (close-wise)
-        # new tickers are also updated daily (full-state)
-        st = Stat()
-        st.remove([t for t in st.index if not t in bs.index])
-        new = [t for t in bs.index if not t in st.index]
-        if new:
-            st.update(new)
-        st['close'] = [bs.loc[ticker, 'close'] for ticker in st.index]
-        st['high52'] = st.apply(lambda row: max(row['high52'], row['close']), axis=1)
-        st['low52'] = st.apply(lambda row: min(row['low52'], row['close']), axis=1)
-        st.drop(columns=["close"], inplace=True)
-        st.dump()
-        bs = bs.join(st)
-
-        # Refine
-        # Size is calculated by dividing the market capitalization
-        # by 100 million KRW. The keyword 'PR' stands for 'Price Ratio,',
-        # which represents the rate of change compared to the reference price.
-        # 'PE' stands for 'Price Earnings,' indicating the price-to-earnings
-        # ratio. 'PS' stands for 'Price Sales,' indicating the price-to-sales
-        # ratio. 'Estimated' refers to estimated values, while 'trailing'
-        # refers to values based on the most recent four consecutive quarters.
-        # 'Fiscal' refers to values confirmed for the last fiscal year.
-        bs['size'] = round(bs['marketCap'] / 100000000, 2)
-        bs['marketCap'] = bs['size'].apply(num2cap)
-        bs['high52PR'] = round(100 * (bs['close'] / bs['high52'] - 1), 2)
-        bs['low52PR'] = round(100 * (bs['close'] / bs['low52'] - 1), 2)
-        bs['estimatedPR'] = round(100 * (bs['close'] / bs['estPrice'] - 1), 2)
-        bs['estimatedPE'] = round(bs['close'] / bs['estEps'], 2)
-        bs['trailingPS'] = round(bs['size'] / bs['trailingSales'], 2)
-        bs['trailingPE'] = round(bs['close'] / bs['trailingEps'], 2)
-        bs['fiscalPE'] = round(bs['close'] / bs['fiscalEps'], 2)
-        bs['fiscalDividends'] = round(bs['fiscalDividends'], 2)
-        bs['meta'] = bs['name'] + '(' + bs.index + ')<br>' \
-                     + '시가총액: ' + bs['marketCap'] + '원<br>' \
-                     + '종가: ' + bs['close'].apply(lambda x: f"{x:,d}") + '원'
-
-        invOrDivByZeroProtection = ['trailingPS', 'trailingPE', 'estimatedPE']
-        for col in invOrDivByZeroProtection:
-            bs.loc[(bs[col] <= 0) | (bs[col] == np.inf), col] = np.nan
-
-        bs = bs[[
-            'name',  'close', 'marketCap', 'meta', 'foreignRate', 'volume',
-            'sectorCode', 'industryCode', 'sectorName', 'industryName',
-            'D-1', 'W-1', 'M-1', 'M-3', 'M-6', 'Y-1',
-            'high52PR', 'low52PR', 'estimatedPR',
-            'stockSize', 'beta', 'floatShares',
-            'trailingPS', 'trailingPE', 'fiscalPE', 'estimatedPE', 'PBR',
-            'trailingEarningRatio', 'fiscalEarningRatio', 'fiscalDividends',
-            'trailingSales', 'trailingEarning', 'trailingNetIncome',
-            'fiscalSales', 'fiscalEarning', 'fiscalNetIncome',
-            'debtRatio', 'size', 'DIV'
-        ]]
-        super().__init__(bs)
+class Bubble(DataFrame):
+    DUMP = {
+        'DATE': f"{Calendar} 기준",
+        'LABEL': {            
+            'D-1':'1일 수익률',
+            'W-1':'1주 수익률', 
+            'M-1':'1개월 수익률', 
+            'M-3':'3개월 수익률', 
+            'M-6':'6개월 수익률', 
+            'Y-1':'1년 수익률', 
+            'high52PR':'52주 최고가 대비', 
+            'low52PR':'52주 최저가 대비', 
+            'estimatedPR':'목표가 대비',
+            'volume':'거래량',
+            'foreignRate':'외국인 지분율', 
+            'beta':'베타', 
+            'floatShares':'유동주식비율', 
+            'trailingPS':'PSR', 
+            'trailingPE':'PER',
+            'estimatedPE':'추정PER', 
+            'PBR':'PBR', 
+            'trailingEarningRatio':'영업이익률',
+            'fiscalDividends':'배당수익률', 
+            'DIV':'예상배당수익률',
+            'debtRatio':'부채비율',
+        }
+    }
+    def __init__(self, basis:DataFrame=DataFrame()):
+        normalize = lambda x, mn, mx: mn + (x - x.min()) * (mx - mn) / (x.max() - x.min())
+        if basis.empty:
+            basis = pd.read_json(PATH.SPECS, orient='index')
+            basis.index = basis.index.astype(str).str.zfill(6)
+        basis = basis.copy()
+        basis = basis.sort_values(by='size', ascending=True)
+        basis['size'] = normalize(basis['size'], 5, 100)
+        keys = ['name', 'size', 'meta'] + list(self.DUMP['LABEL'].keys())
+        
+        super().__init__(basis[keys])
+        category = basis[["sectorCode", "sectorName"]] \
+                   .drop_duplicates() \
+                   .set_index(keys="sectorCode") \
+                   .to_dict()["sectorName"]
+        category.update(basis[["industryCode", "industryName"]] \
+                        .drop_duplicates() \
+                        .set_index(keys="industryCode") \
+                        .to_dict()["industryName"])
+        self.DUMP["CATEGORY"] = category
+        self.DUMP["DATA"] = self.to_dict(orient="index")
         return
 
-    def dump(self) -> str:
-        string = self.to_json(orient='index').replace("nan", "")
-        if not PATH.SPECS.startswith('http'):
-            with open(PATH.SPECS, 'w') as f:
+    def dump(self):
+        string = json.dumps(self.DUMP).replace("NaN", "null")
+        if not PATH.BUBBLE.startswith('http'):
+            with open(PATH.BUBBLE, 'w') as f:
                 f.write(string)
         return string
 
 
 if __name__ == "__main__":
-    specs = Basis(True)
-    # specs.dump()
-    # specs
+    from pandas import set_option
+    import plotly.graph_objects as go
+    set_option('display.expand_frame_repr', False)
+
+    # 'WI100', 'WI110', 'WI200', 'WI210', 'WI220', 'WI230',
+    # 'WI240', 'WI250', 'WI260', 'WI300', 'WI310', 'WI320', 'WI330', 'WI340',
+    # 'WI400', 'WI410', 'WI500', 'WI510', 'WI520', 'WI600', 'WI610', 'WI620',
+    # 'WI630', 'WI640', 'WI700', 'WI800', 'ALL'
+    rank = Rank()
+    rank.dump()
+
+
+    # test = rank['WI100']
+    # label = 'D-1'
+    #
+    # fig = go.Figure()
+    # low = go.Bar(
+    #     orientation='h',
+    #     x=test[label]['lower']['x'],
+    #     y=test[label]['lower']['y'],
+    #     text=test[label]['lower']['text'],
+    #     texttemplate='%{text}%',
+    #     textposition= 'outside',
+    #     marker={
+    #         'color': test[label]['lower']['color']
+    #     },
+    #     hovertemplate=test[label]['lower']['meta'],
+    #     showlegend=False
+    # )
+    # lowlabel = go.Scatter(
+    #     x=[-0.1] * len(test[label]['lower']['y']),
+    #     y=test[label]['lower']['y'],
+    #     mode='text',
+    #     text=test[label]['lower']['name'],
+    #     texttemplate='%{text}',
+    #     textposition='middle left',
+    #     textfont={'color':'white'},
+    #     showlegend=False
+    # )
+    # high = go.Bar(
+    #     orientation='h',
+    #     x=test[label]['upper']['x'],
+    #     y=test[label]['upper']['y'],
+    #     text=test[label]['upper']['text'],
+    #     texttemplate='%{text}%',
+    #     textposition='outside',
+    #     marker={
+    #         'color': test[label]['upper']['color']
+    #     },
+    #     hovertemplate=test[label]['upper']['meta'],
+    #     showlegend=False
+    # )
+    #
+    # fig.add_traces([low, lowlabel, high])
+    # fig.update_layout(
+    #     plot_bgcolor='white',
+    #     barmode='relative'
+    # )
+    # fig.show()

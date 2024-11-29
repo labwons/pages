@@ -15,6 +15,7 @@ class PATH:
     SPECS = os.path.join(ROOT, r'dev/json/group/specs.json')
     INDEX = os.path.join(ROOT, r'dev/json/macro/index.json')
     ECOS  = os.path.join(ROOT, r'dev/json/macro/ecos.json')
+    BUBBLE = os.path.join(ROOT, r'dev/json/service/bubble.json')
     TRMAP = os.path.join(ROOT, r'dev/json/service/treemap.json')
     RANK  = os.path.join(ROOT, r'dev/json/service/rank.json')
     
