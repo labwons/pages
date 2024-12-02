@@ -5,14 +5,12 @@ const isLabTop = window.matchMedia('(max-width: 1443px)');
 const isTablet = window.matchMedia('(max-width: 1023px)');
 const isMobile = window.matchMedia('(max-width: 767px)');
 const isNarrow = window.matchMedia('(max-width: 374px)');
+const fontFamily = 'NanumGothic, Nanum Gothic, Open Sans, sans-serif';
 
 let SRC = null;
-
-var mapTyp = 'WS';
-var mapFrm = null;
-var barTyp = 'industry';
-var comOpt = 'D-1';
-var viewMd = 'treemap';
+var group = 'all';
+var xOpt = 'D-1';
+var yOpt = 'Y-1';
 var toolbox = false;
 
 
@@ -20,64 +18,63 @@ var toolbox = false;
 # Functions
 --------------------------------------------------------------*/
 
+function setCategory(){
+  var sector = {};
+  var industry = {};
 
-
-function setFrame(){
-  mapFrm = SRC.TICKERS;
-  Object.values(SRC[mapTyp]).forEach(val => {
-    mapFrm = Object.assign({}, mapFrm, val);
-  })
-}
-
-function setTypeSelector() {
-  if (viewMd == 'treemap') {
-    $('.map-type')
-    .empty()
-    .append('<option value="WS">대형주</option>')
-    .append('<option value="NS">대형주(삼성전자 제외)</option>')
-    $('.map-type option[value="' + mapTyp + '"]').prop('selected', true);
-  } else {
-    $('.map-type')
-    .empty()
-    .append('<option value="sector">섹터 Sector</option>')
-    .append('<option value="industry">업종 Industry</option>')
-    $('.map-type option[value="' + barTyp + '"]').prop('selected', true);
-  }
-}
-
-function setOptionSelector() {
-  Object.entries(SRC.METADATA).forEach(([key, val]) => {
-    if((key == "DATE") || (key == "DUPLICATEDGROUP")) {
-      return
+  Object.entries(SRC.CATEGORY).forEach(([key, val]) => {
+    if (key.startsWith('G')) {
+      sector[key] = val;
+    } else if (key.startsWith('W')) {
+      industry[key] = val;
     }
-    $('.map-option').append('<option value="' + key + '">' + val.label + '</option>');
   })
-  $('.map-option option[value="' + comOpt + '"]').prop('selected', true);
+
+  $('.scatter-sector')
+  .empty()
+  .append('<option value="all">' + (group == 'all' ? '분류: 전체' : '전체') + '</option>')
+  .append('<optgroup label="[섹터 / Sector]">');
+  Object.entries(sector).forEach(([key, val]) => {
+    if (key == group) val = '분류: ' + val;
+    $('.scatter-sector').append('<option value="' + key + '">' + val + '</option>');
+  })
+  $('.scatter-sector').append('<optgroup label="[업종 / Industry]">');
+  Object.entries(industry).forEach(([key, val]) => {
+    if (key == group) val = '분류: ' + val;
+    $('.scatter-sector').append('<option value="' + key + '">' + val + '</option>');
+  })
+  $('.scatter-sector').val(group);
+}
+
+function setX() {
+  $('.scatter-x').empty();
+  Object.entries(SRC.LABEL).forEach(([key, val]) => {
+    if (key == xOpt) val = 'X값: ' + val;
+    $('.scatter-x').append('<option value="' + key + '">' + val + '</option>');
+  })
+  $('.scatter-x').val(xOpt);
+}
+
+function setY() {
+  $('.scatter-y').empty();
+  Object.entries(SRC.LABEL).forEach(([key, val]) => {
+    if (key == yOpt) val = 'Y값: ' + val;
+    $('.scatter-y').append('<option value="' + key + '">' + val + '</option>');
+  })
+  $('.scatter-y').val(yOpt);
 }
 
 function setSearchSelector(){
-  $('.map-searchbar')
+  $('.scatter-searchbar')
     .select2({placeholder: "종목명/섹터/업종"})
     .empty()
 	  .append('<option></option>');
   
-  $('.map-searchbar').append('<optgroup label="[종목 / Stocks]">');
-  Object.entries(SRC.TICKERS)
+  $('.scatter-searchbar').append('<optgroup label="[종목 / Stocks]">');
+  Object.entries(SRC.DATA)
   .sort((a, b) => b[1].size - a[1].size)
   .forEach(item => {
-    if ((mapTyp === "NS") && (item[0] === '005930')) {
-      return;
-    }
-    $('.map-searchbar').append('<option value="' + item[0] + '">' + item[1].name + '</option>');
-  })
-
-  $('.map-searchbar').append('<optgroup label="[섹터 / Sectors]">');
-  Object.entries(SRC[mapTyp].sector).forEach(([key, val]) => {
-    $('.map-searchbar').append('<option value="' + key + '">' + val.name + '</option>');
-  })
-  $('.map-searchbar').append('<optgroup label="[업종 / Industries]">');
-  Object.entries(SRC[mapTyp].industry).forEach(([key, val]) => {
-    $('.map-searchbar').append('<option value="' + key + '">' + val.name + '</option>');
+    $('.scatter-searchbar').append('<option value="' + item[0] + '">' + item[1].name + '</option>');
   })
 }
 
@@ -107,8 +104,9 @@ function setScatterLayout() {
       showarrow: false,
       align: 'right',
       font: {
-          size: 12,
-          color: 'black'
+        family:fontFamily,
+        size: 12,
+        color: 'black'
       }
     }, {
       text: 'LAB￦ONS',
@@ -121,13 +119,13 @@ function setScatterLayout() {
       showarrow: false,
       align: 'left',
       font: {
-          size: 12,
-          color: 'black'
+        family:fontFamily,
+        size: 12,
+        color: 'black'
       }
     }]
   }
 }
-
 
 function setScatterOption() {
   return {
@@ -142,14 +140,10 @@ function setScatterOption() {
 }
 
 function setScatter() {
-  var xKey = 'D-1';
-  var yKey = 'M-1';
-  var xLabel = SRC.LABEL[xKey];
-  var yLabel = SRC.LABEL[yKey];
-  // var tag = SRC.METADATA[comOpt];
   var layout = setScatterLayout();
   var option = setScatterOption();
-  var font = 'NanumGothic, Nanum Gothic, Open Sans, sans-serif';
+  var xName = SRC.LABEL[xOpt];
+  var yName = SRC.LABEL[yOpt];
 
   var x = [];
   var y = [];
@@ -157,15 +151,15 @@ function setScatter() {
   var size = [];  
   var colors = [];
   Object.entries(SRC.DATA).forEach(([ticker, spec]) => {
-    x.push(spec[xKey]);
-    y.push(spec[yKey]);
+    x.push(spec[xOpt]);
+    y.push(spec[yOpt]);
     meta.push(spec["meta"]);
     size.push(spec["size"]);
     // colors.push(val[comOpt][1]);
   })
 
-  layout.xaxis.title = xLabel;
-  layout.yaxis.title = yLabel;
+  layout.xaxis.title = xName;
+  layout.yaxis.title = yName;
   Plotly.newPlot(
     'scatter', 
     [{
@@ -174,10 +168,10 @@ function setScatter() {
       y:y,
       mode:'markers',
       meta:meta,
-      hovertemplate: '%{meta}<br>' + xLabel + ': %{x}<br>' + yLabel + ': %{y}<extra></extra>',
+      hovertemplate: '%{meta}<br>' + xName + ': %{x}<br>' + yName + ': %{y}<extra></extra>',
       hoverlabel: {
         font: {
-          family: font,
+          family: fontFamily,
           color: '#ffffff'
         }
       },
@@ -194,7 +188,9 @@ function setScatter() {
     layout,
     option
   ).then(function(){
-    $('.js-plotly-plot .plotly .modebar').css({'display':'none'});    
+    if (!toolbox) {
+      $('.js-plotly-plot .plotly .modebar').css({'display':'none'});
+    }
   });
 }
 
@@ -211,28 +207,32 @@ $(document).ready(async function(){
     }
     
     SRC = await response.json();
-    // console.log(SRC);
-    // setYRangeSlider();
-    // setTypeSelector();
-    // setOptionSelector();
-    // setFrame();
+    console.log(SRC);
+
+    setX();
+    setY();
+    setCategory();
     setScatter();
-    // setScale();
-    // setSearchSelector();
+    setSearchSelector();
   } catch (error) {
       console.error('Fetch error:', error);
   }
 
   $('.scatter-sector').on('change', function() {   
-    
+    group = $(this).val();
+    setCategory();
   })
 
   $('.scatter-x').on('change', function() {
-    
+    xOpt = $(this).val();
+    setX();
+    setScatter();
   })
 
   $('.scatter-y').on('change', function() {
-    
+    yOpt = $(this).val();
+    setY();
+    setScatter();
   })
 
   $('.scatter-edit').on('click touch', function(){

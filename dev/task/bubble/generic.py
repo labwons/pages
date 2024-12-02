@@ -45,13 +45,14 @@ class Bubble(DataFrame):
         basis = basis.copy()
         basis = basis.sort_values(by='size', ascending=True)
         basis['size'] = normalize(basis['size'], 5, 100)
-        keys = ['name', 'size', 'meta'] + list(self.DUMP['LABEL'].keys())
+        keys = ['name', 'size', 'meta', 'sectorCode', 'industryCode'] + list(self.DUMP['LABEL'].keys())
         
         super().__init__(basis[keys])
-        category = basis[["sectorCode", "sectorName"]] \
-                   .drop_duplicates() \
-                   .set_index(keys="sectorCode") \
-                   .to_dict()["sectorName"]
+        category = {'all': "전체"}
+        category.update(basis[["sectorCode", "sectorName"]] \
+                        .drop_duplicates() \
+                        .set_index(keys="sectorCode") \
+                        .to_dict()["sectorName"])
         category.update(basis[["industryCode", "industryName"]] \
                         .drop_duplicates() \
                         .set_index(keys="industryCode") \
