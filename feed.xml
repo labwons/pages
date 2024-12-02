@@ -20,12 +20,12 @@ layout: null
       <guid isPermaLink="true">https://labwons.com/</guid>
     </item>
     <item>
-      <title>수익률 순위</title>
-      <description>수익률 순위</description>
+      <title>시장 분포</title>
+      <description>시장 분포</description>
       <author>snob.labwons@gmail.com</author>
       <pubDate>Mon, 28 Oct 2024 16:01:12 +0900</pubDate>
-      <link>https://labwons.com/rank/</link>
-      <guid isPermaLink="true">https://labwons.com/rank/</guid>
+      <link>https://labwons.com/scatter/</link>
+      <guid isPermaLink="true">https://labwons.com/scatter/</guid>
     </item>
   </channel>
 </rss>
