@@ -364,16 +364,17 @@ $(document).ready(async function(){
 
   $('.map-switch i').click(function(){
     if ( $(this).attr('class').includes('fa-map-o') ) {
+      viewMd = 'treemap';
+      setTreemap();
+      $(this).removeClass('fa-map-o').addClass('fa-signal');
+      $('.map-searchbar').prop('disabled', false);
+    } else {
       viewMd = 'bar';
       setBarChart();
       rewindOff();
-      $(this).removeClass('fa-map-o').addClass('fa-signal');
-      $('.map-searchbar').prop('disabled', true);      
-    } else {
-      viewMd = 'treemap';
-      setTreemap();
       $(this).removeClass('fa-signal').addClass('fa-map-o');
-      $('.map-searchbar').prop('disabled', false);
+      $('.map-searchbar').prop('disabled', true);      
+      
     }
     setTypeSelector();
   })

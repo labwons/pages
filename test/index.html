@@ -9,91 +9,80 @@
     
     <link rel="icon" href="../src/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="./css/test.css">
+    <link rel="stylesheet" href="./css/macro.css">
 
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.34.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <!-- <script data-ad-client="ca-pub-7507574593260609" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script> -->
+    <script data-ad-client="ca-pub-7507574593260609" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <!-- Google Tag Manager -->
-    <!-- <script>
+    <script>
       (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
       new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
       j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
       })(window,document,'script','dataLayer','GTM-KJFQ72Z8');
-    </script> -->
+    </script>
     <!-- End Google Tag Manager -->
 </head>
 <body>
-    <!----------------------------------------------------------------------------------------------->
-    <!------------------------------------------- HEADER -------------------------------------------->
-    <!----------------------------------------------------------------------------------------------->
-    <!-- <header id="header" class="header header-fix">
-      <a href="/" class="logo">
-        <img src="../src/img/logo-text.png" alt="Logo">
-      </a>
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a href="/">시장 지도</a></li>
-        </ul>
-        <i class="fa fa-bars navbar-button"></i>
-      </nav>
-    </header> -->
+  <!----------------------------------------------------------------------------------------------->
+  <!------------------------------------------- HEADER -------------------------------------------->
+  <!----------------------------------------------------------------------------------------------->
+  <header id="header" class="header header-fix">
+    <a href="/" class="logo">
+      <img src="../src/img/logo-text.png" alt="Logo">
+    </a>
+    <nav id="navbar" class="navbar">
+      <ul>
+        <li><a href="/">시장 지도</a></li>
+        <li><a href="/scatter">종목 분포</a></li>
+      </ul>
+      <i class="fa fa-bars navbar-button"></i>
+    </nav>
+  </header>
 
     <!----------------------------------------------------------------------------------------------->
     <!-------------------------------------------- MAIN --------------------------------------------->
     <!----------------------------------------------------------------------------------------------->
     <main id="main">
       <section class="service-section">
-        <h1 style="display:none;">시장 지도</h1>
+        <h1 style="display:none;">종목 분포</h1>
         <div class="ad-vertical">
-          <!-- <ins class="adsbygoogle"
+          <ins class="adsbygoogle"
             style="display:block"
             data-ad-client="ca-pub-7507574593260609"
             data-ad-slot="9705057757"
             data-ad-format="auto"
             data-full-width-responsive="true">
-          </ins> -->
+          </ins>
         </div>
         <div class="service-box">
           <div class="service-nav">
-            <div class="scatter-options">
-              <select name="type" class="scatter-sector"></select>
-              <select name="x" class="scatter-x"></select>
-              <select name="y" class="scatter-y"></select>
-              <div class="scatter-edit"><i class="fa fa-pencil"></i></div>
-              
+            <div class="bar-options">
+              <select name="type" class="industry">
+                <option value="" disabled selected>업종 선택</option>
+              </select>
+              <select name="option" class="macro">
+                <option value="" disabled selected>업종/지표 선택</option>
+                <optgroup label="- 업종 -" class="option-industry"></optgroup>
+                <optgroup label="- 지표 -" class="option-indicator"></optgroup>
+              </select>
             </div>
-            <select class="scatter-searchbar">
-              <option></option>
-            </select>
-            
+          </div>
+          <div class="service-app">
+            <div class="bar-before">업종 또는 지표를 선택하세요.</div>
+            <div class="bar-plotly" id="industry-macro"></div>
           </div>
 
-          <div class="service-app">
-            <div class="scatter-plotly" id="scatter"></div>
-          </div>
           <div class="service-footer">
-            <div class="scatter-legend">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="scatter-notice">
-              모든 투자의 책임은 당사자에게 있습니다. PC 환경에서 마우스 커서를 올리거나 모바일 기기에서 길게 누르면 세부 정보가 나타납니다. 종목이나 섹터를 클릭(탭)하면 확대/재편됩니다. *표시는 코스닥 종목입니다.
+            <div class="bar-notice">
+              모든 투자의 책임은 당사자에게 있습니다. 마우스 커서를 올리면 세부 정보가 나타납니다. 
             </div>
           </div>
-          
         </div>
       </section>
-      
+
       <section id="faq" class="faq">
     
         <div class="faq-header">
@@ -137,21 +126,21 @@
           <div class="faq-column">
             <div class="faq-item">
               <div class="faq-question faq-question-4">
-                <span>제가 찾는 종목이 없어요.</span>
+                <span>섹터/업종은 어떻게 구성되나요?</span>
                 <i class="fa fa-chevron-down"></i>
               </div>
               <div class="faq-content faq-content-4 collapse">
-                  가독성을 위해 대형주는 코스피200 지수와 코스닥150 지수 종목으로 구성하였으며 중형주는 그 외 시가총액 상위 400개로 제한하였습니다. 이외 종목은 제외됩니다.
+                섹터/업종을 구성하는 종목은 시가총액 1천억 이상, 유동주식수 1백만주 이상인 주식에 대해서만 순위를 매겼습니다. 
               </div>
             </div>
 
             <div class="faq-item">
               <div class="faq-question faq-question-5">
-                <span>PER, PBR 기준 일자가 언제예요?</span>
+                <span>수익률은 어떻게 계산하나요?</span>
                 <i class="fa fa-chevron-down"></i>
               </div>
               <div class="faq-content faq-content-5 collapse">
-                한국거래소(KRX)에서 일괄 조회 가능한 최근 분기 실적 발표 기준입니다.
+                각 종목의 종가 기준으로 계산됩니다.
               </div>
             </div>
 
@@ -184,8 +173,8 @@
             <a href="/" class="logo">
               <img src="../src/img/logo-footer.png" alt="LAB￦ONS">
             </a>
-            <p>본 홈페이지는 가치투자를 지향하는 <b>개인 블로그</b>로 운영되며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다.
-            참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.</p>
+            <p>본 홈페이지는 <b>개인 블로그</b>이며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다.
+              참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.</p>
           </div>
             
           <div class="footer-links">
@@ -204,7 +193,7 @@
               <h4>서비스 바로가기</h4>
               <ul>
                 <li><i class="fa fa-chevron-right"></i> <a href="/">시장 지도</a></li>
-                <!-- <li><i class="fa fa-chevron-right"></i> <a href="/rank">수익률 순위</a></li> -->
+                <li><i class="fa fa-chevron-right"></i> <a href="/scatter">종목 분포</a></li>
               </ul>
             </div>
           </div>                  
@@ -229,15 +218,9 @@
       </div>
     </footer>
 
-
     <script type="text/javascript" src="../src/js/common.js"></script>
-    <script type="text/javascript" src="./js/test.js"></script>
+    <script type="text/javascript" src="./js/macro.js"></script>
       
     
 </body>
-<!-- Google Tag Manager (noscript) -->
-<noscript>
-  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KJFQ72Z8" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-</noscript>
-<!-- End Google Tag Manager (noscript) -->
 </html>

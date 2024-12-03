@@ -8,7 +8,7 @@ from xml.etree.ElementTree import  ElementTree, fromstring
 
 __all__ = ["METADATA", "xml2df"]
 
-METADATA = {
+ECOSMETA = {
     '기준금리': {
         'symbol': '722Y001',
         'code': '0101000',

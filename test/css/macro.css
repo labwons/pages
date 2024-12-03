@@ -72,10 +72,6 @@
 
 /* LAPTOP CASES */
 @media screen and (max-width: 1443px) {
-    .bar-options {
-        width: 50%;
-    }
-
     .bar-notice {
         font-size: 10px;
     }

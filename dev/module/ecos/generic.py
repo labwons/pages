@@ -1,9 +1,9 @@
 try:
     from ...common.path import PATH
-    from .core import METADATA, xml2df
+    from .core import ECOSMETA, xml2df
 except ImportError:
     from dev.common.path import PATH
-    from dev.module.ecos.core import METADATA, xml2df
+    from dev.module.ecos.core import ECOSMETA, xml2df
 from pandas import DataFrame, Series
 import pandas as pd
 import json
@@ -70,7 +70,7 @@ class _ecos:
     def userDefine(self) -> DataFrame:
         if not hasattr(self, "__user__"):
             objs = {}
-            for name, meta in METADATA.items():
+            for name, meta in ECOSMETA.items():
                 objs[name] = self.data(meta['symbol'], meta['code'])
             self.__setattr__("__user__", pd.concat(objs=objs, axis=1))
         return self.__getattribute__("__user__")
@@ -166,5 +166,5 @@ if __name__ == "__main__":
     # print(Ecos.data('512Y014', 'C0000/BY'))
     # print(Ecos.data('101Y004', "BBHA00"))
     # print(Ecos.userDefine)
-    # print(Ecos.METADATA)
+    # print(Ecos.ECOSMETA)
     print(Ecos.dump())
