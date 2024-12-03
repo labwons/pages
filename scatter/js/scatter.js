@@ -24,6 +24,7 @@ var group = 'all';
 var xOpt = 'D-1';
 var yOpt = 'Y-1';
 var toolbox = false;
+var sizing = true;
 
 
 /*--------------------------------------------------------------
@@ -59,21 +60,55 @@ function setCategory(){
 }
 
 function setX() {
+  var val = null;
   $('.scatter-x').empty();
-  Object.entries(SRC.LABEL).forEach(([key, val]) => {
-    if (key == xOpt) val = 'X값: ' + val;
+  Object.entries(SRC.META).forEach(([key, obj]) => {
+    val = obj.label;
+    if (key == xOpt) val = 'X: ' + val;
     $('.scatter-x').append('<option value="' + key + '">' + val + '</option>');
   })
   $('.scatter-x').val(xOpt);
 }
 
 function setY() {
+  var val = null;
   $('.scatter-y').empty();
-  Object.entries(SRC.LABEL).forEach(([key, val]) => {
-    if (key == yOpt) val = 'Y값: ' + val;
+  Object.entries(SRC.META).forEach(([key, obj]) => {
+    val = obj.label;
+    if (key == yOpt) val = 'Y: ' + val;
     $('.scatter-y').append('<option value="' + key + '">' + val + '</option>');
   })
   $('.scatter-y').val(yOpt);
+}
+
+function toggleToolbox() {
+  toolbox = !toolbox;
+  if (toolbox) {
+    $('.scatter-edit i')
+    .removeClass('fa-edit')
+    .addClass('fa-lock');
+    $('.js-plotly-plot .plotly .modebar').css({
+      'display':'flex',
+      'background-color':'rgba(200, 200, 200, 0.4)'
+    })
+    $('.js-plotly-plot .plotly .modebar-group').css({
+      'padding':'0'
+    })
+    $('.js-plotly-plot .plotly .modebar-btn').css({
+      'padding':'0 5px'
+    })
+    Plotly.relayout('scatter', {
+      'dragmode': "zoom",
+    })
+  } else {
+    $('.scatter-edit i')
+    .removeClass('fa-lock')
+    .addClass('fa-edit');
+    $('.js-plotly-plot .plotly .modebar').css({'display':'none'})
+    Plotly.relayout('scatter', {
+      'dragmode': false,
+    })
+  }
 }
 
 function setSearchSelector(){
@@ -122,21 +157,6 @@ function setScatterLayout() {
         size: 12,
         color: 'black'
       }
-    }, {
-      text: 'LAB￦ONS',
-      x: 0,
-      y: 0,
-      xref: 'paper',
-      yref: 'paper',      
-      xanchor: 'left',
-      yanchor: 'bottom',
-      showarrow: false,
-      align: 'left',
-      font: {
-        family:fontFamily,
-        size: 12,
-        color: 'black'
-      }
     }]
   }
 }
@@ -157,8 +177,10 @@ function setScatterOption() {
 function setScatter() {
   var layout = setScatterLayout();
   var option = setScatterOption();
-  var xName = SRC.LABEL[xOpt];
-  var yName = SRC.LABEL[yOpt];
+  var xName = SRC.META[xOpt].label;
+  var xUnit = SRC.META[xOpt].unit;
+  var yName = SRC.META[yOpt].label;
+  var yUnit = SRC.META[yOpt].unit;
 
   var x = [];
   var y = [];
@@ -170,13 +192,17 @@ function setScatter() {
       x.push(spec[xOpt]);
       y.push(spec[yOpt]);
       meta.push(spec["meta"]);
-      size.push(spec["size"]);
+      if (sizing) {
+        size.push(spec["size"]);
+      } else {
+        size.push(8);
+      }
       colors.push(sectorColor[spec["sectorCode"]]);
     }
   })
 
-  layout.xaxis.title = xName;
-  layout.yaxis.title = yName;
+  layout.xaxis.title = xName + (xUnit ? '[' + xUnit + ']' : '');
+  layout.yaxis.title = yName + (yUnit ? '[' + yUnit + ']' : '');
   Plotly.newPlot(
     'scatter', 
     [{
@@ -185,7 +211,7 @@ function setScatter() {
       y:y,
       mode:'markers',
       meta:meta,
-      hovertemplate: '%{meta}<br>' + xName + ': %{x}<br>' + yName + ': %{y}<extra></extra>',
+      hovertemplate: '%{meta}<br>' + xName + ': %{x}' + xUnit + '<br>' + yName + ': %{y}' + yUnit + '<extra></extra>',
       hoverlabel: {
         font: {
           family: fontFamily,
@@ -226,12 +252,14 @@ $(document).ready(async function(){
     
     SRC = await response.json();
     // console.log(SRC);
-
     setX();
     setY();
     setCategory();
     setScatter();
     setSearchSelector();
+    if (window.matchMedia("(min-width: 1024px)").matches){
+      toggleToolbox();
+    }
   } catch (error) {
       console.error('Fetch error:', error);
   }
@@ -256,34 +284,22 @@ $(document).ready(async function(){
   })
 
   $('.scatter-edit').on('click touch', function(){
-    toolbox = !toolbox;
-    if (toolbox) {
-      $('.scatter-edit i')
-      .removeClass('fa-pencil')
-      .addClass('fa-lock');
-      $('.js-plotly-plot .plotly .modebar').css({
-        'display':'flex',
-        'background-color':'rgba(200, 200, 200, 0.4)'
-      })
-      $('.js-plotly-plot .plotly .modebar-group').css({
-        'padding':'0'
-      })
-      $('.js-plotly-plot .plotly .modebar-btn').css({
-        'padding':'0 5px'
-      })
-      Plotly.relayout('scatter', {
-        'dragmode': "zoom",
-      })
+    toggleToolbox();
+  })
+
+  $('.scatter-sizing').on('click touch', function(){
+    sizing = !sizing;
+    if (sizing) {
+      $('.scatter-sizing i')
+      .removeClass('fa-exand')
+      .addClass('fa-compress');
+      setScatter();
     } else {
-      $('.scatter-edit i')
-      .removeClass('fa-lock')
-      .addClass('fa-pencil');
-      $('.js-plotly-plot .plotly .modebar').css({'display':'none'})
-      Plotly.relayout('scatter', {
-        'dragmode': false,
-      })
+      $('.scatter-sizing i')
+      .removeClass('fa-compress')
+      .addClass('fa-expand');
+      setScatter();
     }
-    
   })
 
   $('.scatter-searchbar').on('select2:select', function (e) {
