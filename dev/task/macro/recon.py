@@ -6,16 +6,21 @@ except ImportError:
     from dev.module.ecos.core import METADATA
 from pandas import DataFrame, Series
 import pandas as pd
-import json
+import json, requests
 
 
 def fromEcos() -> DataFrame:
-    with open(PATH.ECOS, 'r') as file:
-        load = json.load(file)
-        objs = {key: Series(index=data["date"], data=data["data"]) for key, data in load.items()}
-        data = pd.concat(objs=objs, axis=1)
-        data.index = pd.to_datetime(data.index)
-        data = data.astype(float).sort_index()
+    if PATH.ECOS.startswith('http'):
+        with requests.get(PATH.ECOS) as r:
+            file = r.text
+    else:
+        with open(PATH.ECOS, 'r') as f:
+            file = f.read()
+    load = json.loads(file)
+    objs = {key: Series(index=data["date"], data=data["data"]) for key, data in load.items()}
+    data = pd.concat(objs=objs, axis=1)
+    data.index = pd.to_datetime(data.index)
+    data = data.astype(float).sort_index()
 
     align = []
     for name, meta in METADATA.items():

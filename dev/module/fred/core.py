@@ -1,4 +1,4 @@
-METADATA = {
+FREDMETA = {
     'FEDFUNDS' : {
         'name': '월간 실효연방기금금리',
         'seasonally adjusted': 'No',

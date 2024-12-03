@@ -1,7 +1,7 @@
 try:
-    from .core import METADATA
+    from .core import FREDMETA
 except ImportError:
-    from dev.module.fred.core import METADATA
+    from dev.module.fred.core import FREDMETA
 from datetime import datetime, timedelta
 from pandas import DataFrame, Series
 from pandas_datareader import get_data_fred
