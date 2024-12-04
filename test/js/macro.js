@@ -6,7 +6,7 @@ const parseDate = (dateStr) => new Date(dateStr + 'T00:00:00Z')
 
 var tr1 = {};
 var tr2 = {};
-var ecos = null;
+var macro = null;
 
 var legend = {
   bgcolor:'white',
@@ -149,27 +149,27 @@ function chart(trace1={}, trace2={}) {
 
 $(document).ready(async function(){
   try {
-    const ecosFetch = await fetch('../../dev/json/macro/ecos.json');
-    if (!ecosFetch.ok) {
+    const macroFetch = await fetch('../../dev/json/service/macro.json');
+    if (!macroFetch.ok) {
       throw new Error('Network response was not ok');
     }
-    ecos = await ecosFetch.json();
+    macro = await macroFetch.json();
   } catch (error) {
     console.error('Fetch error:', error);
   }
 
-  setSelect($('.bar-option1'), ecos.META, true);
-  setSelect($('.bar-option2'), ecos.META, true);
+  setSelect($('.bar-option1'), macro.META, true);
+  setSelect($('.bar-option2'), macro.META, true);
   
   $('.bar-option1').on('change', function(){
     var key = $(this).val();
-    if (key in ecos.DATA){
-      tr1 = trace(ecos.DATA[key]);
-      tr1.name = ecos.META[key].name;
+    if (key in macro.ECOS){
+      tr1 = trace(macro.ECOS[key]);
+      tr1.name = macro.META[key].name;
       tr1.yaxis = 'y1';
       tr1.line.color='black';
-      tr1.hovertemplate = '%{y}' + ecos.META[key].unit;
-      tr1.meta = ecos.META[key].name + '[' + ecos.META[key].unit + ']';
+      tr1.hovertemplate = '%{y}' + macro.META[key].unit;
+      tr1.meta = macro.META[key].name + '[' + macro.META[key].unit + ']';
     }
     chart(tr1, tr2);
   })
@@ -183,13 +183,13 @@ $(document).ready(async function(){
       return
     }
     var key = $(this).val();
-    if (key in ecos.DATA){
-      tr2 = trace(ecos.DATA[key]);
-      tr2.name = ecos.META[key].name;
+    if (key in macro.ECOS){
+      tr2 = trace(macro.ECOS[key]);
+      tr2.name = macro.META[key].name;
       tr2.yaxis = 'y2';
       tr2.line.color='royalblue';
-      tr2.hovertemplate = '%{y}' + ecos.META[key].unit;
-      tr2.meta = ecos.META[key].name + '[' + ecos.META[key].unit + ']';
+      tr2.hovertemplate = '%{y}' + macro.META[key].unit;
+      tr2.meta = macro.META[key].name + '[' + macro.META[key].unit + ']';
     }
     chart(tr1, tr2);
   })

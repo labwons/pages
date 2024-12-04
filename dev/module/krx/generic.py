@@ -12,7 +12,6 @@ from pandas import DataFrame
 import pandas as pd
 
 
-Log.set_title(f"[LW][LOG] UPDATE After Market @{Calendar}")
 class Price(DataFrame):
 
     def __init__(self, offline:bool=True):

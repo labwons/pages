@@ -9,16 +9,14 @@ class PATH:
     except NameError:
         ROOT = 'https://raw.githubusercontent.com/labwons/pages/main/'
 
-    GROUP = os.path.join(ROOT, r'dev/json/group/group.json')
-    STATE = os.path.join(ROOT, r'dev/json/group/state.json')
-    PRICE = os.path.join(ROOT, r'dev/json/group/price.json')
-    SPECS = os.path.join(ROOT, r'dev/json/group/specs.json')
-    INDEX = os.path.join(ROOT, r'dev/json/macro/index.json')
-    ECOS  = os.path.join(ROOT, r'dev/json/macro/ecos.json')
-    FRED  = os.path.join(ROOT, r'dev/json/macro/fred.json')
+    GROUP  = os.path.join(ROOT, r'dev/json/group/group.json')
+    STATE  = os.path.join(ROOT, r'dev/json/group/state.json')
+    PRICE  = os.path.join(ROOT, r'dev/json/group/price.json')
+    SPECS  = os.path.join(ROOT, r'dev/json/group/specs.json')
+    INDEX  = os.path.join(ROOT, r'dev/json/macro/index.json')
     BUBBLE = os.path.join(ROOT, r'dev/json/service/bubble.json')
-    TRMAP = os.path.join(ROOT, r'dev/json/service/treemap.json')
-    RANK  = os.path.join(ROOT, r'dev/json/service/rank.json')
+    TRMAP  = os.path.join(ROOT, r'dev/json/service/treemap.json')
+    MACRO  = os.path.join(ROOT, r'dev/json/service/macro.json')
     
 
 
