@@ -15,9 +15,7 @@ from pykrx import stock
 import pandas as pd
 
 
-Log.set_title(f"[LW][LOG] UPDATE WISE/INDEX @{Calendar}")
 GEN_TIME = fetchWiseDate()
-
 class Groups(DataFrame):
 
     def __init__(self, offline:bool=True):

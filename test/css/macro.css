@@ -8,7 +8,7 @@
     justify-content: space-between;
 }
 
-.industry, .macro {
+.bar-option1, .bar-option2 {
     flex: 0 0 15%;
     height: 28px;
     color: #999;

@@ -10,7 +10,7 @@ import json
 
 
 class _ecos:
-
+    META = {}
     def __init__(self, api:str=""):
         self.__api__:str = api
         return
@@ -71,8 +71,61 @@ class _ecos:
         if not hasattr(self, "__user__"):
             objs = {}
             for name, meta in ECOSMETA.items():
-                objs[name] = self.data(meta['symbol'], meta['code'])
-            self.__setattr__("__user__", pd.concat(objs=objs, axis=1))
+                code = f'{meta["symbol"]}{meta["code"]}'
+                data = self.data(meta['symbol'], meta['code'])
+                self.META[code] = {
+                    'name': name,
+                    'unit': meta['unit'],
+                    'category': meta['category']
+                }
+                objs[code] = data.copy()
+                if meta["YoY"]:
+                    self.META[f'{code}YoY'] = {
+                        'name': f'{name}(YoY)',
+                        'unit': meta['unit'],
+                        'category': meta['category']
+                    }
+                    objs[f'{code}YoY'] = data.dropna().asfreq('M').pct_change(periods=12) * 100
+                    if name.startswith('신용대주'):
+                        objs[f'{code}YoY'] = objs[f'{code}YoY'].clip(upper=2000)
+
+                if meta["MoM"]:
+                    self.META[f'{code}MoM'] = {
+                        'name': f'{name}(MoM)',
+                        'unit': meta['unit'],
+                        'category': meta['category']
+                    }
+                    objs[f'{name}(MoM)'] = data.dropna().asfreq('M').pct_change(periods=1) * 100
+
+                if code == '121Y015BECBLB01':
+                    self.META['T10MT2'] = {
+                        'name':'장단기금리차(10Y-2Y)',
+                        'unit': '%',
+                        'category':'금리지표'
+                    }
+                    objs['T10MT2'] = objs['817Y002010210000'] - objs['817Y002010195000']
+                    self.META['T10MT2'] = {
+                        'name':'하이일드스프레드',
+                        'unit': '%',
+                        'category':'금리지표'
+                    }
+                    objs['HYSPREAD'] = objs['817Y002010320000'] - objs['817Y002010210000']
+                    self.META['LBDIFFN'] = {
+                        'name':'예대금리차(신규)',
+                        'unit': '%',
+                        'category':'금리지표'
+                    }
+                    objs['LBDIFFN'] = objs['121Y006BECBLA01'] - objs['121Y002BEABAA2']
+                    self.META['LBDIFFL'] = {
+                        'name':'예대금리차(잔액)',
+                        'unit': '%',
+                        'category':'금리지표'
+                    }
+                    objs['LBDIFFL'] = objs['121Y015BECBLB01'] - objs['121Y013BEABAB2']
+
+            df = pd.concat(objs=objs, axis=1)
+            df = df[df.index >= datetime(1990, 1, 1)]
+            self.__setattr__("__user__", df)
         return self.__getattribute__("__user__")
 
     def container(self, symbol:str, **kwargs):
@@ -131,18 +184,22 @@ class _ecos:
         return series
 
     def dump(self):
-        objs = {}
-        for col in self.userDefine:
-            series = self.userDefine[col].dropna()
-            objs[col] = {
+        routine = self.userDefine.copy()
+        objs = {
+            'META': self.META.copy(),
+            'DATA': {}
+        }
+        for col in routine:
+            series = routine[col].dropna()
+            objs['DATA'][col] = {
                 'date': series.index.strftime("%Y-%m-%d").tolist(),
                 'data': series.tolist()
             }
-        string = json.dumps(objs)
+        string = json.dumps(objs, separators=(",", ":"))
         if not PATH.ECOS.startswith('http'):
             with open(PATH.ECOS, 'w') as f:
                 f.write(string)
-        return objs
+        return string
 
 
 # Alias
