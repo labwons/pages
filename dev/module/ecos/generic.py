@@ -4,6 +4,7 @@ try:
 except ImportError:
     from dev.common.path import PATH
     from dev.module.ecos.core import ECOSMETA, xml2df
+from datetime import datetime
 from pandas import DataFrame, Series
 import pandas as pd
 import json
