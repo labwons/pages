@@ -83,7 +83,7 @@ class _ecos:
                 if meta["YoY"]:
                     self.META[f'{code}YoY'] = {
                         'name': f'{name}(YoY)',
-                        'unit': meta['unit'],
+                        'unit': '%',
                         'category': meta['category']
                     }
                     objs[f'{code}YoY'] = data.dropna().asfreq('M').pct_change(periods=12) * 100
@@ -93,7 +93,7 @@ class _ecos:
                 if meta["MoM"]:
                     self.META[f'{code}MoM'] = {
                         'name': f'{name}(MoM)',
-                        'unit': meta['unit'],
+                        'unit': '%',
                         'category': meta['category']
                     }
                     objs[f'{name}(MoM)'] = data.dropna().asfreq('M').pct_change(periods=1) * 100
@@ -164,7 +164,7 @@ class _ecos:
               f'xml/' \
               f'kr/' \
               f'1/' \
-              f'100000/' \
+              f'{layer["count"]}/' \
               f'{symbol}/' \
               f'{layer["freq"]}/' \
               f'{layer["startdate"]}/' \
@@ -183,24 +183,6 @@ class _ecos:
         if not layer["freq"] == "D":
             series.index = series.index.to_period("M").to_timestamp("M")
         return series
-
-    def dump(self):
-        routine = self.userDefine.copy()
-        objs = {
-            'META': self.META.copy(),
-            'DATA': {}
-        }
-        for col in routine:
-            series = routine[col].dropna()
-            objs['DATA'][col] = {
-                'date': series.index.strftime("%Y-%m-%d").tolist(),
-                'data': series.tolist()
-            }
-        string = json.dumps(objs, separators=(",", ":"))
-        if not PATH.ECOS.startswith('http'):
-            with open(PATH.ECOS, 'w') as f:
-                f.write(string)
-        return string
 
 
 # Alias
