@@ -9,7 +9,7 @@
 }
 
 .bar-option1, .bar-option2 {
-    flex: 0 0 15%;
+    flex: 0 0 20%;
     height: 28px;
     color: #999;
     margin: 0;
@@ -87,7 +87,7 @@
     }
     .bar-option1, .bar-option2 {
         width: 100%;
-        height: 30px;
+        height: 30px !important;
         margin-bottom: 4px;
     }
 }

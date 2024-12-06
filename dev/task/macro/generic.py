@@ -13,16 +13,33 @@ import json
 
 class Macro:
     objs = {
+        # "META": {
+        #     code : {
+        #         "name": name,
+        #         "category": "업종지수"
+        #     } for code, name in CDSEC.items()
+        # },
         "META": {
-            code : {
-                "name": name,
+            "KOSPI": {
+                "name": "코스피", 
+                "category": "업종지수",
+            },
+            "KOSDAQ": {
+                "name": "코스닥",
                 "category": "업종지수"
-            } for code, name in CDSEC.items()
+            }
         },
         "WISE": {},
         "ECOS": {}
     }
+    objs["META"].update({
+        code: {
+            "name": name,
+            "category": "업종지수"
+        } for code, name in CDSEC.items()
+    })
     def __init__(self):
+        
         index = Indices(offline=False)
         index.dump()
 

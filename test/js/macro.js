@@ -45,7 +45,7 @@ var xaxis = {
 
 var yaxis = {
   side: 'left',
-  ticklabelposition: 'inside',
+  // ticklabelposition: 'inside',
   // position: 0.01,
   showline: true,
   zeroline: false,
@@ -55,7 +55,7 @@ var yaxis = {
 
 var yaxis2 = {
   overlaying:'y',
-  ticklabelposition: 'inside',
+  // ticklabelposition: 'inside',
   side:'right',
   // position: 0,
   zeroline:false,
@@ -95,8 +95,10 @@ var option = {
 function setSelect(obj, meta, clear=false){
   if (clear) {
     obj
+    .select2({placeholder: obj.attr('data-name') + ' 지표/지수 선택'})
     .empty()
-    .append('<option value="" disabled selected>' + obj.attr('data-name') + ' 지표/지수 선택</option>');
+    .append('<option></option>');
+    // .append('<option value="" disabled selected>' + obj.attr('data-name') + ' 지표/지수 선택</option>');
   }
   var categories = {};
   Object.entries(meta).forEach(([key, item]) => {
@@ -117,31 +119,16 @@ function setSelect(obj, meta, clear=false){
   })
 }
 
-function trace(data) {
-  return {
-    x: data.date,
-    y: data.data,
-    type: "scatter",
-    mode: "lines",
-    name: "",
-    showlegend:true,
-    line: {
-      color: 'black'
-    },
-    yaxis: 'y1'
-  };
-}
-
 function chart(trace1={}, trace2={}) {
   if ($('.bar-before').css('display') == 'flex'){
     $('.bar-before').css('display', 'none');
   }
-  if (trace1){
-    layout.yaxis.title = trace1.meta;
-  }
-  if (trace2){
-    layout.yaxis2.title = trace2.meta;
-  }
+  // if (trace1){
+  //   layout.yaxis.title = trace1.meta;
+  // }
+  // if (trace2){
+  //   layout.yaxis2.title = trace2.meta;
+  // }
   
   Plotly.newPlot('macro', [trace1, trace2], layout, option);
 }
@@ -164,12 +151,29 @@ $(document).ready(async function(){
   $('.bar-option1').on('change', function(){
     var key = $(this).val();
     if (key in macro.ECOS){
-      tr1 = trace(macro.ECOS[key]);
-      tr1.name = macro.META[key].name;
-      tr1.yaxis = 'y1';
-      tr1.line.color='black';
-      tr1.hovertemplate = '%{y}' + macro.META[key].unit;
-      tr1.meta = macro.META[key].name + '[' + macro.META[key].unit + ']';
+      var date = macro.ECOS[key].date;
+      var data = macro.ECOS[key].data;
+      var unit = macro.META[key].unit;      
+    } else if (key in macro.WISE){
+      var date = macro.WISE.date;
+      var data = macro.WISE[key];
+      var unit = '';
+    } else {
+      return;
+    }
+    tr1 = {
+      x:date,
+      y:data,
+      type:"scatter",
+      mode:"lines",
+      name:macro.META[key].name,
+      showlegend:true,
+      line: {
+        color:'black'
+      },
+      yaxis:'y1',
+      hovertemplate:'%{y}' + unit,
+      meta:macro.META[key].name + '[' + unit + ']'
     }
     chart(tr1, tr2);
   })
@@ -184,14 +188,45 @@ $(document).ready(async function(){
     }
     var key = $(this).val();
     if (key in macro.ECOS){
-      tr2 = trace(macro.ECOS[key]);
-      tr2.name = macro.META[key].name;
-      tr2.yaxis = 'y2';
-      tr2.line.color='royalblue';
-      tr2.hovertemplate = '%{y}' + macro.META[key].unit;
-      tr2.meta = macro.META[key].name + '[' + macro.META[key].unit + ']';
+      var date = macro.ECOS[key].date;
+      var data = macro.ECOS[key].data;
+      var unit = macro.META[key].unit;      
+    } else if (key in macro.WISE){
+      var date = macro.WISE.date;
+      var data = macro.WISE[key];
+      var unit = '';
+    } else {
+      return;
+    }
+    tr2 = {
+      x:date,
+      y:data,
+      type:"scatter",
+      mode:"lines",
+      name:macro.META[key].name,
+      showlegend:true,
+      line: {
+        color:'royalblue'
+      },
+      yaxis:'y2',
+      hovertemplate:'%{y}' + unit,
+      meta:macro.META[key].name + '[' + unit + ']'
     }
     chart(tr1, tr2);
   })
 })
 
+function trace(data) {
+  return {
+    x: data.date,
+    y: data.data,
+    type: "scatter",
+    mode: "lines",
+    name: "",
+    showlegend:true,
+    line: {
+      color: 'black'
+    },
+    yaxis: 'y1'
+  };
+}
