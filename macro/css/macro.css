@@ -1,5 +1,5 @@
 
-.bar-options {
+.macro-options {
     flex: 0 0 auto;
     width: 100%;
     display: flex;
@@ -8,7 +8,8 @@
     justify-content: space-between;
 }
 
-.bar-option1, .bar-option2 {
+.macro-option1, 
+.macro-option2 {
     flex: 0 0 20%;
     height: 28px;
     color: #999;
@@ -26,11 +27,11 @@
     background-color: #fff;
 }
 
-.bar-plotly {
+.macro-plotly {
     height: 100%; 
 }
 
-.bar-before {
+.macro-before {
     height: 100%;
     width: 100%;
     display: flex;
@@ -40,39 +41,9 @@
     font-size: 18px;
 }
 
-.bar-legend {
-    flex: 0 0 auto;
-    width: 40%;
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-}
-
-.bar-legend span {
-    flex: 1 0 auto;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.bar-notice {
-    flex: 0 1 auto;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    padding-left: 4px;
-    font-size: 12px;
-    white-space: normal;
-}
-
 /* LAPTOP CASES */
 @media screen and (max-width: 1443px) {
-    .bar-notice {
+    .macro-notice {
         font-size: 10px;
     }
 }
@@ -82,10 +53,11 @@
     .service-box {
         height: 70vh;
     }
-    .bar-options {
+    .macro-options {
         flex-direction: column;
     }
-    .bar-option1, .bar-option2 {
+    .macro-option1, 
+    .macro-option2 {
         width: 100%;
         height: 30px !important;
         margin-bottom: 4px;

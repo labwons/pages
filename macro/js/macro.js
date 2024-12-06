@@ -120,8 +120,8 @@ function setSelect(obj, meta, clear=false){
 }
 
 function chart(trace1={}, trace2={}) {
-  if ($('.bar-before').css('display') == 'flex'){
-    $('.bar-before').css('display', 'none');
+  if ($('.macro-before').css('display') == 'flex'){
+    $('.macro-before').css('display', 'none');
   }
   // if (trace1){
   //   layout.yaxis.title = trace1.meta;
@@ -145,10 +145,10 @@ $(document).ready(async function(){
     console.error('Fetch error:', error);
   }
 
-  setSelect($('.bar-option1'), macro.META, true);
-  setSelect($('.bar-option2'), macro.META, true);
+  setSelect($('.macro-option1'), macro.META, true);
+  setSelect($('.macro-option2'), macro.META, true);
   
-  $('.bar-option1').on('change', function(){
+  $('.macro-option1').on('change', function(){
     var key = $(this).val();
     if (key in macro.ECOS){
       var date = macro.ECOS[key].date;
@@ -178,10 +178,10 @@ $(document).ready(async function(){
     chart(tr1, tr2);
   })
 
-  $('.bar-option2').on('change', function(){
+  $('.macro-option2').on('change', function(){
     if (tr1.length == 0){
       alert('Y1 지표/지수를 먼저 선택해주세요');
-      $('.bar-option2').each(function() {
+      $('.macro-option2').each(function() {
         $(this).find('option').first().prop('selected', true);
       });
       return

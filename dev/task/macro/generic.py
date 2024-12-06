@@ -61,7 +61,7 @@ class Macro:
         return
 
     def dump(self):
-        string = json.dumps(self.objs, separators=(",", ":"))
+        string = json.dumps(self.objs, separators=(",", ":")).replace("NaN", "null")
         if not PATH.MACRO.startswith('http'):
             with open(PATH.MACRO, 'w') as f:
                 f.write(string)
