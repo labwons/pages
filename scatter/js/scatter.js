@@ -205,7 +205,7 @@ function setScatter() {
     }
   })
   
-  layout.height = $('#scatter').height();
+  layout.height = $('.service-app').height();
   layout.xaxis.title = xMeta.label + (xMeta.unit ? '[' + xMeta.unit + ']' : '');
   layout.yaxis.title = yMeta.label + (yMeta.unit ? '[' + yMeta.unit + ']' : '');
   layout.shapes = [{
