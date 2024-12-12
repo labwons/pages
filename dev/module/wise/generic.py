@@ -12,10 +12,14 @@ except ImportError:
     from dev.module.wise.fetch import fetchWiseDate, fetchWiseGroup, fetchWiseSeries
 from pandas import DataFrame
 from pykrx import stock
+from datetime import datetime, timedelta
+from requests.exceptions import SSLError
 import pandas as pd
 
-
-GEN_TIME = fetchWiseDate()
+try:
+    GEN_TIME = fetchWiseDate()
+except SSLError:
+    GEN_TIME = (datetime.today() - timedelta(days=1)).date()
 class Groups(DataFrame):
 
     def __init__(self, offline:bool=True):
