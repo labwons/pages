@@ -105,13 +105,15 @@ function toggleToolbox() {
     .removeClass('fa-lock')
     .addClass('fa-edit');
     $('.js-plotly-plot .plotly .modebar').css({'display':'none'});
+    var plot = document.getElementById('scatter');
     Plotly.relayout('scatter', {
       'dragmode': false,      
+      'xaxis.range': plot.layout.xaxis.range,
+      'yaxis.range': plot.layout.yaxis.range,
     });
 
-    // var plot = document.getElementById('myPlot');
-    // 'xaxis.range': plot.layout.xaxis.range,
-    // 'yaxis.range': plot.layout.yaxis.range,
+    
+    
   }
 }
 
