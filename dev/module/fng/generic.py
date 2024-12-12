@@ -37,6 +37,8 @@ class Stat(DataFrame):
             if quarter.empty:
                 self.loc[ticker, base.index] = base.values
                 continue
+            if len(quarter) < 4:
+                continue
             debt = quarter.iloc[-1]['부채비율(%)']
             if np.isnan(debt):
                 ifrs = 'sep'
