@@ -177,10 +177,8 @@ function setScatterOption() {
 function setScatter() {
   var layout = setScatterLayout();
   var option = setScatterOption();
-  var xName = SRC.META[xOpt].label;
-  var xUnit = SRC.META[xOpt].unit;
-  var yName = SRC.META[yOpt].label;
-  var yUnit = SRC.META[yOpt].unit;
+  var xMeta = SRC.META[xOpt];
+  var yMeta = SRC.META[yOpt];
 
   var x = [];
   var y = [];
@@ -200,9 +198,35 @@ function setScatter() {
       colors.push(sectorColor[spec["sectorCode"]]);
     }
   })
+  
+  layout.height = $('#scatter').height();
+  layout.xaxis.title = xMeta.label + (xMeta.unit ? '[' + xMeta.unit + ']' : '');
+  layout.yaxis.title = yMeta.label + (yMeta.unit ? '[' + yMeta.unit + ']' : '');
+  layout.shapes = [{
+    type:'line',
+    xref:'paper',
+    x0:0, x1:1,
+    y0:yMeta.mean,
+    y1:yMeta.mean,
+    line:{
+      color:'grey',
+      width: 1,
+      dash:'dot'
+    }
+  },{
+    type:'line',
+    yref:'paper',
+    x0:xMeta.mean, 
+    x1:xMeta.mean,
+    y0:0,
+    y1:1,
+    line:{
+      color:'grey',
+      width: 1,
+      dash:'dot'
+    }
+  }];
 
-  layout.xaxis.title = xName + (xUnit ? '[' + xUnit + ']' : '');
-  layout.yaxis.title = yName + (yUnit ? '[' + yUnit + ']' : '');
   Plotly.newPlot(
     'scatter', 
     [{
@@ -211,7 +235,7 @@ function setScatter() {
       y:y,
       mode:'markers',
       meta:meta,
-      hovertemplate: '%{meta}<br>' + xName + ': %{x}' + xUnit + '<br>' + yName + ': %{y}' + yUnit + '<extra></extra>',
+      hovertemplate: '%{meta}<br>' + xMeta.label + ': %{x}' + xMeta.unit + '<br>' + yMeta.label + ': %{y}' + yMeta.unit + '<extra></extra>',
       hoverlabel: {
         font: {
           family: fontFamily,

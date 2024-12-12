@@ -107,9 +107,14 @@ class Bubble(DataFrame):
             basis.index = basis.index.astype(str).str.zfill(6)
         basis = basis.copy()
         basis = basis.sort_values(by='size', ascending=True)
-        basis['size'] = round(normalize(basis['size'], 8, 100), 4)
+        basis['size'] = round(normalize(basis['size'], 7, 100), 4)
         keys = ['name', 'size', 'meta', 'sectorCode', 'industryCode'] + list(self.DUMP['META'].keys())
-        
+        for key in self.DUMP['META'].keys():
+            if not key == 'volume':
+                basis[key] = round(basis[key], 4 if key == 'beta' else 2)
+            self.DUMP['META'][key]['mean'] = mean = basis[key].mean()
+            self.DUMP['META'][key]['std'] = std = basis[key].std()
+            
         super().__init__(basis[keys])
         category = {'all': "전체"}
         category.update(basis[["sectorCode", "sectorName"]] \
