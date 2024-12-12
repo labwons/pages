@@ -2,8 +2,10 @@ try:
     from ...common.path import PATH
     from ...common.logger import Log
     from .fetch import fetchOverviewSpec, fetchOverviewStatement
+    from .core import compensationSum
 except ImportError:
     from dev.module.fng.fetch import fetchOverviewSpec, fetchOverviewStatement
+    from dev.module.fng.core import compensationSum
     from dev.common.path import PATH
     from dev.common.logger import Log
 from datetime import datetime
@@ -15,7 +17,7 @@ import pandas as pd
 
 Log.set_title(f"[LW][LOG] UPDATE Fundamentals @{datetime.now().date()}")
 class Stat(DataFrame):
-
+    
     def __init__(self):
         read = pd.read_json(PATH.STATE, orient='index')
         read.index = read.index.astype(str).str.zfill(6)
@@ -48,7 +50,7 @@ class Stat(DataFrame):
             base['trailingEarning'] = quarter['영업이익(억원)'].sum()
             base['trailingNetIncome'] = quarter['당기순이익(억원)'].sum()
             base['trailingEarningRatio'] = round(quarter['영업이익률(%)'].mean(), 2)
-            base['trailingEps'] = quarter['EPS(원)'].sum()
+            base['trailingEps'] = compensationSum(quarter['EPS(원)'])
 
             annual = fetchOverviewStatement(ticker, ifrs, 'a', False)
 

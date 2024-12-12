@@ -1,3 +1,4 @@
+from pandas import Series
 from typing import Union
 import numpy as np
 
@@ -13,3 +14,8 @@ def str2num(src:str) -> Union[int, float]:
         if "." in src:
             return float(src)
         return int(src)
+
+def compensationSum(data:Series) -> Union[int, float]:
+    if len(data.isna()):
+        return data.mean() * len(data)
+    return data.sum()
