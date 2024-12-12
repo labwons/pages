@@ -105,13 +105,13 @@ function toggleToolbox() {
     .removeClass('fa-lock')
     .addClass('fa-edit');
     $('.js-plotly-plot .plotly .modebar').css({'display':'none'});
-    var plot = document.getElementById('myPlot');
     Plotly.relayout('scatter', {
-      'dragmode': false,
-      'xaxis.range': plot.layout.xaxis.range,
-      'yaxis.range': plot.layout.yaxis.range,
-      
-    })
+      'dragmode': false,      
+    });
+
+    // var plot = document.getElementById('myPlot');
+    // 'xaxis.range': plot.layout.xaxis.range,
+    // 'yaxis.range': plot.layout.yaxis.range,
   }
 }
 
@@ -133,7 +133,7 @@ function setSearchSelector(){
 
 function setScatterLayout() {
   return {
-    dragmode: toolbox ? true:false,
+    dragmode: toolbox ? "zoom":false,
     margin:{l:20, r:2, t:0, b:35},
     xaxis:{
       showline:true,
