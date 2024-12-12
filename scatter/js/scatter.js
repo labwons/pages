@@ -90,13 +90,13 @@ function toggleToolbox() {
     $('.js-plotly-plot .plotly .modebar').css({
       'display':'flex',
       'background-color':'rgba(200, 200, 200, 0.4)'
-    })
+    });
     $('.js-plotly-plot .plotly .modebar-group').css({
       'padding':'0'
-    })
+    });
     $('.js-plotly-plot .plotly .modebar-btn').css({
       'padding':'0 5px'
-    })
+    });
     Plotly.relayout('scatter', {
       'dragmode': "zoom",
     })
@@ -104,9 +104,13 @@ function toggleToolbox() {
     $('.scatter-edit i')
     .removeClass('fa-lock')
     .addClass('fa-edit');
-    $('.js-plotly-plot .plotly .modebar').css({'display':'none'})
+    $('.js-plotly-plot .plotly .modebar').css({'display':'none'});
+    var plot = document.getElementById('myPlot');
     Plotly.relayout('scatter', {
       'dragmode': false,
+      'xaxis.range': plot.layout.xaxis.range,
+      'yaxis.range': plot.layout.yaxis.range,
+      
     })
   }
 }
