@@ -147,8 +147,10 @@
 
 /* MOBILE CASES */
 @media screen and (max-width: 767px) {
-    .service-box {
-        position: relative;
+    /* .service-section {
+        height: 70vh;
+    } */
+    .service-section .service-box {
         height: 70vh;
     }
 

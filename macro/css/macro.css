@@ -41,6 +41,17 @@
     font-size: 18px;
 }
 
+.macro-notice {
+    flex: 0 1 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 4px;
+    font-size: 12px;
+    white-space: normal;
+}
+
 /* LAPTOP CASES */
 @media screen and (max-width: 1443px) {
     .macro-notice {
@@ -50,7 +61,7 @@
 
 /* MOBILE CASES */
 @media screen and (max-width: 767px) {
-    .service-box {
+    .service-section .service-box {
         height: 70vh;
     }
     .macro-options {
