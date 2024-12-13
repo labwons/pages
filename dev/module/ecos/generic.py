@@ -105,7 +105,7 @@ class _ecos:
                         'category':'금리지표'
                     }
                     objs['T10MT2'] = objs['817Y002010210000'] - objs['817Y002010195000']
-                    self.META['T10MT2'] = {
+                    self.META['HYSPREAD'] = {
                         'name':'하이일드스프레드',
                         'unit': '%',
                         'category':'금리지표'
