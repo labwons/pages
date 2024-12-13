@@ -94,30 +94,35 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .header .logo img {
-    max-height: 40px;
+    /* max-height: 40px; */
+    max-height: 3.5vh;
 }
 
 @media (max-width: 1024px) {
     .header .logo img {
-        max-height: 36px;
+        /* max-height: 36px; */
+        max-height: 3.2vh;
     }
 }
 
 @media (max-width: 768px) {
     .header .logo img {
-        max-height: 32px;
+        /* max-height: 32px; */
+        max-height: 3.2vh;
     }
 }
 
 @media (max-width: 425px) {
     .header .logo img {
-        max-height: 28px;
+        /* max-height: 28px; */
+        max-height: 3.2vh;
     }
 }
 
 @media (max-width: 320px) {
     .header .logo img {
-        max-height: 24px;
+        /* max-height: 24px; */
+        max-height: 3.2vh;
     }
 }
 
