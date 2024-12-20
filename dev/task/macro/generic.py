@@ -13,12 +13,6 @@ import json
 
 class Macro:
     objs = {
-        # "META": {
-        #     code : {
-        #         "name": name,
-        #         "category": "업종지수"
-        #     } for code, name in CDSEC.items()
-        # },
         "META": {
             "KOSPI": {
                 "name": "코스피", 

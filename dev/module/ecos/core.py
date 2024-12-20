@@ -509,9 +509,6 @@ ECOSMETA = {
 }
 
 
-
-
-
 def xml2df(url: str, parser:str="") -> DataFrame:
     """
     정보-100 : 인증키가 유효하지 않습니다.
