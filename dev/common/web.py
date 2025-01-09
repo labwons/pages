@@ -1,14 +1,16 @@
 from bs4 import BeautifulSoup
 from pandas import DataFrame
+from urllib.request import urlopen
 from typing import List
 import pandas as pd
-import requests, re
+import requests, re, json
 
 
 class Web:
 
     __req__:dict = {}
     __tbl__:dict = {}
+    __jsn__:dict = {}
 
     @classmethod
     def get(cls, url:str, encoding:str='', **kwargs):
@@ -51,3 +53,20 @@ class Web:
             return
         cls.__req__[url] = resp
         return cls.__req__[url]
+
+    @classmethod
+    def json(cls, url:str) -> json:
+        if not url in cls.__jsn__:
+            cls.__jsn__[url] = json.loads(urlopen(url=url).read().decode('utf-8-sig', 'replace'))
+        return cls.__jsn__[url]
+    
+    @classmethod
+    def data(cls, url:str, key:str=""):
+        if url.endswith('.json'):
+            return DataFrame(cls.json(url)[key] if key else cls.json(url))
+        elif url.endswith('.csv'):
+            return pd.read_csv(url, encoding='utf-8')
+        elif url.endswith('.pkl'):
+            return pd.read_pickle(url)
+        else:
+            raise KeyError(f"Unknown data type: {url}")
