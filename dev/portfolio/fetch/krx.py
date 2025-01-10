@@ -102,27 +102,29 @@ class krx:
 
     @property
     def ohlcv(self) -> DataFrame:
-        todate = datetime.today().strftime("%Y%m%d")
-        frdate = (datetime.today() - timedelta(365 * self.period)).strftime("%Y%m%d")
+        todate = datetime.today()
+        frdate = datetime.today() - timedelta(365 * self.period)
         ohlcv = get_market_ohlcv_by_date(
-            fromdate=frdate,
-            todate=todate,
+            fromdate=frdate.strftime("%Y%m%d"),
+            todate=todate.strftime("%Y%m%d"),
             ticker=self.ticker,
             freq=self.freq
         )
         if ohlcv.empty:
-            ohlcv = Ticker('005930.KS').history(
+            _id = f'{self.ticker}.KS' if self.ticker.isdigit() else self.ticker
+            ohlcv = Ticker(_id).history(
                 start=frdate,
                 end=todate,
-                interval='1d'
-            )
-        ohlcv.index.name = "date"
-        ohlcv.drop(columns=["등락률"], inplace=True)
-        ohlcv.columns = ["open", "high", "low", "close", "volume"]
+                interval='1d',
+            ).drop(columns=["Adj Close"])
+        else:
+            ohlcv.index.name = "date"
+            ohlcv.drop(columns=["등락률"], inplace=True)
+            ohlcv.columns = ["Open", "High", "Low", "Close", "Volume"]
 
-        trade_stop = ohlcv[ohlcv.open == 0].copy()
+        trade_stop = ohlcv[ohlcv.Open == 0].copy()
         if not trade_stop.empty:
-            ohlcv.loc[trade_stop.index, ['open', 'high', 'low']] = trade_stop.close
+            ohlcv.loc[trade_stop.index, ['Open', 'High', 'Low']] = trade_stop.close
         return ohlcv
 
     @property
@@ -160,9 +162,11 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     krx = krx(
-        "005930"
+        "TSLA"
+        # "005930"
+        # "000660"
         # "069500"
     )
     print(krx.ohlcv)
-    print(krx.quarterlyMarketCap)
+    # print(krx.quarterlyMarketCap)
     # print(krx.components)
