@@ -20,7 +20,7 @@ def simpleMA(ohlct:DataFrame, use:str='typical', *args:int) -> DataFrame:
     if not args:
         args = [5, 20, 60, 120, 200]
     for arg in args:
-        copyOhlct[f'{arg}MA'] = basePrice.rolling(arg).mean()
+        copyOhlct[f'MA{arg}'] = basePrice.rolling(arg).mean()
     return copyOhlct
 
 def bollingerBand(ohlct:DataFrame, use:str='typical', window:int=20, stddevFactor:int=2) -> DataFrame:
