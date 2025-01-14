@@ -6,14 +6,17 @@
 #     from dev.portfolio.technical import calc
 import calc
 from pandas import DataFrame, Series
+from typing import Union
 import pandas as pd
 import json
 
 
 class Layout:
 
+    mode:str='json'
+
     @classmethod
-    def xaxis(cls, **kwargs) -> str:
+    def xaxis(cls, **kwargs) -> Union[dict, str]:
         axis = {
             "autorange": True,              # [str | bool] one of ( True | False | "reversed" | "min reversed" |
                                             #                       "max reversed" | "min" | "max" )
@@ -54,10 +57,10 @@ class Layout:
             "zerolinewidth": 1              # [float]
         }
         axis.update(kwargs)
-        return json.dumps(axis)
+        return json.dumps(axis) if cls.mode == 'json' else axis
     
     @classmethod
-    def yaxis(cls, **kwargs) -> dict:
+    def yaxis(cls, **kwargs) -> Union[dict, str]:
         axis = {
             "autorange": True,              # [str | bool] one of ( True | False | "reversed" | "min reversed" |
                                             #                       "max reversed" | "min" | "max" )
@@ -76,10 +79,10 @@ class Layout:
             "zerolinewidth": 1              # [float]
         }
         axis.update(kwargs)
-        return json.dumps(axis)
+        return json.dumps(axis) if cls.mode == 'json' else axis
     
     @classmethod
-    def legend(cls, **kwargs) -> dict:
+    def legend(cls, **kwargs) -> Union[dict, str]:
         legend = {
             "bgcolor": "white",                 # [str]
             "bordercolor": "#444",              # [str]
@@ -99,7 +102,7 @@ class Layout:
             "y": 1.0,                           # [float] 1.0 for both "v" and "h",
         }
         legend.update(kwargs)
-        return json.dumps(legend)
+        return json.dumps(legend) if cls.mode == 'json' else legend
 
 
 class TechnicalReport(DataFrame):
@@ -124,7 +127,8 @@ class TechnicalReport(DataFrame):
         data['typical'] = calc.typicalPrice(data)
         data = data.astype(int)
         data = self.push(data, calc.bollingerBand(data))
-        data = self.push(data, calc.simpleMA(data))
+        data = self.push(data, calc.simpleMA(data, 5, 20, 60, 120, 200))
+        data = self.push(data, calc.regression(data, 5, 2, 1, 0.5, 0.25))
         data.reset_index(level=0, inplace=True)
         data['Date'] = data['Date'].dt.strftime("%Y-%m-%d")
         super().__init__(data)
@@ -214,6 +218,24 @@ class TechnicalReport(DataFrame):
         _trace.update(**kwargs)
         return self.dump(_trace)
     
+    def uppertrend(self, **kwargs) -> str:
+        _trace = {
+            "name": "x1 Band",
+            "y": self["uppertrend"],
+            "mode": "lines",
+            "line": {
+                "dash": "dash",
+                "color": "green"
+            },
+            "showlegend": True,
+            "legendgroup": "x1",
+            "xhoverformat": "%Y/%m/%d",
+            "yhoverformat": ".1f",
+            "hovertemplate": "x1 상단: %{y}원<extra></extra>"
+        }
+        _trace.update(**kwargs)
+        return self.dump(_trace)
+    
     def lowerband(self, **kwargs) -> str:
         _trace = {
             "name": "x2 Band",
@@ -232,7 +254,25 @@ class TechnicalReport(DataFrame):
         _trace.update(**kwargs)
         return self.dump(_trace)
     
-    def bandWidth(self, **kwargs) -> str:
+    def lowertrend(self, **kwargs) -> str:
+        _trace = {
+            "name": "x1 Band",
+            "y": self["lowertrend"],
+            "mode": "lines",
+            "line": {
+                "dash": "dash",
+                "color": "green"
+            },
+            "showlegend": False,
+            "legendgroup": "x1",
+            "xhoverformat": "%Y/%m/%d",
+            "yhoverformat": ".1f",
+            "hovertemplate": "x1 하단: %{y}원<extra></extra>"
+        }
+        _trace.update(**kwargs)
+        return self.dump(_trace)
+    
+    def bandwidth(self, **kwargs) -> str:
         _trace = {
             "name": "밴드폭",
             "y": self["width"],
@@ -249,6 +289,23 @@ class TechnicalReport(DataFrame):
         _trace.update(**kwargs)
         return self.dump(_trace)
     
+    def trend(self, **kwargs) -> str:
+        _trace = {
+            "mode": "lines",
+            "visible": "legendonly",
+            "showlegend": True,
+            "line": {
+                "dash": "dash",
+                "color": "black"
+            },
+            "connectgaps": True,
+            "xhoverformat": "%Y/%m/%d",
+            "yhoverformat": ".2f",
+            # "hovertemplate": ""
+        }
+        _trace.update(**kwargs)
+        return self.dump(_trace)
+    
     def write(self):
         with open(r"C:\Users\Administrator\Desktop\report_copy.html", mode='w', encoding='utf-8') as file:
             file.write(f"""<!DOCTYPE html>
@@ -259,7 +316,7 @@ class TechnicalReport(DataFrame):
     <title>LAB￦ONS :: ({self.ticker})</title>
 	
 	<!-- <script src="https://cdn.plot.ly/plotly-2.34.0.min.js"></script> --> 
-    <script src="./plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/labwons/pages/src/js/plotly-0.1.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
 </head>
 <body>
@@ -273,6 +330,7 @@ class TechnicalReport(DataFrame):
                     <select name="technical" class="service-t">
                         <option value="default">기본</option>
                         <option value="bollingerBand">밴드</option>
+                        <option value="trend">추세</option>
                     </select>
                     <select name="fundamental" class="service-f"></select>
                 </div>
@@ -294,15 +352,27 @@ class TechnicalReport(DataFrame):
         var ma120 = {self.ma(name='MA120', y=self['MA120'])};
         var ma200 = {self.ma(name='MA200', y=self['MA200'])};
         var upperBand = {self.upperband()};
+        var upperTrend = {self.uppertrend()};
         var lowerBand = {self.lowerband()};
-        var bandWidth = {self.bandWidth()};
+        var lowerTrend = {self.lowertrend()};
+        var bandWidth = {self.bandwidth()};
+        var trendAll = {self.trend(name='전기간 추세', y=self['전체'])};
+        var trend5y = {self.trend(name="5년 추세", y=self["5Y"])};
+        var trend2y = {self.trend(name="2년 추세", y=self["2Y"])};
+        var trend1y = {self.trend(name="1년 추세", y=self["1Y"])};
+        var trend6m = {self.trend(name="6개월 추세", y=self["6M"])};
+        var trend3m = {self.trend(name="3개월 추세", y=self["3M"])};
         var layout = {{
             title: "이름({self.ticker})",
-            "hovermode": "x unified",
-            height: "80vh",
+            hovermode: "x unified",
             xaxis: {Layout.xaxis()},
             yaxis: {Layout.yaxis()},
             legend: {Layout.legend()}
+        }};
+        var option = {{
+            displayModeBar:false,
+            responsive:true,
+            showTips:false
         }};
 
         function viewHeight() {{
@@ -310,7 +380,8 @@ class TechnicalReport(DataFrame):
         }};
 
         function sma(){{
-            candle.x = volume.x = ma5.x = ma20.x = ma60.x = ma120.x = ma200.x = date;
+            var data = [candle, volume, ma5, ma20, ma60, ma120, ma200];
+            data.forEach(item => {{item.x = date;}});
             layout.grid = {{
                 rows:2,
                 columns:1,
@@ -318,11 +389,12 @@ class TechnicalReport(DataFrame):
                 xaxes:['x'],
             }}
             layout.height = viewHeight();
-            Plotly.newPlot('plotly', [candle, volume, ma5, ma20, ma60, ma120, ma200], layout);
+            Plotly.newPlot('plotly', data, layout, option);
         }};
 
         function bollingerBand(){{
-            candle.x = volume.x = upperBand.x = lowerBand.x = bandWidth.x = date;
+            var data = [candle, volume, upperBand, lowerBand, upperTrend, lowerTrend, bandWidth];
+            data.forEach(item => {{item.x = date;}});
             layout.grid = {{
                 rows:3,
                 columns:1,
@@ -330,8 +402,21 @@ class TechnicalReport(DataFrame):
                 xaxes:['x'],
             }}
             layout.height = viewHeight();
-            Plotly.newPlot('plotly', [candle, volume, upperBand, lowerBand, bandWidth], layout);
+            Plotly.newPlot('plotly', data, layout, option);
         }};
+
+        function trend(){{
+            var data = [candle, volume, trendAll, trend5y, trend2y, trend1y, trend6m, trend3m];
+            data.forEach(item => {{item.x = date;}});
+            layout.grid = {{
+                rows:2,
+                columns:1,
+                rowheights:[0.8, 0.2],
+                xaxes:['x'],
+            }}
+            layout.height = viewHeight();
+            Plotly.newPlot('plotly', data, layout, option);
+        }}
         
         $(document).ready(function() {{
             sma();
@@ -343,7 +428,7 @@ class TechnicalReport(DataFrame):
                     bollingerBand();
                 }}
             }})
-
+    
         }})
     </script>
 </body>
@@ -353,5 +438,5 @@ class TechnicalReport(DataFrame):
 if __name__ == "__main__":
     rep = TechnicalReport('005930')
 
-    # print(rep)
+    print(rep)
     rep.write()
