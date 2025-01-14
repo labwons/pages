@@ -2,6 +2,7 @@ bs4
 numpy
 pandas
 pandas_datareader
+plotly
 pykrx
 pytz
 requests
