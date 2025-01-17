@@ -2,7 +2,6 @@ try:
     from ..fetch.krx import krx
 except ImportError:
     from dev.portfolio.fetch.krx import krx
-
 from datetime import timedelta
 from numpy import nan
 from pandas import DataFrame, Series
@@ -11,13 +10,14 @@ from ta.trend import MACD, PSARIndicator
 from ta import add_momentum_ta
 from typing import Union
 from warnings import filterwarnings
+import pandas as pd
 filterwarnings("ignore", message="invalid value encountered in scalar divide")
 filterwarnings("ignore", message="invalid value encountered in cast")
 
 
 class TechnicalFrame(DataFrame):
 
-    BASE_PRICE = 'typical'
+    BASE_PRICE:str = 'typical'
 
     @classmethod
     def typicalPrice(cls, ohlcv: DataFrame):
@@ -75,9 +75,9 @@ class TechnicalFrame(DataFrame):
             return pd.concat(objs=[data, fitted], axis=1).set_index(keys='Date')[fitted.name]
 
         basePrice = ohlct[cls.BASE_PRICE]
-        objs = {'전구간 추세': _fit(basePrice)}
+        objs = {'전구간추세': _fit(basePrice)}
         for yy in [5, 2, 1, 0.5, 0.25] if not args else args:
-            key = f"{yy}Y 추세" if isinstance(yy, int) else f"{int(yy * 12)}M 추세"
+            key = f"{yy}Y추세" if isinstance(yy, int) else f"{int(yy * 12)}M추세"
             date = basePrice.index[-1] - timedelta(int(yy * 365))
             if basePrice.index[0] > date:
                 fit = Series(name=key, index=basePrice.index)
@@ -96,8 +96,7 @@ class TechnicalFrame(DataFrame):
             if unit.empty:
                 objs[name] = Series(name=col, dtype=float)
             else:
-                objs[name] = 100 * (unit[cls.BASE_PRICE]/unit[col] - 1)
-                # objs[name] = (unit[use]/unit[col] - 1) / (abs(unit[use]/unit[col] - 1).sum() / len(unit))
+                objs[name] = (unit[cls.BASE_PRICE]/unit[col] - 1) / (abs(unit[cls.BASE_PRICE]/unit[col] - 1).sum() / len(unit))
         return pd.concat(objs=objs, axis=1)
 
     @classmethod
@@ -136,6 +135,8 @@ class TechnicalFrame(DataFrame):
             self.psar(data)
         )
         data = self.push(data, self.deviation(data))
+        data.reset_index(level=0, inplace=True)
+        data['Date'] = data['Date'].dt.strftime("%Y-%m-%d")
         super().__init__(data)
         return
 

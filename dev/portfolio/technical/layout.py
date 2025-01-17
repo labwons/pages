@@ -52,8 +52,33 @@ class Layout:
     @classmethod
     def yaxis(cls, **kwargs) -> Union[dict, str]:
         axis = {
+            "side":"right",
+            "tickformat": ',d',
             "autorange": True,  # [str | bool] one of ( True | False | "reversed" | "min reversed" |
                                 #  "max reversed" | "min" | "max" )
+            "color": "#444",  # [str]
+            "showgrid": True,  # [bool]
+            "gridcolor": "lightgrey",  # [str]
+            "griddash": "solid",  # [str] one of ( "solid" | "dot" | "dash" | "longdash" | "dashdot" )
+            "gridwidth": 0.5,  # [float]
+            "showline": True,  # [bool]
+            "linecolor": "grey",  # [str]
+            "linewidth": 1,  # [float]
+            "mirror": False,  # [str | bool] one of ( True | "ticks" | False | "all" | "allticks" )
+            "showticklabels": True,  # [bool]
+            "zeroline": True,  # [bool]
+            "zerolinecolor": "lightgrey",  # [str]
+            "zerolinewidth": 1  # [float]
+        }
+        axis.update(kwargs)
+        return dumps(axis) if cls.mode == 'json' else axis
+
+    @classmethod
+    def yaxis2(cls, **kwargs) -> Union[dict, str]:
+        axis = {
+            "side": "right",
+            "autorange": True,  # [str | bool] one of ( True | False | "reversed" | "min reversed" |
+            #  "max reversed" | "min" | "max" )
             "color": "#444",  # [str]
             "showgrid": True,  # [bool]
             "gridcolor": "lightgrey",  # [str]
