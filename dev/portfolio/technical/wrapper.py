@@ -2,6 +2,7 @@ try:
     from . import core
 except ImportError:
     from dev.portfolio.technical import core
+from jsmin import jsmin
 from json import dumps
 from pandas import DataFrame
 
@@ -10,45 +11,132 @@ class TechnicalReporter:
 
     def __init__(self, ohlcv:DataFrame, to:str='js'):
         core.PRINT_MODE = to
-        self.ohlcv_t = core.OHLCV_T(ohlcv)
-        self.sma = core.MovingAverage(ohlcv)
-        self.bb = core.BollingerBand(ohlcv)
-        self.macd = core.MACD(ohlcv)
+        self.meta = {
+            'ohlct': {
+                'html': {
+                    'tag':False,
+                    'label':'',
+                    'pos':'top'
+                },
+                'core': core.OHLCT(ohlcv)
+            },
+            'sma': {
+                'html': {
+                    'tag': True,
+                    'label': '이동평균선',
+                    'pos': 'top'
+                },
+                'core': core.MovingAverage(ohlcv)
+            },
+            'bb': {
+                'html': {
+                    'tag': True,
+                    'label': '볼린저밴드',
+                    'pos': 'top'
+                },
+                'core': core.BollingerBand(ohlcv)
+            },
+            'trend': {
+                'html': {
+                    'tag': True,
+                    'label': '통계추세',
+                    'pos': 'top'
+                },
+                'core': core.Trend(ohlcv)
+            },
+            'psar': {
+                'html': {
+                    'tag': True,
+                    'label': 'PSAR',
+                    'pos': 'top'
+                },
+                'core': core.PSAR(ohlcv)
+            },
+            'volume': {
+                'html': {
+                    'tag': True,
+                    'label': '거래량',
+                    'pos': 'bottom'
+                },
+                'core': core.Volume(ohlcv)
+            },
+            'macd': {
+                'html': {
+                    'tag': True,
+                    'label': 'MACD',
+                    'pos': 'bottom'
+                },
+                'core': core.MACD(ohlcv)
+            },
+            'rsi': {
+                'html': {
+                    'tag': True,
+                    'label': 'RSI',
+                    'pos': 'bottom'
+                },
+                'core': core.RSI(ohlcv)
+            },
+            'osc': {
+                'html': {
+                    'tag': True,
+                    'label': '오실레이터',
+                    'pos': 'bottom'
+                },
+                'core': core.StochasticOscillator(ohlcv)
+            },
+        }
         return
 
     def __iter__(self):
-        for item in [
-            self.ohlcv_t,
-            self.sma,
-            self.bb,
-            self.macd
-        ]:
+        for item in self.meta.values():
             yield item
+
+    def __getitem__(self, item):
+        return self.meta[item]
 
     @property
     def const(self) -> str:
-        return "\n".join([item.const for item in self]) \
+        return f"""
+                const X_RANGE = ['{self['ohlct']['core']['Date'].iloc[0]}', '{self['ohlct']['core']['Date'].iloc[-1]}'];
+                const BELOW_INDICATORS = {str([key for key, val in self.meta.items() if val['html']['pos'] == 'bottom'])};
+                const VARIABLE_MAPPING = {dumps({key: val['core'].mapvar for key, val in self.meta.items()}).replace('"', '').replace("'", "")};
+                const GRID_RATIO = {{1:[0, 1.0], 2:[0.8, 0.2], 3:[0.6, 0.2, 0.2], 4:[0.55, 0.15, 0.15, 0.15]}};
+                """[1:]
+
+    @property
+    def declaration(self) -> str:
+        return jsmin(self.trace + self.const)
+
+    @property
+    def select(self) -> str:
+        index = {'top': 1, 'bottom': 3}
+        lines = [
+            '<label><strong>상단 지표</strong></label>', '',
+            '<label><strong>하단 지표</strong></label>', ''
+        ]
+        for key, val in self.meta.items():
+            if key == 'ohlct': continue
+            html = val['html']
+            checked = "checked" if key == 'volume' else ''
+            lines[index[html['pos']]] += (f'<label class="dropdown-option">'
+                                          f'<input type="checkbox" name="dropdown-group" value="{key}" {checked}/>'
+                                          f'{html["label"]}'
+                                          f'</label>')
+        return f"""
+                <div class="dropdown" data-control="checkbox-dropdown">
+                    <label class="dropdown-label">지표 선택</label>
+                    <div class="dropdown-list">{str().join(lines)}</div>
+                </div>
+                """.replace("\n", "").replace("\t", "")
+
+    @property
+    def trace(self) -> str:
+        return "\n".join([item['core'].const for item in self]) \
                 .replace('"ohlc.x"', 'ohlc.x') \
                 .replace("NaN", "null")
 
-    @property
-    def predef(self) -> str:
-        return f"""
-const BELOW_INDICATORS = ["volume", "macd"];
-const VARIABLE_MAPPING = {{
-    ohlc:[ohlc],
-    volume:[volume],
-    sma:{str(self.sma.label).replace("'", "").replace('"', '')},
-    bb:{str(self.bb.label).replace("'", "").replace('"', '')},
-    macd:{str(self.macd.label).replace("'", "").replace('"', '')},
-}};
-const GRID_RATIO = {{
-    2:[0.8, 0.2],
-    3:[0.6, 0.2, 0.2],
-    4:[0.55, 0.15, 0.15, 0.15]
-}};"""[1:]
-
-    def xaxis(self, **kwargs):
+    @classmethod
+    def xaxis(cls, **kwargs):
         attr = {
             "autorange": True,  # [str | bool] one of ( True | False | "reversed" | "min reversed" |
             #                       "max reversed" | "min" | "max" )
@@ -91,7 +179,8 @@ const GRID_RATIO = {{
         attr.update(kwargs)
         return dumps(attr)
 
-    def yaxis(self, **kwargs):
+    @classmethod
+    def yaxis(cls, **kwargs):
         attr = {
             "domain":[0, 1],
             "side":"right",

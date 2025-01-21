@@ -19,7 +19,7 @@ class Report:
                  .set_index(keys="Date") \
                  .drop(columns=["Adj Close"])
         data.index = pd.to_datetime(data.index)
-        self.tech = TechnicalReporter(data, to="js")
+        self.technical = TechnicalReporter(data, to="js")
         self.ticker = ticker
         return
     
@@ -113,35 +113,7 @@ class Report:
     <main>
         <div class="service-app">
             <div class="service-nav">
-                <div class="service-options">
-                    <div class="dropdown" data-control="checkbox-dropdown">
-                        <label class="dropdown-label">지표 선택</label>
-                        <div class="dropdown-list">
-                            <label><strong>상단 지표</strong></label>
-                            <label class="dropdown-option">
-                                <input type="checkbox" name="dropdown-group" value="sma" />
-                                MA
-                            </label>
-                            <label class="dropdown-option">
-                                <input type="checkbox" name="dropdown-group" value="bb" />
-                                BB
-                            </label>
-                            <label class="dropdown-option">
-                                <input type="checkbox" name="dropdown-group" value="trend" />
-                                TREND
-                            </label>
-                            <label><strong>하단 지표</strong></label>
-                            <label class="dropdown-option">
-                                <input type="checkbox" name="dropdown-group" value="volume" checked/>
-                                Volume
-                            </label>
-                            <label class="dropdown-option">
-                                <input type="checkbox" name="dropdown-group" value="macd" />
-                                CD
-                            </label>   
-                        </div>
-                    </div>
-                </div>
+                <div class="service-options">{self.technical.select}</div>
             </div>
             <div class="plotly" id="plotly"></div>
         </div>
@@ -151,14 +123,13 @@ class Report:
         <!-- 하단 정보 -->
     </footer>
     <script>
-{self.tech.const}
-{self.tech.predef}        
         var option = {{
             displayModeBar:false,
             responsive:true,
             showTips:false
         }}
     </script>
+    <script>{self.technical.declaration}</script>
     <script>
         (function($) {{
             var CheckboxDropdown = function(el) {{
@@ -201,6 +172,9 @@ class Report:
                         bgcolor: "white",
                         bordercolor: "#444",
                         borderwidth: 0,
+                        font: {{
+                            size: 9,
+                        }},
                         groupclick: "togglegroup",
                         itemclick: "toggle",
                         itemdoubleclick: "toggleothers",
@@ -215,40 +189,59 @@ class Report:
                         yanchor: "bottom",
                         y: 1.0,
                     }},
-                    xaxis: {self.tech.xaxis()},
-                    yaxis: {self.tech.yaxis()},
+                    xaxis: {self.technical.xaxis()},
+                    yaxis: {self.technical.yaxis()},
                 }}
                 
+                /* TRACE 선택 */
                 for(var i = 0; i < checked.length; i++) {{
                     if (BELOW_INDICATORS.includes(checked[i].value)) {{
+                        // 하단 지표 CASE
                         grid.push(checked[i].value);
                         if (grid.length > 4) {{
-                            grid.pop();
                             alert("하단(보조) 지표는 최대 3개까지 가능합니다.");
+                            grid.pop();
+                            $(checked[i]).prop('checked', false);
+                            if (this.isOpen) {{
+                                this.toggleOpen();
+                            }} 
                             return;
                         }}
-                        layout[`yaxis${{grid.length}}`] = {self.tech.yaxis()};
+                        layout[`yaxis${{grid.length}}`] = {self.technical.yaxis()};
+                        VARIABLE_MAPPING[checked[i].value].forEach(item => {{
+                            item.yaxis = `y${{grid.length}}`;
+                        }});
                         if (checked[i].value == "volume") {{
                             layout[`yaxis${{grid.length}}`].tickformat = "";
                         }}
                     }} else {{
+                        // 상단 지표 CASE
                         grid[0].push(checked[i].value);
                     }}
                     data.push(...VARIABLE_MAPPING[checked[i].value]);
                 }}
+                
                 layout.grid.rows = grid.length;
+                if (grid.length > 1) {{
+                    GRID_RATIO[layout.grid.rows].map((height, n) => {{
+                        const start = currentY - height;
+                        if (n == 0) {{
+                            layout.yaxis.domain = [start, currentY];                
+                        }} else {{
+                            layout[`yaxis${{n + 1}}`].domain = [start, currentY];         
+                        }}
+                        currentY = start;
+                    }});                
+                }}
                 
-                GRID_RATIO[layout.grid.rows].map((height, n) => {{
-                    const start = currentY - height;
-                    if (n == 0) {{
-                        layout.yaxis.domain = [start, currentY];                
-                    }} else {{
-                        layout[`yaxis${{n + 1}}`].domain = [start, currentY];         
-                    }}
-                    currentY = start;
-                }});
+                if (this.isOpen) {{
+                    this.toggleOpen();
+                }} 
+                
                 Plotly.newPlot('plotly', data, layout, option);
-                
+                if (grid[0].includes('psar')) {{
+                    Plotly.relayout('plotly', {{'xaxis.range': X_RANGE}});
+                }}          
             }};
 
             CheckboxDropdown.prototype.toggleOpen = function(forceOpen) {{
