@@ -38,13 +38,12 @@ def individualReport():
     sector = pd.read_json(PATH.GROUP).T
     sector.index = sector.index.astype(str).str.zfill(6)
     for n, meta in enumerate(TRACK):
-        if not meta["ticker"] in TRACK:
-            raise KeyError(f"Ticker: {meta['ticker']} 정보를 찾을 수 없습니다.")
-        meta['name'] = sector.loc[meta['ticker'], 'name']
-
         path = os.path.join(PATH.ROOT, rf"portfolio/{str(n + 1).zfill(2)}")
         os.makedirs(path, exist_ok=True)
+
+        meta['name'] = sector.loc[meta['ticker'], 'name']
         meta['path'] = os.path.join(path, "index.html")
+
         docs = Report(**meta)
         docs.write(meta["path"])
     return
