@@ -28,8 +28,8 @@ class Report:
         self.name = name
         return
     
-    def write(self, path:str):
-        with open(rf"{path}/index.html", mode='w', encoding='utf-8') as file:
+    def write(self, path:str, file:str='index.html'):
+        with open(rf"{path}/{file}", mode='w', encoding='utf-8') as file:
             file.write(f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
