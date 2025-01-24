@@ -242,25 +242,6 @@ class Trend(OHLCT):
         __slot__ = {
             'trace': trace
         }
-
-        # __slot__ = {
-        #     'trace': {
-        #         f'tr_{col.lower().replace("추세", "").replace("전구간", "all")}': {
-        #             "name": col,
-        #             "x": "ohlc.x" if PRINT_MODE.startswith("js") else self["Date"],
-        #             "y": round(self[col], 1),
-        #             "mode": "lines",
-        #             "visible": True if col.startswith("전구간") else False,
-        #             "showlegend": True,
-        #             "line": {
-        #                 "dash": "dot"
-        #             },
-        #             "connectgaps": True,
-        #             "yhoverformat": ".1f",
-        #             "hovertemplate": f"{col}: %{{y}}원<extra></extra>"
-        #         } for col in self if col.endswith('추세')
-        #     }
-        # }
         __slot__['label'] = list(__slot__['trace'].keys())
         __slot__['const'] = "\n".join([
             f"const {label} = {self.dump(attr)};" for label, attr in __slot__['trace'].items()
@@ -277,6 +258,7 @@ class Trend(OHLCT):
     def _construct(self):
         def _fit(price: Series, _key:str) -> Series:
             data = price.reset_index(level=0)
+            data.columns = ['Date', 'data']
             xrange = (data['Date'].diff()).dt.days.fillna(1).astype(int).cumsum()
 
             r = linregress(x=xrange, y=data[data.columns[-1]])
