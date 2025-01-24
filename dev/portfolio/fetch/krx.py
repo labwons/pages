@@ -124,7 +124,7 @@ class krx:
 
         trade_stop = ohlcv[ohlcv.Open == 0].copy()
         if not trade_stop.empty:
-            ohlcv.loc[trade_stop.index, ['Open', 'High', 'Low']] = trade_stop.close
+            ohlcv.loc[trade_stop.index, ['Open', 'High', 'Low']] = trade_stop['Close']
         return ohlcv
 
     @property
