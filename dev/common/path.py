@@ -17,9 +17,11 @@ class PATH:
     BUBBLE = os.path.join(ROOT, r'dev/json/service/bubble.json')
     TRMAP  = os.path.join(ROOT, r'dev/json/service/treemap.json')
     MACRO  = os.path.join(ROOT, r'dev/json/service/macro.json')
-
-    DESKTOP = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
-    DOWNLOADS = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Downloads')
+    try:
+        DESKTOP = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+        DOWNLOADS = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Downloads')
+    except KeyError:
+        DESKTOP = DOWNLOADS = ROOT
     
 
 
