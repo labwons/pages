@@ -50,7 +50,6 @@ class OHLCT(DataFrame):
                 },
                 "showlegend": False,
                 "hoverinfo": 'x+y',
-                "xhoverformat": "%Y/%m/%d",
                 "yhoverformat": ",d",
                 "type": 'candlestick'
             },
@@ -92,7 +91,6 @@ class Volume(OHLCT):
                         "color": self.apply(lambda r: "red" if r.Close >= r.Open else "royalblue", axis=1).tolist()
                     },
                     "showlegend": False,
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ",d",
                     "hovertemplate": ": %{y}<extra></extra>",
                     "yaxis": "y2",
@@ -106,7 +104,6 @@ class Volume(OHLCT):
                         "color": 'royalblue'
                     },
                     "showlegend": False,
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".1f",
                     "hovertemplate": ": %{y}<extra></extra>",
                     "yaxis": "y2",
@@ -148,7 +145,6 @@ class MovingAverage(OHLCT):
                         "dash": "dot"
                     },
                     "connectgaps": True,
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".1f",
                     "hovertemplate": f"{col.replace('MA', '')}일: %{{y}}원<extra></extra>"
                 } for col in self if col.startswith('MA')
@@ -176,30 +172,95 @@ class MovingAverage(OHLCT):
 class Trend(OHLCT):
 
     WINDOWS = [5, 2, 1, 0.5, 0.25]
-
+    STDDEVS = {}
     def __init__(self, ohlcv: DataFrame):
         super().__init__(ohlcv)
         self._construct()
 
-        __slot__ = {
-            'trace': {
-                f'tr_{col.lower().replace("추세", "").replace("전구간", "all")}': {
-                    "name": col,
-                    "x": "ohlc.x" if PRINT_MODE.startswith("js") else self["Date"],
-                    "y": round(self[col], 1),
-                    "mode": "lines",
-                    "visible": True,
-                    "showlegend": True,
-                    "line": {
-                        "dash": "dot"
-                    },
-                    "connectgaps": True,
-                    "xhoverformat": "%Y/%m/%d",
-                    "yhoverformat": ".1f",
-                    "hovertemplate": f"{col}: %{{y}}원<extra></extra>"
-                } for col in self if col.endswith('추세')
+        trace = {}
+        for col in self:
+            if not col.endswith('추세'):
+                continue
+            dat1 = self[col].dropna()
+            dat1.index = dat1.index.astype(str)
+
+            var1 = f'tr_{col.lower().replace("추세", "").replace("전구간", "all")}'
+            trace[var1] = {
+                "name": col,
+                "x": "ohlc.x" if PRINT_MODE.startswith("js") and col.startswith('전구간') else dat1.index.tolist(),
+                "y": dat1.astype(int).tolist(),
+                "mode": "lines",
+                "visible": True if col.startswith("전구간") else 'legendonly',
+                "showlegend": True,
+                "legendgroup": f"{var1}_t2",
+                "line": {
+                    "dash": "dash",
+                    "color": "black"
+                },
+                "connectgaps": True,
+                "yhoverformat": ",d",
+                "hovertemplate": f"{col}: %{{y}}원<extra></extra>"
             }
+
+            var2 = f'trUp_{col.lower().replace("추세", "").replace("전구간", "all")}'
+            dat2 = dat1 + 2 * self.STDDEVS[col]
+            trace[var2] = {
+                "name": col,
+                "x": "ohlc.x" if PRINT_MODE.startswith("js") and col.startswith('전구간') else dat2.index.tolist(),
+                "y": dat2.astype(int),
+                "mode": "lines",
+                "visible": True if col.startswith("전구간") else 'legendonly',
+                "showlegend": False,
+                "legendgroup": f"{var1}_t2",
+                "line": {
+                    "dash": "dot",
+                    "color": "Red"
+                },
+                "connectgaps": True,
+                "yhoverformat": ",d",
+                "hovertemplate": f"상단: %{{y}}원<extra></extra>"
+            }
+
+            var3 = f'trDn_{col.lower().replace("추세", "").replace("전구간", "all")}'
+            dat3 = dat1 - 2 * self.STDDEVS[col]
+            trace[var3] = {
+                "name": col,
+                "x": "ohlc.x" if PRINT_MODE.startswith("js") and col.startswith('전구간') else dat3.index.tolist(),
+                "y": dat3.astype(int),
+                "mode": "lines",
+                "visible": True if col.startswith("전구간") else 'legendonly',
+                "showlegend": False,
+                "legendgroup": f"{var1}_t2",
+                "line": {
+                    "dash": "dot",
+                    "color": "Red"
+                },
+                "connectgaps": True,
+                "yhoverformat": ",d",
+                "hovertemplate": f"하단: %{{y}}원<extra></extra>"
+            }
+        __slot__ = {
+            'trace': trace
         }
+
+        # __slot__ = {
+        #     'trace': {
+        #         f'tr_{col.lower().replace("추세", "").replace("전구간", "all")}': {
+        #             "name": col,
+        #             "x": "ohlc.x" if PRINT_MODE.startswith("js") else self["Date"],
+        #             "y": round(self[col], 1),
+        #             "mode": "lines",
+        #             "visible": True if col.startswith("전구간") else False,
+        #             "showlegend": True,
+        #             "line": {
+        #                 "dash": "dot"
+        #             },
+        #             "connectgaps": True,
+        #             "yhoverformat": ".1f",
+        #             "hovertemplate": f"{col}: %{{y}}원<extra></extra>"
+        #         } for col in self if col.endswith('추세')
+        #     }
+        # }
         __slot__['label'] = list(__slot__['trace'].keys())
         __slot__['const'] = "\n".join([
             f"const {label} = {self.dump(attr)};" for label, attr in __slot__['trace'].items()
@@ -214,24 +275,25 @@ class Trend(OHLCT):
         return
 
     def _construct(self):
-        def _fit(price: Series) -> Series:
+        def _fit(price: Series, _key:str) -> Series:
             data = price.reset_index(level=0)
             xrange = (data['Date'].diff()).dt.days.fillna(1).astype(int).cumsum()
 
-            slope, intercept, _, _, _ = linregress(x=xrange, y=data[data.columns[-1]])
-            fitted = slope * xrange + intercept
+            r = linregress(x=xrange, y=data[data.columns[-1]])
+            fitted = r.slope * xrange + r.intercept
             fitted.name = f'{price.name}Fit'
+            self.STDDEVS[_key] = (price.values - fitted).std()
             return pd.concat(objs=[data, fitted], axis=1).set_index(keys='Date')[fitted.name]
 
         basePrice = self[BASE_PRICE]
-        self['전구간추세'] = _fit(basePrice)
+        self['전구간추세'] = _fit(basePrice, '전구간추세')
         for yy in self.WINDOWS:
             key = f"{yy}Y추세" if isinstance(yy, int) else f"{int(yy * 12)}M추세"
             date = basePrice.index[-1] - timedelta(int(yy * 365))
             if basePrice.index[0] > date:
                 fit = Series(name=key, index=basePrice.index)
             else:
-                fit = _fit(basePrice[basePrice.index >= date])
+                fit = _fit(basePrice[basePrice.index >= date], key)
             self[key] = fit
         return
 
@@ -257,7 +319,6 @@ class BollingerBand(OHLCT):
                         "dash": "dot"
                     },
                     "connectgaps": True,
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".1f",
                     "hovertemplate": f"{self.WINDOW}일: %{{y}}원<extra></extra>"
                 },
@@ -272,7 +333,6 @@ class BollingerBand(OHLCT):
                     },
                     "showlegend": True,
                     "legendgroup": "x2",
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".1f",
                     "hovertemplate": "x2 상단: %{y}원<extra></extra>"
                 },
@@ -287,7 +347,6 @@ class BollingerBand(OHLCT):
                     },
                     "showlegend": True,
                     "legendgroup": "x1",
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".1f",
                     "hovertemplate": "x1 상단: %{y}원<extra></extra>"
                 }
@@ -352,7 +411,6 @@ class PSAR(OHLCT):
                         "color": "green",
                         "size": 4
                     },
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".1f",
                     "hovertemplate": f"SAR: %{{y}}원<extra></extra>"
                 } for col in ['up', 'down']
@@ -399,7 +457,6 @@ class MACD(OHLCT):
                         "color": "royalblue"
                     },
                     "connectgaps": True,
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".2f",
                     "hovertemplate": "MACD: %{y}<extra></extra>",
                     "yaxis": "y3",
@@ -415,7 +472,6 @@ class MACD(OHLCT):
                         "color": "red"
                     },
                     "connectgaps": True,
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".2f",
                     "hovertemplate": "Signal: %{y}<extra></extra>",
                     "yaxis": "y3",
@@ -430,7 +486,6 @@ class MACD(OHLCT):
                     },
                     "visible": True,
                     "showlegend": False,
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".2f",
                     "hovertemplate": "Diff: %{y}<extra></extra>",
                     "yaxis": "y3",
@@ -477,7 +532,6 @@ class RSI(OHLCT):
                         "color": "royalblue"
                     },
                     "connectgaps": True,
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".2f",
                     "hovertemplate": "RSI: %{y}%<extra></extra>",
                     "yaxis": "y3",
@@ -522,7 +576,6 @@ class StochasticOscillator(OHLCT):
                         "color": "royalblue"
                     },
                     "connectgaps": True,
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".2f",
                     "hovertemplate": ": %{y}%<extra></extra>",
                     "yaxis": "y3",
@@ -539,7 +592,6 @@ class StochasticOscillator(OHLCT):
                         "color": "red"
                     },
                     "connectgaps": True,
-                    "xhoverformat": "%Y/%m/%d",
                     "yhoverformat": ".2f",
                     "hovertemplate": ": %{y}%<extra></extra>",
                     "yaxis": "y3",
@@ -570,20 +622,23 @@ class Deviation(Trend):
     def __init__(self, ohlcv: DataFrame):
         super().__init__(ohlcv)
         self._re_construct()
-
+        enum = [col for col in self if col.endswith('편차')]
         __slot__: Dict[str, Any] = {
             'trace': {
-                f'dv{col.replace("편차", "")}': {
+                f'dv{col.replace("편차", "").replace("전구간", "All")}': {
                     'x':self[col].dropna().index.tolist(),
                     'y':self[col].dropna().tolist(),
                     'type':'bar',
+                    'visible': True,
                     'marker': {
                         'color':self[col].dropna().apply(lambda x: "red" if x >= 0 else "royalblue").tolist()
                     },
-                    "xhoverformat": "%Y/%m/%d",
+                    "showlegend": False,
+                    "xaxis": f"x{n + 1}",
+                    "yaxis": f"y{n + 1}",
                     "yhoverformat": ".2f",
                     "hovertemplate": ": %{y}%<extra></extra>"
-                } for col in self if col.endswith('편차') and (not self[col].empty)
+                } for n, col in enumerate(enum) if not self[col].empty
             }
         }
         __slot__['trace'].update({
@@ -591,9 +646,12 @@ class Deviation(Trend):
                 'x': [10],
                 'y': [10],
                 'mode': 'text',
+                'visible': True,
                 'text': ['데이터 없음'],
                 'textposition': 'top center',
-            } for col in self if col.endswith('편차') and self[col].empty
+                "xaxis": f"x{n + 1}",
+                "yaxis": f"y{n + 1}",
+            } for n, col in enumerate(enum) if self[col].empty
         })
         __slot__['label'] = list(__slot__['trace'].keys())
         __slot__['const'] = "\n".join([
@@ -640,11 +698,13 @@ if __name__ == "__main__":
     # print(ma.label)
     # print(ma.const)
 
-    # tr = Trend(data)
+    tr = Trend(data)
     # print(tr)
     # print(ma.trace)
     # print(tr.label)
     # print(tr.const)
 
-    dv = Deviation(data)
-    print(dv)
+    # dv = Deviation(data)
+    # print(dv)
+    # print(dv.trace)
+    # print(dv.const)

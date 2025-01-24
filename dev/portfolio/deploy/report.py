@@ -1,7 +1,11 @@
 try:
     from ..technical.wrapper import TechnicalReporter
+    from ..fetch.krx import krx
+    from ...common.path import PATH
 except ImportError:
     from dev.portfolio.technical.wrapper import TechnicalReporter
+    from dev.portfolio.fetch.krx import krx
+    from dev.common.path import PATH
 import pandas as pd
 import json
 
@@ -13,24 +17,25 @@ class Report:
     def dump(cls, data:dict) -> str:
         return json.dumps(data).replace("NaN", "null")
 
-    def __init__(self, ticker:str, **kwargs):
-        # data = krx(ticker=ticker, period=period).ohlcv
-        data = pd.read_csv("https://raw.githubusercontent.com/kairess/stock_crypto_price_prediction/master/dataset/005930.KS_5y.csv") \
-                 .set_index(keys="Date") \
-                 .drop(columns=["Adj Close"])
+    def __init__(self, ticker:str, name:str, **kwargs):
+        data = krx(ticker=ticker, period=kwargs["period"] if "period" in kwargs else 10).ohlcv
+        # data = pd.read_csv("https://raw.githubusercontent.com/kairess/stock_crypto_price_prediction/master/dataset/005930.KS_5y.csv") \
+        #          .set_index(keys="Date") \
+        #          .drop(columns=["Adj Close"])
         data.index = pd.to_datetime(data.index)
         self.technical = TechnicalReporter(data, to="js")
         self.ticker = ticker
+        self.name = name
         return
     
-    def write(self):
-        with open(r"C:\Users\Administrator\Desktop\report_copy.html", mode='w', encoding='utf-8') as file:
+    def write(self, path:str):
+        with open(rf"{path}/index.html", mode='w', encoding='utf-8') as file:
             file.write(f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>LAB￦ONS :: 이름({self.ticker})</title>
+    <title>LAB￦ONS :: {self.name}({self.ticker})</title>
 	
 	<!-- <script src="https://cdn.plot.ly/plotly-2.34.0.min.js"></script> --> 
     <script src="https://cdn.jsdelivr.net/gh/labwons/pages/src/js/plotly-0.1.min.js"></script>
@@ -132,6 +137,7 @@ class Report:
     <script>{self.technical.declaration}</script>
     <script>
         (function($) {{
+            var dvStat = false;
             var CheckboxDropdown = function(el) {{
                 var _this = this;
                 this.isOpen = false;
@@ -156,92 +162,127 @@ class Report:
             }};
 
             CheckboxDropdown.prototype.updateStatus = function() {{
-                var checked = this.$el.find(':checked');   
-                var data = [ohlc];
-                var grid = [['ohlc']];
-                var currentY = 1;
-                var layout = {{
-                    margin: {{t:10, r:80, l:20, b:20}},
-                    grid: {{
-                        rows:1,
-                        columns:1,
-                        xaxes:['x'],
-                    }},
-                    hovermode: "x unified",
-                    legend:{{
-                        bgcolor: "white",
-                        bordercolor: "#444",
-                        borderwidth: 0,
-                        font: {{
-                            size: 9,
+                var checked = this.$el.find(':checked');
+  
+                if ((!dvStat) && (checked[checked.length - 1].value == 'dv')){{
+                    var data = VARIABLE_MAP['dv'];
+                    var grid = [[]];
+                    var layout = {{
+                        margin: {{t:10, r:80, l:20, b:20}},
+                        grid: {{
+                            rows:2,
+                            columns:3,
+                            pattern: 'independent',
+                            xgap:0.1,
                         }},
-                        groupclick: "togglegroup",
-                        itemclick: "toggle",
-                        itemdoubleclick: "toggleothers",
-                        itemsizing: "trace",
-                        itemwidth: 30,
-                        orientation: "h",
-                        tracegroupgap: 10,
-                        traceorder: "normal",
-                        valign: "middle",
-                        xanchor: "right",
-                        x: 1.0,
-                        yanchor: "bottom",
-                        y: 1.0,
-                    }},
-                    xaxis: {self.technical.xaxis()},
-                    yaxis: {self.technical.yaxis()},
-                }}
-                
-                /* TRACE 선택 */
-                for(var i = 0; i < checked.length; i++) {{
-                    if (BELOW_INDICATORS.includes(checked[i].value)) {{
-                        // 하단 지표 CASE
-                        grid.push(checked[i].value);
-                        if (grid.length > 4) {{
-                            alert("하단(보조) 지표는 최대 3개까지 가능합니다.");
-                            grid.pop();
-                            $(checked[i]).prop('checked', false);
-                            if (this.isOpen) {{
-                                this.toggleOpen();
-                            }} 
-                            return;
-                        }}
-                        layout[`yaxis${{grid.length}}`] = {self.technical.yaxis()};
-                        VARIABLE_MAPPING[checked[i].value].forEach(item => {{
-                            item.yaxis = `y${{grid.length}}`;
-                        }});
-                        if (checked[i].value == "volume") {{
-                            layout[`yaxis${{grid.length}}`].tickformat = "";
-                        }}
-                    }} else {{
-                        // 상단 지표 CASE
-                        grid[0].push(checked[i].value);
+                        xaxis: {{ tickformat: "%Y/%m/%d", tickfont: {{size: 10}} }},
+                        xaxis2: {{ tickformat: "%Y/%m/%d", tickfont: {{size: 10}} }},
+                        xaxis3: {{ tickformat: "%Y/%m/%d", tickfont: {{size: 10}} }},
+                        xaxis4: {{ tickformat: "%Y/%m/%d", tickfont: {{size: 10}} }},
+                        xaxis5: {{ tickformat: "%Y/%m/%d", tickfont: {{size: 10}} }},
+                        xaxis6: {{ tickformat: "%Y/%m/%d", tickfont: {{size: 10}} }},
+                        
+                        yaxis: {{ showticklabels: false }},
+                        yaxis2: {{ showticklabels: false }},
+                        yaxis3: {{ showticklabels: false }},
+                        yaxis4: {{ showticklabels: false }},
+                        yaxis5: {{ showticklabels: false }},
+                        yaxis6: {{ showticklabels: false }}
+                        
+                    }};
+                    for(var n = 0; n < checked.length; n++) {{
+                        $(checked[n]).prop('checked', n == checked.length - 1 ? true : false);
                     }}
-                    data.push(...VARIABLE_MAPPING[checked[i].value]);
-                }}
-                
-                layout.grid.rows = grid.length;
-                if (grid.length > 1) {{
-                    GRID_RATIO[layout.grid.rows].map((height, n) => {{
-                        const start = currentY - height;
-                        if (n == 0) {{
-                            layout.yaxis.domain = [start, currentY];                
-                        }} else {{
-                            layout[`yaxis${{n + 1}}`].domain = [start, currentY];         
+                    dvStat = true;
+                }} else {{
+                    var data = [ohlc];
+                    var grid = [['ohlc']];
+                    var currentY = 1;
+                    var layout = {{
+                        margin: {{t:10, r:80, l:20, b:20}},
+                        grid: {{
+                            rows:1,
+                            columns:1,
+                            xaxes:['x'],
+                        }},
+                        hovermode: "x unified",
+                        legend:{{
+                            bgcolor: "white",
+                            bordercolor: "#444",
+                            borderwidth: 0,
+                            font: {{
+                                size: 9,
+                            }},
+                            groupclick: "togglegroup",
+                            itemclick: "toggle",
+                            itemdoubleclick: "toggleothers",
+                            itemsizing: "trace",
+                            itemwidth: 30,
+                            orientation: "h",
+                            tracegroupgap: 10,
+                            traceorder: "normal",
+                            valign: "middle",
+                            xanchor: "right",
+                            x: 1.0,
+                            yanchor: "bottom",
+                            y: 1.0,
+                        }},
+                        xaxis: {self.technical.xaxis()},
+                        yaxis: {self.technical.yaxis()},
+                    }};
+                    
+                    /* TRACE 선택 */
+                    for(var i = 0; i < checked.length; i++) {{
+                        if (checked[i].value == 'dv') {{
+                            $(checked[i]).prop('checked', false);
+                            continue;
                         }}
-                        currentY = start;
-                    }});                
+                        if (BELOW_INDICATORS.includes(checked[i].value)) {{
+                            /* 하단 지표 CASE */
+                            if (grid.length >= 3) {{
+                                alert("하단(보조) 지표는 최대 3개까지 가능합니다.");
+                                $(checked[i]).prop('checked', false);
+                                return;
+                            }}
+                            
+                            grid.push(checked[i].value);                        
+                            layout[`yaxis${{grid.length}}`] = {self.technical.yaxis()};
+                            VARIABLE_MAP[checked[i].value].forEach(item => {{
+                                item.yaxis = `y${{grid.length}}`;
+                            }});
+                            if (checked[i].value == "volume") {{
+                                layout[`yaxis${{grid.length}}`].tickformat = "";
+                            }}
+                        }} else {{
+                            /* 상단 지표 CASE */
+                            grid[0].push(checked[i].value);
+                        }}
+                        data.push(...VARIABLE_MAP[checked[i].value]);
+                    }}
+                    
+                    if (grid.length > 1) {{
+                        layout.grid.rows = grid.length;
+                        GRID_RATIO[layout.grid.rows].map((height, n) => {{
+                            const start = currentY - height;
+                            if (n == 0) {{
+                                layout.yaxis.domain = [start, currentY];                
+                            }} else {{
+                                layout[`yaxis${{n + 1}}`].domain = [start, currentY];         
+                            }}
+                            currentY = start;
+                        }});                
+                    }}
+                    dvStat = false;
                 }}
                 
                 if (this.isOpen) {{
                     this.toggleOpen();
                 }} 
-                
+   
                 Plotly.newPlot('plotly', data, layout, option);
                 if (grid[0].includes('psar')) {{
                     Plotly.relayout('plotly', {{'xaxis.range': X_RANGE}});
-                }}          
+                }}
             }};
 
             CheckboxDropdown.prototype.toggleOpen = function(forceOpen) {{
@@ -273,6 +314,6 @@ class Report:
         return
     
 if __name__ == "__main__":
-    rep = Report('005930')
 
-    rep.write()
+    rep = Report('005930', "Samsung Elec. Co.,Ltd")
+    rep.write(PATH.DOWNLOADS)

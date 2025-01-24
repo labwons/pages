@@ -39,7 +39,7 @@ class TechnicalReporter:
             'trend': {
                 'html': {
                     'tag': True,
-                    'label': '통계추세',
+                    'label': '통계적추세',
                     'pos': 'top'
                 },
                 'core': core.Trend(ohlcv)
@@ -84,6 +84,14 @@ class TechnicalReporter:
                 },
                 'core': core.StochasticOscillator(ohlcv)
             },
+            'dv': {
+                'html': {
+                    'tag': True,
+                    'label': '통계적추세 편차',
+                    'pos': 'etc'
+                },
+                'core': core.Deviation(ohlcv)
+            }
         }
         return
 
@@ -97,11 +105,11 @@ class TechnicalReporter:
     @property
     def const(self) -> str:
         return f"""
-                const X_RANGE = ['{self['ohlct']['core']['Date'].iloc[0]}', '{self['ohlct']['core']['Date'].iloc[-1]}'];
-                const BELOW_INDICATORS = {str([key for key, val in self.meta.items() if val['html']['pos'] == 'bottom'])};
-                const VARIABLE_MAPPING = {dumps({key: val['core'].mapvar for key, val in self.meta.items()}).replace('"', '').replace("'", "")};
-                const GRID_RATIO = {{1:[0, 1.0], 2:[0.8, 0.2], 3:[0.6, 0.2, 0.2], 4:[0.55, 0.15, 0.15, 0.15]}};
-                """[1:]
+            const X_RANGE = ['{self['ohlct']['core']['Date'].iloc[0]}', '{self['ohlct']['core']['Date'].iloc[-1]}'];
+            const BELOW_INDICATORS = {str([key for key, val in self.meta.items() if val['html']['pos'] == 'bottom'])};
+            const VARIABLE_MAP = {dumps({key: val['core'].mapvar for key, val in self.meta.items()}).replace('"', '').replace("'", "")};
+            const GRID_RATIO = {{1:[0, 1.0], 2:[0.8, 0.2], 3:[0.6, 0.2, 0.2], 4:[0.55, 0.15, 0.15, 0.15]}};
+        """[1:]
 
     @property
     def declaration(self) -> str:
@@ -109,10 +117,11 @@ class TechnicalReporter:
 
     @property
     def select(self) -> str:
-        index = {'top': 1, 'bottom': 3}
+        index = {'top': 1, 'bottom': 3, 'etc': 5}
         lines = [
             '<label><strong>상단 지표</strong></label>', '',
-            '<label><strong>하단 지표</strong></label>', ''
+            '<label><strong>하단 지표</strong></label>', '',
+            '<label><strong>기타 지표</strong></label>', '',
         ]
         for key, val in self.meta.items():
             if key == 'ohlct': continue
@@ -123,11 +132,11 @@ class TechnicalReporter:
                                           f'{html["label"]}'
                                           f'</label>')
         return f"""
-                <div class="dropdown" data-control="checkbox-dropdown">
-                    <label class="dropdown-label">지표 선택</label>
-                    <div class="dropdown-list">{str().join(lines)}</div>
-                </div>
-                """.replace("\n", "").replace("\t", "")
+            <div class="dropdown" data-control="checkbox-dropdown">
+                <label class="dropdown-label">지표 선택</label>
+                <div class="dropdown-list">{str().join(lines)}</div>
+            </div>
+        """.replace("\n", "").replace("\t", "")
 
     @property
     def trace(self) -> str:
