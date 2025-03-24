@@ -580,7 +580,7 @@ h1, h2, h3, h4, h5, h6 {
 		height: auto;
 		display: flex;
 		flex-direction: row;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		align-items: flex-start;
 		justify-content: flex-start;
 		font-size: 12px;
@@ -588,7 +588,7 @@ h1, h2, h3, h4, h5, h6 {
 	}
 
 	.service-section .service .service-nav .service-opt-l {
-		flex: 1 1 auto;
+		flex: 0 1 auto;
 		max-width: 50%;
 		width: 50%;
 		display: flex;
@@ -601,7 +601,7 @@ h1, h2, h3, h4, h5, h6 {
 	}
 
 	.service-section .service .service-nav .service-opt-r {
-		flex: 1 1 auto;
+		flex: 0 1 auto;
 		max-width: 50%;
 		width: 50%;
 		display: flex;
