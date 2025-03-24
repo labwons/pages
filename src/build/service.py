@@ -49,12 +49,17 @@ if __name__ == "__main__":
             "pos": "top"
         }],
         "ad_title": [{
-            "class": "adsbygoogle",
+            "class": "adsbygoogle ads-mobile",
             "style": "display:block",
             "data-ad-client": config.ADSENSE_ID,
-            "data-ad-slot": "9705057757",
+            "data-ad-slot": "9007042504",
             "data-ad-format": "auto",
             "data-full-width-responsive": "true",
+        }, {
+            "class": "adsbygoogle ads-pc",
+            "style": "display:inline-block;width:728px;height:90px;",
+            "data-ad-client": config.ADSENSE_ID,
+            "data-ad-slot": "8415406752",
         }]
     }
 
@@ -77,7 +82,7 @@ if __name__ == "__main__":
         # LOCAL HOSTING DIRECTORY WITH DEPLOYMENT DIRECTORY, DEPLOYMENT MIGHT BE CORRUPTED.
         # IF YOU WANT TO USE DIFFERENT PATH FOR LOCAL HOST TESTING, BELOW {ROOT} VARIABLE ARE
         # TO BE CHANGED.
-        ADSENSE = False
+        # ADSENSE = False
         BASE_DIR = os.path.join(PATH.DOWNLOADS, 'labwons')
         PATH.copytree(PATH.DOCS, BASE_DIR)
 

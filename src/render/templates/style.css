@@ -291,17 +291,19 @@ h1, h2, h3, h4, h5, h6 {
 /*--------------------------------------------------------------
 # ads
 --------------------------------------------------------------*/
-.adsbygoogle {
-    width: 728px;
-    height: 90px;
+.ads-pc {
+    display:inline-block;
 }
+.ads-mobile {
+    display:none;
+ }
 
 .ad-title-h {
 	flex: 1 1 auto;
 	width: 728px;
 	max-width: 728px;
 	height: 90px;
-	max-height: 90px !important;
+	max-height: 90px;
 	background: rgba(242, 244, 249, 0.9);
 
     display: flex;
@@ -342,6 +344,13 @@ h1, h2, h3, h4, h5, h6 {
 
 /* MOBILE CASES */
 @media screen and (max-width: 767px) {
+    .ads-pc {
+        display:none;
+    }
+    .ads-mobile {
+        display:block;
+     }
+
 	.ad-title-h {
 		min-height: 240px;
 		max-height: auto;

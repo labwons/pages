@@ -19,6 +19,7 @@ from requests import get
 from requests.exceptions import JSONDecodeError, SSLError
 from time import time
 from typing import Dict, Iterable, List
+
 set_option('future.no_silent_downcasting', True)
 
 if "PATH" not in globals():
@@ -52,7 +53,7 @@ INTERVALS: Dict[str, int] = {
 class MarketState(DataFrame):
     _log: List[str] = []
 
-    def __init__(self, debug:bool=True):
+    def __init__(self, debug: bool = True):
         if debug:
             super().__init__()
             return
@@ -74,7 +75,7 @@ class MarketState(DataFrame):
             (~market.index.isin(self.fetchKonexList(date))) &
             (market.index.isin(self.fetchIpoList().index)) &
             (~market['shares'].isna())
-        ]
+            ]
         market = market[market['marketCap'] >= market['marketCap'].median()]
 
         returns = self.fetchReturns(date, market.index)
@@ -164,11 +165,18 @@ class MarketState(DataFrame):
 
         diff = base[base['Y-1']['shares'] != base['D+0']['shares']].index
         fdate = (tdate - timedelta(380)).strftime("%Y%m%d")
-        for ticker in diff:
-            ohlc = get_market_ohlcv_by_date(fromdate=fdate, todate=date, ticker=ticker)
-            for interval in returns.columns:
-                ohlc_copy = ohlc[ohlc.index >= intv[interval]]['종가']
-                returns.loc[ticker, interval] = ret = ohlc_copy.iloc[-1] / ohlc_copy.iloc[0] - 1
+
+        ohlc = concat({
+            ticker: get_market_ohlcv_by_date(fromdate=fdate, todate=date, ticker=ticker)['종가']
+            for ticker in diff
+        }, axis=1)
+
+        objs = {}
+        for interval in returns.columns:
+            ohlc_copy = ohlc[ohlc.index >= intv[interval]]
+            _returns = ohlc_copy.iloc[-1] / ohlc_copy.iloc[0] - 1
+            objs[interval] = _returns
+        returns.update(concat(objs=objs, axis=1))
         return round(100 * returns, 2)
 
 
