@@ -34,7 +34,7 @@
 				<h1 class="title-name">{{ title }}</h1>
 				<span class="title-date">{{ trading_date }}</span>
 			</div>
-			<div class="ads ad-title-h">
+			<div class="ad-title-h">
 				<ins {% for ad in ad_title %}{% for key, val in ad.items() %}{{ key }}="{{ val }}" {% endfor %}{% endfor %}></ins>
 			</div>
 		</section>
@@ -56,7 +56,7 @@
             </div>
         </section>
 		
-		<div class="ads ad-middle-h">
+		<div class="ad-middle-h">
             <ins {% for ad in ad_title %}{% for key, val in ad.items() %}{{ key }}="{{ val }}" {% endfor %}{% endfor %}></ins>
         </div>
 				
