@@ -299,7 +299,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .ad-title-h {
-	flex: 1 1 auto;	
+	flex: 1 1 auto;
+	width: 60%;
 	max-width: 60%;
 	background: rgba(242, 244, 249, 0.9);
 }
