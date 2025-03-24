@@ -300,8 +300,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .ad-title-h {
 	flex: 1 1 auto;
-	width: 60%;
-	max-width: 60%;
+	width: 728px;
+	max-width: 728px;
+	height: 90px;
+	max-height: 90px;
 	background: rgba(242, 244, 249, 0.9);
 }
 
@@ -334,6 +336,7 @@ h1, h2, h3, h4, h5, h6 {
 @media screen and (max-width: 767px) {
 	.ad-title-h {
 		min-height: 240px;
+		width: 100%;
 		max-width: 100%;
 		margin-bottom: 12px;
 	}
