@@ -69,7 +69,7 @@ if __name__ == "__main__":
     CLOCK      = lambda zone: datetime.now(zone)
     LOCAL_HOST = os.getenv('LOCAL_HOST') is None
     LOCAL_ZONE = timezone(timedelta(hours=9))
-    ROUTER     = '/yuho'
+    ROUTER     = ''
 
     if LOCAL_HOST:
         # FOR LOCAL HOST TESTING, EXTERNAL DIRECTORY IS RECOMMENDED AND USED. USING THE SAME

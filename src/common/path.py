@@ -5,10 +5,10 @@ import os, shutil
 class PATH:
     try:
         ROOT = os.path.dirname(__file__)
-        while not ROOT.endswith('yuho'):
+        while not ROOT.endswith('pages'):
             ROOT = os.path.dirname(ROOT)
     except NameError:
-        ROOT = 'https://raw.githubusercontent.com/labwons/yuho/main/'
+        ROOT = 'https://raw.githubusercontent.com/labwons/pages/main/'
 
     try:
         DESKTOP = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
