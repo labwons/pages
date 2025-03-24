@@ -296,13 +296,6 @@ h1, h2, h3, h4, h5, h6 {
     height: auto;
 }
 
-.ads {
-	display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
 .ad-title-h {
 	flex: 1 1 auto;
 	width: 728px;
@@ -312,6 +305,11 @@ h1, h2, h3, h4, h5, h6 {
 	min-height: 80px;
 	max-height: 90px;
 	background: rgba(242, 244, 249, 0.9);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .ad-service-v {
@@ -327,6 +325,11 @@ h1, h2, h3, h4, h5, h6 {
 	height: 100px;
 	margin-top: 40px;
 	background: rgba(242, 244, 249, 0.9);
+
+	display: flex;
+	align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 /* LAPTOP CASES */
