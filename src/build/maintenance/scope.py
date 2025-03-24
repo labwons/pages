@@ -42,10 +42,7 @@ def sitemap(root: str, domain: str, save:str="") -> str:
     if save:
         dom = xml.dom.minidom.parseString(string)
         with open(save, "w", encoding="utf-8") as file:
-            file.write(f'''---
-layout:null
----
-{dom.toprettyxml(indent="  ").replace(
+            file.write(f'''{dom.toprettyxml(indent="  ").replace(
 '<?xml version="1.0" ?>', '<?xml version="1.0" encoding="UTF-8"?>'
 )}''')
     return string
@@ -81,10 +78,7 @@ def rss(root: str, domain:str, save:str="") -> str:
     if save:
         dom = xml.dom.minidom.parseString(string)
         with open(save, "w", encoding="utf-8") as file:
-            file.write(f'''---
-layout:null
----
-{dom.toprettyxml(indent="  ").replace(
+            file.write(f'''{dom.toprettyxml(indent="  ").replace(
 '<?xml version="1.0" ?>', '<?xml version="1.0" encoding="UTF-8"?>'
 )}''')
     return string
