@@ -6,19 +6,19 @@
   |    PC    | 1024px <= width
 --------------------------------------------------------------*/
 /* LAPTOP CASES */
-@media screen and (max-width: 1443px) {
+/* @media screen and (max-width: 1443px) {
 
-}
+}*/
 
 /* TABLET CASES */
-@media screen and (max-width: 1023px) {
+/*@media screen and (max-width: 1023px) {
 
-}
+}*/
 
 /* MOBILE CASES */
-@media screen and (max-width: 767px) {
+/*@media screen and (max-width: 767px) {
 	
-}
+}*/
 
 /*--------------------------------------------------------------
 # General
@@ -292,18 +292,16 @@ h1, h2, h3, h4, h5, h6 {
 # ads
 --------------------------------------------------------------*/
 .adsbygoogle {
-    width: 100%;
-    height: auto;
+    width: 728px;
+    height: 90px;
 }
 
 .ad-title-h {
 	flex: 1 1 auto;
 	width: 728px;
-	min-width: 700px;
 	max-width: 728px;
 	height: 90px;
-	min-height: 80px;
-	max-height: 90px;
+	max-height: 90px !important;
 	background: rgba(242, 244, 249, 0.9);
 
     display: flex;
@@ -346,6 +344,7 @@ h1, h2, h3, h4, h5, h6 {
 @media screen and (max-width: 767px) {
 	.ad-title-h {
 		min-height: 240px;
+		max-height: auto;
 		width: 100%;
 		max-width: 100%;
 		margin-bottom: 12px;
@@ -512,12 +511,144 @@ h1, h2, h3, h4, h5, h6 {
 
 /* LAPTOP CASES */
 @media screen and (max-width: 1443px) {
-
+	#main {
+		padding: 20px 60px;
+		padding-right: calc(50px + var(--scrollbar-width, 0px));
+	}
 }
 
 /* TABLET CASES */
 @media screen and (max-width: 1023px) {
+	#main {
+		padding: 20px 20px;
+	}
 
+	.service-title {
+		flex: 1 0 auto;
+		width: 100%;
+		display: flex;
+		flex-direction: column-reverse;
+		align-items: stretch;
+		justify-content: flex-start;
+		box-sizing: border-box;
+		margin-bottom: 4px;
+	}
+
+	.service-title .title {
+		flex: 0 0 auto;
+		display: flex;
+		flex-direction: row;
+		align-items: stretch;
+		justify-content: flex-start;
+		padding: 0;
+		margin-bottom: 6px;
+	}
+
+	.service-title .title .title-name {
+		margin: 0;
+		margin-right: 4px;
+		font-size: 30px;
+	}
+
+	.service-title .title .title-date {
+		font-size: 18px;
+	}
+
+	.service-section {
+		flex: 1 0 auto;
+		max-width: 100%;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+	}
+
+	.service-section .service {
+		flex: 1 0 auto;
+		max-width: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		gap: 4px;
+	}
+
+	.service-section .service .service-nav {
+		flex: 0 0 auto;
+		max-width: 100%;
+		width: 100%;
+		height: auto;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		justify-content: flex-start;
+		font-size: 12px;
+		gap:4px;
+	}
+
+	.service-section .service .service-nav .service-opt-l {
+		flex: 1 1 auto;
+		max-width: 50%;
+		width: 50%;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 4px;
+		overflow: hidden;
+	}
+
+	.service-section .service .service-nav .service-opt-r {
+		flex: 1 1 auto;
+		max-width: 50%;
+		width: 50%;
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: stretch;
+	}
+
+	.service-section .service .service-app {
+		flex: 1 1 auto;
+		display: flex;
+	}
+
+	.service-section .service .service-app .plot {
+		flex: 1 0 auto;
+	}
+
+	.service-section .service .service-footer {
+		flex: 0 1 auto;
+		max-width: 100%;
+		max-height: unset;
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
+		gap: 8px;
+	}
+	.service-section .service .service-footer .service-legend {
+		flex: 1 1 auto;
+		max-width: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+		align-items:stretch;
+		justify-content:space-between;
+	}
+
+	.service-section .service .service-footer .service-notice {
+		flex: 1 0 auto;
+		max-width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: stretch;
+		font-size: 10px;
+	}
 }
 
 /* MOBILE CASES */
@@ -1029,7 +1160,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* TABLET CASES */
 @media screen and (max-width: 1023px) {
-
+	.map-select {
+		min-width: auto;
+	}
 }
 
 /* MOBILE CASES */
