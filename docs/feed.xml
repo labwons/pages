@@ -1,39 +1,28 @@
 ---
-layout: null
+layout:null
 ---
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0">
   <channel>
     <title>LAB￦ONS</title>
+    <link>https://labwons.com</link>
     <description>SNO￦BALL YOUR ASSET</description>
-    <link>https://labwons.com/</link>
-    <atom:link href="https://labwons.com/feed.xml" rel="self" type="application/rss+xml"/>
     <pubDate>Fri, 26 Jul 2024 12:00:00 +0900</pubDate>
-    <lastBuildDate>Mon, 28 Oct 2024 16:01:12 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 24 Mar 2025 11:03:34 +0900</lastBuildDate>
     <generator>Custom Python Script 1.0</generator>
     <item>
-      <title>시장 지도</title>
-      <description>시장 지도</description>
+      <title>docs</title>
       <author>snob.labwons@gmail.com</author>
-      <pubDate>Mon, 28 Oct 2024 16:01:12 +0900</pubDate>
-      <link>https://labwons.com/</link>
-      <guid isPermaLink="true">https://labwons.com/</guid>
+      <link>https://labwons.com/index.html</link>
+      <description>docs</description>
+      <pubDate>Mon, 24 Mar 2025 11:03:33 +0900</pubDate>
     </item>
     <item>
-      <title>종목 분포</title>
-      <description>종목 분포</description>
+      <title>bubble</title>
       <author>snob.labwons@gmail.com</author>
-      <pubDate>Mon, 28 Oct 2024 16:01:12 +0900</pubDate>
-      <link>https://labwons.com/scatter/</link>
-      <guid isPermaLink="true">https://labwons.com/scatter/</guid>
-    </item>
-    <item>
-      <title>경제 지표</title>
-      <description>경제 지표</description>
-      <author>snob.labwons@gmail.com</author>
-      <pubDate>Fri, 6 Dec 2024 16:28:25 +0900</pubDate>
-      <link>https://labwons.com/macro/</link>
-      <guid isPermaLink="true">https://labwons.com/macro/</guid>
+      <link>https://labwons.com/bubble/index.html</link>
+      <description>bubble</description>
+      <pubDate>Mon, 24 Mar 2025 11:03:33 +0900</pubDate>
     </item>
   </channel>
 </rss>
