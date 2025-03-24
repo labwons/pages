@@ -7,8 +7,14 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-Env
+.idea
 .idea/misc.xml
-.idea/pages.iml
+.idea/yuho.iml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/.gitignore
+.idea/inspectionProfiles
 
 # User-specific stuff
 .idea/**/workspace.xml
@@ -37,7 +43,7 @@
 .idea/**/libraries
 
 # Gradle and Maven with auto-import
-# When using Gradle or Maven with auto-import, you should exclude module files,
+# When using Gradle or Maven with auto-import, you should exclude fetch files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
 # .idea/artifacts
@@ -126,7 +132,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/

@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https:/labwons.com/sitemap.xml
