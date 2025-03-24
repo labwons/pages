@@ -308,7 +308,7 @@ class MarketBaseline(DataFrame):
 
         spec = MarketSpec(update=False)
         group = MarketGroup(update=False)
-        state = MarketState(update=True)
+        state = MarketState(debug=False)
         merge = state.join(spec).join(group)
         if state.log:
             self.log = state.log
@@ -354,7 +354,7 @@ if __name__ == "__main__":
 
     set_option('display.expand_frame_repr', False)
 
-    baseline = MarketBaseline(True)
+    baseline = MarketBaseline(False)
     print(baseline)
     # print(baseline.log)
     # print(baseline.columns)

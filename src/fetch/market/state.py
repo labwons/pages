@@ -6,6 +6,7 @@ from pandas import (
     Index,
     read_html,
     read_json,
+    set_option
 )
 from pykrx.stock import (
     get_exhaustion_rates_of_foreign_investment,
@@ -18,6 +19,7 @@ from requests import get
 from requests.exceptions import JSONDecodeError, SSLError
 from time import time
 from typing import Dict, Iterable, List
+set_option('future.no_silent_downcasting', True)
 
 if "PATH" not in globals():
     try:
@@ -50,12 +52,11 @@ INTERVALS: Dict[str, int] = {
 class MarketState(DataFrame):
     _log: List[str] = []
 
-    def __init__(self, update: bool = True):
-        stime = time()
-        if not update:
-            super().__init__(read_json(PATH.STATE, orient='index'))
-            self.index = self.index.astype(str).str.zfill(6)
+    def __init__(self, debug:bool=True):
+        if debug:
+            super().__init__()
             return
+        stime = time()
 
         date = get_nearest_business_day_in_a_week()
         self.log = f'RUN [Market State Fetch]'
@@ -148,15 +149,14 @@ class MarketState(DataFrame):
     @classmethod
     def fetchReturns(cls, date: str, tickers: Iterable = None) -> DataFrame:
         tdate = datetime.strptime(date, "%Y%m%d")
-        intv = {key: tdate - timedelta(val) for key, val in INTERVALS.items()}
+        intv, objs = {}, {}
+        for key, val in INTERVALS.items():
+            fdate = (tdate - timedelta(val)).strftime("%Y%m%d")
+            intv[key] = dt = get_nearest_business_day_in_a_week(fdate)
+            objs[key] = cls.fetchMarketCap(dt)
 
-        objs = {
-            key: cls.fetchMarketCap(val.strftime("%Y%m%d"))
-            for key, val in intv.items()
-        }
         base = concat(objs, axis=1)
         base = base[base.index.isin(tickers)]
-
         returns = concat({
             dt: base['D+0']['close'] / base[dt]['close'] - 1 for dt in objs
         }, axis=1)
@@ -168,12 +168,12 @@ class MarketState(DataFrame):
             ohlc = get_market_ohlcv_by_date(fromdate=fdate, todate=date, ticker=ticker)
             for interval in returns.columns:
                 ohlc_copy = ohlc[ohlc.index >= intv[interval]]['종가']
-                returns.loc[ticker, interval] = ohlc_copy.iloc[-1] / ohlc_copy.iloc[0] - 1
+                returns.loc[ticker, interval] = ret = ohlc_copy.iloc[-1] / ohlc_copy.iloc[0] - 1
         return round(100 * returns, 2)
 
 
 if __name__ == "__main__":
-    marketState = MarketState(True)
-    print(marketState)
-    print(marketState.log)
+    marketState = MarketState()
+    # print(marketState)
+    # print(marketState.log)
 

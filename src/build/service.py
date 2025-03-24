@@ -77,6 +77,7 @@ if __name__ == "__main__":
         # LOCAL HOSTING DIRECTORY WITH DEPLOYMENT DIRECTORY, DEPLOYMENT MIGHT BE CORRUPTED.
         # IF YOU WANT TO USE DIFFERENT PATH FOR LOCAL HOST TESTING, BELOW {ROOT} VARIABLE ARE
         # TO BE CHANGED.
+        ADSENSE = False
         BASE_DIR = os.path.join(PATH.DOWNLOADS, 'labwons')
         PATH.copytree(PATH.DOCS, BASE_DIR)
 
@@ -94,7 +95,7 @@ if __name__ == "__main__":
             sleep(30)
             now = CLOCK(LOCAL_ZONE)
 
-        if now.hour < 15 or (now.hour <= 15 and now.minute <= 30) :
+        if now.hour < 15 or (now.hour == 15 and now.minute <= 30) :
             BASELINE = False
 
     # ---------------------------------------------------------------------------------------
