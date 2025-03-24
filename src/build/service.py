@@ -66,6 +66,7 @@ if __name__ == "__main__":
 
     ADSENSE    = True
     BASE_DIR   = PATH.DOCS
+    BASELINE   = True
     CLOCK      = lambda zone: datetime.now(zone)
     LOCAL_HOST = os.getenv('LOCAL_HOST') is None
     LOCAL_ZONE = timezone(timedelta(hours=9))
@@ -89,9 +90,12 @@ if __name__ == "__main__":
         # ON GITHUB ACTIONS, IF SCHEDULED CRON TIME IS ACTIVATED BEFORE THE MARKET IS CLOSED,
         # WHICH ALMOST NEVER HAPPENS, BUILD AND DEPLOY WILL HOLD UNTIL THE MARKET IS CLOSED.
         now = CLOCK(LOCAL_ZONE)
-        while now.hour == 3 and now.minute < 31:
+        while now.hour == 15 and now.minute < 31:
             sleep(30)
             now = CLOCK(LOCAL_ZONE)
+
+        if now.hour < 15 or (now.hour <= 15 and now.minute <= 30) :
+            BASELINE = False
 
     # ---------------------------------------------------------------------------------------
     # UPDATE PORTFOLIO
@@ -104,7 +108,7 @@ if __name__ == "__main__":
     context = ["DETAILS"]
 
     try:
-        baseline = MarketBaseline(update=True)
+        baseline = MarketBaseline(update=BASELINE)
         if not PATH.BASE.startswith('http'):
             with open(PATH.BASE, 'w') as f:
                 f.write(baseline.to_json(orient='index').replace("nan", "null"))
