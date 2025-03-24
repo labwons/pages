@@ -306,8 +306,10 @@ h1, h2, h3, h4, h5, h6 {
 .ad-title-h {
 	flex: 1 1 auto;
 	width: 728px;
+	min-width: 700px;
 	max-width: 728px;
 	height: 90px;
+	min-height: 80px;
 	max-height: 90px;
 	background: rgba(242, 244, 249, 0.9);
 }
