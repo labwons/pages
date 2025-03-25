@@ -291,26 +291,31 @@ h1, h2, h3, h4, h5, h6 {
 /*--------------------------------------------------------------
 # ads
 --------------------------------------------------------------*/
-.ads-pc {
-    display:inline-block;
-}
-.ads-mobile {
-    display:none;
- }
-
 .ad-title-h {
 	flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    text-align: center;
+}
+
+.ad-title-h .ads-pc {
+    display: block;
 	width: 728px;
 	max-width: 728px;
 	height: 90px;
 	max-height: 90px;
 	background: rgba(242, 244, 249, 0.9);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
 }
+
+.ad-title-h .ads-mobile {
+    display:none;
+	min-height: 240px;
+	max-height: auto;
+	width: 100%;
+	max-width: 100%;
+	background: rgba(242, 244, 249, 0.9);
+ }
 
 .ad-service-v {
     flex: 0 0 15%;
@@ -319,7 +324,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .ad-middle-h {
-	flex: 1 1 auto;	
+	flex: 1 1 auto;
 	max-width: 100%;
 	max-height: 100px;
 	height: 100px;
@@ -352,10 +357,6 @@ h1, h2, h3, h4, h5, h6 {
      }
 
 	.ad-title-h {
-		min-height: 240px;
-		max-height: auto;
-		width: 100%;
-		max-width: 100%;
 		margin-bottom: 12px;
 	}
 	
