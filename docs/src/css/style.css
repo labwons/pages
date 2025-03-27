@@ -296,7 +296,6 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-	background: rgba(242, 244, 249, 0.9);
 }
 
 .ad-middle {
@@ -306,6 +305,7 @@ h1, h2, h3, h4, h5, h6 {
 	align-items: center;
     justify-content: center;
 	background: rgba(242, 244, 249, 0.9);
+	margin-top: 40px;
 }
 
 .ads-fixed-horizontal {
@@ -313,6 +313,7 @@ h1, h2, h3, h4, h5, h6 {
 	max-width: 728px;
 	height: 90px;
 	max-height: 90px;
+	background: rgba(242, 244, 249, 0.9);
 }
 
 .ads-responsive {
@@ -323,7 +324,7 @@ h1, h2, h3, h4, h5, h6 {
 	max-width: 100%;
 }
  
- .ads-desktop {
+.ads-desktop {
 	display:block;
 }
  
