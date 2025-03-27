@@ -296,7 +296,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    text-align: center;
+	background: rgba(242, 244, 249, 0.9);
 }
 
 .ad-middle {
@@ -305,6 +305,7 @@ h1, h2, h3, h4, h5, h6 {
 	display: flex;
 	align-items: center;
     justify-content: center;
+	background: rgba(242, 244, 249, 0.9);
 }
 
 .ads-fixed-horizontal {
@@ -312,16 +313,14 @@ h1, h2, h3, h4, h5, h6 {
 	max-width: 728px;
 	height: 90px;
 	max-height: 90px;
-	background: rgba(242, 244, 249, 0.9);
 }
 
 .ads-responsive {
-	min-height: 90px;
+	display: block;
+	min-height: 240px;
 	height: auto;
-	max-height: auto;
-	width: 100%;
+	min-width: 728px;
 	max-width: 100%;
-	background: rgba(242, 244, 249, 0.9);
 }
  
  .ads-desktop {
@@ -358,8 +357,12 @@ h1, h2, h3, h4, h5, h6 {
 	}
 	
 	.ad-middle {
-		max-height: auto;
+		max-height: none;
 		min-height: 240px;
+	}
+	
+	.ads-responsive {
+		min-width: 320px;
 	}
 }
 
