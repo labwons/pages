@@ -299,7 +299,15 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
 }
 
-.ad-title .ads-fixed {
+.ad-middle {
+	flex: 1 1 auto;
+	width: 100%;
+	display: flex;
+	align-items: center;
+    justify-content: center;
+}
+
+.ads-fixed-horizontal {
 	width: 728px;
 	max-width: 728px;
 	height: 90px;
@@ -307,31 +315,23 @@ h1, h2, h3, h4, h5, h6 {
 	background: rgba(242, 244, 249, 0.9);
 }
 
-.ad-title .ads-responsive {
-	min-height: 240px;
+.ads-responsive {
+	min-height: 90px;
 	height: auto;
 	max-height: auto;
 	width: 100%;
 	max-width: 100%;
 	background: rgba(242, 244, 249, 0.9);
- }
+}
  
- .ad-title .ads-desktop {
+ .ads-desktop {
 	display:block;
 }
  
- .ad-title .ads-mobile {
-	 display: none;
- }
-
-.ad-middle {
-	flex: 1 1 auto;
-	width: 100%;
-	display: flex;
-	align-items: center;
-    justify-content: center;
-    text-align: center;
+ .ads-mobile {
+	display: none;
 }
+
 
 /* LAPTOP CASES */
 @media screen and (max-width: 1443px) {
@@ -345,13 +345,13 @@ h1, h2, h3, h4, h5, h6 {
 
 /* MOBILE CASES */
 @media screen and (max-width: 767px) {
-    .ad-title .ads-desktop {
+    .ads-desktop {
         display:none;
     }
 	
-	 .ad-title .ads-mobile {
-		 display: block;
-	 }
+	.ads-mobile {
+		display: block;
+	}
 
 	.ad-title {
 		margin-bottom: 12px;
