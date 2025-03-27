@@ -48,17 +48,25 @@ if __name__ == "__main__":
             "async src": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
             "pos": "top"
         }],
-        "ad_tittle_h_pc": {
+        "ad_title_fixed": {
             "class": "adsbygoogle",
             "style": "display:inline-block;width:728px;height:90px;",
             "data-ad-client": config.ADSENSE_ID,
             "data-ad-slot": "8415406752",
         },
-        "ad_tittle_h_mb": {
+        "ad_title_responsive": {
             "class": "adsbygoogle",
             "style": "display:block",
             "data-ad-client": config.ADSENSE_ID,
             "data-ad-slot": "9007042504",
+            "data-ad-format": "auto",
+            "data-full-width-responsive": "true",
+        },
+        "ad_middle_responsive": {
+            "class": "adsbygoogle",
+            "style": "display:block",
+            "data-ad-client": config.ADSENSE_ID,
+            "data-ad-slot": "9705057757",
             "data-ad-format": "auto",
             "data-full-width-responsive": "true",
         },

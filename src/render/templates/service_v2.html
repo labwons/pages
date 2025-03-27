@@ -34,9 +34,9 @@
 				<h1 class="title-name">{{ title }}</h1>
 				<span class="title-date">{{ trading_date }}</span>
 			</div>
-			<div class="ad-title-h">
-				<div class="ads-pc"><ins {% for key, val in ad_tittle_h_pc.items() %}{{ key }}="{{ val }}" {% endfor %}></ins></div>
-				<div class="ads-mobile"><ins {% for key, val in ad_tittle_h_mb.items() %}{{ key }}="{{ val }}" {% endfor %}></ins></div>
+			<div class="ad-title">
+				<div class="ads-fixed"><ins {% for key, val in ad_title_fixed.items() %}{{ key }}="{{ val }}" {% endfor %}></ins></div>
+				<div class="ads-responsive ads-mobile"><ins {% for key, val in ad_title_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins></div>
 			</div>
 		</section>
 		
@@ -57,9 +57,8 @@
             </div>
         </section>
 		
-		<div class="ad-middle-h">
-			<div class="ads-pc"><ins {% for key, val in ad_tittle_h_pc.items() %}{{ key }}="{{ val }}" {% endfor %}></ins></div>
-			<div class="ads-mobile"><ins {% for key, val in ad_tittle_h_mb.items() %}{{ key }}="{{ val }}" {% endfor %}></ins></div>
+		<div class="ad-middle">
+			<div class="ads-responsive"><ins {% for key, val in ad_middle_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins></div>
         </div>
 				
 		<section class="faq">			
