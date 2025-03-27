@@ -66,7 +66,7 @@ if __name__ == "__main__":
             "class": "adsbygoogle",
             "style": "display:block",
             "data-ad-client": config.ADSENSE_ID,
-            "data-ad-slot": "9007042504",
+            "data-ad-slot": "9705057757",
             "data-ad-format": "auto",
             "data-full-width-responsive": "true",
         },
