@@ -296,6 +296,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+	width: 100%;
 	min-height: 0px;
 	height: auto;
 	margin-bottom: 12px;
@@ -333,17 +334,27 @@ h1, h2, h3, h4, h5, h6 {
  
 /* LAPTOP */
 @media(min-width: 1024px) {
+	.ad-title {
+		width: 468px !important;
+		height: 60px !important;
+	}
+	
 	.ads-resp-h-top {
-		height: 60px;
-		width: 468px;
+		width: 468px !important;
+		height: 60px !important;		
 	}
 }
 
 /* NOTEBOOK */
 @media(min-width: 1440px) {
+	.ad-title {
+		width: 728px !important;
+		height: 90px !important;
+	}
+	
 	.ads-resp-h-top {
-		height: 90px;
-		width: 728px;
+		width: 728px !important;
+		height: 90px !important;		
 	}
 }
 
