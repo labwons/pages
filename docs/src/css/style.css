@@ -298,13 +298,13 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: flex-end;
 	min-height: 0px;
 	height: auto;
-	
+	margin-bottom: 12px;
 	background: rgba(242, 244, 249, 0.9);
 }
 
 .ads-resp-h-top {
-	height: 90px;
-	width: 728px;
+	height: auto;
+	width: 100%;
 }
 
 .ad-middle {
@@ -331,29 +331,23 @@ h1, h2, h3, h4, h5, h6 {
 	min-height: 240px;	
 }
  
-
-/* LAPTOP CASES */
-@media screen and (max-width: 1443px) {
-
-}
-
-/* TABLET CASES */
-@media screen and (max-width: 1023px) {
-
-}
-
-/* MOBILE CASES */
-@media screen and (max-width: 767px) {
-    .ad-title {
-		margin-bottom: 12px;
-	}
-	
+/* LAPTOP */
+@media(min-width: 1024px) {
 	.ads-resp-h-top {
-		height: auto !important;
-		width: 100% !important;
+		height: 60px;
+		width: 468px;
 	}
-	
 }
+
+/* NOTEBOOK */
+@media(min-width: 1440px) {
+	.ads-resp-h-top {
+		height: 90px;
+		width: 728px;
+	}
+}
+
+
 
 /*--------------------------------------------------------------
 # main
