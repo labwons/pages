@@ -35,16 +35,19 @@
 				<span class="title-date">{{ trading_date }}</span>
 			</div>
 			<div class="ad-title">
+				{% if ad_title_responsive %}
 				<div class="ads-resp-h-top">
-					{% if ad_title_responsive %}
 					<ins {% for key, val in ad_title_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
-					<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>{% endif %}
 				</div>
+				{% endif %}
+				{% if ad_title_fixed %}
 				<div class="ads-fixed-h-top">
-					{% if ad_title_fixed %}
 					<ins {% for key, val in ad_title_fixed.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
-					<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>{% endif %}
 				</div>
+				{% endif %}
+				{% if ad_title_fixed or ad_title_responsive %}
+				<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+				{% endif %}
 			</div>
 		</section>
 		
@@ -64,13 +67,14 @@
 				</div>
             </div>
         </section>
-		{% if ad_middle_responsive %}
 		<div class="ad-middle">
+			{% if ad_middle_responsive %}
 			<div class="ads-resp-h-mid">
 				<ins {% for key, val in ad_middle_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
-				<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-			</div>			
-        </div>{% endif %}		
+			</div>
+			<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+			{% endif %}
+        </div>
 				
 		<section class="faq">			
 			
