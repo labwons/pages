@@ -294,7 +294,7 @@ h1, h2, h3, h4, h5, h6 {
 .ad-title {
 	flex: 1 0 auto;
 	width: 100%;
-	height: 250px;
+	height: auto;
 	
     display: flex;
 	flex-direction: column;
@@ -310,7 +310,7 @@ h1, h2, h3, h4, h5, h6 {
 .ad-middle {
 	flex: 1 1 auto;
 	width: 100%;
-	height: 250px;
+	height: auto;
 
 	display: flex;
 	flex-direction: column;
@@ -330,6 +330,27 @@ h1, h2, h3, h4, h5, h6 {
 .ads-resp-h-mid {
 	flex: 1 1 auto;
 	width: 50%;	
+}
+
+/* LAPTOP CASES */
+/* @media screen and (max-width: 1443px) {
+
+}*/
+
+/* TABLET CASES */
+/*@media screen and (max-width: 1023px) {
+
+}*/
+
+/* MOBILE CASES */
+@media screen and (max-width: 767px) {
+	.ads-resp-h-top {
+		width: 100%;
+	}
+
+	.ads-resp-h-mid {
+		width: 100%;	
+	}
 }
  
 
