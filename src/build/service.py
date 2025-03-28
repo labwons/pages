@@ -79,7 +79,7 @@ if __name__ == "__main__":
     PRINT_DATA('display.expand_frame_repr', False)
 
     ADSENSE    = True
-    BASE_DIR   = PATH.DOCS
+    BASE_DIR = PATH.DOCS
     BASELINE   = True
     CLOCK      = lambda zone: datetime.now(zone)
     LOCAL_HOST = os.getenv('LOCAL_HOST') is None
@@ -109,7 +109,7 @@ if __name__ == "__main__":
             sleep(30)
             now = CLOCK(LOCAL_ZONE)
 
-        if now.hour < 15 or (now.hour == 15 and now.minute <= 30) :
+        if now.hour < 15:
             BASELINE = False
 
     # ---------------------------------------------------------------------------------------
