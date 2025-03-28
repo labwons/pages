@@ -69,9 +69,9 @@
         </section>
 		<div class="ad-middle">
 			{% if ad_middle_responsive %}
-			<div class="ads-resp-h-mid">
-				<ins {% for key, val in ad_middle_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
-			</div>
+			<!-- <div class="ads-resp-h-mid"> -->
+			<ins {% for key, val in ad_middle_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
+			<!-- </div> -->
 			<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 			{% endif %}
         </div>
