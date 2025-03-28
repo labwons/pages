@@ -62,7 +62,7 @@ if __name__ == "__main__":
             "data-ad-format": "auto",
         },
         "ad_middle_responsive": {
-            "class": "adsbygoogle",
+            "class": "adsbygoogle ads-resp-h-mid",
             "style": "display:block",
             "data-ad-client": config.ADSENSE_ID,
             "data-ad-slot": "9705057757",
