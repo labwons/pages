@@ -298,20 +298,13 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: flex-end;
 	min-height: 0px;
 	height: auto;
-}
-
-.ad-title .ads-fixed-h-top {
-	display: block;
-	width: 728px;
-	height: 90px;
+	
 	background: rgba(242, 244, 249, 0.9);
 }
 
-.ad-title .ads-resp-h-top {
-	display: block;
+.ads-resp-h-top {
 	height: 90px;
 	width: 728px;
-	background: rgba(242, 244, 249, 0.9);
 }
 
 .ad-middle {
@@ -355,16 +348,9 @@ h1, h2, h3, h4, h5, h6 {
 		margin-bottom: 12px;
 	}
 	
-	.ad-title .ads-fixed-h-top {
-		width: auto;
-		height: auto;
-        display:none;
-    }
-	
-	.ad-title .ads-resp-h-top {
-		width: 100%;
-		height: auto;
-		display: block;
+	.ads-resp-h-top {
+		height: auto !important;
+		width: 100% !important;
 	}
 	
 }
