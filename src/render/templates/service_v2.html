@@ -28,17 +28,17 @@
     </header>
 
     <main id="main">
+	
+		<section class="ad-title">
+			{% if ad_title_responsive %}
+			<ins {% for key, val in ad_title_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
+			{% endif %}
+        </section>
 		
 		<section class="service-title">
 			<div class="title">
 				<h1 class="title-name">{{ title }}</h1>
 				<span class="title-date">{{ trading_date }}</span>
-			</div>
-			<div class="ad-title">
-				{% if ad_title_responsive %}
-				<ins {% for key, val in ad_title_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
-				{% endif %}
-
 			</div>
 		</section>
 		
@@ -58,12 +58,10 @@
 				</div>
             </div>
         </section>
+		
 		<section class="ad-middle">
 			{% if ad_middle_responsive %}
-			<!-- <div class="ads-resp-h-mid"> -->
 			<ins {% for key, val in ad_middle_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
-			<!-- </div> -->
-			
 			{% endif %}
         </section>
 				
