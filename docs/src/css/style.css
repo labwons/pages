@@ -298,18 +298,8 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: flex-end;
 }
 
-.ad-middle {
-	flex: 1 1 auto;
-	width: 100%;
-	min-height: 240px;
-	display: flex;
-	align-items: center;
-    justify-content: center;
-	background: rgba(242, 244, 249, 0.9);
-	margin-top: 40px;
-}
-
-.ads-fixed-horizontal {
+.ad-title .ads-fixed-h-top {
+	display: block;
 	width: 728px;
 	max-width: 728px;
 	height: 90px;
@@ -317,22 +307,32 @@ h1, h2, h3, h4, h5, h6 {
 	background: rgba(242, 244, 249, 0.9);
 }
 
-.ads-responsive {
-	display: block;
-	min-height: 240px;
+.ad-title .ads-resp-h-top {
+	display: none;
+	min-height: 260px;
 	height: auto;
 	min-width: 728px;
-	max-width: 100%;
-}
- 
-.ads-desktop {
-	display:block;
-}
- 
- .ads-mobile {
-	display: none;
 }
 
+.ad-middle {
+	flex: 1 1 auto;
+	width: 100%;
+	min-height: 260px;
+	display: flex;
+	align-items: center;
+    justify-content: center;
+	position:relative;
+	background: rgba(242, 244, 249, 0.9);
+	margin-top: 40px;
+	padding: 10px 0;
+}
+
+.ad-middle .ads-resp-h-mid {
+	display: block;
+	width: 100%;
+	min-height: 240px;	
+}
+ 
 
 /* LAPTOP CASES */
 @media screen and (max-width: 1443px) {
@@ -346,24 +346,20 @@ h1, h2, h3, h4, h5, h6 {
 
 /* MOBILE CASES */
 @media screen and (max-width: 767px) {
-    .ads-desktop {
+    .ad-title {
+		margin-bottom: 12px;
+	}
+	
+	.ad-title .ads-fixed-h-top {
         display:none;
     }
 	
-	.ads-mobile {
+	.ad-title .ads-resp-h-top {
 		display: block;
-	}
-
-	.ad-title {
-		margin-bottom: 12px;
 	}
 	
 	.ad-middle {
 		max-height: none;
-	}
-	
-	.ads-responsive {
-		min-width: 320px;
 	}
 }
 
