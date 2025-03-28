@@ -37,6 +37,7 @@
 			<div class="ad-title">
 				<div class="ads-resp-h-top"><ins {% for key, val in ad_title_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins></div>
 				<div class="ads-fixed-h-top"><ins {% for key, val in ad_title_fixed.items() %}{{ key }}="{{ val }}" {% endfor %}></ins></div>				
+				{% if ad_title_responsive or ad_title_fixed %}<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>{% endif %}
 			</div>
 		</section>
 		
@@ -59,6 +60,7 @@
 		
 		<div class="ad-middle">
 			<div class="ads-resp-h-mid"><ins {% for key, val in ad_middle_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins></div>
+			{% if ad_middle_responsive %}<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>{% endif %}
         </div>
 				
 		<section class="faq">			
@@ -150,7 +152,6 @@
     <script{% for key, value in _script.items() %} {% if key != "pos" %}{{ key }}="{{ value }}"{% endif %}{% endfor %}></script>{% endfor %}
     <script>
 		document.addEventListener("selectstart", function(e) {e.preventDefault();});
-		$(window).on('load', function(){(adsbygoogle = window.adsbygoogle || []).push({});})
 	</script>
 </body>
 </html>

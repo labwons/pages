@@ -330,7 +330,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .ad-middle .ads-resp-h-mid {
 	flex: 1 1 auto;
-	display: block;
+	display: flex;
+	align-items: center;
+    justify-content: center;
 	width: 100%;
 	min-height: 240px;	
 }
