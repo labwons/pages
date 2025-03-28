@@ -36,9 +36,7 @@
 			</div>
 			<div class="ad-title">
 				{% if ad_title_responsive %}
-				<div class="ads-resp-h-top">
-					<ins {% for key, val in ad_title_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
-				</div>
+				<ins {% for key, val in ad_title_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
 				{% endif %}
 
 			</div>

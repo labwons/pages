@@ -55,7 +55,7 @@ if __name__ == "__main__":
             "data-ad-slot": "8415406752",
         },
         "ad_title_responsive": {
-            "class": "adsbygoogle",
+            "class": "adsbygoogle ads-resp-h-top",
             "style": "display:block",
             "data-ad-client": config.ADSENSE_ID,
             "data-ad-slot": "9007042504",
