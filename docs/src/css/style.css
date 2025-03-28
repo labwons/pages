@@ -308,9 +308,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .ad-title .ads-resp-h-top {
-	display: none;
-	height: auto;
-	width: auto;
+	display: block;
+	height: 90px;
+	width: 728px;
+	background: rgba(242, 244, 249, 0.9);
 }
 
 .ad-middle {
@@ -362,6 +363,7 @@ h1, h2, h3, h4, h5, h6 {
 	
 	.ad-title .ads-resp-h-top {
 		width: 100%;
+		height: auto;
 		display: block;
 	}
 	
