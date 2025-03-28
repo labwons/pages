@@ -56,7 +56,7 @@ if __name__ == "__main__":
         },
         "ad_title_responsive": {
             "class": "adsbygoogle ads-resp-h-top",
-            "style": "display:block; height: 90px;",
+            "style": "display:block;",
             "data-ad-client": config.ADSENSE_ID,
             "data-ad-slot": "9007042504",
             "data-ad-format": "auto",
