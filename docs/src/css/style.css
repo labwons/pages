@@ -303,11 +303,6 @@ h1, h2, h3, h4, h5, h6 {
 	background: rgba(242, 244, 249, 0.9);
 }
 
-.ads-resp-h-top {
-	height: auto;
-	width: 100%;
-}
-
 .ad-middle {
 	flex: 1 1 auto;
 	width: 100%;
@@ -323,11 +318,13 @@ h1, h2, h3, h4, h5, h6 {
 	padding: 10px 0;
 }
 
-.ad-middle .ads-resp-h-mid {
+.ads-resp-h-top {
+	height: auto;
+	width: 100%;
+}
+
+.ads-resp-h-mid {
 	flex: 1 1 auto;
-	display: flex;
-	align-items: center;
-    justify-content: center;
 	width: 100%;
 	min-height: 240px;	
 }
