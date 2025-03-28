@@ -326,7 +326,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .ads-resp-h-mid {
 	flex: 1 1 auto;
-	width: 100%;
+	width: 50%;
 	min-height: 240px;	
 }
  
