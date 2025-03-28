@@ -60,6 +60,7 @@ if __name__ == "__main__":
             "data-ad-client": config.ADSENSE_ID,
             "data-ad-slot": "9007042504",
             "data-ad-format": "auto",
+            "data-full-width-responsive": "true",
         },
         "ad_middle_responsive": {
             "class": "adsbygoogle ads-resp-h-mid",
