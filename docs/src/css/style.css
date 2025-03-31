@@ -602,7 +602,7 @@ h1, h2, h3, h4, h5, h6 {
 		max-width: 100%;
 		width: 100%;
 		display: flex;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		flex-direction: column;
 		justify-content: space-between;
 		align-items: stretch;
@@ -743,7 +743,7 @@ h1, h2, h3, h4, h5, h6 {
 		max-width: 100%;
 		width: 100%;
 		display: flex;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		flex-direction: column;
 		justify-content: space-between;
 		align-items: stretch;
