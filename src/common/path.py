@@ -16,11 +16,10 @@ class PATH:
     except KeyError:
         DESKTOP = DOWNLOADS = ROOT
 
-    BASE   = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
-    GROUP  = os.path.join(ROOT, r'src/fetch/market/json/group.json')
-    INDEX  = os.path.join(ROOT, r'src/fetch/market/json/index.json')
-    SPEC   = os.path.join(ROOT, r'src/fetch/market/json/spec.json')
-    STATE  = os.path.join(ROOT, r'src/fetch/market/json/state.json')
+    BASE      = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
+    GROUP     = os.path.join(ROOT, r'src/fetch/market/json/group.json')
+    SPEC      = os.path.join(ROOT, r'src/fetch/market/json/spec.json')
+    PORTFOLIO = os.path.join(ROOT, r'src/fetch/stock/json/portfolio.json')
 
     DOCS   = os.path.join(ROOT, r'docs')
 

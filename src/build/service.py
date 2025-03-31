@@ -16,6 +16,7 @@ if __name__ == "__main__":
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
         from .service.marketmap import MarketMap
+        from .service.portfolio import Portfolio
         from .maintenance.scope import rss, sitemap
     except ImportError:
         from src.common.path import PATH
@@ -28,6 +29,7 @@ if __name__ == "__main__":
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble
         from src.build.service.marketmap import MarketMap
+        from src.build.service.portfolio import Portfolio
         from src.build.maintenance.scope import rss, sitemap
     from datetime import datetime, timezone, timedelta
     from json import dumps
@@ -48,12 +50,6 @@ if __name__ == "__main__":
             "async src": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
             "pos": "top"
         }],
-        "ad_title_fixed": {
-            "class": "adsbygoogle",
-            "style": "display:inline-block;width:728px;height:90px;",
-            "data-ad-client": config.ADSENSE_ID,
-            "data-ad-slot": "8415406752",
-        },
         "ad_title_responsive": {
             "class": "adsbygoogle ads-resp-h-top",
             "style": "display:block;",
@@ -113,11 +109,6 @@ if __name__ == "__main__":
             BASELINE = False
 
     # ---------------------------------------------------------------------------------------
-    # UPDATE PORTFOLIO
-    # ---------------------------------------------------------------------------------------
-
-
-    # ---------------------------------------------------------------------------------------
     # UPDATE BASELINE
     # ---------------------------------------------------------------------------------------
     context = ["DETAILS"]
@@ -138,6 +129,10 @@ if __name__ == "__main__":
     if not isinstance(TRADING_DATE, str):
         TRADING_DATE = f"{datetime_as_string(TRADING_DATE, unit='D').replace('-', '/')}"
 
+    # ---------------------------------------------------------------------------------------
+    # UPDATE PORTFOLIO
+    # ---------------------------------------------------------------------------------------
+    portfolio = Portfolio(baseline)
 
     # ---------------------------------------------------------------------------------------
     # BUILD MARKET MAP

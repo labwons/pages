@@ -52,7 +52,7 @@ class html:
 
     def __init__(self, **kwargs):
         self.src = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
-                   .get_template('service_v2.html') \
+                   .get_template('service.html') \
                    .render(**kwargs)
         return
 
