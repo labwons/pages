@@ -1,9 +1,9 @@
 try:
     from ..common.path import PATH
-    from ..build.service.portfolio import ONSITE
+    from ..build.service.portfolio import MY_PORTFOLIO
 except ImportError:
     from src.common.path import PATH
-    from src.build.service.portfolio import ONSITE
+    from src.build.service.portfolio import MY_PORTFOLIO
 from jinja2 import Environment, FileSystemLoader
 from typing import Dict, List, Union
 import csscompressor, jsmin, os
@@ -114,8 +114,8 @@ class templateKeys(dict):
             for sub_content in os.listdir(os.path.join(PATH.DOCS, content)):
                 if not '.' in sub_content and sub_content != "src":
                     name = sub_content
-                    if name in ONSITE:
-                        name = ONSITE[name]["name"]
+                    if name in MY_PORTFOLIO:
+                        name = MY_PORTFOLIO[name]["name"]
                     sub.append({'href': f'/{content}/{sub_content}', 'content': name})
             nav[-1].update({'sub': sub})
         return nav

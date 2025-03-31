@@ -132,7 +132,11 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE PORTFOLIO
     # ---------------------------------------------------------------------------------------
-    portfolio = Portfolio(baseline)
+    try:
+        portfolio = Portfolio(baseline)
+        context += [f'- [SUCCESS] Deploy Portfolio', 'log', '']
+    except Exception as error:
+        context += [f'- [FAILED] Deploy Portfolio',f'  : {error}', '']
 
     # ---------------------------------------------------------------------------------------
     # BUILD MARKET MAP

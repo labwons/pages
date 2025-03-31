@@ -7,7 +7,7 @@ from numpy import datetime_as_string
 from pandas import concat, read_json, DataFrame, MultiIndex
 
 
-PORTFOLIO_HISTORY = {
+MY_PORTFOLIO = {
     "251970": {"start": "2025-03-28", "name": "펌텍코리아"},
     "021240": {"start": "2025-03-28", "name": "코웨이"},
 }
@@ -33,6 +33,8 @@ class Portfolio(DataFrame):
                 # CHECK THE END-DATE DATA IN PORTFOLIO HISTORY.
                 # IF THE DATA IS NOT EXIST, APPEND THE DATA AND CONTINUE THE LOOP
                 history = portfolio.loc[[ticker]]
+
+                continue
 
 
             stock.columns = [(key, baseline_date) for key in stock.columns]
