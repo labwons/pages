@@ -208,7 +208,12 @@ function setBubble(x, y, sector) {
 
 $(document).ready(function(){
 
-
+	if (isTablet) {
+		$('.service-opt-r').css({
+			'flex-wrap':'nowrap',
+			'flex-direction':'row',
+		});
+	}
     setOption('.bubble-x', srcIndicatorOpt, 'D-1');
     setOption('.bubble-y', srcIndicatorOpt, 'Y-1');
 	setOption('.bubble-sectors', srcSectors, "ALL");
