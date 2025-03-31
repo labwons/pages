@@ -133,7 +133,7 @@ if __name__ == "__main__":
     # UPDATE PORTFOLIO
     # ---------------------------------------------------------------------------------------
     try:
-        portfolio = Portfolio(baseline)
+        portfolio = Portfolio(baseline, TRADING_DATE)
         context += [f'- [SUCCESS] Deploy Portfolio', 'log', '']
     except Exception as error:
         context += [f'- [FAILED] Deploy Portfolio',f'  : {error}', '']
