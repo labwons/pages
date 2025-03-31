@@ -1238,8 +1238,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* LAPTOP CASES */
-@media screen and (max-width: 1443px) {
-
+@media screen and (max-width: 1443px) {	
+	.bubble-searchbar {
+		min-width: none;
+	}
 }
 
 /* TABLET CASES */
@@ -1258,6 +1260,7 @@ h1, h2, h3, h4, h5, h6 {
 		text-overflow: ellipsis;
 		overflow: hidden;
 	}	
+	
 		
 	.bubble-searchbar {
 		width: auto !important;

@@ -79,7 +79,7 @@ if __name__ == "__main__":
     PRINT_DATA('display.expand_frame_repr', False)
 
     ADSENSE    = True
-    BASE_DIR = PATH.DOCS
+    BASE_DIR   = PATH.DOCS
     BASELINE   = True
     CLOCK      = lambda zone: datetime.now(zone)
     LOCAL_HOST = os.getenv('LOCAL_HOST') is None
