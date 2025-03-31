@@ -1229,7 +1229,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .bubble-sectors {
-	flex: 1 1 auto;
+	flex: 0 1 auto;
 	min-width: 120px;
 }
 
@@ -1239,6 +1239,11 @@ h1, h2, h3, h4, h5, h6 {
 
 /* LAPTOP CASES */
 @media screen and (max-width: 1443px) {	
+	.bubble-sectors {
+		flex: 0 1 auto;
+		min-width: none;
+	}
+	
 	.bubble-searchbar {
 		min-width: none;
 	}

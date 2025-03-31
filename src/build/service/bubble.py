@@ -29,10 +29,11 @@ class MarketBubble(DataFrame):
         self.meta = baseline.meta
 
         super().__init__(baseline)
-        self['size'] = round(normalize(self['marketCap'], 7, 100), 4)
+        self['size'] = self['marketCap'] / 100000000
         self['meta'] = self['name'] + '(' + self.index + ')<br>' \
                      + '시가총액: ' + self['size'].apply(self._format_cap) + '원<br>' \
                      + '종가: ' + self['close'].apply(lambda x: f"{x:,d}원")
+        self['size'] = round(normalize(self['marketCap'], 7, 100), 4)
         abnormal = self[
             (self[['D-1', 'W-1', 'M-1', 'M-3', 'M-6', 'Y-1']].sum(axis="columns") == 0) |
             (self['volume'] == 0) |
@@ -106,5 +107,5 @@ if __name__ == "__main__":
     # print(baseline)
     marketBubble = MarketBubble(baseline)
     print(marketBubble)
-    print(marketBubble.meta)
-    print(marketBubble.sector)
+    # print(marketBubble.meta)
+    # print(marketBubble.sector)
