@@ -301,7 +301,7 @@ class MarketBaseline(DataFrame):
             basedate = f"{datetime_as_string(basedate, unit='D')}"
 
         if (not update) or basedate == datetime.today().strftime("%Y-%m-%d"):
-            super().__init__(baseline)
+            super().__init__(baseline[["date"] + [col for col in baseline.columns if not col == 'date']])
             self.index = self.index.astype(str).str.zfill(6)
             self.log = f'END [Build Market Baseline] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
             return
@@ -336,7 +336,7 @@ class MarketBaseline(DataFrame):
         except Exception as report:
             self.log = f" * [FAILED] Error while customizing data: {report}"
 
-        super().__init__(merge)
+        super().__init__(merge[["date"] + [col for col in merge.columns if not col == 'date']])
         self.log = f'END [Build Market Baseline] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
         return
 

@@ -2,8 +2,8 @@ try:
     from ...common.path import PATH
 except ImportError:
     from src.common.path import PATH
-
-from pandas import concat, read_json, DataFrame, MultiIndex
+from numpy import datetime_as_string
+from pandas import concat, read_json, to_datetime, DataFrame, MultiIndex
 
 
 # REFERENCED BY {config.py}
@@ -21,57 +21,25 @@ class Portfolio(DataFrame):
         portfolio = read_json(PATH.PORTFOLIO, orient='index')
         portfolio.columns = MultiIndex.from_tuples([eval(col) for col in portfolio.columns])
         portfolio.index = portfolio.index.astype(str).str.zfill(6)
-
-        print(portfolio)
-        print("-" * 100)
+        portfolio['date'] = portfolio['date'] \
+                            .apply(to_datetime, unit='ms') \
+                            .apply(lambda x: x.dt.strftime("%Y-%m-%d"))
+        portfolio_date = portfolio["date"]["Tracking"].values[0]
+        if baseline_date == portfolio_date:
+            super().__init__(portfolio)
+            return
 
         objs = []
         for ticker, info in MY_PORTFOLIO.items():
             stock:DataFrame = baseline.loc[[ticker]]
-            stock.columns = [(key, baseline_date) for key in stock.columns]
+            stock.columns = [(key, "Tracking") for key in stock.columns]
+            stock[("date", "Tracking")] = stock[("date", "Tracking")].dt.strftime("%Y-%m-%d")
             objs.append(stock)
         today = concat(objs, axis=0)
         today.columns = MultiIndex.from_tuples(today.columns)
-        print(today)
-        print("-" * 100)
+        portfolio.update(today)
 
-        portfolio = concat([portfolio, today], axis=1)
-        order = portfolio.columns.get_level_values(0).unique()
-        portfolio = portfolio.reindex(
-            columns=sorted(portfolio.columns, key=lambda x: (order.get_loc(x[0]), x[1]))
-        )
 
-            # if stock.empty:
-            #     # TODO
-            #     # {onsite{의 ticker가 baseline에 없으면 logging
-            #     continue
-            #
-            # if "end" in info:
-            #     # IF THE INVESTMENT OF THIS TICKER IS ALREADY OVER,
-            #     # CHECK THE END-DATE DATA IN PORTFOLIO HISTORY.
-            #     # IF THE DATA IS NOT EXIST, APPEND THE DATA AND CONTINUE THE LOOP
-            #     history = portfolio.loc[[ticker]]
-            #
-            #     continue
-            #
-            # axis = 1
-            # if not ticker in portfolio.index:
-            #     # IF TICKER IS NOT IN PORTFOLIO LIST,
-            #     # NEW STOCK DATA IS TO APPEND BY THE LATEST BASELINE DATE
-            #     axis = 0
-            # # else:
-            #     # IF TICKER IS IN PORTFOLIO LIST,
-            #     # THIS CODE PREVENT TO APPEND DUPLICATED-DATED-DATA
-            #
-            #     # stock = stock[[col for col in stock.columns if not col in portfolio.columns]]
-            #
-            # portfolio = concat([portfolio, stock], axis=axis)
-            
-            # TODO
-            # 종목 당 날짜는 시작 날짜, 오늘 날짜 2개로 제한하는 코드 추가
-
-        # portfolio.columns = MultiIndex.from_tuples(portfolio.columns)
-        # portfolio = portfolio.T.drop_duplicates(keep='first')
         super().__init__(portfolio)
         self.to_json(PATH.PORTFOLIO, orient='index')
         return
