@@ -114,8 +114,12 @@ class templateKeys(dict):
             for sub_content in os.listdir(os.path.join(PATH.DOCS, content)):
                 if not '.' in sub_content and sub_content != "src":
                     name = sub_content
-                    if name in MY_PORTFOLIO:
-                        name = MY_PORTFOLIO[name]["name"]
+                    for item in MY_PORTFOLIO:
+                        if "end" in item:
+                            continue
+                        if name == item["ticker"]:
+                            name = item["name"]
+                            break
                     sub.append({'href': f'/{content}/{sub_content}', 'content': name})
             nav[-1].update({'sub': sub})
         return nav

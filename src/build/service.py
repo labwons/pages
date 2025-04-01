@@ -133,8 +133,8 @@ if __name__ == "__main__":
     # UPDATE PORTFOLIO
     # ---------------------------------------------------------------------------------------
     try:
-        portfolio = Portfolio(baseline, TRADING_DATE)
-        context += [f'- [SUCCESS] Deploy Portfolio', 'log', '']
+        portfolio = Portfolio(baseline)
+        context += [f'- [SUCCESS] Deploy Portfolio', portfolio.log, '']
     except Exception as error:
         context += [f'- [FAILED] Deploy Portfolio',f'  : {error}', '']
 
@@ -216,19 +216,23 @@ if __name__ == "__main__":
     except Exception as error:
         context += [f'- [FAILED] CSS Deployment and Minify Resources', f'  : {error}', '']
 
-    rss(BASE_DIR, "https://labwons.com", os.path.join(BASE_DIR, "feed.xml"))
-    sitemap(BASE_DIR, "https://labwons.com", os.path.join(BASE_DIR, "sitemap.xml"))
+    try:
+        rss(BASE_DIR, "https://labwons.com", os.path.join(BASE_DIR, "feed.xml"))
+        sitemap(BASE_DIR, "https://labwons.com", os.path.join(BASE_DIR, "sitemap.xml"))
+        context += [f'- [SUCCESS] Build RSS and Sitemap', '']
+    except Exception as error:
+        context += [f'- [FAILED] Build RSS and Sitemap', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------
     # REPORT
     # ---------------------------------------------------------------------------------------
     mail = eMail()
-    mail.context = "\n".join(context)
+    mail.context = "\n".join([f"TRADING DATE: {TRADING_DATE}"] + context)
     prefix = "SUCCESS"
     if "FAILED" in mail.context:
         prefix = "FAILED"
-    mail.subject = f'[{prefix}] BUILD BASELINE on {TRADING_DATE} {datetime.now(LOCAL_ZONE).strftime("%H:%M")}'
+    mail.subject = f'[{prefix}] BUILD BASELINE on {datetime.now(LOCAL_ZONE).strftime("%Y/%m/%d %H:%M")}'
 
     if LOCAL_HOST:
         print(f'{mail.subject}\n{mail.context}\n')
