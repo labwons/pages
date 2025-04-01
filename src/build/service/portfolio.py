@@ -7,10 +7,15 @@ from typing import List
 
 
 # REFERENCED BY {config.py}
+# HOW TO USE
+# 1) 정규장 마감 이후 종목 선택
+# 2) 다음 거래일 매수 체결 후, BUILD 실행 전
+#    - 종목 정보 추가
+# 3) 이력 삭제 시
+#    - {MY_PORTFOLIO}에서 해당 종목 정보 삭제
 MY_PORTFOLIO = [
-    # {"ticker": "251970", "start": "2025-03-28", "end":"2025-03-31", "name": "펌텍코리아"},
-    {"ticker": "251970", "start": "2025-03-28", "name": "펌텍코리아"},
-    {"ticker": "021240", "start": "2025-03-28", "name": "코웨이"},
+    {"ticker": "251970", "start": "2025-03-28", "buy": 49200, "name": "펌텍코리아"},
+    # {"ticker": "053580", "start": "2025-04-02", "buy": 11500, "name": "웹케시"},
 ]
 
 
@@ -28,7 +33,12 @@ class Portfolio(DataFrame):
         portfolio = read_json(PATH.PORTFOLIO, orient='index')
         portfolio.columns = MultiIndex.from_tuples([eval(col) for col in portfolio.columns])
         portfolio.index = portfolio.index.astype(str).str.zfill(6)
+        portfolio = portfolio[
+            portfolio.index.isin([o["ticker"] for o in MY_PORTFOLIO]) & \
+            portfolio[("date", "Start")].isin([o["start"] for o in MY_PORTFOLIO])
+        ]
         portfolio_date = portfolio["date"]["Tracking"].values[0]
+
         if baseline_date == portfolio_date:
             super().__init__(portfolio)
             self.log = f'END [Build Portfolio] {len(self[self["date"]["End"].isna()])} / {len(self)} Stocks'
@@ -68,6 +78,7 @@ class Portfolio(DataFrame):
         tracking.columns = MultiIndex.from_tuples(zip(tracking.columns, ["Tracking"] * len(tracking.columns)))
         if not tracking.empty:
             portfolio.update(tracking)
+        portfolio.loc[:, ("buy", "Start")] = [obj["buy"] for obj in MY_PORTFOLIO]
 
         complete:DataFrame = baseline.loc[_complete]
         complete.columns = MultiIndex.from_tuples(zip(complete.columns, ["End"] * len(complete.columns)))
@@ -77,7 +88,6 @@ class Portfolio(DataFrame):
         # order = portfolio.columns.get_level_values(0).unique()
         # portfolio = portfolio.reindex(columns=
         #                               sorted(portfolio.columns, key=lambda x: (order.get_loc(x[0]), x[1])))
-
         super().__init__(portfolio)
         self.to_json(PATH.PORTFOLIO, orient='index')
         self.log = f'END [Build Portfolio] {len(self[self["date"]["End"].isna()])} / {len(self)} Stocks'
@@ -90,6 +100,20 @@ class Portfolio(DataFrame):
     @log.setter
     def log(self, log: str):
         self._log.append(log)
+
+    def report(self) -> DataFrame:
+        on = self[self["sell"]["End"].isna()].copy()
+        return on[[
+            ('date', 'Start'),
+            ('date', 'Tracking'),
+            ('buy', 'Start'),
+            ('close', 'Tracking'),
+            ('D-1', 'Tracking'),
+            ('M-1', 'Tracking'),
+            ('M-3', 'Tracking'),
+            ('M-6', 'Tracking'),
+            ('Y-1', 'Tracking'),
+        ]]
 
 
 
@@ -108,4 +132,4 @@ if __name__ == "__main__":
     print(portfolio.log)
     print("*" * 100)
     print(portfolio)
-    print(portfolio[['close', 'marketCap', 'volume']])
+    print(portfolio.report())
