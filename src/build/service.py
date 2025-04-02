@@ -140,7 +140,7 @@ if __name__ == "__main__":
         portfolioJsKeys = {
             "srcTickers": portfolioData.status().to_json(orient='index')
         }
-        portfolio.javascript(**portfolioJsKeys).save(rf'{BASE_DIR}/src/js/')
+        portfolio.javascript(**portfolioJsKeys).save(os.path.join(BASE_DIR, r'src/js/'))
         portfolioKeys = config.templateKeys()
         portfolioKeys.merge(**portfolio.defaultPortfolioAttribute)
         if LOCAL_HOST:
@@ -149,7 +149,7 @@ if __name__ == "__main__":
             portfolioKeys.route(ROUTER)
         if ADSENSE:
             portfolioKeys.merge(**ADSENSE_PROPERTY)
-        portfolio.html(**portfolioKeys).save(rf'{BASE_DIR}/portfolio/')
+        portfolio.html(**portfolioKeys).save(os.path.join(BASE_DIR, 'portfolio'))
         context += [f'- [SUCCESS] Deploy Portfolio', portfolioData.log, '']
     except Exception as error:
         context += [f'- [FAILED] Deploy Portfolio',f'  : {error}', '']
