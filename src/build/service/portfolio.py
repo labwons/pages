@@ -2,7 +2,7 @@ try:
     from ...common.path import PATH
 except ImportError:
     from src.common.path import PATH
-from pandas import concat, read_json, isna, DataFrame, MultiIndex
+from pandas import concat, read_json, isna, to_datetime, DataFrame, MultiIndex
 from typing import List
 
 
@@ -15,11 +15,11 @@ from typing import List
 #    - {MY_PORTFOLIO}에서 해당 종목 정보 삭제
 MY_PORTFOLIO = [
     {"ticker": "251970", "start": "2025-03-28", "buy": 49200, "name": "펌텍코리아"},
-    # {"ticker": "053580", "start": "2025-04-02", "buy": 11500, "name": "웹케시"},
+    {"ticker": "053580", "start": "2025-04-02", "buy": 11000, "name": "웹케시"},
 ]
 
 
-class Portfolio(DataFrame):
+class StockPortfolio(DataFrame):
 
     _log: List[str] = []
     def __init__(self, baseline:DataFrame):
@@ -101,6 +101,11 @@ class Portfolio(DataFrame):
     def log(self, log: str):
         self._log.append(log)
 
+    @classmethod
+    def _format_cap(cls, market_cap: int) -> str:
+        zo, euk = int(market_cap // 10000), int(market_cap % 10000)
+        return f'{zo}조 {euk}억' if zo else f'{euk}억'
+
     def report(self) -> DataFrame:
         on = self[self["sell"]["End"].isna()].copy()
         return on[[
@@ -115,6 +120,34 @@ class Portfolio(DataFrame):
             ('Y-1', 'Tracking'),
         ]]
 
+    def status(self):
+        rename = {
+            "startDate": "startDate",
+            "date":"today",
+            "timeDiff": "timeDiff",
+            "startBuy": "buyPrice",
+            "close": "currentPrice",
+            "yield": "yield",
+            "pct52wHigh": "pct52wHigh",
+            "pct52wLow": "pct52wLow",
+            "trailingProfitRate": "trailingProfitRate",
+            "trailingPE": "trailingPE",
+            "estimatedPE": "estimatedPE",
+            "name": "name",
+            "marketCap": "marketCap",
+            "sectorName": "sectorName",
+            "industryName": "industryName",
+
+        }
+        on = self[self["sell"]["End"].isna()].copy()
+        on = on[[('date', 'Start'), ('buy', 'Start')] + [c for c in on.columns if c[1] == "Tracking"]]
+        on.columns = [f'{c[1].lower()}{c[0].capitalize()}' if c[1] == "Start" else c[0] for c in on]
+        on["timeDiff"] = (to_datetime(on["date"]) - to_datetime(on["startDate"])).astype(str)
+        on["yield"] = round(100 * (on["close"] / on["startBuy"] - 1), 2)
+        on["marketCap"] = (on["marketCap"] / 1e+8).apply(self._format_cap)
+        on = on[rename.keys()].rename(columns=rename)
+
+        return on
 
 
 if __name__ == "__main__":
@@ -128,8 +161,10 @@ if __name__ == "__main__":
     # print(baseline)
     # print(baseline.loc[['021240']])
 
-    portfolio = Portfolio(baseline)
+    portfolio = StockPortfolio(baseline)
     print(portfolio.log)
     print("*" * 100)
     print(portfolio)
-    print(portfolio.report())
+    # print(portfolio.report())
+    print(portfolio.status())
+

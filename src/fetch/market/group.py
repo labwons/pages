@@ -7,7 +7,7 @@ from pandas import (
 )
 from pykrx.stock import get_index_portfolio_deposit_file
 from re import compile
-from requests import get
+from requests import get, Session
 from requests.exceptions import JSONDecodeError, SSLError
 from time import sleep, time
 from typing import (
@@ -183,7 +183,7 @@ class MarketGroup(DataFrame):
             if not resp.status_code == 200:
                 cls._log.append(f'{" " * 8}RESPONSE STATUS: {resp.status_code}')
             return DataFrame(resp.json()['list'])
-        except (ConnectionError, JSONDecodeError, NewConnectionError):
+        except (ConnectionError, JSONDecodeError):
             if countdown == 0:
                 cls._log.append(f'{" " * 8}JSON FORMAT ERROR')
                 return DataFrame()

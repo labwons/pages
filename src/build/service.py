@@ -11,12 +11,13 @@ if __name__ == "__main__":
         from ..render import (
             config,
             bubble,
-            marketmap
+            marketmap,
+            portfolio
         )
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
         from .service.marketmap import MarketMap
-        from .service.portfolio import Portfolio
+        from .service.portfolio import StockPortfolio
         from .maintenance.scope import rss, sitemap
     except ImportError:
         from src.common.path import PATH
@@ -24,12 +25,13 @@ if __name__ == "__main__":
         from src.render import (
             config,
             bubble,
-            marketmap
+            marketmap,
+            portfolio
         )
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble
         from src.build.service.marketmap import MarketMap
-        from src.build.service.portfolio import Portfolio
+        from src.build.service.portfolio import StockPortfolio
         from src.build.maintenance.scope import rss, sitemap
     from datetime import datetime, timezone, timedelta
     from json import dumps
@@ -87,7 +89,7 @@ if __name__ == "__main__":
         # LOCAL HOSTING DIRECTORY WITH DEPLOYMENT DIRECTORY, DEPLOYMENT MIGHT BE CORRUPTED.
         # IF YOU WANT TO USE DIFFERENT PATH FOR LOCAL HOST TESTING, BELOW {ROOT} VARIABLE ARE
         # TO BE CHANGED.
-        # ADSENSE = False
+        ADSENSE = False
         BASE_DIR = os.path.join(PATH.DOWNLOADS, 'labwons')
         PATH.copytree(PATH.DOCS, BASE_DIR)
 
@@ -133,8 +135,22 @@ if __name__ == "__main__":
     # UPDATE PORTFOLIO
     # ---------------------------------------------------------------------------------------
     try:
-        portfolio = Portfolio(baseline)
-        context += [f'- [SUCCESS] Deploy Portfolio', portfolio.log, '']
+        portfolioData = StockPortfolio(baseline)
+
+        portfolioJsKeys = {
+            "srcTickers": portfolioData.status().to_json(orient='index')
+        }
+        portfolio.javascript(**portfolioJsKeys).save(rf'{BASE_DIR}/src/js/')
+        portfolioKeys = config.templateKeys()
+        portfolioKeys.merge(**portfolio.defaultPortfolioAttribute)
+        if LOCAL_HOST:
+            portfolioKeys.fulltext()
+        if not LOCAL_HOST:
+            portfolioKeys.route(ROUTER)
+        if ADSENSE:
+            portfolioKeys.merge(**ADSENSE_PROPERTY)
+        portfolio.html(**portfolioKeys).save(rf'{BASE_DIR}/portfolio/')
+        context += [f'- [SUCCESS] Deploy Portfolio', portfolioData.log, '']
     except Exception as error:
         context += [f'- [FAILED] Deploy Portfolio',f'  : {error}', '']
 
