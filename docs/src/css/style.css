@@ -404,7 +404,7 @@ h1, h2, h3, h4, h5, h6 {
 .service-section {
 	flex: 1 1 auto;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: nowrap;
 	height: calc(100vh - 60px);
     margin: 0;
