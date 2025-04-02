@@ -5,6 +5,17 @@ except ImportError:
 from pandas import concat, read_json, isna, to_datetime, DataFrame, MultiIndex
 from typing import List
 
+BLUE2RED = [
+    '#1861A8', # R24 G97 B168
+    '#228BE6', # R34 G139 B230
+    '#74C0FC', # R116 G192 B252
+    '#A6A6A6', # R168 G168 B168
+    '#FF8787', # R255 G135 B135
+    '#F03E3E', # R240 G62 B62
+    '#C92A2A'  # R201 G42 B42
+]
+HEX2RGB = lambda x: (int(x[1:3], 16), int(x[3:5], 16), int(x[5:], 16))
+CONNECT = lambda x, x1, y1, x2, y2: ( (y2 - y1) / (x2 - x1) ) * (x - x1) + y1
 
 # REFERENCED BY {config.py}
 # HOW TO USE
@@ -16,6 +27,7 @@ from typing import List
 MY_PORTFOLIO = [
     {"ticker": "251970", "start": "2025-03-28", "buy": 49200, "name": "펌텍코리아"},
     {"ticker": "053580", "start": "2025-04-02", "buy": 11000, "name": "웹케시"},
+    {"ticker": "102710", "start": "2025-04-02", "buy": 26000, "name": "이엔에프테크놀로지"},
 ]
 
 
@@ -128,6 +140,7 @@ class StockPortfolio(DataFrame):
             "startBuy": "buyPrice",
             "close": "currentPrice",
             "yield": "yield",
+            "yieldColor": "yieldColor",
             "pct52wHigh": "pct52wHigh",
             "pct52wLow": "pct52wLow",
             "trailingProfitRate": "trailingProfitRate",
@@ -137,14 +150,37 @@ class StockPortfolio(DataFrame):
             "marketCap": "marketCap",
             "sectorName": "sectorName",
             "industryName": "industryName",
-
         }
+
+        scale = [-15, -10, -5, 0, 5, 10, 15]
+        rgb = [HEX2RGB(s) for s in BLUE2RED]
+
+        def _paint(value) -> str:
+            if value <= scale[0]:
+                return BLUE2RED[0]
+            if value > scale[-1]:
+                return BLUE2RED[-1]
+            n = 0
+            while n < len(BLUE2RED) - 1:
+                if scale[n] < value <= scale[n + 1]:
+                    break
+                n += 1
+            r1, g1, b1 = rgb[n]
+            r2, g2, b2 = rgb[n + 1]
+            r = CONNECT(value, scale[n], r1, scale[n + 1], r2)
+            g = CONNECT(value, scale[n], g1, scale[n + 1], g2)
+            b = CONNECT(value, scale[n], b1, scale[n + 1], b2)
+            return f'#{hex(int(r))[2:]}{hex(int(g))[2:]}{hex(int(b))[2:]}'.upper()
+
+
         on = self[self["sell"]["End"].isna()].copy()
         on = on[[('date', 'Start'), ('buy', 'Start')] + [c for c in on.columns if c[1] == "Tracking"]]
         on.columns = [f'{c[1].lower()}{c[0].capitalize()}' if c[1] == "Start" else c[0] for c in on]
         on["timeDiff"] = (to_datetime(on["date"]) - to_datetime(on["startDate"])).astype(str)
         on["yield"] = round(100 * (on["close"] / on["startBuy"] - 1), 2)
         on["marketCap"] = (on["marketCap"] / 1e+8).apply(self._format_cap)
+        on["yieldColor"] = on["yield"].apply(_paint)
+        # on["meta"] = on
         on = on[rename.keys()].rename(columns=rename)
 
         return on

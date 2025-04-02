@@ -11,13 +11,12 @@ var TOOLBOX = false; // 0: NO TOOLBOX, 1: USE TOOLBOX
 var VIEW_MODE = false; // 0: TREEMAP, 1: BAR
 var SAMSUNG = true; // 0: WITHOUT SAMSUNG, 1: WITH SAMSUNG
 var BARMODE = false; // 0: INDUSTRY, 1: SECTOR
-var bubbleLayout = {
-	dragmode: TOOLBOX ? "zoom" : false,
+var yieldLayout = {
     margin:{
         l:20,
         r:0,
         t:0,
-        b:35
+        b:20
     },
 	xaxis:{
 		showline:true,
@@ -58,23 +57,28 @@ function setYield() {
 		x:[],
 		y:[],
 		meta:[],
-		hovertemplate: '%{meta}<br>' + xObj.label + ': %{x}' + xObj.unit + '<br>' + yObj.label + ': %{y}' + yObj.unit + '<extra></extra>',
+		texttemplate:'%{y}%',
+		textposition:'outside',
+		hovertemplate: '%{x}<br><extra></extra>',
 		hoverlabel: {
 			font: {
 				family: fontFamily,
 				color: '#fffff'
 			}
 		},
+		marker:{
+			color:[]
+		}
 	};
 	
 	Object.entries(srcTickers).forEach(([ticker, obj]) => {		
 		data.x.push(obj.name);
 		data.y.push(obj['yield']);
-		
+		data.marker.color.push(obj.yieldColor);
 		
 	});
   
-    Plotly.newPlot('portfolio-yield', [data]);
+    Plotly.newPlot('portfolio-yield', [data], yieldLayout);
 }
 
 function setOption(cssSelector, jsonObj, initKey){
@@ -101,6 +105,6 @@ function setAxisLabel(cssSelector, axis){
 
 $(document).ready(function(){
 
-
+	setYield();
 })
 

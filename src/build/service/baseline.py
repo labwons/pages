@@ -299,6 +299,8 @@ class MarketBaseline(DataFrame):
         basedate = baseline['date'].values[0]
         if not isinstance(basedate, str):
             basedate = f"{datetime_as_string(basedate, unit='D')}"
+        else:
+            basedate = basedate.replace("/", "-")
 
         if (not update) or basedate == datetime.today().strftime("%Y-%m-%d"):
             super().__init__(baseline[["date"] + [col for col in baseline.columns if not col == 'date']])
