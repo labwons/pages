@@ -12,6 +12,9 @@ var VIEW_MODE = false; // 0: TREEMAP, 1: BAR
 var SAMSUNG = true; // 0: WITHOUT SAMSUNG, 1: WITH SAMSUNG
 var BARMODE = false; // 0: INDUSTRY, 1: SECTOR
 var yieldLayout = {
+	barmode:'group',
+	showlegend: false,
+	dragmode: false,
     margin:{
         l:20,
         r:0,
@@ -25,15 +28,17 @@ var yieldLayout = {
     },
     yaxis:{
 		ticklabelposition: 'inside',
+		tickformat: 'd',
 		showline:true,
 		zerolinecolor:"lightgrey",
 		gridcolor:"lightgrey",
     },
+	autosize: true
 };
-var bubbleOption = {
+var Option = {
     showTips:false,
     responsive:true,
-    displayModeBar:true,
+    displayModeBar:false,
     displaylogo:false,
     modeBarButtonsToRemove: [
       // 'toImage','select2d','lasso2d','zoomOut2d','zoomIn2d','resetScale2d'
@@ -45,7 +50,7 @@ var bubbleOption = {
 /*--------------------------------------------------------------
 # SOURCE DATA
 --------------------------------------------------------------*/
-const srcTickers = {"251970":{"startDate":"2025-03-28","today":"2025\/04\/03","timeDiff":"6 days","buyPrice":49200,"currentPrice":54200,"yield":10.16,"yieldColor":"#EE3D3D","pct52wHigh":0.0,"pct52wLow":138.77,"trailingProfitRate":14.34,"trailingPE":20.55,"estimatedPE":17.04,"name":"\ud38c\ud14d\ucf54\ub9ac\uc544*","marketCap":"6720\uc5b5","sectorName":"\uc18c\uc7ac","industryName":"\ube44\ucca0\uae08\uc18d"},"053580":{"startDate":"2025-04-02","today":"2025\/04\/03","timeDiff":"1 days","buyPrice":11000,"currentPrice":14080,"yield":28.0,"yieldColor":"#C92A2A","pct52wHigh":0.0,"pct52wLow":123.49,"trailingProfitRate":18.69,"trailingPE":23.04,"estimatedPE":null,"name":"\uc6f9\ucf00\uc2dc*","marketCap":"1914\uc5b5","sectorName":"IT","industryName":"IT\uc11c\ube44\uc2a4"},"102710":{"startDate":"2025-04-02","today":"2025\/04\/03","timeDiff":"1 days","buyPrice":26000,"currentPrice":26000,"yield":0.0,"yieldColor":"#A6A6A6","pct52wHigh":-21.45,"pct52wLow":79.68,"trailingProfitRate":10.19,"trailingPE":11.94,"estimatedPE":null,"name":"\uc774\uc5d4\uc5d0\ud504\ud14c\ud06c\ub180\ub85c\uc9c0*","marketCap":"3707\uc5b5","sectorName":"IT","industryName":"\ubc18\ub3c4\uccb4"}};
+const srcTickers = {"251970":{"startDate":"2025-03-28","today":"2025-04-03","timeDiff":"6 days","buyPrice":49200,"currentPrice":54200,"yield":10.16,"yieldColor":"#EE3D3D","pct52wHigh":0.0,"pct52wLow":138.77,"trailingProfitRate":14.34,"trailingPE":20.55,"estimatedPE":17.04,"name":"\ud38c\ud14d\ucf54\ub9ac\uc544*","marketCap":"6720\uc5b5","sectorName":"\uc18c\uc7ac","industryName":"\ube44\ucca0\uae08\uc18d"},"053580":{"startDate":"2025-04-02","today":"2025-04-03","timeDiff":"1 days","buyPrice":11000,"currentPrice":14080,"yield":28.0,"yieldColor":"#C92A2A","pct52wHigh":0.0,"pct52wLow":123.49,"trailingProfitRate":18.69,"trailingPE":23.04,"estimatedPE":null,"name":"\uc6f9\ucf00\uc2dc*","marketCap":"1914\uc5b5","sectorName":"IT","industryName":"IT\uc11c\ube44\uc2a4"},"102710":{"startDate":"2025-04-02","today":"2025-04-03","timeDiff":"1 days","buyPrice":26000,"currentPrice":26000,"yield":0.0,"yieldColor":"#A6A6A6","pct52wHigh":-21.45,"pct52wLow":79.68,"trailingProfitRate":10.19,"trailingPE":11.94,"estimatedPE":null,"name":"\uc774\uc5d4\uc5d0\ud504\ud14c\ud06c\ub180\ub85c\uc9c0*","marketCap":"3707\uc5b5","sectorName":"IT","industryName":"\ubc18\ub3c4\uccb4"},"005180":{"startDate":"2025-04-03","today":"2025-04-03","timeDiff":"0 days","buyPrice":97000,"currentPrice":98700,"yield":1.75,"yieldColor":"#C59B9B","pct52wHigh":-11.95,"pct52wLow":72.55,"trailingProfitRate":8.97,"trailingPE":9.42,"estimatedPE":8.7,"name":"\ube59\uadf8\ub808","marketCap":"9723\uc5b5","sectorName":"\ud544\uc218\uc18c\ube44\uc7ac","industryName":"\ud544\uc218\uc18c\ube44\uc7ac"}};
 
 
 /*--------------------------------------------------------------
@@ -59,7 +64,7 @@ function setYield() {
 		meta:[],
 		texttemplate:'%{y}%',
 		textposition:'outside',
-		hovertemplate: '%{x}<br><extra></extra>',
+		hovertemplate: '%{x}<br>%{y}%<extra></extra>',
 		hoverlabel: {
 			font: {
 				family: fontFamily,
@@ -78,7 +83,42 @@ function setYield() {
 		
 	});
   
-    Plotly.newPlot('portfolio-yield', [data], yieldLayout);
+    Plotly.newPlot('plotly-yield', [data], yieldLayout, Option);
+}
+
+function setPrice() {
+	var data1 = {
+		type:'bar',
+		x:[],
+		y:[],
+		meta:[],
+		hovertemplate: '%{y}원<br><extra></extra>',
+		hoverlabel: {
+			font: {
+				family: fontFamily,
+				color: '#fffff'
+			}
+		},
+		marker:{
+			color:[]
+		}
+	};
+	
+	var data2 = JSON.parse(JSON.stringify(data1));
+	
+	Object.entries(srcTickers).forEach(([ticker, obj]) => {		
+		data1.x.push(obj.name);
+		data1.y.push(obj.buyPrice);
+		data1.marker.color.push('grey');
+	});
+	
+	Object.entries(srcTickers).forEach(([ticker, obj]) => {		
+		data2.x.push(obj.name);
+		data2.y.push(obj.currentPrice);
+		data2.marker.color.push('red');
+	});
+  
+    Plotly.newPlot('plotly-price', [data1, data2], yieldLayout, Option);
 }
 
 function setOption(cssSelector, jsonObj, initKey){
@@ -106,4 +146,5 @@ function setAxisLabel(cssSelector, axis){
 $(document).ready(function(){
 
 	setYield();
+	setPrice();
 })
