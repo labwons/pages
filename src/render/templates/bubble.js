@@ -101,7 +101,7 @@ function toggleToolbox() {
 			'display':'flex',
 			'background-color':'rgba(200, 200, 200, 0.4)'
 		});
-		$('.js-plotly-plot .plotly .modebar').prepend('<i class="toolbox-off fa fa-remove"></i>');
+		$('.js-plotly-plot .plotly .modebar').prepend('<i class="toolbox-off fa fa-remove" style="background-color":"rgba(200, 200, 200, 0.4);"></i>');
 		$('.js-plotly-plot .plotly .modebar-group').css({
 			'padding':'0'
 		});

@@ -43,9 +43,40 @@
 		</section>
 		
         <section class="service-section">
-			<div class="layer-title">수익률 현황</div>
-            <div class="service" id="portfolio-yield"></div>
+            <div class="service">
+				<div class="service-row">
+					<div class="service-item">
+						<div class="service-item-title">수익률 현황<span class="service-item-title-eng">Status</span></div>
+						<div class="plot" id="plotly-yield"></div>
+					</div>
+					<div class="service-item">
+						<div class="service-item-title">가격 추이<span class="service-item-title-eng">Price</span></div>
+						<div class="plot" id="plotly-price"></div>
+					</div>
+				</div>
+				<div class="service-row">
+					<div class="service-item">
+						<div class="service-item-title">아이템3<span class="service-item-title-eng">ITEM3</span></div>
+						<div class="plot" id="plotly-earnings"></div>
+					</div>
+					<div class="service-item">
+						<div class="service-item-title">아이템4<span class="service-item-title-eng">ITEM4</span></div>
+						<div class="plot" id="plotly-pe"></div>
+					</div>
+				</div>
+			</div>
         </section>
+		
+		<div style="margin: 20px 0;"></div>
+		
+		<section class="service-section-portfolio">
+			<div class="service">
+				<div class="section-title">운용 실적<span class="section-title-eng">Track Record</span></div>
+				<div class="service-app">
+					<div class="table-content" id="table-record"></div>
+				</div>
+			</div>
+		</section>
 		
 		<section class="ad-middle">
 			{% if ad_middle_responsive %}
@@ -53,7 +84,7 @@
 			{% endif %}
         </section>
 				
-		<section class="faq">			
+		<section class="faq">
 			
 			<div class="faq-header">
 			  <h2>자주 묻는 질문 F.A.Q</h2>

@@ -12,6 +12,9 @@ var VIEW_MODE = false; // 0: TREEMAP, 1: BAR
 var SAMSUNG = true; // 0: WITHOUT SAMSUNG, 1: WITH SAMSUNG
 var BARMODE = false; // 0: INDUSTRY, 1: SECTOR
 var yieldLayout = {
+	barmode:'group',
+	showlegend: false,
+	dragmode: false,
     margin:{
         l:20,
         r:0,
@@ -25,15 +28,17 @@ var yieldLayout = {
     },
     yaxis:{
 		ticklabelposition: 'inside',
+		tickformat: 'd',
 		showline:true,
 		zerolinecolor:"lightgrey",
 		gridcolor:"lightgrey",
     },
+	autosize: true
 };
-var bubbleOption = {
+var Option = {
     showTips:false,
     responsive:true,
-    displayModeBar:true,
+    displayModeBar:false,
     displaylogo:false,
     modeBarButtonsToRemove: [
       // 'toImage','select2d','lasso2d','zoomOut2d','zoomIn2d','resetScale2d'
@@ -59,7 +64,7 @@ function setYield() {
 		meta:[],
 		texttemplate:'%{y}%',
 		textposition:'outside',
-		hovertemplate: '%{x}<br><extra></extra>',
+		hovertemplate: '%{x}<br>%{y}%<extra></extra>',
 		hoverlabel: {
 			font: {
 				family: fontFamily,
@@ -78,7 +83,42 @@ function setYield() {
 		
 	});
   
-    Plotly.newPlot('portfolio-yield', [data], yieldLayout);
+    Plotly.newPlot('plotly-yield', [data], yieldLayout, Option);
+}
+
+function setPrice() {
+	var data1 = {
+		type:'bar',
+		x:[],
+		y:[],
+		meta:[],
+		hovertemplate: '%{y}원<br><extra></extra>',
+		hoverlabel: {
+			font: {
+				family: fontFamily,
+				color: '#fffff'
+			}
+		},
+		marker:{
+			color:[]
+		}
+	};
+	
+	var data2 = JSON.parse(JSON.stringify(data1));
+	
+	Object.entries(srcTickers).forEach(([ticker, obj]) => {		
+		data1.x.push(obj.name);
+		data1.y.push(obj.buyPrice);
+		data1.marker.color.push('grey');
+	});
+	
+	Object.entries(srcTickers).forEach(([ticker, obj]) => {		
+		data2.x.push(obj.name);
+		data2.y.push(obj.currentPrice);
+		data2.marker.color.push('red');
+	});
+  
+    Plotly.newPlot('plotly-price', [data1, data2], yieldLayout, Option);
 }
 
 function setOption(cssSelector, jsonObj, initKey){
@@ -106,5 +146,6 @@ function setAxisLabel(cssSelector, axis){
 $(document).ready(function(){
 
 	setYield();
+	setPrice();
 })
 
