@@ -5,18 +5,6 @@ except ImportError:
 from pandas import concat, read_json, isna, to_datetime, DataFrame, MultiIndex
 from typing import List
 
-BLUE2RED = [
-    '#1861A8', # R24 G97 B168
-    '#228BE6', # R34 G139 B230
-    '#74C0FC', # R116 G192 B252
-    '#A6A6A6', # R168 G168 B168
-    '#FF8787', # R255 G135 B135
-    '#F03E3E', # R240 G62 B62
-    '#C92A2A'  # R201 G42 B42
-]
-HEX2RGB = lambda x: (int(x[1:3], 16), int(x[3:5], 16), int(x[5:], 16))
-CONNECT = lambda x, x1, y1, x2, y2: ( (y2 - y1) / (x2 - x1) ) * (x - x1) + y1
-
 # REFERENCED BY {config.py}
 # HOW TO USE
 # 1) 정규장 마감 이후 종목 선택
@@ -25,10 +13,11 @@ CONNECT = lambda x, x1, y1, x2, y2: ( (y2 - y1) / (x2 - x1) ) * (x - x1) + y1
 # 3) 이력 삭제 시
 #    - {MY_PORTFOLIO}에서 해당 종목 정보 삭제
 MY_PORTFOLIO = [
-    {"ticker": "251970", "start": "2025-03-28", "buy": 49200, "name": "펌텍코리아"},
-    {"ticker": "053580", "start": "2025-04-02", "buy": 11000, "end": "2025-04-04", "sell": 15000, "name": "웹케시"},
-    {"ticker": "102710", "start": "2025-04-02", "buy": 26000, "name": "이엔에프테크놀로지"},
-    {"ticker": "005180", "start": "2025-04-03", "buy": 97000, "name": "빙그레"},
+    {"ticker": "251970", "start": "2025-03-28", "buy": 49200}, # 펌텍코리아
+    {"ticker": "053580", "start": "2025-04-02", "buy": 11000, "end": "2025-04-04", "sell": 15000}, # 웹케시
+    {"ticker": "102710", "start": "2025-04-02", "buy": 26000}, # 이엔에프테크놀로지
+    {"ticker": "005180", "start": "2025-04-03", "buy": 97000}, # 빙그레
+    {"ticker": "097520", "start": "2025-04-04", "buy": 24000}, # 엠씨넥스
 ]
 
 
@@ -135,43 +124,46 @@ class StockPortfolio(DataFrame):
         ]]
 
     def status(self):
-        rename = {
-            "startDate": "startDate",
-            "date":"today",
-            "timeDiff": "timeDiff",
-            "startBuy": "buyPrice",
-            "close": "currentPrice",
-            "yield": "yield",
-            "yieldColor": "yieldColor",
-            "pct52wHigh": "pct52wHigh",
-            "pct52wLow": "pct52wLow",
-            "trailingProfitRate": "trailingProfitRate",
-            "trailingPE": "trailingPE",
-            "estimatedPE": "estimatedPE",
-            "name": "name",
-            "marketCap": "marketCap",
-            "sectorName": "sectorName",
-            "industryName": "industryName",
-        }
+        BLUE2RED = [
+            '#1861A8',  # R24 G97 B168
+            '#228BE6',  # R34 G139 B230
+            '#74C0FC',  # R116 G192 B252
+            '#A6A6A6',  # R168 G168 B168
+            '#FF8787',  # R255 G135 B135
+            '#F03E3E',  # R240 G62 B62
+            '#C92A2A'  # R201 G42 B42
+        ]
 
-        scale = [-15, -10, -5, 0, 5, 10, 15]
-        rgb = [HEX2RGB(s) for s in BLUE2RED]
+        RED2GREEN = [
+            '#F63538',  # R246 G53 B56
+            '#BF4045',  # R191 G64 B69
+            '#8B444E',  # R139 G68 B78
+            '#414554',  # R65 G69 B84
+            '#35764E',  # R53 G118 B78
+            '#2F9E4F',  # R47 G158 B79
+            '#30CC5A'  # R48 G204 B90
+        ]
+        HEX2RGB = lambda x: (int(x[1:3], 16), int(x[3:5], 16), int(x[5:], 16))
+        CONNECT = lambda x, x1, y1, x2, y2: ((y2 - y1) / (x2 - x1)) * (x - x1) + y1
 
-        def _paint(value) -> str:
-            if value <= scale[0]:
-                return BLUE2RED[0]
-            if value > scale[-1]:
-                return BLUE2RED[-1]
+        def _paint(value, valueScale, colorScale) -> str:
+            rgb = [HEX2RGB(s) for s in colorScale]
+            if isna(value):
+                return colorScale[3]
+            if value <= valueScale[0]:
+                return colorScale[0]
+            if value > valueScale[-1]:
+                return colorScale[-1]
             n = 0
-            while n < len(BLUE2RED) - 1:
-                if scale[n] < value <= scale[n + 1]:
+            while n < len(colorScale) - 1:
+                if valueScale[n] < value <= valueScale[n + 1]:
                     break
                 n += 1
             r1, g1, b1 = rgb[n]
             r2, g2, b2 = rgb[n + 1]
-            r = CONNECT(value, scale[n], r1, scale[n + 1], r2)
-            g = CONNECT(value, scale[n], g1, scale[n + 1], g2)
-            b = CONNECT(value, scale[n], b1, scale[n + 1], b2)
+            r = CONNECT(value, valueScale[n], r1, valueScale[n + 1], r2)
+            g = CONNECT(value, valueScale[n], g1, valueScale[n + 1], g2)
+            b = CONNECT(value, valueScale[n], b1, valueScale[n + 1], b2)
             return f'#{hex(int(r))[2:]}{hex(int(g))[2:]}{hex(int(b))[2:]}'.upper()
 
 
@@ -181,11 +173,22 @@ class StockPortfolio(DataFrame):
         on["timeDiff"] = (to_datetime(on["date"]) - to_datetime(on["startDate"])).astype(str)
         on["yield"] = round(100 * (on["close"] / on["startBuy"] - 1), 2)
         on["marketCap"] = (on["marketCap"] / 1e+8).apply(self._format_cap)
-        on["yieldColor"] = on["yield"].apply(_paint)
-        # on["meta"] = on
-        on = on[rename.keys()].rename(columns=rename)
+        on["yieldColor"] = on["yield"].apply(_paint, valueScale=[-21, -14, -7, 0, 7, 14, 21], colorScale=BLUE2RED)
+        on["profitColor"] = on["trailingProfitRate"].apply(_paint, valueScale=[-15, -10, -5, 0, 5, 10, 15], colorScale=RED2GREEN)
+        on["peColor"] = on["trailingPE"].apply(_paint, valueScale=[6, 12, 18, 24, 30, 36, 42], colorScale=RED2GREEN[::-1])
+        on["epeColor"] = on["estimatedPE"].apply(_paint, valueScale=[6, 12, 18, 24, 30, 36, 42], colorScale=RED2GREEN[::-1])
+        on["meta1"] = "투자 시작일: " + on["startDate"].str.replace("-", "/") + \
+                      "(" + on["timeDiff"].str.replace(" days", "일차") + ")<br>" + \
+                      "투자 수익률: " + on["yield"].astype(str) + "%<br>"
+        on["meta2"] = "영업이익률: " + on["trailingProfitRate"].astype(str) + "%<br>" + \
+                      "섹터: " + on["sectorName"] + "<br>" + \
+                      "업종: " + on["industryName"] + "<br>" + \
+                      "시가총액: " + on["marketCap"] + "원<br>"
 
         return on
+
+    def history(self) -> str:
+        return ""
 
 
 if __name__ == "__main__":
@@ -204,5 +207,5 @@ if __name__ == "__main__":
     print("*" * 100)
     print(portfolio)
     # print(portfolio.report())
-    print(portfolio.status())
+    # print(portfolio.status())
 
