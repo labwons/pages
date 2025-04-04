@@ -41,10 +41,10 @@ class StockPortfolio(DataFrame):
         ]
         portfolio_date = portfolio["date"]["Tracking"].values[0]
 
-        if baseline_date == portfolio_date:
-            super().__init__(portfolio)
-            self.log = f'END [Build Portfolio] {len(self[self["date"]["End"].isna()])} / {len(self)} Stocks'
-            return
+        # if baseline_date == portfolio_date:
+        #     super().__init__(portfolio)
+        #     self.log = f'END [Build Portfolio] {len(self[self["date"]["End"].isna()])} / {len(self)} Stocks'
+        #     return
 
         _new, _tracking, _complete = [], [], []
         for obj in MY_PORTFOLIO:
