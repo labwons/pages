@@ -26,7 +26,7 @@ CONNECT = lambda x, x1, y1, x2, y2: ( (y2 - y1) / (x2 - x1) ) * (x - x1) + y1
 #    - {MY_PORTFOLIO}에서 해당 종목 정보 삭제
 MY_PORTFOLIO = [
     {"ticker": "251970", "start": "2025-03-28", "buy": 49200, "name": "펌텍코리아"},
-    {"ticker": "053580", "start": "2025-04-02", "buy": 11000, "name": "웹케시"},
+    {"ticker": "053580", "start": "2025-04-02", "buy": 11000, "end": "2025-04-04", "sell": 15000, "name": "웹케시"},
     {"ticker": "102710", "start": "2025-04-02", "buy": 26000, "name": "이엔에프테크놀로지"},
     {"ticker": "005180", "start": "2025-04-03", "buy": 97000, "name": "빙그레"},
 ]
@@ -97,6 +97,7 @@ class StockPortfolio(DataFrame):
         complete.columns = MultiIndex.from_tuples(zip(complete.columns, ["End"] * len(complete.columns)))
         if not complete.empty:
             portfolio.update(complete)
+            portfolio.loc[_complete, ("sell", "End")] = [obj["sell"] for obj in MY_PORTFOLIO if obj["ticker"] in _complete]
 
         # order = portfolio.columns.get_level_values(0).unique()
         # portfolio = portfolio.reindex(columns=
