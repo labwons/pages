@@ -1,7 +1,11 @@
 try:
     from ...common.path import PATH
+    from ...common.decorator import validate_argument
+    from .marketmap import BLUE2RED, RED2GREEN, HEX2RGB, CONNECT
 except ImportError:
     from src.common.path import PATH
+    from src.common.decorator import validate_argument
+    from src.build.service.marketmap import BLUE2RED, RED2GREEN, HEX2RGB, CONNECT
 from pandas import concat, read_json, isna, to_datetime, DataFrame, MultiIndex
 from typing import List
 
@@ -15,11 +19,13 @@ from typing import List
 MY_PORTFOLIO = [
     {"ticker": "251970", "start": "2025-03-28", "buy": 49200, "end": "2025-04-09", "sell": 49400}, # 펌텍코리아
     {"ticker": "053580", "start": "2025-04-02", "buy": 11000, "end": "2025-04-04", "sell": 15000}, # 웹케시
-    {"ticker": "102710", "start": "2025-04-02", "buy": 26000}, # 이엔에프테크놀로지
+    {"ticker": "102710", "start": "2025-04-02", "buy": 26000, "end": "2025-04-21", "sell": 26800}, # 이엔에프테크놀로지
     {"ticker": "005180", "start": "2025-04-03", "buy": 97000, "end": "2025-04-09", "sell": 90000}, # 빙그레
     {"ticker": "097520", "start": "2025-04-04", "buy": 24000, "end": "2025-04-09", "sell": 21500}, # 엠씨넥스
-    {"ticker": "017960", "start": "2025-04-09", "buy": 17400}, # 한국카본
+    {"ticker": "017960", "start": "2025-04-09", "buy": 17400, "end": "2025-04-21", "sell": 18410}, # 한국카본
     {"ticker": "016590", "start": "2025-04-09", "buy": 7170}, # 신대양제지
+    {"ticker": "052400", "start": "2025-04-21", "buy": 35050}, # 코나아이
+    {"ticker": "183300", "start": "2025-04-21", "buy": 62000}, # 코미코
 ]
 
 
@@ -89,6 +95,7 @@ class StockPortfolio(DataFrame):
         if not complete.empty:
             portfolio.update(complete)
             portfolio.loc[_complete, ("sell", "End")] = [obj["sell"] for obj in MY_PORTFOLIO if obj["ticker"] in _complete]
+            portfolio.loc[_complete, ("date", "End")] = [obj["end"] for obj in MY_PORTFOLIO if obj["ticker"] in _complete]
 
         # order = portfolio.columns.get_level_values(0).unique()
         # portfolio = portfolio.reindex(columns=
@@ -111,44 +118,8 @@ class StockPortfolio(DataFrame):
         zo, euk = int(market_cap // 10000), int(market_cap % 10000)
         return f'{zo}조 {euk}억' if zo else f'{euk}억'
 
-    def report(self) -> DataFrame:
-        on = self[self["sell"]["End"].isna()].copy()
-        return on[[
-            ('date', 'Start'),
-            ('date', 'Tracking'),
-            ('buy', 'Start'),
-            ('close', 'Tracking'),
-            ('D-1', 'Tracking'),
-            ('M-1', 'Tracking'),
-            ('M-3', 'Tracking'),
-            ('M-6', 'Tracking'),
-            ('Y-1', 'Tracking'),
-        ]]
-
     def status(self):
-        BLUE2RED = [
-            '#1861A8',  # R24 G97 B168
-            '#228BE6',  # R34 G139 B230
-            '#74C0FC',  # R116 G192 B252
-            '#A6A6A6',  # R168 G168 B168
-            '#FF8787',  # R255 G135 B135
-            '#F03E3E',  # R240 G62 B62
-            '#C92A2A'  # R201 G42 B42
-        ]
-
-        RED2GREEN = [
-            '#F63538',  # R246 G53 B56
-            '#BF4045',  # R191 G64 B69
-            '#8B444E',  # R139 G68 B78
-            '#414554',  # R65 G69 B84
-            '#35764E',  # R53 G118 B78
-            '#2F9E4F',  # R47 G158 B79
-            '#30CC5A'  # R48 G204 B90
-        ]
-        HEX2RGB = lambda x: (int(x[1:3], 16), int(x[3:5], 16), int(x[5:], 16))
-        CONNECT = lambda x, x1, y1, x2, y2: ((y2 - y1) / (x2 - x1)) * (x - x1) + y1
-
-        def _paint(value, valueScale, colorScale) -> str:
+        def _rgb(value, valueScale, colorScale) -> str:
             rgb = [HEX2RGB(s) for s in colorScale]
             if isna(value):
                 return colorScale[3]
@@ -163,11 +134,10 @@ class StockPortfolio(DataFrame):
                 n += 1
             r1, g1, b1 = rgb[n]
             r2, g2, b2 = rgb[n + 1]
-            r = CONNECT(value, valueScale[n], r1, valueScale[n + 1], r2)
-            g = CONNECT(value, valueScale[n], g1, valueScale[n + 1], g2)
-            b = CONNECT(value, valueScale[n], b1, valueScale[n + 1], b2)
-            return f'#{hex(int(r))[2:]}{hex(int(g))[2:]}{hex(int(b))[2:]}'.upper()
-
+            return (f'#'
+                    f'{hex(int(CONNECT(value, valueScale[n], r1, valueScale[n + 1], r2)))[2:]}'
+                    f'{hex(int(CONNECT(value, valueScale[n], g1, valueScale[n + 1], g2)))[2:]}'
+                    f'{hex(int(CONNECT(value, valueScale[n], b1, valueScale[n + 1], b2)))[2:]}').upper()
 
         on = self[self["sell"]["End"].isna()].copy()
         on = on[[('date', 'Start'), ('buy', 'Start')] + [c for c in on.columns if c[1] == "Tracking"]]
@@ -175,10 +145,10 @@ class StockPortfolio(DataFrame):
         on["timeDiff"] = (to_datetime(on["date"]) - to_datetime(on["startDate"])).astype(str)
         on["yield"] = round(100 * (on["close"] / on["startBuy"] - 1), 2)
         on["marketCap"] = (on["marketCap"] / 1e+8).apply(self._format_cap)
-        on["yieldColor"] = on["yield"].apply(_paint, valueScale=[-21, -14, -7, 0, 7, 14, 21], colorScale=BLUE2RED)
-        on["profitColor"] = on["trailingProfitRate"].apply(_paint, valueScale=[-15, -10, -5, 0, 5, 10, 15], colorScale=RED2GREEN)
-        on["peColor"] = on["trailingPE"].apply(_paint, valueScale=[6, 12, 18, 24, 30, 36, 42], colorScale=RED2GREEN[::-1])
-        on["epeColor"] = on["estimatedPE"].apply(_paint, valueScale=[6, 12, 18, 24, 30, 36, 42], colorScale=RED2GREEN[::-1])
+        on["yieldColor"] = on["yield"].apply(_rgb, valueScale=[-21, -14, -7, 0, 7, 14, 21], colorScale=BLUE2RED)
+        on["profitColor"] = on["trailingProfitRate"].apply(_rgb, valueScale=[-15, -10, -5, 0, 5, 10, 15], colorScale=RED2GREEN)
+        on["peColor"] = on["trailingPE"].apply(_rgb, valueScale=[6, 12, 18, 24, 30, 36, 42], colorScale=RED2GREEN[::-1])
+        on["epeColor"] = on["estimatedPE"].apply(_rgb, valueScale=[6, 12, 18, 24, 30, 36, 42], colorScale=RED2GREEN[::-1])
         on["meta1"] = "투자 시작일: " + on["startDate"].str.replace("-", "/") + \
                       "(" + on["timeDiff"].str.replace(" days", "일차") + ")<br>" + \
                       "투자 수익률: " + on["yield"].astype(str) + "%<br>"
@@ -190,6 +160,42 @@ class StockPortfolio(DataFrame):
         return on
 
     def history(self) -> str:
+        on = self[self["sell"]["End"].isna()].copy()
+        on[("date", "timeDiff")] = (to_datetime(on["date"]["Tracking"]) - to_datetime(on["date"]["Start"])).astype(str)
+        on[("yield", "Tracking")] = round(100 * (on["close"]["Tracking"] / on["buy"]["Start"] - 1), 2)
+
+        pr = self[~(self.index.isin(on.index) & self["sell"]["End"].isna())].copy()
+        pr[("date", "timeDiff")] = (to_datetime(pr["date"]["End"]) - to_datetime(pr["date"]["Start"])).astype(str)
+        pr[("yield", "End")] = round(100 * (pr["close"]["End"] / pr["buy"]["Start"] - 1), 2)
+        pr[("yield", "Tracking")] = round(100 * (pr["close"]["Tracking"] / pr["buy"]["Start"] - 1), 2)
+        wrap = concat([on, pr], axis=0)
+        wrap[("marketCap", "Tracking")] = (wrap[("marketCap", "Tracking")] / 1e+8).apply(self._format_cap)
+
+        cols = {
+            ("marketCap", "Tracking"): '시가총액',
+            ("yield", "End"): '수익률',
+            ("yield", "Tracking"): '계속수익률',
+            ("buy", "Start"): '매수가',
+            ("sell", "End"): '매도가',
+            ("date", "Start"): '매수일',
+            ("date", "End"): '매도일',
+            ("date", "timeDiff"): '보유기간',
+            ("trailingPE", "Start"): '매수PE',
+            ("trailingPE", "End"): '매도PE',
+            ("trailingPE", "Tracking"): '계속PE',
+            ("trailingPS", "Start"): '매도PS',
+            ("trailingPS", "End"): '매도PS',
+            ("trailingPS", "Tracking"): '계속PS',
+            ("estimatedPE", "Start"): '매수추청PE',
+            ("estimatedPE", "End"): '매도추청PE',
+            ("estimatedPE", "Tracking"): '계속추청PE',
+            ("name", "Start"): '종목명'
+        }
+
+        wrap = wrap[cols.keys()]
+        wrap.columns = cols.values()
+        print(wrap)
+
         return ""
 
 
@@ -207,7 +213,7 @@ if __name__ == "__main__":
     portfolio = StockPortfolio(baseline)
     print(portfolio.log)
     print("*" * 100)
-    print(portfolio)
-    # print(portfolio.report())
+    # print(portfolio)
+    # print(portfolio.columns.tolist())
     # print(portfolio.status())
-
+    portfolio.history()
