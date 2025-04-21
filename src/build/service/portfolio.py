@@ -223,7 +223,7 @@ if __name__ == "__main__":
     portfolio = StockPortfolio(baseline)
     print(portfolio.log)
     print("*" * 100)
-    # print(portfolio)
+    print(portfolio)
     # print(portfolio.columns.tolist())
     # print(portfolio.status())
     print(portfolio.history())
