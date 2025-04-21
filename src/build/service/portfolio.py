@@ -162,41 +162,51 @@ class StockPortfolio(DataFrame):
     def history(self) -> str:
         on = self[self["sell"]["End"].isna()].copy()
         on[("date", "timeDiff")] = (to_datetime(on["date"]["Tracking"]) - to_datetime(on["date"]["Start"])).astype(str)
-        on[("yield", "Tracking")] = round(100 * (on["close"]["Tracking"] / on["buy"]["Start"] - 1), 2)
+        on[("yield", "End")] = round(100 * (on["close"]["Tracking"] / on["buy"]["Start"] - 1), 2)
 
         pr = self[~(self.index.isin(on.index) & self["sell"]["End"].isna())].copy()
         pr[("date", "timeDiff")] = (to_datetime(pr["date"]["End"]) - to_datetime(pr["date"]["Start"])).astype(str)
         pr[("yield", "End")] = round(100 * (pr["close"]["End"] / pr["buy"]["Start"] - 1), 2)
-        pr[("yield", "Tracking")] = round(100 * (pr["close"]["Tracking"] / pr["buy"]["Start"] - 1), 2)
         wrap = concat([on, pr], axis=0)
         wrap[("marketCap", "Tracking")] = (wrap[("marketCap", "Tracking")] / 1e+8).apply(self._format_cap)
 
-        cols = {
-            ("marketCap", "Tracking"): '시가총액',
-            ("yield", "End"): '수익률',
-            ("yield", "Tracking"): '계속수익률',
-            ("buy", "Start"): '매수가',
-            ("sell", "End"): '매도가',
-            ("date", "Start"): '매수일',
-            ("date", "End"): '매도일',
-            ("date", "timeDiff"): '보유기간',
-            ("trailingPE", "Start"): '매수PE',
-            ("trailingPE", "End"): '매도PE',
-            ("trailingPE", "Tracking"): '계속PE',
-            ("trailingPS", "Start"): '매도PS',
-            ("trailingPS", "End"): '매도PS',
-            ("trailingPS", "Tracking"): '계속PS',
-            ("estimatedPE", "Start"): '매수추청PE',
-            ("estimatedPE", "End"): '매도추청PE',
-            ("estimatedPE", "Tracking"): '계속추청PE',
-            ("name", "Start"): '종목명'
-        }
+        periods = []
+        buys = []
+        sells = []
+        for index, row in wrap.iterrows():
+            start = row[("date", "Start")]
+            sell = row[("sell", "End")]
+            if isna(sell):
+                end = "진행 중"
+                suf = '차'
+                sell = '보유 중'
+            else:
+                end = row[("date", "End")]
+                suf = '간'
+                sell = f'{int(sell):,d}'
+            buys.append(f'{int(row[("buy", "Start")]):,d}')
+            periods.append(f'{start} ~ {end}<br>({row[("date", "timeDiff")].replace(" days", "")}일{suf})')
+            sells.append(sell)
 
-        wrap = wrap[cols.keys()]
-        wrap.columns = cols.values()
-        print(wrap)
+        src = DataFrame(index=wrap.index + wrap[("date", "Start")])
+        src["종목명"] = (wrap[("name", "Start")] + '<br>(' + wrap.index + ')').values
+        # src["시가총액"] = wrap[("marketCap", "Tracking")].values
+        src["투자 기간"] = periods
+        src["수익률"] = wrap[("yield", "End")].values
+        src["매수가"] = buys
+        src["매도가"] = sells
+        src["매수PE"] = round(wrap[("trailingPE", "Start")], 2).values
+        src["매수ForwardPE"] = round(wrap[("estimatedPE", "Start")], 2).fillna("미제공").values
+        src["매수PS"] = round(wrap[("trailingPS", "Start")], 2).values
+        # print(src)
 
-        return ""
+        thead = f"<thead><tr>{''.join([f'<th>{col}</th>' for col in src.columns])}</tr></thead>"
+        tbody = '<tbody>\n'
+        for row in src.itertuples(index=False):
+            items = [str(item) for item in row]
+            tbody += f"<tr><td>{'</td><td>'.join(items)}</td></tr>\n"
+        tbody += '</tbody>'
+        return f'{thead}\n{tbody}'
 
 
 if __name__ == "__main__":
@@ -216,4 +226,4 @@ if __name__ == "__main__":
     # print(portfolio)
     # print(portfolio.columns.tolist())
     # print(portfolio.status())
-    portfolio.history()
+    print(portfolio.history())

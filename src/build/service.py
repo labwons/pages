@@ -144,6 +144,7 @@ if __name__ == "__main__":
         portfolioKeys = config.templateKeys()
         portfolioKeys.merge(**portfolio.defaultPortfolioAttribute)
         portfolioKeys["trading_date"] = f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900'
+        portfolioKeys["track_record"] = portfolioData.history()
         if LOCAL_HOST:
             portfolioKeys.fulltext()
         if not LOCAL_HOST:

@@ -67,22 +67,28 @@
 			</div>
         </section>
 		
-		<div style="margin: 20px 0;"></div>
-		
-		<section class="service-section-portfolio">
-			<div class="service">
-				<div class="section-title">운용 실적<span class="section-title-eng">Track Record</span></div>
-				<div class="service-app">
-					<div class="table-content" id="table-record"></div>
-				</div>
-			</div>
-		</section>
-		
 		<section class="ad-middle">
 			{% if ad_middle_responsive %}
 			<ins {% for key, val in ad_middle_responsive.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
 			{% endif %}
         </section>
+		
+		<div style="margin-top: 40px;"></div>
+		
+		<section class="service-section">
+			<div class="service">
+				<div class="service-item-title">운용 실적<span class="service-item-title-eng">Track Record</span></div>
+				<div class="service-column">
+					
+					<div class="service-cell">
+					
+					</div>
+					<div class="table-wrapper"><table class="table" id="table-record">{{ track_record }}</table></div>
+				</div>
+			</div>
+		</section>
+		
+		
 				
 		<section class="faq">
 			
