@@ -428,8 +428,8 @@ PARTS
 }
 
 .content-main {
-  flex: 1 1 auto;
-  min-height: calc(100vh - 200px);
+  flex: 1 0 auto;
+  height: calc(100vh - 200px);
   display: flex;
   flex-direction: column;
   align-items: stretch;
