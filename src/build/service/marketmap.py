@@ -530,6 +530,7 @@ class MarketMap(DataFrame):
             peak.loc['maxC', col] = self.meta[col]['colorScale'][-1]
             peak.loc['minI', col] = self.meta[col]['iconMin']
             peak.loc['maxI', col] = self.meta[col]['iconMax']
+            peak.loc['label', col] = self.meta[col]['label']
 
         peak = peak.drop(columns=drop)
         for key in self.meta:
@@ -578,10 +579,10 @@ if __name__ == "__main__":
     marketMap = MarketMap(baseline)
     # print(marketMap)
     # print(marketMap.desc)
-    # print(marketMap.peakPoint)
+    print(marketMap.peakPoint)
     # print(marketMap.log)
     # print(marketMap.meta)
-    print(marketMap.gaussian)
-    marketMap.show_gaussian()
+    # print(marketMap.gaussian)
+    # marketMap.show_gaussian()
     # print(marketMap.colors)
     # print(marketMap.to_dict(orient='index'))

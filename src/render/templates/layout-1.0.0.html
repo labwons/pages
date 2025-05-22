@@ -100,9 +100,7 @@
         </div>
       </div>
     </section>
-    {% block content_addon %}{% endblock %}
 
-    {% if statusSection %}
     <section class="section section-flow">
       <div class="container container-content margin-bottom-60px">
         <div class="ad ad-content">
@@ -117,7 +115,12 @@
           </div>
         </div>
       </div>
+    </section>
+    
+    {% block content_addon %}{% endblock %}
 
+    {% if statusSection %}
+    <section class="section section-flow">
       <div class="container container-title">
         <h2 class="main-title">STATUS</h2>
         <p class="sub-title">{{ trading_date }}</p>

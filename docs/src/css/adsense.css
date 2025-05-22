@@ -87,12 +87,7 @@
 
 .ad-in-display-mobile {
   display: none;
-
-  border: 1px dotted black;
-}
-
-.ad-in-display {
-  border: 1px dotted black;
+  /* border: 1px dotted black; */
 }
 
 @media (max-width: 1023px) {
