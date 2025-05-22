@@ -1,0 +1,741 @@
+/* ======================================================================
+    COMMON EVENTS
+====================================================================== */
+$('.mobile-nav-toggle').on('click', function() {
+  $('body').toggleClass('mobile-nav-active');
+  $(this).toggleClass('bi-list bi-x');
+});
+$('#navmenu a').on('click', function() {
+  if ($('.mobile-nav-active').length) {
+    $('body').toggleClass('mobile-nav-active');
+    $('.mobile-nav-toggle').toggleClass('bi-list bi-x');
+  }
+});
+$('.navmenu .toggle-dropdown').on('click', function(e) {
+  e.preventDefault();
+  $(this).parent().next().toggleClass('dropdown-active');
+  e.stopImmediatePropagation();
+});
+$('.scroll-top').on('click', function(e) {
+  e.preventDefault();
+  $('html, body').animate({ scrollTop: 0 }, 'fast');
+});
+$('.faq-q').on('click', function() {
+  $(this).parent().toggleClass('faq-active');
+});
+$(window).on('load scroll', function() {
+  const $scrollTop = $('.scroll-top');
+  if ($scrollTop.length) {
+    if ($(window).scrollTop() > 100) {
+      $scrollTop.addClass('active');
+    } else {
+      $scrollTop.removeClass('active');
+    }
+  }
+});
+
+
+const __media__ = {
+  isMobile: window.matchMedia('(min-width: 0px) and (max-width: 767px)').matches,
+  isTablet: window.matchMedia('(min-width: 768px) and (max-width: 1023px)').matches,
+  isLabtop: window.matchMedia('(min-width: 1024px) and (max-width: 1439px)').matches,
+  isDesktop: window.matchMedia('(min-width: 1440px)').matches
+}
+const __fonts__ = 'NanumGothic, Nanum Gothic, Open Sans, sans-serif';
+
+// new PureCounter();
+
+/* -----------------------------------------------------------
+ * MARKET MAP OPERATION 
+----------------------------------------------------------- */
+let updateCenteredSlide;
+let getCurrentServiceState;
+let setMainTypes;
+let setMainOptions;
+let setSearchBar;
+let setScaleBar;
+let setBar;
+let setMap;
+let eventClickTreemap;
+
+if (SERVICE === "marketmap"){
+  const mouseEvent   = document.createEvent('MouseEvent');
+  const $mapToggle   = $('.map-switch i');
+  const $mainTypes   = $('.map-select.types');
+  const $mainOptions = $('.map-select.options');
+  const $searchBar   = $('.map-select.map-searchbar');
+  const $mapLegend   = $('.legends .legend');
+  const $mapReset    = $('.map-reset');
+
+  var currentMapViewer = 'all';
+  var currentBarViewer = 'industry';
+  var currentOption    = 'D-1';
+  
+  mouseEvent.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+
+  updateCenteredSlide = function(swiperInstance) {
+    const slides = swiperInstance.slides;
+    slides.forEach(slide => slide.classList.remove('centered'));
+
+    const activeIndex = swiperInstance.activeIndex;
+    const centeredIndex = activeIndex + 1;
+
+    if (slides[centeredIndex]) {
+      slides[centeredIndex].classList.add('centered');
+    }
+  };
+
+  getCurrentServiceState = function() {
+    return $mapToggle.hasClass('bi-bar-chart-line-fill') ? 'bar' : 'map';
+  };
+
+  setMainTypes = function() {
+    if (getCurrentServiceState() == 'bar') {
+      $mainTypes.empty()
+      .append(`<option value="sector">\uc139\ud130\u0020\u0053\u0065\u0063\u0074\u006f\u0072</option>`)
+      .append(`<option value="industry">\uc5c5\uc885\u0020\u0049\u006e\u0064\u0075\u0073\u0074\u0072\u0079</option>`)
+      .find('option[value="' + currentBarViewer + '"]').prop('selected', true);
+
+    } else {
+      $mainTypes.empty()
+      .append(`<option value="all" selected>\ub300\ud615\uc8fc</option>`)
+      .append(`<option value="woS">\ub300\ud615\uc8fc\u0028\uc0bc\uc131\uc804\uc790\u0020\uc81c\uc678\u0029</option>`)
+      .find('option[value="' + currentMapViewer + '"]').prop('selected', true);
+    }
+  };
+
+  setMainOptions = function(){
+    $mainOptions.empty();
+    Object.entries(srcIndicatorOpt).forEach(([key, obj]) => {
+      $mainOptions.append(`<option value="${key}">${obj.label}</option>`)
+    })
+    $mainOptions.find('option[value="' + currentOption + '"]').prop('selected', true);
+  };
+
+  setSearchBar = function(){
+    $searchBar.empty().append('<option></option>');
+    Object.entries(srcTicker)
+    .sort((a, b) => b[1].size - a[1].size)
+    .forEach(([ticker, obj]) => {
+        if (
+            ticker.startsWith('N') ||
+            ticker.startsWith('W') ||
+            ( (currentMapViewer === 'woS') && (ticker === '005930') )
+        ){
+            return
+        }
+        $searchBar.append('<option value="' + ticker + '">' + obj.name + '</option>');
+      })
+
+      $searchBar.select2({
+        placeholder: "\uc885\ubaa9\uba85\u0020\uac80\uc0c9",
+        allowClear: true
+      })
+  };
+
+  setScaleBar = function(){
+    let indicator = srcIndicatorOpt[currentOption];
+    $mapLegend.each(function(n) {
+      if(indicator.valueScale[n] == null){
+        $(this).html('&nbsp; - &nbsp;');
+      } else {
+          $(this).html(String(indicator.valueScale[n]) + indicator.unit);
+      }
+      $(this).css('background-color', indicator.colorScale[n]);
+    });
+  };
+  
+  eventClickTreemap = function(item){
+    $('g.slicetext').each(function(){
+      if ($(this).text().includes(item)) {
+        !$(this).get(0).dispatchEvent(mouseEvent);
+        return
+      }
+    })
+  }
+
+  setBar = function(key) {
+    var layout = {
+      margin:{
+        l:10,
+        r:0,
+        t:10,
+        b:22
+      },
+      xaxis:{
+        autorange: false,
+        showticklabels: false,
+        showline: false,
+        range:[0, 0],
+      },
+      yaxis:{
+        showline: false,
+        zeroline: false,
+        showticklabels: false
+      },
+      dragmode: false
+    };
+    var option = {
+      scrollZoom: false,
+      displayModeBar:false,
+      responsive:true,
+      showTips:false,
+    };    
+    var data = {
+      type:'bar',
+      x:[],
+      y:[],
+      orientation:'h',
+      marker: {
+          color:[]
+      },
+      text:[],
+      textposition: 'outside',
+      meta:[],
+      hovertemplate: '%{meta}' + srcIndicatorOpt[key].label + ': %{text}<extra></extra>',
+      opacity:0.9
+    };
+    var tickers = [];
+    Object.entries(srcTicker).forEach(([ticker, obj]) => {
+      if (
+        ( (currentBarViewer === 'sector') && (ticker.startsWith('W') && ticker.includes('G')) ) ||
+        ( (currentBarViewer === 'industry') && (ticker.startsWith('W') && (!ticker.includes('G'))) )
+      ){
+        if (ticker !== 'WS0000'){
+          obj.ticker = ticker;
+          tickers.push(obj);
+        }
+      }
+    });
+    tickers.sort((a, b) => a[key] - b[key]).forEach(item => {
+      data.x.push(Math.abs(item[key]));
+      data.y.push(item.name);
+      data.marker.color.push(srcColors[item.ticker][key]);
+      data.text.push(item[key] + srcIndicatorOpt[key].unit);
+      data.meta.push(item.meta);
+    });
+    data.x = data.x.map(item => item + 0.3333 * Math.max(...data.x));
+    layout.annotations = data.y.map(item => {
+      return {
+        x:0,
+        y:item,
+        xref:'x',
+        yref:'y',
+        text: item,
+        showarrow:false,
+        font: {
+          family:__fonts__,
+          color:'#ffffff',
+          size:13,
+        },
+        xanchor:'left',
+        yanchor:'middle'
+      }
+    })
+    layout.xaxis.range = [0, 1.2 * Math.max(...data.x)];
+
+//    if (isNarrow.matches) {
+//        var xrange = 1.75 * maxX;
+//    } else if (isMobile.matches) {
+//        var xrange = 1.5 * maxX;
+//    } else if (isTablet.matches) {
+//        var xrange = 1.25 * maxX;
+//    } else {
+//        var xrange = 1.1 * maxX;
+//    }
+
+    Plotly.newPlot('plotly', [data], layout, option);
+  }
+
+  setMap = function(key) {
+    var layout = {
+      margin: {
+        l:0,
+        r:0,
+        t:0,
+        b:25
+      },
+      annotations: [{
+        text: "©LAB￦ONS",
+        xref: "paper",
+        yref: "paper",
+        x: 0,
+        y: 1,
+        xanchor: "left",
+        yanchor: "top",
+        showarrow: false,
+        font: {
+          size: 12,
+          color: "white"
+        }
+      }],
+    };
+    var option = {
+      displayModeBar:false,
+      responsive:true,
+      showTips:false
+    };
+    var data = {
+      type:'treemap',
+      branchvalues:'total',
+      labels: [],
+      parents: [],
+      values: [],
+      text: [],
+      meta: [],
+      textposition:'middle center',
+      textfont:{
+        family:__fonts__,
+        color:'#ffffff'
+      },
+      texttemplate: '%{label}<br>%{text}',
+      marker: {
+        colors: [],
+        visible: true,
+      },
+      hovertemplate: '%{meta}<br>' + srcIndicatorOpt[key].label + ': %{text}<extra></extra>',
+      hoverlabel: {
+        font: {
+          family: __fonts__,
+          color: '#ffffff'
+        }
+      },
+      opacity: 0.9,
+      pathbar:{
+        visible: true,
+      }
+    };
+
+    Object.entries(srcTicker).forEach(([ticker, obj]) => {
+      if (currentMapViewer === 'woS') {
+        if ( (ticker == '005930') || ticker.startsWith('W') ) {
+          return
+        }
+      } else {
+        if (ticker.startsWith('N')) {
+          return
+        }
+      }
+      data.labels.push(obj.name);
+      data.parents.push(obj.ceiling);
+      data.values.push(obj.size);
+      if (obj[key] == null) {
+        data.text.push(srcIndicatorOpt[key].na);
+      } else {
+        data.text.push(obj[key] + srcIndicatorOpt[key].unit);
+      }
+      data.meta.push(obj.meta);
+      data.marker.colors.push(srcColors[ticker][key]);
+    });
+    Plotly.newPlot('plotly', [data], layout, option);
+  }
+  
+  $mainTypes.on('change', function() {
+    if (getCurrentServiceState() === 'map') {
+      currentMapViewer = $(this).val();
+      setMap(currentOption);
+      setSearchBar();
+    } else {
+      currentBarViewer = $(this).val();
+      setBar(currentOption)
+    }
+  });
+
+  $mainOptions.on('change', function() {
+    currentOption = $(this).val();
+    if (getCurrentServiceState() === 'map') {
+      setMap(currentOption);
+    } else {
+      setBar(currentOption)
+    }
+    setScaleBar();
+  });
+
+  $mapReset.on('click', function() {
+    currentMapViewer = 'all';
+    currentOption = 'D-1';
+    setMainTypes();
+    setMainOptions();
+    setScaleBar();
+    setSearchBar();
+    setMap(currentOption);
+  })
+
+  $mapToggle.on('click', function() {
+    $(this).toggleClass("bi-geo-alt-fill bi-bar-chart-line-fill");
+    if ($(this).hasClass('bi-bar-chart-line-fill')) {
+      setBar(currentOption);
+      $(this).css('transform', 'scaleX(-1) rotate(-90deg)');
+      $searchBar.prop('disabled', true);
+    } else {
+      setMap(currentOption);
+      $(this).css('transform', 'none');
+      $searchBar.prop('disabled', false);
+    }
+    setMainTypes();
+  });
+
+  $searchBar.on('select2:select', function(e){
+    const ticker = srcTicker[e.params.data.id];
+    eventClickTreemap(ticker.ceiling);
+    setTimeout(function(){
+        eventClickTreemap(ticker.name);
+    }, 1000);
+  })
+
+  $searchBar.on('select2:clear', function(e){
+    setMap(currentOption);
+  })
+
+  $('#plotly').dblclick(function(){
+    if (getCurrentServiceState() === 'map') {
+      setMap(currentOption);
+    }    
+  })
+
+  new Swiper('.swiper', {
+    loop: true,
+    speed: 600,
+    autoplay: {
+      delay: 5000
+    },
+    slidesPerView: "auto",
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    breakpoints: {
+      "320": {
+        "slidesPerView": 1,
+        "spaceBetween": 40
+      },
+      "1200": {
+        "slidesPerView": 3,
+        "spaceBetween": 1
+      }
+    },
+    on: {
+      slideChange: function () {
+        updateCenteredSlide(this);
+      },
+      init: function () {
+        updateCenteredSlide(this);
+      }
+    }
+  });
+
+  setMainTypes();
+  setMainOptions();
+  setScaleBar();
+  setSearchBar();
+  setMap(currentOption);
+}
+
+/* -----------------------------------------------------------
+ * MARKET BUBBLE OPERATION 
+----------------------------------------------------------- */
+let setOption;
+let setAxisLabel;
+let setBubbleSearchBar;
+let setBubble;
+let lineMap;
+if (SERVICE === "bubble"){
+  const root = document.querySelector(':root');
+  const cssVY = parseInt(getComputedStyle(root).getPropertyValue('--slider-button-y'));
+  const cssVX = parseInt(getComputedStyle(root).getPropertyValue('--slider-button-x'));
+  const cssHX = cssVY;
+  const cssHY = cssVX;
+  const $x = $('.bubble-x');
+  const $y = $('.bubble-y');
+  const $sectors = $('.bubble-sector');
+  const $bubbleSearchBar = $('.bubble-searchbar');
+  const $ySlider = $('.slider-y-range');
+  const $xSlider = $('.slider-x-range');
+  const $fullscreen = $('.bubble-fullscreen');
+  const $pan = $('.bubble-pan');
+
+  var isDragging = false;
+  var slider = '';
+  var currentX = 'D-1';
+  var currentY = 'M-6';
+  var currentSector = 'ALL';
+  var yValMin = 100;
+  var yValMax = 0;
+  var yValMinO = 100;
+  var yValMaxO = 0;
+  var xValMin = 100;
+  var xValMax = 0;
+  var xValMinO = 100;
+  var xValMaxO = 0;
+
+  setOption = function() {
+    $x.empty();
+    $y.empty();
+    $sectors.empty();
+    Object.entries(srcIndicatorOpt).forEach(([key, obj]) => {
+      var label = (typeof obj === "object" && obj !== null) ? obj.label : obj;
+      if (key == currentX) {
+        $x.append(`<option value="${key}" selected>${label}</option>`);
+      } else if (key === currentY) {
+        $y.append(`<option value="${key}" selected>${label}</option>`);
+      } else {
+        $x.append(`<option value="${key}">${label}</option>`);
+        $y.append(`<option value="${key}">${label}</option>`);
+      }
+    });
+
+    Object.entries(srcSectors).forEach(([key, obj]) => {
+      var label = (typeof obj === "object" && obj !== null) ? obj.label : obj;
+      $sectors.append(`<option value="${key}">${label}</option>`);
+    })
+  };
+
+  setBubbleSearchBar = function(){
+    $bubbleSearchBar.empty().append('<option></option>');
+
+    Object.entries(srcTickers)
+    .sort((a, b) => b[1].size - a[1].size)
+    .forEach(([ticker, obj]) => {
+      if ((currentSector != 'ALL') && (currentSector != obj.sectorCode)){
+        return
+      }
+      $bubbleSearchBar.append('<option value="' + ticker + '">' + obj.name + '</option>');
+    });
+    $bubbleSearchBar.select2({placeholder: "\uc885\ubaa9\uba85\u0020\uac80\uc0c9"}) // 종목명 검색
+  };
+
+  setBubble = function(x, y, sector) {
+    var xObj = srcIndicatorOpt[x];
+    var yObj = srcIndicatorOpt[y];
+    var bubbleLayout = {
+      dragmode: false,
+      margin:{
+        l:20,
+        r:0,
+        t:0,
+        b:35
+      },
+      xaxis:{
+        showline:true,
+        zerolinecolor:"lightgrey",
+        gridcolor:"lightgrey",
+      },
+      yaxis:{
+        ticklabelposition: 'inside',
+        showline:true,
+        zerolinecolor:"lightgrey",
+        gridcolor:"lightgrey",
+      },
+    };
+    var bubbleOption = {
+      showTips:false,
+      responsive:true,
+      displayModeBar:false,
+      displaylogo:false,   
+    };
+    var data = {
+      type:'scatter',
+      x:[],
+      y:[],
+      mode:'markers',
+      meta:[],
+      hovertemplate: '%{meta}<br>' + xObj.label + ': %{x}' + xObj.unit + '<br>' + yObj.label + ': %{y}' + yObj.unit + '<extra></extra>',
+      hoverlabel: {
+        font: {
+          family: __fonts__,
+          color: '#fffff'
+        }
+      },
+      marker: {
+        size:[],
+        color:[],
+        line: {
+          width:1.0,
+        },
+        opacity: 0.7,        
+          },
+    };
+    
+    Object.entries(srcTickers).forEach(([ticker, obj]) => {
+      if ( (sector != 'ALL') && (sector != obj.sectorCode) ) {
+        return;
+      }
+      
+      data.x.push(obj[x]);
+      data.y.push(obj[y]);
+      data.meta.push(obj.meta);
+      data.marker.size.push(obj.size);
+      data.marker.color.push(srcSectors[obj.sectorCode].color);		
+    });
+    
+    
+    bubbleLayout.xaxis.title = xObj.label + (xObj.unit ? '[' + xObj.unit + ']' : '');
+    bubbleLayout.yaxis.title = yObj.label + (yObj.unit ? '[' + yObj.unit + ']' : '');
+    bubbleLayout.shapes = [{
+      type:'line',
+      xref:'paper',
+      x0:0, x1:1,
+      y0:yObj.mean,
+      y1:yObj.mean,
+      line:{
+        color:'grey',
+        width: 1,
+        dash:'dot'
+      }
+    },{
+      type:'line',
+      yref:'paper',
+      x0:xObj.mean, 
+      x1:xObj.mean,
+      y0:0,
+      y1:1,
+      line:{
+        color:'grey',
+        width: 1,
+        dash:'dot'
+      }
+    }];
+    
+    Plotly.newPlot('plotly', [data], bubbleLayout, bubbleOption)
+    .then(grid => {
+      yValMinO = grid.layout.yaxis.range[0];
+      yValMaxO = grid.layout.yaxis.range[1]; 
+      yValMin = grid.layout.yaxis.range[0];
+      yValMax = grid.layout.yaxis.range[1];
+      xValMinO = grid.layout.xaxis.range[0];
+      xValMaxO = grid.layout.xaxis.range[1]; 
+      xValMin = grid.layout.xaxis.range[0];
+      xValMax = grid.layout.xaxis.range[1];
+      grid.on('plotly_doubleclick', function(e) {
+        yValMin = yValMinO;
+        yValMax = yValMaxO;
+        xValMin = xValMinO;
+        xValMax = xValMaxO;
+      })
+    });
+  }
+
+  lineMap = function(x1, y1, x2, y2, x) {
+    return ((y2 - y1) / (x2 - x1)) * x + (y1 - ((y2 - y1) / (x2 - x1)) * x1);
+  }
+
+  $x.on('change', function() {
+    currentX = $(this).val();
+    setBubble(currentX, currentY, currentSector);
+  });
+
+  $y.on('change', function() {
+    currentY = $(this).val();
+    setBubble(currentX, currentY, currentSector);
+  });
+  
+  $fullscreen.on('click', function() {
+    Plotly.relayout('plotly', {
+      'xaxis.range': [xValMinO, xValMaxO],
+      'yaxis.range': [yValMinO, yValMaxO]
+    });
+  });
+
+  $pan.on('click', function() {
+    $(this).toggleClass('active');
+    if ($(this).hasClass('active')) {
+      Plotly.relayout('plotly', {dragmode: 'pan'});
+    } else {
+      Plotly.relayout('plotly', {dragmode: false});
+    }
+  });
+
+  $sectors.on('change', function() {
+    currentSector = $(this).val();
+    setBubble(currentX, currentY, currentSector);
+  })
+
+  $(document)
+  .on('mousedown', function(e) {
+    isDragging = true;
+    $('body').css('user-select', 'none');
+    slider = $(e.target).attr('class');
+  })
+  .on('mouseup', function() {
+    $('body').css('user-select', 'auto');
+    if ($('.service-app').find('.y-ranger').length){
+      $('.service-app').find('.y-ranger').remove();
+    }
+    if ($('.service-app').find('.x-ranger').length){
+      $('.service-app').find('.x-ranger').remove();
+    }
+    if (slider.includes('y-slider')) {
+      if (slider.includes('top')) {
+        yValMax = lineMap(0, yValMax, $ySlider.height() - cssVY, yValMin, parseFloat($(`.${slider}`).css('top')));
+        $(`.${slider}`).css('top', '0');        
+      } else {
+        yValMin = lineMap(0, yValMax, $ySlider.height() - cssVY, yValMin, parseFloat($(`.${slider}`).css('top')));
+        $(`.${slider}`).css({'top': '', 'bottom': '0'});
+      }
+      Plotly.relayout('plotly', {'yaxis.range': [yValMin, yValMax]});
+    } else if (slider.includes('x-slider')) {
+      if (slider.includes('left')) {
+        xValMin = lineMap(0, xValMin, $xSlider.width() - cssHX, xValMax, parseFloat($(`.${slider}`).css('left')));
+        $(`.${slider}`).css('left', '0');
+      } else {
+        xValMax = lineMap(0, xValMin, $xSlider.width() - cssHX, xValMax, parseFloat($(`.${slider}`).css('left')));
+        $(`.${slider}`).css({'left':'', 'right': '0'});
+      }
+      Plotly.relayout('plotly', {'xaxis.range': [xValMin, xValMax]});
+    } else { }
+    
+    isDragging = false;
+    slider = '';
+  })
+  .on('mousemove', function(e) {
+    if(!isDragging) return;
+
+    if (slider.includes('y-slider')) {
+      let posY = e.pageY - $ySlider.offset().top;
+
+      if (slider.includes('top')) {
+        let lowLim = $('.y-slider-bottom')[0].offsetTop - cssVY;
+        posY = Math.max(0, Math.min(posY, lowLim));
+      } else {
+        let highLim = $('.y-slider-top')[0].offsetTop + cssVY;
+        posY = Math.max(highLim, Math.min(posY, $ySlider.height() - cssVY));
+      }
+      if (!$('.service-app').find('.y-ranger').length){
+        $('.service-app').append('<div class="y-ranger"></div>');
+      }
+
+      $(`.${slider}`).css('top', `${posY}px`);
+      $('.y-ranger').css({
+        'top': `${posY + (cssVY / 2)}px`,
+        'left': `${cssVX}px`
+      });
+      
+    } else if (slider.includes('x-slider')) {
+      let posX = e.pageX - $xSlider.offset().left;
+
+      if (slider.includes('left')) {
+        let highLim = $('.x-slider-right')[0].offsetLeft - cssHX;
+        posX = Math.max(0, Math.min(posX, highLim));
+      } else {
+        let lowLim = $('.x-slider-left')[0].offsetLeft + cssHX;
+        posX = Math.min(Math.max(lowLim, posX), $xSlider.width() - cssHX);
+      }
+      if (!$('.service-app').find('.x-ranger').length){
+        $('.service-app').append('<div class="x-ranger"></div>');
+      }
+      $(`.${slider}`).css('left', `${posX}px`);
+      $('.x-ranger').css({
+        'left': `${posX + 20 + cssVX + (cssHX / 2) + 2}px`,
+        'bottom': `${cssHY}px`
+      })
+
+    } else {}
+  });
+
+  $ySlider.css('height', `${$('.slider-vertical').height() - 35}px`);
+  $('.y-slider-bottom').css('top', `${$('.slider-vertical').height() - 35 - cssVY / 2}px`);
+
+  setOption();
+  setBubbleSearchBar();
+  setBubble(currentX, currentY, currentSector);
+}

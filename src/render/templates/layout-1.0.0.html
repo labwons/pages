@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <title>{{ title }}</title>
+
+  <!-- Favicons -->
+  <link href="/src/img/favicon.ico" rel="icon">
+    
+  <!-- Dependencies -->
+  <script src="/src/js/jquery-3.6.1.min.js"></script>
+  <script src="/src/js/purecounter-1.0.5.min.js"></script>
+  <script src="/src/js/swiper-bundle.min.js" defer></script>
+  <script src="/src/js/select2.min.js"></script>
+  <script src="/src/js/plotly-2.35.2-r0.1.min.js"></script>
+  {% if local %}
+  <script src="/src/js/labwons-1.0.0.js" defer></script>
+  {% else %}
+  <script src="/src/js/labwons-1.0.0.min.js" defer></script>
+  {% endif %}
+  
+  <!-- CSS Files -->
+  <link href="/src/css/icon.min.css" rel="stylesheet"> 
+  <link href="/src/css/select2.min.css" rel="stylesheet">
+  <link href="/src/css/swiper-bundle.min.css" rel="stylesheet">
+  <link href="/src/css/adsense.css" rel="stylesheet"> 
+  <link href="/src/css/style.css" rel="stylesheet">
+  
+  <!-- Style Sheet -->{% block style %}{% endblock %}
+  
+  <!-- Data -->{% block data %}{% endblock %}
+</head>
+
+<body>
+  <header id="header" class="header">
+    <div class="container container-header">
+      <a href="/" class="logo d-flex align-items-center me-auto">
+        <!-- <img src="/src/img/logo.png" alt=""> -->
+      </a>
+      <nav id="navmenu" class="navmenu">
+        <ul>{% for _nav in nav %}{% if not "sub" in _nav %}
+          <li><a href="{{ _nav['href'] }}">{{ _nav['content'] }}</a></li>{% else %}
+          <li class="dropdown">
+            <a href="{{ _nav['href'] }}">{{ _nav['content'] }}<i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>{% for _sub in _nav["sub"] %}
+              <li><a href="{{ _sub['href'] }}">{{ _sub['content'] }}</a></li>{% endfor %}
+            </ul>
+          </li>{% endif %}{% endfor %}
+        </ul>
+        <i class="mobile-nav-toggle bi bi-list"></i>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="container container-leaderboard">
+        <div class="ad ad-leaderboard">
+          <div class="ad-in-leaderboard">{{ ad_in_leaderboard }}</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container container-service">
+        <div class="ad ad-responsive">
+          <div class="ad-in-skyscraper">{{ ad_in_skyscraper }}</div>
+          <div class="ad-in-display-mobile">{{ ad_in_display_mobile }}</div>
+        </div>
+        <div class="content-main">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </section>
+    {% block content_addon %}{% endblock %}
+
+    {% if statusSection %}
+    <section class="section section-flow">
+      <div class="container container-content margin-bottom-60px">
+        <div class="ad ad-content">
+          <div class="ad-in-display">{{ ad_in_display }}</div>
+        </div>
+      </div>
+
+      <div class="container container-title">
+        <h2 class="main-title">STATUS</h2>
+        <p class="sub-title">{{ trading_date }}</p>
+      </div>
+
+      <div class="container container-content">
+        <!-- START Delete When use as template -->
+        <div class="content-number">
+          <i class="bi bi-emoji-smile content-number-icon"></i>
+          <div class="content-number-item">
+            <div class="content-number-value">
+              <span 
+              data-purecounter-start="0" 
+              data-purecounter-end="1200" 
+              data-purecounter-duration="1" 
+              data-purecounter-decimals="0" 
+              data-purecounter-separator="true" 
+              class="purecounter"></span>
+              <span class="content-number-unit"></span>
+            </div>            
+            <p>TEST 1</p>
+          </div>
+        </div>
+
+        <div class="content-number">
+          <i class="bi bi-emoji-smile content-number-icon"></i>
+          <div class="content-number-item">
+            <div class="content-number-value">
+              <span 
+              data-purecounter-start="0" 
+              data-purecounter-end="32.8" 
+              data-purecounter-duration="1" 
+              data-purecounter-decimals="1"
+              class="purecounter"></span>
+              <span class="content-number-unit">%</span>
+            </div>            
+            <p>TEST 2</p>
+          </div>
+        </div>
+
+        <div class="content-number">
+          <i class="bi bi-emoji-smile content-number-icon"></i>
+          <div class="content-number-item">
+            <div class="content-number-value">
+              <span 
+              data-purecounter-start="0" 
+              data-purecounter-end="53.6" 
+              data-purecounter-duration="1" 
+              data-purecounter-decimals="1" 
+              class="purecounter"></span>
+              <span class="content-number-unit">%</span>
+            </div>            
+            <p>TEST 3</p>
+          </div>
+        </div>
+
+        <div class="content-number">
+          <i class="bi bi-emoji-smile content-number-icon"></i>
+          <div class="content-number-item">
+            <div class="content-number-value">
+              <span 
+              data-purecounter-start="0" 
+              data-purecounter-end="-12.0" 
+              data-purecounter-duration="1" 
+              data-purecounter-decimals="1" 
+              class="purecounter"></span>
+              <span class="content-number-unit">%</span>
+            </div>            
+            <p>TEST 4</p>
+          </div>
+        </div>
+        <!-- END Delete When use as template -->
+      </div>
+    </section>
+    {% endif %}
+
+    {% if historySection %}
+    <section class="section section-flow">
+      
+      <div class="container container-title">
+        <h2 class="main-title">HISTORY</h2>
+        <p class="sub-title">{{ trading_days }}</p>
+      </div>
+
+      <div class="container container-content">
+        <div class="content-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Period</th>
+                <th>Yield</th>
+                <th>Benchmark</th>
+                <th>Buy</th>
+                <th>Sell</th>
+                <th>PriceToEarnings</th>
+                <th>FowardPE</th>
+                <th>PriceToSales</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>              
+            </tbody>
+          </table>
+        </div>        
+      </div>
+
+    </section>
+    {% endif %}
+
+    <section class="section section-flow">
+
+      <div class="container container-title">
+        <h2 class="main-title">SERVICE</h2>
+        <p class="sub-title">다른 기능들도 확인해보세요!</p>
+      </div>
+
+      <div class="container container-content gap-24px">
+        
+        <div class="content-service color-cyan">
+          <i class="bi bi-columns-gap"></i>
+          <h3>시장 지도</h3>
+          <p>코스피200과 코스닥150 종목을 섹터/업종 별 시가총액과 투자지표를 각각 크기와 색깔로 표시하였습니다. 시장을 <strong>직관적</strong>으로 이해할 수 있습니다.</p>
+          <a href="/" class="goto-service"><span>바로가기</span><i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="content-service content-infeed">
+          <div class="ad ad-infeed">
+            <div class="ad-in-infeed">{{ ad_in_infeed }}</div>
+          </div>
+        </div>
+
+        <div class="content-service color-orange">
+          <i class="bi bi-geo"></i>
+          <h3>종목 분포</h3>
+          <p>코스피와 코스닥 시가총액 중위값 이상의 약 1,300여개 종목을 2차원 산포도로 표시하였습니다. <strong>종목 발굴</strong>에 유용하게 사용할 수 있습니다. </p>
+          <a href="/bubble" class="goto-service"><span>바로가기</span><i class="bi bi-arrow-right"></i></a>
+        </div>
+        
+        <div class="content-service color-teal">
+          <i class="bi bi-graph-up"></i>
+          <h3>거시 경제</h3>
+          <p>서비스 준비 중입니다.</p>
+          <a href="#" class="goto-service"><span>바로가기</span><i class="bi bi-arrow-right"></i></a>
+        </div>
+        
+        <div class="content-service color-navy">
+          <i class="bi bi-list-check"></i>
+          <h3>PORTFOLIO</h3>
+          <p>서비스 준비 중입니다.</p>
+          <a href="#" class="goto-service"><span>바로가기</span><i class="bi bi-arrow-right"></i></a>
+        </div>
+        
+        <div class="content-service content-infeed">
+          <div class="ad ad-infeed">
+            <div class="ad-in-infeed">{{ ad_in_infeed }}</div>
+          </div>
+        </div>
+
+      </div>
+    
+    </section>
+
+    <section class="section section-flow">
+      <div class="container container-content margin-bottom-60px">
+        <div class="ad ad-content">
+          <div class="ad-in-display">{{ ad_in_display }}</div>
+        </div>
+      </div>
+
+      <div class="container container-title">
+        <h2 class="main-title">F.A.Q</h2>
+        <p class="sub-title">자주 묻는 질문</p>
+      </div>
+
+      <div class="container container-faq">
+        <div class="content-faq">
+          {% set half = (faq|length + 1) // 2 %}
+          {% for _faq in faq %}{% if loop.index <= half %}
+          <div class="faq-item">
+            <div class="faq-q">
+              <h3>{{ _faq['q'] }}</h3>
+              <i class="faq-toggle bi bi-chevron-right"></i>
+            </div>            
+            <div class="faq-a">
+              <p>{{ _faq['a'] }}</p>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="content-faq">
+          {% for _faq in faq %}{% if half < loop.index %}
+          <div class="faq-item">
+            <div class="faq-q">
+              <h3>{{ _faq['q'] }}</h3>
+              <i class="faq-toggle bi bi-chevron-right"></i>
+            </div>            
+            <div class="faq-a">
+              <p>{{ _faq['a'] }}</p>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="footer" class="footer">
+    <div class="footer-basis container" style="background: white url(/src/img/footer-bg.png) no-repeat right top;">
+      <div class="footer-container">
+        <div class="footer-info">
+          <a href="/" class="logo">
+            <img src="/src/img/logo-footer.png" alt="LAB￦ONS">
+          </a>
+          <p>본 홈페이지는 <b>개인 블로그</b>이며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다. 참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.</p>
+        </div>
+
+        <div class="footer-links">
+          <div class="footer-link">
+            <h4>주요 정보 출처</h4>
+            <ul>
+              <li><i class="bi bi-chevron-right"></i> <a href="http://data.krx.co.kr/contents/MDC/MAIN/main/index.cmd">한국거래소</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="https://dart.fss.or.kr/">전자공시시스템</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="https://finance.naver.com/">네이버증권</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="https://comp.fnguide.com/SVO2/ASP/SVD_main.asp?pGB=1&gicode=A005930&cID=&MenuYn=Y&ReportGB=&NewMenuID=11&stkGb=&strResearchYN=">에프앤가이드</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="https://news.einfomax.co.kr/">연합인포맥스</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-link">
+            <h4>서비스 바로가기</h4>
+            <ul>{% for _nav in nav %}
+              <li><i class="bi bi-chevron-right"></i><a href="{{ _nav['href'] }}">{{ _nav['content'] }}</a></li>{% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-contact">
+          <h4>연락처</h4>
+          <p><strong><i class="bi bi-envelope-fill"></i></strong> snob.labwons@gmail.com </p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="copyright">
+        &copy; Copyright LAB<strong>￦</strong>ONS. All Rights Reserved
+      </div>
+      <div class="credits">Designed By. YUHO PAPA</div>
+    </div>
+  </footer>
+
+  <a href="#" id="scroll-top" class="scroll-top"><i class="bi bi-arrow-up-short"></i></a>
+
+</body>
+
+</html>
