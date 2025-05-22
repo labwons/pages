@@ -51,7 +51,7 @@ class html:
 
     def __init__(self, **kwargs):
         self.src = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
-                   .get_template('service.html') \
+                   .get_template('layout-1.0.0.html') \
                    .render(**kwargs)
         return
 

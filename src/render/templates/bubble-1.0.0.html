@@ -1,0 +1,342 @@
+{% extends "layout-1.0.0.html" %}
+{% set NOTICE = "모든 투자의 책임은 당사자에게 있습니다. 
+본 자료는 법적 효력이 없으며 열람 시점에 따라 정보가 상이할 수 있습니다.                 
+*표시는 코스닥 종목입니다. 시총 중위값 이상 종목으로 구성되었습니다." %}
+
+{% block style %}
+  <style>
+    :root {
+      --slider-button-x: 20px;
+      --slider-button-y: 8px;
+    }
+    .service-nav {
+      flex: 0 0 auto;
+      margin-bottom: 6px;
+      padding: 0;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .service-nav select {
+      font-family: var(--font-family);
+      font-size: 14px;
+      color: #999;
+      min-width: 180px;
+      height: 28px;
+      margin: 0;      
+      padding: 2px 8px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    .service-nav .service-config,
+    .service-nav .service-search {
+      flex: 0 0 auto;
+      max-width: 40%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
+    .service-nav .service-search {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .service-nav .service-search .bubble-searchbar {
+      min-width: 360px !important;
+    }
+
+    .select2-container .select2-selection--single {
+      font-size: 14px !important;
+    }
+
+    .select2-container--default .select2-results__option {
+      font-size: 14px !important;
+    }
+
+    @media (max-width: 767px){
+      .service-nav {
+        flex: 0 0 auto;
+        min-width: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 4px;
+      }
+      
+      .service-nav .service-config,
+      .service-nav .service-search {
+        flex: 1 0 auto;
+        max-width: none;
+        justify-content: space-between;
+      }
+      
+      .service-nav .service-config select {
+        min-width: auto;
+      }
+
+      /* .service-nav .service-search .bubble-sector,
+      .service-nav .service-search .bubble-searchbar {
+        flex: 1 0 auto;
+        min-width: auto;
+      } */
+    }
+
+    @media (max-width: 1023px){
+      .service-nav .service-search .bubble-sector,
+      .service-nav .service-search .bubble-searchbar {
+        min-width: auto;
+      }
+
+      .service-nav .service-search .bubble-sector {
+        flex: 0 0 auto;
+      }
+
+      .service-nav .service-search .bubble-searchbar {
+        flex: 1 0 auto;
+      }
+    }
+
+    .service-nav .bubble-fullscreen,
+    .service-nav .bubble-pan {
+      width: 28px;
+      height: 28px;
+      margin: 0;
+      padding: 4px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      box-sizing: border-box;
+      cursor: pointer;
+      background-color: #fff; 
+      color: var(--nav-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .service-nav .bubble-fullscreen:hover,
+    .service-nav .bubble-pan:hover {
+      background-color: var(--nav-color);
+      color: #fff;
+      transition: 0.3s;
+    }
+
+    .service-nav .bubble-pan.active {
+      background-color: var(--nav-color);
+      color: #fff;
+    }
+
+    .service-nav .bubble-pan.active:hover {
+      background-color: #fff;
+      color: var(--nav-color);
+    }
+
+    .service-footer {
+      padding-top: 8px;
+    }
+
+    .service-footer > .notice {
+      font-family: var(--font-family);
+      font-size: 12px;
+      color: var(--default-color);
+    }
+
+    @media (max-width: 1023px){
+      .service-footer > .notice {
+        font-size: 9px;
+      }
+    }
+
+    @media (max-width: 767px){
+      .service-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .service-footer .notice {
+        width: 100%;
+      }
+    }
+
+    .service-app {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .service-app .service-layer-top {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 2px;
+    }
+
+    .service-app .service-layer-bottom {
+      flex: 0 0 auto;
+      height: var(--slider-button-x);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2px;
+    }
+
+    .plot {
+      flex: 1 0 auto;
+      cursor: default;
+    }
+
+    .slider-vertical {
+      flex: 0 0 auto;
+      width: var(--slider-button-x);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .slider-vertical .slider-y-range {
+      width: 1px;
+      background-color: grey;
+    }
+
+    .slider-vertical .y-slider-top,
+    .slider-vertical .y-slider-bottom {
+      position: absolute;
+      width: var(--slider-button-x);
+      height: var(--slider-button-y);
+      background-color: var(--nav-color);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .slider-vertical .y-slider-top {
+      top: 0;
+    }
+
+    .y-ranger {
+      position: absolute;
+      width: calc(100% - var(--slider-button-x));
+      height: 1px;
+      border-top: 1px dashed var(--nav-color);
+      z-index: 1000;
+    }
+
+    .x-ranger {
+      position: absolute;
+      width: 1px;
+      height: calc(100% - var(--slider-button-x));
+      border-right: 1px dashed var(--nav-color);
+      z-index: 1000;
+    }
+
+    .dummy {
+      flex: 0 0 auto;
+      width: calc(var(--slider-button-x) + 20px);
+    }
+
+    .slider-horizontal {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      position: relative;
+    }
+
+    .slider-horizontal .slider-x-range {
+      flex: 1 0 auto;
+      height: 1px;
+      width: 100%;
+      background-color: grey;
+    }
+
+    .slider-horizontal .x-slider-left,
+    .slider-horizontal .x-slider-right {
+      position: absolute;
+      width: var(--slider-button-y);
+      height: var(--slider-button-x);
+      background-color: var(--nav-color);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .slider-horizontal .x-slider-left {
+      left: 0;
+    }
+
+    .slider-horizontal .x-slider-right {
+      right: 0;
+    }
+
+  </style>
+{% endblock %}
+
+{% block data %}
+  <script type="text/javascript">
+    const SERVICE = "bubble";
+    const srcIndicatorOpt = {{ srcIndicatorOpt }};
+    const srcTickers = {{ srcTickers }};
+    const srcSectors = {{ srcSectors }};
+  </script>
+{% endblock %}
+
+{% block content %}
+          <!-- MARKET BUBBLE -->
+          <div class="service-nav">
+            <div class="service-config">
+              <select name="opt-x" class="bubble-x"></select>
+              <select name="opt-y" class="bubble-y"></select>
+              <span class="bubble-fullscreen"><i class="bi bi-fullscreen"></i></span>
+              <span class="bubble-pan"><i class="bi bi-arrows-move"></i></span>
+            </div>
+            <div class="service-search">
+              <select class="bubble-sector"></select>
+              <select class="bubble-searchbar"></select>
+            </div>
+          </div>
+          
+          <div class="service-app">
+
+            <div class="service-layer-top">
+              <div class="slider-vertical">
+                <div class="slider-y-range"></div>
+                <span class="y-slider-top"></span>
+                <span class="y-slider-bottom"></span>
+              </div>
+              <div class="plot" id="plotly"></div>
+            </div>
+
+            <div class="service-layer-bottom">
+              <div class="dummy"></div>
+              <div class="slider-horizontal">
+                <div class="slider-x-range"></div>
+                <span class="x-slider-left"></span>
+                <span class="x-slider-right"></span>
+              </div>
+            </div>
+
+          </div>
+  
+          <div class="service-footer">
+            <div class="notice">{{ NOTICE }}</div>
+          </div>
+          <!-- END MARKET MAP -->
+{% endblock %}
+
+{% block content_addon %}{% endblock %}

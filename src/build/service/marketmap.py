@@ -34,175 +34,240 @@ KEYS = {
         'valueScale': [-3, -2, -1, 0, 1, 2, 3],
         'colorScale': BLUE2RED,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'W-1': {
         'na': '(미제공)',
         'valueScale': [-6, -4, -2, 0, 2, 4, 6],
         'colorScale': BLUE2RED,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'M-1': {
         'na': '(미제공)',
         'valueScale': [-10, -6.7, -3.3, 0, 3.3, 6.7, 10],
         'colorScale': BLUE2RED,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'M-3': {
         'na': '(미제공)',
         'valueScale': [-18, -12, -6, 0, 6, 12, 18],
         'colorScale': BLUE2RED,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'M-6': {
         'na': '(미제공)',
         'valueScale': [-24, -16, -8, 0, 8, 16, 24],
         'colorScale': BLUE2RED,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'Y-1': {
         'na': '(미제공)',
         'valueScale': [-30, -20, -10, 0, 10, 20, 30],
         'colorScale': BLUE2RED,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'pct52wHigh': {
         'na': '(미제공)',
         'valueScale': [-30, -20, -10, 0, None, None, None],
         'colorScale': BLUE2RED,
         'defaultColorIndex': 0,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'pct52wLow': {
         'na': '(미제공)',
         'valueScale': [None, None, None, 0, 10, 20, 30],
         'colorScale': BLUE2RED,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'dividendYield': {
         'na': '(미제공)',
         'valueScale': [0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 0,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'fiscalDividendYield': {
         'na': '(미제공)',
         'valueScale': [0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 0,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'foreignRate': {
         'na': '(미제공)',
         'valueScale': [None, None, None, 0, 20, 40, 60],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'trailingProfitRate': {
         'na': '(미제공)',
         'valueScale': [-15, -10, -5, 0, 5, 10, 15],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-emoji-smile-fill',
+        'iconMin': 'bi-emoji-frown-fill',
     },
     'trailingPE': {
         'na': '(적자 | 미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN[::-1],
         'defaultColorIndex': 6,
+        'iconMax': 'bi-emoji-frown-fill',
+        'iconMin': 'bi-emoji-smile-fill',
     },
     'trailingPS': {
         'na': '(미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN[::-1],
         'defaultColorIndex': 6,
+        'iconMax': 'bi-emoji-frown-fill',
+        'iconMin': 'bi-emoji-smile-fill',
     },
     'estimatedPE': {
         'na': '(적자 | 미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN[::-1],
         'defaultColorIndex': 6,
+        'iconMax': 'bi-hand-thumbs-down-fill',
+        'iconMin': 'bi-hand-thumbs-up-fill',
     },
     'PBR': {
         'na': '(미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN[::-1],
         'defaultColorIndex': 6,
+        'iconMax': 'bi-emoji-frown-fill',
+        'iconMin': 'bi-emoji-smile-fill',
     },
     'fiscalDebtRatio' : {
         'na': '(미제공)',
         'valueScale':  [30, 60, 90, 120, 150, 180, 210],
         'colorScale': RED2GREEN[::-1],
         'defaultColorIndex': 6,
+        'iconMax': 'bi-emoji-frown-fill',
+        'iconMin': 'bi-emoji-smile-fill',
     },
     'volume': {
         'na': '(미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-volume-up-fill',
+        'iconMin': 'bi-volume-off-fill',
     },
     'beta': {
         'na': '(미제공)',
         'valueScale': [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-graph-up-arrow',
+        'iconMin': 'bi-graph-down-arrow',
     },
     'turnoverRatio': {
         'na': '(미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-arrow-left-right',
+        'iconMin': 'bi-three-dots',
     },
     'averageRevenueGrowth_A': {
         'na': '(미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-emoji-smile-fill',
+        'iconMin': 'bi-emoji-frown-fill',
     },
     'averageProfitGrowth_A': {
         'na': '(미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-emoji-smile-fill',
+        'iconMin': 'bi-emoji-frown-fill',
     },
     'averageEpsGrowth_A': {
         'na': '(미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-emoji-smile-fill',
+        'iconMin': 'bi-emoji-frown-fill',
     },
     'RevenueGrowth_A': {
         'na': '(미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-emoji-smile-fill',
+        'iconMin': 'bi-emoji-frown-fill',
     },
     'ProfitGrowth_A': {
         'na': '(미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-emoji-smile-fill',
+        'iconMin': 'bi-emoji-frown-fill',
     },
     'EpsGrowth_A': {
         'na': '(미제공)',
         'valueScale': None,
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
+        'iconMax': 'bi-emoji-smile-fill',
+        'iconMin': 'bi-emoji-frown-fill',
     }
 }
+
+FAQ = [
+    {'q': '실시간 업데이트는 안 되나요?', 'a': '실시간 업데이트는 제공되지 않습니다.<i class="bi bi-emoji-frown-fill"></i> 마지막 거래일 기준 데이터로 구성하였습니다.'},
+    {'q': '제가 찾는 종목이 없어요.', 'a': '가독성을 위해 코스피200 지수와 코스닥150 지수 종목으로 구성하였으며 이외 종목은 제외됩니다.'},
+    {'q': '언제 업데이트 되나요?', 'a': '정규장 시간 마감(15:30) 이후 15분~30분 내로 업데이트 됩니다. 휴장일에는 마지막 개장일 데이터가 유지됩니다.'},
+    {'q': '자료 출처가 어디인가요?',
+     'a': '섹터/업종 분류는 GICS 산업 분류 및 WISE INDEX를 참고하여 재구성하였습니다. 수익률은 한국거래소(KRX) 데이터를 참고하였으며 기타 지표는 네이버 및 에프앤가이드를 참고하였습니다.'},
+    {'q': 'NXT 거래소 정보는 반영 안 되나요?',
+     'a': 'NXT 거래소의 가격 정보는 반영되지 않으며 한국거래소(KRX) 기준 가격만 반영됩니다.'},
+    {'q': '정보 수정이 필요해요.',
+     'a': '고장 신고, 정보 정정 및 기타 문의는 snob.labwons@gmail.com 으로 연락주세요!<i class="bi bi-emoji-smile-fill"></i>'},
+]
 
 
 class MarketMap(DataFrame):
 
     _log: List[str] = []
     meta: Dict[str, Dict[str, Any]] = KEYS.copy()
+    faqs: List[Dict] = FAQ
     def __init__(self, baseline:DataFrame):
         stime = time()
         self.log = f'RUN [Build Market Map]'
 
         super().__init__(baseline[baseline["stockSize"] == "large"])
-
+        self.drop(columns=["date"], inplace=True)
         self['size'] = (self['marketCap'] / 1e+8).astype(int)
         self['ceiling'] = self['industryName']
         self['meta'] = self['name'] + '(' + self.index + ')<br>' \
                      + '시가총액: ' + self['size'].apply(self._format_cap) + '원<br>' \
-                     + '종가: ' + self['close'].apply(lambda x: f"{x:,d}원")
+                     + '종가: ' + self['close'].apply(lambda x: f"{x:.0f}원")
         prior_sector = self[self["industryName"] == self["sectorName"]]["sectorName"] \
                        .drop_duplicates() \
                        .tolist()
@@ -423,17 +488,54 @@ class MarketMap(DataFrame):
             objs[key] = self[key].fillna('').apply(_paint)
         colors = concat(objs, axis=1)
         colors.iloc[-2:] = "#C8C8C8"
+        for key in self.meta:
+            for _destroy in ['defaultColorIndex']:
+                del self.meta[key][_destroy]
         return colors
 
     @property
     def desc(self) -> DataFrame:
-        # INTERNAL
         tg = self[self.index.str.isdigit()]
         desc = tg.describe()
         mn = {col: ",".join(tg[tg[col] == tg[col].min()].index) for col in desc}
         mx = {col: ",".join(tg[tg[col] == tg[col].max()].index) for col in desc}
         desc = concat([desc, DataFrame([mn, mx], index=["minT", "maxT"])])
         return desc
+
+    @property
+    def peakPoint(self) -> DataFrame:
+        desc = self.desc.copy()
+        peak = desc.loc[["min", "max", "minT", "maxT"]]
+        drop = ['size']
+        for col in peak:
+            if ','in peak.loc['minT', col] or ',' in peak.loc['maxT', col]:
+                drop.append(col)
+            if col in drop:
+                continue
+            if col == "volume":
+                if peak.loc['min', col] >= 10000:
+                    peak.loc['min', col] = f"{peak.loc['min', col] // 10000:.0f}만 주"
+                else:
+                    peak.loc['min', col] = f"{peak.loc['min', col]:.0f} 주"
+                if peak.loc['max', col] >= 10000:
+                    peak.loc['max', col] = f"{peak.loc['max', col] // 10000:.0f}만 주"
+                else:
+                    peak.loc['max', col] = f"{peak.loc['max', col]:.0f} 주"
+            else:
+                peak.loc['min', col] = f"{peak.loc['min', col]:.1f} {self.meta[col]['unit']}"
+                peak.loc['max', col] = f"{peak.loc['max', col]:.1f} {self.meta[col]['unit']}"
+            peak.loc['minT', col] = self.loc[peak.loc['minT', col], 'name']
+            peak.loc['maxT', col] = self.loc[peak.loc['maxT', col], 'name']
+            peak.loc['minC', col] = self.meta[col]['colorScale'][0]
+            peak.loc['maxC', col] = self.meta[col]['colorScale'][-1]
+            peak.loc['minI', col] = self.meta[col]['iconMin']
+            peak.loc['maxI', col] = self.meta[col]['iconMax']
+
+        peak = peak.drop(columns=drop)
+        for key in self.meta:
+            for _destroy in ['iconMax', 'iconMin']:
+                del self.meta[key][_destroy]
+        return peak
 
     @property
     def gaussian(self) -> DataFrame:
@@ -472,32 +574,14 @@ if __name__ == "__main__":
 
     set_option('display.expand_frame_repr', False)
     baseline = MarketBaseline(update=False)
-    print(baseline)
+    # print(baseline)
     marketMap = MarketMap(baseline)
-    print(marketMap)
+    # print(marketMap)
+    # print(marketMap.desc)
+    # print(marketMap.peakPoint)
     # print(marketMap.log)
     # print(marketMap.meta)
-    # print(marketMap.gaussian)
-    # marketMap.show_gaussian()
+    print(marketMap.gaussian)
+    marketMap.show_gaussian()
     # print(marketMap.colors)
     # print(marketMap.to_dict(orient='index'))
-
-
-    # import plotly.graph_objs as go
-    #
-    # fig = go.Figure()
-    # df = marketMap[marketMap.index.str.isdigit() | marketMap.index.str.startswith('W')]
-    # key = 'D-1'
-    # trace = go.Treemap(
-    #     branchvalues='total',
-    #     labels=df['name'],
-    #     parents=df['ceiling'].fillna(""),
-    #     values=df["size"],
-    #     meta=df['meta'] + f"<br>{marketMap.meta[key]['label']}" + df[key].astype(str),
-    #     text=df[key],
-    #     textposition="middle center",
-    #     texttemplate='%{label}<br>%{text}',
-    #     hovertemplate="%{meta}" + "<extra></extra>",
-    # )
-    # fig.add_trace(trace)
-    # fig.show()

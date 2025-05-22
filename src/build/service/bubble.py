@@ -17,9 +17,22 @@ colors = {
   "G99": "rgb(132, 62, 173)"
 }
 
+FAQ = [
+    {'q': '실시간 업데이트는 안 되나요?', 'a': '실시간 업데이트는 제공되지 않습니다.<i class="bi bi-emoji-frown-fill"></i> 마지막 거래일 기준 데이터로 구성하였습니다.'},
+    {'q': '제가 찾는 종목이 없어요.', 'a': '가독성을 위해 코스피와 코스닥 시가총액 중위값 보다 큰 약 1,300여개의 종목으로 구성하였습니다.'},
+    {'q': '언제 업데이트 되나요?', 'a': '정규장 시간 마감(15:30) 이후 15분~30분 내로 업데이트 됩니다. 휴장일에는 마지막 개장일 데이터가 유지됩니다.'},
+    {'q': '자료 출처가 어디인가요?',
+     'a': '섹터/업종 분류는 GICS 산업 분류 및 WISE INDEX를 참고하여 재구성하였습니다. 수익률은 한국거래소(KRX) 데이터를 참고하였으며 기타 지표는 네이버 및 에프앤가이드를 참고하였습니다.'},
+    {'q': 'NXT 거래소 정보는 반영 안 되나요?',
+     'a': 'NXT 거래소의 가격 정보는 반영되지 않으며 한국거래소(KRX) 기준 가격만 반영됩니다.'},
+    {'q': '정보 수정이 필요해요.',
+     'a': '고장 신고, 정보 정정 및 기타 문의는 snob.labwons@gmail.com 으로 연락주세요!<i class="bi bi-emoji-smile-fill"></i>'},
+]
+
 class MarketBubble(DataFrame):
 
     _log: List[str] = []
+    faqs:List[Dict] = FAQ
     meta: Dict[str, Dict[str, Any]] = {}
     sector: Dict[str, Dict[str, str]] = {"ALL": {"label": "전체", "color": "royalblue"}}
     def __init__(self, baseline:DataFrame):
