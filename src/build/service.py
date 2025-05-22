@@ -229,17 +229,14 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # BUILD RESOURCES
     # ---------------------------------------------------------------------------------------
-    # try:
-    #     resources = config.deploymentResource()
-    #     resources.LOCAL_HOST = LOCAL_HOST
-    #     resources.BASE_DIR = BASE_DIR
-    #     if not LOCAL_HOST:
-    #         resources.router = ROUTER
-    #     resources.render_css()
-    #     resources.minify()
-    #     context += [f'- [SUCCESS] CSS Deployment and Minify Resources', '']
-    # except Exception as error:
-    #     context += [f'- [FAILED] CSS Deployment and Minify Resources', f'  : {error}', '']
+    try:
+        resources = config.deploymentResource()
+        resources.LOCAL_HOST = LOCAL_HOST
+        resources.BASE_DIR = BASE_DIR
+        resources.minify()
+        context += [f'- [SUCCESS] Minify Resources', '']
+    except Exception as error:
+        context += [f'- [FAILED] Minify Resources', f'  : {error}', '']
 
     try:
         rss(BASE_DIR, "https://labwons.com", os.path.join(BASE_DIR, "feed.xml"))

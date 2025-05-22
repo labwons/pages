@@ -27,14 +27,6 @@ class deploymentResource:
     def BASE_DIR(self, root:str):
         self._root = root
 
-    def render_css(self):
-        style = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
-                .get_template('style.css') \
-                .render(router=self.router)
-        with open(os.path.join(self.BASE_DIR, "src/css/style.css"), "w", encoding="utf-8") as css:
-            css.write(style)
-        return
-
     def minify(self):
         for _dir, _folder, _files in os.walk(self.BASE_DIR):
             for _file in _files:

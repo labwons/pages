@@ -39,7 +39,9 @@
   <header id="header" class="header">
     <div class="container container-header">
       <a href="/" class="logo d-flex align-items-center me-auto">
-        <!-- <img src="/src/img/logo.png" alt=""> -->
+        {% if not local %}
+        <img src="/src/img/logo.png" alt="">
+        {% endif %}
       </a>
       <nav id="navmenu" class="navmenu">
         <ul>{% for _nav in nav %}{% if not "sub" in _nav %}
