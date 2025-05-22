@@ -429,18 +429,18 @@ PARTS
 
 .content-main {
   flex: 1 0 auto;
-  height: calc(100vh - 200px);
+  /* height: calc(100vh - 200px); */
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
 }
-
+/* 
 @media (max-width: 767px) {
   .content-main {
     min-height: 85dvh;
   }
-}
+} */
 
 .content-number {
   flex: 1 0 auto;

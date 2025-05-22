@@ -44,42 +44,11 @@ if __name__ == "__main__":
     from time import sleep
     import os
 
-
-    # ---------------------------------------------------------------------------------------
-    # GOOGLE ADSENSE CONFIGURATION
-    # ---------------------------------------------------------------------------------------
-    ADSENSE_PROPERTY = {
-        "meta": [{"name": "google-adsense-account", "content": config.ADSENSE_ID}],
-        "script": [{
-            "data-ad-client": config.ADSENSE_ID,
-            "async src": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
-            "pos": "top"
-        }],
-        "ad_title_responsive": {
-            "class": "adsbygoogle ads-resp-h-top",
-            "style": "display:block;",
-            "data-ad-client": config.ADSENSE_ID,
-            "data-ad-slot": "9007042504",
-            "data-ad-format": "auto",
-            "data-full-width-responsive": "true",
-        },
-        "ad_middle_responsive": {
-            "class": "adsbygoogle ads-resp-h-mid",
-            "style": "display:block",
-            "data-ad-client": config.ADSENSE_ID,
-            "data-ad-slot": "9705057757",
-            "data-ad-format": "auto",
-            "data-full-width-responsive": "true",
-        },
-    }
-
-
     # ---------------------------------------------------------------------------------------
     # ENVIRONMENT SETTINGS
     # ---------------------------------------------------------------------------------------
     PRINT_DATA('display.expand_frame_repr', False)
 
-    ADSENSE    = True
     BASE_DIR   = PATH.DOCS
     BASELINE   = True
     CLOCK      = lambda zone: datetime.now(zone)
@@ -93,7 +62,6 @@ if __name__ == "__main__":
         # LOCAL HOSTING DIRECTORY WITH DEPLOYMENT DIRECTORY, DEPLOYMENT MIGHT BE CORRUPTED.
         # IF YOU WANT TO USE DIFFERENT PATH FOR LOCAL HOST TESTING, BELOW {ROOT} VARIABLE ARE
         # TO BE CHANGED.
-        ADSENSE = False
         BASE_DIR = os.path.join(PATH.DOWNLOADS, 'labwons')
         PATH.copytree(PATH.DOCS, BASE_DIR)
 
@@ -153,8 +121,6 @@ if __name__ == "__main__":
     #         portfolioKeys.fulltext()
     #     if not LOCAL_HOST:
     #         portfolioKeys.route(ROUTER)
-    #     if ADSENSE:
-    #         portfolioKeys.merge(**ADSENSE_PROPERTY)
     #     portfolio.html(**portfolioKeys).save(os.path.join(BASE_DIR, 'portfolio'))
     #     context += [f'- [SUCCESS] Deploy Portfolio', portfolioData.log, '']
     # except Exception as error:

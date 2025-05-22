@@ -81,8 +81,9 @@
     <section class="section">
       <div class="container container-service">
         <div class="ad ad-responsive">
-          <!-- <div class="ad-in-skyscraper"> -->
-            <ins class="adsbygoogle ad-in-skyscraper"
+          <div class="ad-in-skyscraper">
+            {% if not local %}
+            <ins class="adsbygoogle"
                  style="display:inline-block;width:160px;height:600px"
                  data-ad-client="ca-pub-7507574593260609"
                  data-ad-slot="8415406752">
@@ -90,9 +91,11 @@
             <script>
               (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
-          <!-- </div> -->
-          <!-- <div class="ad-in-display-mobile"> -->
-            <ins class="adsbygoogle ad-in-display-mobile"
+            {% endif %}
+          </div>
+          <div class="ad-in-display-mobile">
+            {% if not local %}
+            <ins class="adsbygoogle"
                  style="display:block"
                  data-ad-client="ca-pub-7507574593260609"
                  data-ad-slot="9007042504"
@@ -102,7 +105,8 @@
             <script>
               (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
-          <!-- </div> -->
+            {% endif %}
+          </div>
         </div>
         <div class="content-main">
           {% block content %}{% endblock %}
@@ -114,6 +118,7 @@
       <div class="container container-content margin-bottom-60px">
         <div class="ad ad-content">
           <div class="ad-in-display">
+            {% if not local %}
             <ins class="adsbygoogle"
                  style="display:block"
                  data-ad-client="ca-pub-7507574593260609"
@@ -124,6 +129,7 @@
             <script>
               (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
+            {% endif %}
           </div>
         </div>
       </div>
