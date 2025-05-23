@@ -528,7 +528,7 @@ if (SERVICE === "bubble"){
       showTips:false,
       responsive:true,
       displayModeBar:true,
-      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale"],
+      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
       displaylogo:false,   
     };
     var data = {
@@ -748,8 +748,13 @@ if (SERVICE === "bubble"){
   })
   .on('click', '.bi-arrow-down-up', function() {
     Plotly.relayout('plotly', {dragmode: false});
+    $(this).css('opacity', '0.8');
+  })
+  .on('click', '.modebar', function(e) {
+    if (!$(e.target).is('i')){
+      $('.bi-arrow-down-up').css('opacity', '0.3');
+    }
   });
-
 
   $ySlider.css('height', `${$('.slider-vertical').height() - 35}px`);
   $('.y-slider-bottom').css('top', `${$('.slider-vertical').height() - 35 - cssVY / 2}px`);
