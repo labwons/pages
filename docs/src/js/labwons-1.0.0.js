@@ -434,11 +434,10 @@ if (SERVICE === "marketmap"){
 /* -----------------------------------------------------------
  * MARKET BUBBLE OPERATION 
 ----------------------------------------------------------- */
-let setOption;
-let setAxisLabel;
-let setBubbleSearchBar;
-let setBubble;
+let setOption, setAxisLabel, setBubbleSearchBar, setBubble;
+let startDrag, onDrag, stopDrag;
 let lineMap;
+
 if (SERVICE === "bubble"){
   const root = document.querySelector(':root');
   const cssVY = parseInt(getComputedStyle(root).getPropertyValue('--slider-button-y'));
@@ -650,48 +649,19 @@ if (SERVICE === "bubble"){
     setBubble(currentX, currentY, currentSector);
   })
 
-  $(document)
-  .on('mousedown', function(e) {
-    isDragging = true;
-    $('body').css('user-select', 'none');
-    slider = $(e.target).attr('class');
-  })
-  .on('mouseup', function() {
-    $('body').css('user-select', 'auto');
-    if ($('.service-app').find('.y-ranger').length){
-      $('.service-app').find('.y-ranger').remove();
+  startDrag = function(e) {
+    $_class = $(e.target).attr('class');
+    if ($_class.includes('-slider-')) {
+      $('body').css('user-select', 'none');
+      slider = $_class;
+    } else {
+      slider = "";
     }
-    if ($('.service-app').find('.x-ranger').length){
-      $('.service-app').find('.x-ranger').remove();
-    }
-    if (slider.includes('y-slider')) {
-      if (slider.includes('top')) {
-        yValMax = lineMap(0, yValMax, $ySlider.height() - cssVY, yValMin, parseFloat($(`.${slider}`).css('top')));
-        $(`.${slider}`).css('top', '0');        
-      } else {
-        yValMin = lineMap(0, yValMax, $ySlider.height() - cssVY, yValMin, parseFloat($(`.${slider}`).css('top')));
-        $(`.${slider}`).css({'top': '', 'bottom': '0'});
-      }
-      Plotly.relayout('plotly', {'yaxis.range': [yValMin, yValMax]});
-    } else if (slider.includes('x-slider')) {
-      if (slider.includes('left')) {
-        xValMin = lineMap(0, xValMin, $xSlider.width() - cssHX, xValMax, parseFloat($(`.${slider}`).css('left')));
-        $(`.${slider}`).css('left', '0');
-      } else {
-        xValMax = lineMap(0, xValMin, $xSlider.width() - cssHX, xValMax, parseFloat($(`.${slider}`).css('left')));
-        $(`.${slider}`).css({'left':'', 'right': '0'});
-      }
-      Plotly.relayout('plotly', {'xaxis.range': [xValMin, xValMax]});
-    } else { }
-    
-    isDragging = false;
-    slider = '';
-  })
-  .on('mousemove', function(e) {
-    if(!isDragging) return;
+  };
 
+  onDrag = function(x, y) {
     if (slider.includes('y-slider')) {
-      let posY = e.pageY - $ySlider.offset().top;
+      let posY = y - $ySlider.offset().top;
 
       if (slider.includes('top')) {
         let lowLim = $('.y-slider-bottom')[0].offsetTop - cssVY;
@@ -711,7 +681,7 @@ if (SERVICE === "bubble"){
       });
       
     } else if (slider.includes('x-slider')) {
-      let posX = e.pageX - $xSlider.offset().left;
+      let posX = x - $xSlider.offset().left;
 
       if (slider.includes('left')) {
         let highLim = $('.x-slider-right')[0].offsetLeft - cssHX;
@@ -730,7 +700,64 @@ if (SERVICE === "bubble"){
       })
 
     } else {}
+
+  };
+
+  stopDrag = function() {
+    if (slider.includes('-slider-')){
+      $('body').css('user-select', 'auto');
+      if ($('.service-app').find('.y-ranger').length){
+        $('.service-app').find('.y-ranger').remove();
+      }
+      if ($('.service-app').find('.x-ranger').length){
+        $('.service-app').find('.x-ranger').remove();
+      }
+
+      if (slider === 'y-slider-top') {
+        yValMax = lineMap(0, yValMax, $ySlider.height() - cssVY, yValMin, parseFloat($(`.${slider}`).css('top')));
+        $(`.${slider}`).css('top', '0');
+      } else if (slider === 'y-slider-bottom') {
+        yValMin = lineMap(0, yValMax, $ySlider.height() - cssVY, yValMin, parseFloat($(`.${slider}`).css('top')));
+        $(`.${slider}`).css('top', `${$('.slider-vertical').height() - 35 - cssVY / 2}px`);
+      } else if (slider === 'x-slider-left') {
+        xValMin = lineMap(0, xValMin, $xSlider.width() - cssHX, xValMax, parseFloat($(`.${slider}`).css('left')));
+        $(`.${slider}`).css('left', '0');
+      } else if (slider === 'x-slider-right') {
+        xValMax = lineMap(0, xValMin, $xSlider.width() - cssHX, xValMax, parseFloat($(`.${slider}`).css('left')));
+        $(`.${slider}`).css({'left':'', 'right': '0'});
+      } else { }
+      Plotly.relayout('plotly', {
+        'xaxis.range': [xValMin, xValMax],
+        'yaxis.range': [yValMin, yValMax]
+      });
+    }
+    slider = "";
+  };
+
+  $(document)
+  .on('mousedown', function(e) {
+    startDrag(e);
+  })
+  .on('touchstart', function(e) {
+    startDrag(e);
+  })
+  .on('mousemove', function(e) {
+    onDrag(e.pageX, e.pageY);
+  })
+  .on('touchmove', function(e) {
+    const _e = e.originalEvent.touches[0];
+    onDrag(_e.pageX, _e.pageY);
+  })
+  .on('mouseup', function() {
+    stopDrag();
+  })
+  .on('touchend', function() {
+    stopDrag();
+  })
+  .on('touchcancel', function() {
+    stopDrag();
   });
+
 
   $ySlider.css('height', `${$('.slider-vertical').height() - 35}px`);
   $('.y-slider-bottom').css('top', `${$('.slider-vertical').height() - 35 - cssVY / 2}px`);
@@ -739,17 +766,3 @@ if (SERVICE === "bubble"){
   setBubbleSearchBar();
   setBubble(currentX, currentY, currentSector);
 }
-
-(function() {
-  const overflowingElements = [];
-  const viewportWidth = document.documentElement.clientWidth;
-
-  document.querySelectorAll('*').forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.right > viewportWidth || rect.left < 0) {
-      overflowingElements.push(el);
-    }
-  });
-
-  console.log('Overflowing elements:', overflowingElements);
-})();

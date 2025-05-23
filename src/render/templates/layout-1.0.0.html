@@ -27,16 +27,20 @@
   <script src="/src/js/labwons-1.0.0.js" defer></script>
   {% else %}
   <script src="/src/js/labwons-1.0.0.min.js" defer></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7507574593260609" crossorigin="anonymous"></script>
   {% endif %}
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7507574593260609"
-     crossorigin="anonymous"></script>
   
   <!-- CSS Files -->
   <link href="/src/css/icon.min.css" rel="stylesheet"> 
   <link href="/src/css/select2.min.css" rel="stylesheet">
   <link href="/src/css/swiper-bundle.min.css" rel="stylesheet">
+  {% if local %}
   <link href="/src/css/adsense.css" rel="stylesheet"> 
   <link href="/src/css/style.css" rel="stylesheet">
+  {% else %}
+  <link href="/src/css/adsense.min.css" rel="stylesheet"> 
+  <link href="/src/css/style.min.css" rel="stylesheet">
+  {% endif %}
   
   <!-- Style Sheet -->{% block style %}{% endblock %}
   
