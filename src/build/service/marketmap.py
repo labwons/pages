@@ -1,3 +1,7 @@
+try:
+    from ...common.path import PATH
+except ImportError:
+    from src.common.path import PATH
 from pandas import (
     concat,
     DataFrame,
@@ -5,6 +9,7 @@ from pandas import (
 from scipy.stats import norm
 from time import time
 from typing import Any, Dict, List
+import os
 
 
 HEX2RGB = lambda x: (int(x[1:3], 16), int(x[3:5], 16), int(x[5:], 16))
@@ -577,12 +582,46 @@ if __name__ == "__main__":
     baseline = MarketBaseline(update=False)
     # print(baseline)
     marketMap = MarketMap(baseline)
-    # print(marketMap)
+    print(marketMap)
     # print(marketMap.desc)
-    print(marketMap.peakPoint)
+    # print(marketMap.peakPoint)
     # print(marketMap.log)
     # print(marketMap.meta)
     # print(marketMap.gaussian)
     # marketMap.show_gaussian()
     # print(marketMap.colors)
     # print(marketMap.to_dict(orient='index'))
+
+    import plotly.graph_objs as go
+
+    tickers = []
+    for i in marketMap.index:
+        if i.startswith('N'):
+            continue
+        tickers.append(i)
+    df = marketMap.loc[tickers]
+
+    fig = go.Figure()
+    fig.add_trace(go.Treemap(
+        branchvalues='total',
+        labels=df.name,
+        parents=df.ceiling,
+        values=df['size'],
+        text=df['D-1'],
+        textposition='middle center',
+        texttemplate='%{label}<br>%{text}%',
+        textfont={
+            'color': '#fff'
+        },
+        opacity=0.9,
+        marker={
+            "colors": marketMap.colors.loc[tickers]['D-1']
+        }
+    ))
+
+    fig.write_image(
+        file=os.path.join(PATH.DOCS, r'src/img/marketmap.png'),
+        width=1200,
+        height=630,
+        validate=False
+    )

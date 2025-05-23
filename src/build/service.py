@@ -8,13 +8,7 @@ if __name__ == "__main__":
     try:
         from ..common.path import PATH
         from ..common.report import eMail
-        from ..render.navigate import navigate
-        from ..render import (
-            config,
-            bubble,
-            marketmap,
-            portfolio
-        )
+        from ..render.navigate import navigate, minify
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
         from .service.marketmap import MarketMap
@@ -23,13 +17,7 @@ if __name__ == "__main__":
     except ImportError:
         from src.common.path import PATH
         from src.common.report import eMail
-        from src.render.navigate import navigate
-        from src.render import (
-            config,
-            bubble,
-            marketmap,
-            portfolio
-        )
+        from src.render.navigate import navigate, minify
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble
         from src.build.service.marketmap import MarketMap
@@ -196,10 +184,7 @@ if __name__ == "__main__":
     # BUILD RESOURCES
     # ---------------------------------------------------------------------------------------
     try:
-        resources = config.deploymentResource()
-        resources.LOCAL_HOST = LOCAL_HOST
-        resources.BASE_DIR = BASE_DIR
-        resources.minify()
+        minify()
         context += [f'- [SUCCESS] Minify Resources', '']
     except Exception as error:
         context += [f'- [FAILED] Minify Resources', f'  : {error}', '']
