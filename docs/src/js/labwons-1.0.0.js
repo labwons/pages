@@ -618,41 +618,10 @@ if (SERVICE === "bubble"){
     return ((y2 - y1) / (x2 - x1)) * x + (y1 - ((y2 - y1) / (x2 - x1)) * x1);
   }
 
-  $x.on('change', function() {
-    currentX = $(this).val();
-    setBubble(currentX, currentY, currentSector);
-  });
-
-  $y.on('change', function() {
-    currentY = $(this).val();
-    setBubble(currentX, currentY, currentSector);
-  });
-  
-  $fullscreen.on('click', function() {
-    Plotly.relayout('plotly', {
-      'xaxis.range': [xValMinO, xValMaxO],
-      'yaxis.range': [yValMinO, yValMaxO]
-    });
-  });
-
-  $pan.on('click', function() {
-    $(this).toggleClass('active');
-    if ($(this).hasClass('active')) {
-      Plotly.relayout('plotly', {dragmode: 'pan'});
-    } else {
-      Plotly.relayout('plotly', {dragmode: false});
-    }
-  });
-
-  $sectors.on('change', function() {
-    currentSector = $(this).val();
-    setBubble(currentX, currentY, currentSector);
-  })
-
   startDrag = function(e) {
     $_class = $(e.target).attr('class');
     if ($_class.includes('-slider-')) {
-      $('body').css('user-select', 'none');
+      $('body').css({'user-select': 'none', 'overflow': 'hidden'});
       slider = $_class;
     } else {
       slider = "";
@@ -705,7 +674,7 @@ if (SERVICE === "bubble"){
 
   stopDrag = function() {
     if (slider.includes('-slider-')){
-      $('body').css('user-select', 'auto');
+      $('body').css({'user-select': 'auto', 'overflow': ''});
       if ($('.service-app').find('.y-ranger').length){
         $('.service-app').find('.y-ranger').remove();
       }
@@ -733,6 +702,37 @@ if (SERVICE === "bubble"){
     }
     slider = "";
   };
+
+  $x.on('change', function() {
+    currentX = $(this).val();
+    setBubble(currentX, currentY, currentSector);
+  });
+
+  $y.on('change', function() {
+    currentY = $(this).val();
+    setBubble(currentX, currentY, currentSector);
+  });
+  
+  $fullscreen.on('click', function() {
+    Plotly.relayout('plotly', {
+      'xaxis.range': [xValMinO, xValMaxO],
+      'yaxis.range': [yValMinO, yValMaxO]
+    });
+  });
+
+  $pan.on('click', function() {
+    $(this).toggleClass('active');
+    if ($(this).hasClass('active')) {
+      Plotly.relayout('plotly', {dragmode: 'pan'});
+    } else {
+      Plotly.relayout('plotly', {dragmode: false});
+    }
+  });
+
+  $sectors.on('change', function() {
+    currentSector = $(this).val();
+    setBubble(currentX, currentY, currentSector);
+  })
 
   $(document)
   .on('mousedown', function(e) {
