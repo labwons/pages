@@ -272,7 +272,7 @@ class MarketMap(DataFrame):
         self['ceiling'] = self['industryName']
         self['meta'] = self['name'] + '(' + self.index + ')<br>' \
                      + '시가총액: ' + self['size'].apply(self._format_cap) + '원<br>' \
-                     + '종가: ' + self['close'].apply(lambda x: f"{x:.0f}원")
+                     + '종가: ' + self['close'].apply(lambda x: f"{x:,d}원")
         prior_sector = self[self["industryName"] == self["sectorName"]]["sectorName"] \
                        .drop_duplicates() \
                        .tolist()
@@ -592,36 +592,36 @@ if __name__ == "__main__":
     # print(marketMap.colors)
     # print(marketMap.to_dict(orient='index'))
 
-    import plotly.graph_objs as go
-
-    tickers = []
-    for i in marketMap.index:
-        if i.startswith('N'):
-            continue
-        tickers.append(i)
-    df = marketMap.loc[tickers]
-
-    fig = go.Figure()
-    fig.add_trace(go.Treemap(
-        branchvalues='total',
-        labels=df.name,
-        parents=df.ceiling,
-        values=df['size'],
-        text=df['D-1'],
-        textposition='middle center',
-        texttemplate='%{label}<br>%{text}%',
-        textfont={
-            'color': '#fff'
-        },
-        opacity=0.9,
-        marker={
-            "colors": marketMap.colors.loc[tickers]['D-1']
-        }
-    ))
-
-    fig.write_image(
-        file=os.path.join(PATH.DOCS, r'src/img/marketmap.png'),
-        width=1200,
-        height=630,
-        validate=False
-    )
+    # import plotly.graph_objs as go
+    #
+    # tickers = []
+    # for i in marketMap.index:
+    #     if i.startswith('N'):
+    #         continue
+    #     tickers.append(i)
+    # df = marketMap.loc[tickers]
+    #
+    # fig = go.Figure()
+    # fig.add_trace(go.Treemap(
+    #     branchvalues='total',
+    #     labels=df.name,
+    #     parents=df.ceiling,
+    #     values=df['size'],
+    #     text=df['D-1'],
+    #     textposition='middle center',
+    #     texttemplate='%{label}<br>%{text}%',
+    #     textfont={
+    #         'color': '#fff'
+    #     },
+    #     opacity=0.9,
+    #     marker={
+    #         "colors": marketMap.colors.loc[tickers]['D-1']
+    #     }
+    # ))
+    #
+    # fig.write_image(
+    #     file=os.path.join(PATH.DOCS, r'src/img/marketmap.png'),
+    #     width=1200,
+    #     height=630,
+    #     validate=False
+    # )

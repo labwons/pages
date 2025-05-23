@@ -753,6 +753,10 @@ if (SERVICE === "bubble"){
 
   $ySlider.css('height', `${$('.slider-vertical').height() - 35}px`);
   $('.y-slider-bottom').css('top', `${$('.slider-vertical').height() - 35 - cssVY / 2}px`);
+  if (__media__.isMobile) {
+    $('.slider-vertical').remove();
+    $('.service-layer-bottom').remove();
+  }
 
   setOption();
   setBubbleSearchBar();
