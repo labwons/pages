@@ -73,7 +73,6 @@
   max-height: 90px;
   height: 90px;
   margin: 10px;
-  /* border: 1px dotted black; */
 }
 
 .ad-in-skyscraper {
@@ -82,12 +81,10 @@
   min-height: 600px;
   height: 600px;
   margin: 10px;
-  /* border: 1px dotted black; */
 }
 
 .ad-in-display-mobile {
   display: none;
-  /* border: 1px dotted black; */
 }
 
 @media (max-width: 1023px) {
@@ -117,5 +114,4 @@
 .ad-in-infeed {
   flex: 1 0 auto;
   max-height: 360px;
-  border: 1px dotted black;
 }

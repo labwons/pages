@@ -731,17 +731,11 @@ if (SERVICE === "bubble"){
     startDrag(e);
   })
   .on('mousemove', function(e) {
-    if (slider.includes('_slider_')) {
-      e.preventDefault();
-      onDrag(e.pageX, e.pageY);
-    }    
+    onDrag(e.pageX, e.pageY);
   })
   .on('touchmove', function(e) {
-    if (slider.includes('_slider_')) {
-      e.preventDefault();
-      const _e = e.originalEvent.touches[0];
-      onDrag(_e.pageX, _e.pageY);
-    }    
+    const _e = e.originalEvent.touches[0];
+    onDrag(_e.pageX, _e.pageY);
   })
   .on('mouseup', function() {
     stopDrag();
