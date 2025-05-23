@@ -197,6 +197,12 @@ PARTS
   max-height: 36px;
 }
 
+@media(max-width: 767px) {
+  .header .logo img {
+    max-height: 32px;
+  } 
+}
+
 .navmenu {
   padding: 0;
 }

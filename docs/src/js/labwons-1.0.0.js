@@ -450,8 +450,6 @@ if (SERVICE === "bubble"){
   const $bubbleSearchBar = $('.bubble-searchbar');
   const $ySlider = $('.slider-y-range');
   const $xSlider = $('.slider-x-range');
-  const $fullscreen = $('.bubble-fullscreen');
-  const $pan = $('.bubble-pan');
 
   var isDragging = false;
   var slider = '';
@@ -529,7 +527,8 @@ if (SERVICE === "bubble"){
     var bubbleOption = {
       showTips:false,
       responsive:true,
-      displayModeBar:false,
+      displayModeBar:true,
+      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale"],
       displaylogo:false,   
     };
     var data = {
@@ -605,6 +604,11 @@ if (SERVICE === "bubble"){
       xValMaxO = grid.layout.xaxis.range[1]; 
       xValMin = grid.layout.xaxis.range[0];
       xValMax = grid.layout.xaxis.range[1];
+      $('a[data-title="Download plot as a png"]').attr("data-title", "그림으로 저장");
+      $('a[data-title="Zoom"]').attr("data-title", "확대");
+      $('a[data-title="Pan"]').attr("data-title", "이동(패닝)");
+      $('a[data-title="Autoscale"]').attr("data-title", "자동 조정");
+      $('.modebar').prepend($('<div class="modebar-group"><a rel="tooltip" class="modebar-btn" data-title="스크롤 모드" data-toggle="false" data-gravity="n"><i class="bi bi-arrow-down-up"></i></a></div>'));
       grid.on('plotly_doubleclick', function(e) {
         yValMin = yValMinO;
         yValMax = yValMaxO;
@@ -620,7 +624,7 @@ if (SERVICE === "bubble"){
 
   startDrag = function(e) {
     $_class = $(e.target).attr('class');
-    if ($_class.includes('-slider-')) {
+    if ((typeof $_class === "string") && ($_class.includes('-slider-'))) {
       $('body').css({'user-select': 'none', 'overflow': 'hidden'});
       slider = $_class;
     } else {
@@ -713,40 +717,31 @@ if (SERVICE === "bubble"){
     setBubble(currentX, currentY, currentSector);
   });
   
-  $fullscreen.on('click', function() {
-    Plotly.relayout('plotly', {
-      'xaxis.range': [xValMinO, xValMaxO],
-      'yaxis.range': [yValMinO, yValMaxO]
-    });
-  });
-
-  $pan.on('click', function() {
-    $(this).toggleClass('active');
-    if ($(this).hasClass('active')) {
-      Plotly.relayout('plotly', {dragmode: 'pan'});
-    } else {
-      Plotly.relayout('plotly', {dragmode: false});
-    }
-  });
-
   $sectors.on('change', function() {
     currentSector = $(this).val();
     setBubble(currentX, currentY, currentSector);
-  })
+  });
 
   $(document)
   .on('mousedown', function(e) {
     startDrag(e);
   })
   .on('touchstart', function(e) {
+    const _e = e.originalEvent.touches[0];
     startDrag(e);
   })
   .on('mousemove', function(e) {
-    onDrag(e.pageX, e.pageY);
+    if (slider.includes('_slider_')) {
+      e.preventDefault();
+      onDrag(e.pageX, e.pageY);
+    }    
   })
   .on('touchmove', function(e) {
-    const _e = e.originalEvent.touches[0];
-    onDrag(_e.pageX, _e.pageY);
+    if (slider.includes('_slider_')) {
+      e.preventDefault();
+      const _e = e.originalEvent.touches[0];
+      onDrag(_e.pageX, _e.pageY);
+    }    
   })
   .on('mouseup', function() {
     stopDrag();
@@ -756,6 +751,9 @@ if (SERVICE === "bubble"){
   })
   .on('touchcancel', function() {
     stopDrag();
+  })
+  .on('click', '.bi-arrow-down-up', function() {
+    Plotly.relayout('plotly', {dragmode: false});
   });
 
 
