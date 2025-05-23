@@ -184,7 +184,8 @@ if __name__ == "__main__":
     # BUILD RESOURCES
     # ---------------------------------------------------------------------------------------
     try:
-        minify()
+        if not LOCAL_HOST:
+            minify()
         context += [f'- [SUCCESS] Minify Resources', '']
     except Exception as error:
         context += [f'- [FAILED] Minify Resources', f'  : {error}', '']
