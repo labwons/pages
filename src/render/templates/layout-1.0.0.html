@@ -6,10 +6,16 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <meta name="description" content="">
   <meta name="keywords" content="">
+  {% if not local %}
   <title>{{ title }}</title>
+  {% else %}
+  <title>Autoway2.1</title>
+  {% endif %}
 
+  {% if not local %}
   <!-- Favicons -->
   <link href="/src/img/favicon.ico" rel="icon">
+  {% endif %}
     
   <!-- Dependencies -->
   <script src="/src/js/jquery-3.6.1.min.js"></script>

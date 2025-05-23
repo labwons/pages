@@ -61,6 +61,10 @@ td {
   font-weight: 400;
 }
 
+select {
+  background-color: #fff !important;
+}
+
 .section-flow {
   margin-top: 80px;
   display: flex;

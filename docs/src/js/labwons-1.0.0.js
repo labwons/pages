@@ -739,3 +739,17 @@ if (SERVICE === "bubble"){
   setBubbleSearchBar();
   setBubble(currentX, currentY, currentSector);
 }
+
+(function() {
+  const overflowingElements = [];
+  const viewportWidth = document.documentElement.clientWidth;
+
+  document.querySelectorAll('*').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.right > viewportWidth || rect.left < 0) {
+      overflowingElements.push(el);
+    }
+  });
+
+  console.log('Overflowing elements:', overflowingElements);
+})();

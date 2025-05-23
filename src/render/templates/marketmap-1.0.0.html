@@ -25,7 +25,7 @@
       gap: 4px;
     }
 
-    .service-nav .map-select {
+    .service-nav .service-config .map-select {
       font-family: var(--font-family);
       font-size: 14px;
       color: #999;
@@ -62,14 +62,66 @@
     }
 
     .service-nav .service-search {
-      flex: 1 0 auto;
+      flex: 0 0 auto;
+      width: 40%;
       display: flex;
       flex-direction: row-reverse;
       align-items: center;
     }
 
     .service-nav .service-search .map-searchbar {
-      min-width: 360px !important;
+      flex: 1 0 auto;
+      min-width: 360px;
+      font-family: var(--font-family);
+      font-size: 14px;
+      color: #999;      
+      height: 28px;
+      margin: 0;      
+      padding: 2px 8px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    @media (max-width: 1023px){
+      .service-nav .map-select {
+        min-width: auto;
+      }
+    }
+
+    @media (max-width: 767px){
+      .service-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+      }
+
+      .service-nav .service-config {
+        flex: 0 0 auto;
+        max-width: none;
+      }
+      
+      .service-nav .service-search {
+        flex: 0 0 auto;
+        width: 100%;
+        min-width: auto;
+        max-width: 100%;
+        overflow: hidden;
+      }
+
+      .service-nav .service-config .map-select,
+      .service-nav .service-search .map-searchbar {
+        flex: 1 0 auto;
+        min-width: auto;
+      }      
+    }
+
+    @media (max-width: 424px) {
+      .service-nav .map-select.types,
+      .service-nav .map-select.options {
+        max-width: calc((100% - 72px) / 2);
+      }
     }
 
     .select2-container .select2-selection--single {
@@ -78,51 +130,6 @@
 
     .select2-container--default .select2-results__option {
       font-size: 14px !important;
-    }
-
-    @media (max-width: 1023px){
-      .service-nav .map-select,
-      .service-nav .service-search {
-        min-width: auto;
-      }
-
-      .service-nav .service-search .map-searchbar {
-        min-width: auto !important;
-      }
-    }
-
-    @media (max-width: 767px){
-      .service-nav .map-select {
-        flex: 1 0 auto;
-        min-width: auto;
-      }
-
-      .service-nav {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 4px;
-      }
-      
-      .service-nav .service-config {
-        flex: 1 0 auto;
-        max-width: none;
-      }
-      
-      .service-nav .service-search {
-        min-width: auto;
-        flex-direction: row;
-      }
-
-      .service-nav .service-search .map-select.map-searchbar {
-        width: 100% !important;
-      }
-    }
-
-    @media (max-width: 424px) {
-      .service-nav .map-select.types,
-      .service-nav .map-select.options {
-        max-width: calc((100% - 72px) / 2);
-      }
     }
 
     .service-app {
