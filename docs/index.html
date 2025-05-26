@@ -295,7 +295,7 @@
 
     .service-status-values {
       display: flex; 
-      align-items:center; 
+      align-items: stretch;
       justify-content: space-around;
     }
 
@@ -318,6 +318,14 @@
       font-size: 16px;
       font-weight: 500;
       color: var(--default-color);
+    }
+    @media (max-width:767px) {
+      .service-status-values .service-status-value > p {
+        font-size: 22px;
+      }
+      .service-status-values .service-status-value > span {
+        font-size: 14px;
+      }
     }
 
 
