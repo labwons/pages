@@ -19,6 +19,7 @@ class PATH:
     BASE      = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
     GROUP     = os.path.join(ROOT, r'src/fetch/market/json/group.json')
     SPEC      = os.path.join(ROOT, r'src/fetch/market/json/spec.json')
+    MACRO     = os.path.join(ROOT, r'src/fetch/macro/json/macro.json')
     PORTFOLIO = os.path.join(ROOT, r'src/fetch/stock/json/portfolio.json')
 
     DOCS   = os.path.join(ROOT, r'docs')

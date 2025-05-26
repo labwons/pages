@@ -13,7 +13,7 @@ if __name__ == "__main__":
         from .service.bubble import MarketBubble
         from .service.marketmap import MarketMap
         from .service.portfolio import StockPortfolio
-        from .maintenance.scope import rss, sitemap
+        from .resource.scope import rss, sitemap
     except ImportError:
         from src.common.path import PATH
         from src.common.report import eMail
@@ -22,7 +22,7 @@ if __name__ == "__main__":
         from src.build.service.bubble import MarketBubble
         from src.build.service.marketmap import MarketMap
         from src.build.service.portfolio import StockPortfolio
-        from src.build.maintenance.scope import rss, sitemap
+        from src.build.resource.scope import rss, sitemap
     from datetime import datetime, timezone, timedelta
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
