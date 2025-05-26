@@ -89,18 +89,17 @@ if (SERVICE === "marketmap"){
     return $mapToggle.hasClass('bi-bar-chart-line-fill') ? 'bar' : 'map';
   };
 
-  setMainTypes = function() {
-    if (getCurrentServiceState() == 'bar') {
-      $mainTypes.empty()
-      .append(`<option value="sector">\uc139\ud130\u0020\u0053\u0065\u0063\u0074\u006f\u0072</option>`)
-      .append(`<option value="industry">\uc5c5\uc885\u0020\u0049\u006e\u0064\u0075\u0073\u0074\u0072\u0079</option>`)
-      .find('option[value="' + currentBarViewer + '"]').prop('selected', true);
-
-    } else {
+  setMainTypes = function(reset) {
+    if ((getCurrentServiceState() == 'map') || reset) {
       $mainTypes.empty()
       .append(`<option value="all" selected>\ub300\ud615\uc8fc</option>`)
       .append(`<option value="woS">\ub300\ud615\uc8fc\u0028\uc0bc\uc131\uc804\uc790\u0020\uc81c\uc678\u0029</option>`)
       .find('option[value="' + currentMapViewer + '"]').prop('selected', true);
+    } else {
+      $mainTypes.empty()
+      .append(`<option value="sector">\uc139\ud130\u0020\u0053\u0065\u0063\u0074\u006f\u0072</option>`)
+      .append(`<option value="industry">\uc5c5\uc885\u0020\u0049\u006e\u0064\u0075\u0073\u0074\u0072\u0079</option>`)
+      .find('option[value="' + currentBarViewer + '"]').prop('selected', true);
     }
   };
 
@@ -354,12 +353,18 @@ if (SERVICE === "marketmap"){
   $mapReset.on('click', function() {
     currentMapViewer = 'all';
     currentOption = 'D-1';
-    setMainTypes();
+    setMainTypes(true);
     setMainOptions();
     setScaleBar();
     setSearchBar();
     setMap(currentOption);
-  })
+    $searchBar.prop('disabled', false);
+    if (getCurrentServiceState() === 'bar') {
+      $mapToggle
+      .toggleClass("bi-geo-alt-fill bi-bar-chart-line-fill")
+      .css('transform', 'none');
+    }
+  });
 
   $mapToggle.on('click', function() {
     $(this).toggleClass("bi-geo-alt-fill bi-bar-chart-line-fill");
@@ -372,7 +377,7 @@ if (SERVICE === "marketmap"){
       $(this).css('transform', 'none');
       $searchBar.prop('disabled', false);
     }
-    setMainTypes();
+    setMainTypes(false);
   });
 
   $searchBar.on('select2:select', function(e){
@@ -390,7 +395,7 @@ if (SERVICE === "marketmap"){
   $('#plotly').dblclick(function(){
     if (getCurrentServiceState() === 'map') {
       setMap(currentOption);
-    }    
+    }
   })
 
   new Swiper('.swiper', {
@@ -424,7 +429,7 @@ if (SERVICE === "marketmap"){
     }
   });
 
-  setMainTypes();
+  setMainTypes(false);
   setMainOptions();
   setScaleBar();
   setSearchBar();
