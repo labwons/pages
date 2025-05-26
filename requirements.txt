@@ -2,6 +2,7 @@ bs4
 csscompressor
 jinja2
 jsmin
+kaleido
 numpy
 pandas
 pandas_datareader

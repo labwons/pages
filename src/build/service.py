@@ -143,6 +143,41 @@ if __name__ == "__main__":
                 })
             )
 
+        import plotly.graph_objs as go
+        import plotly.io as pio
+
+        tickers = []
+        for i in marketMap.index:
+            if i.startswith('N'):
+                continue
+            tickers.append(i)
+        df = marketMap.loc[tickers]
+
+        fig = go.Figure()
+        fig.add_trace(go.Treemap(
+            branchvalues='total',
+            labels=df.name,
+            parents=df.ceiling,
+            values=df['size'],
+            text=df['D-1'],
+            textposition='middle center',
+            texttemplate='%{label}<br>%{text}%',
+            textfont={
+                'color': '#fff'
+            },
+            opacity=0.9,
+            marker={
+                "colors": marketMap.colors.loc[tickers]['D-1']
+            }
+        ))
+        # fig.show()
+        fig.write_image(
+            file=os.path.join(PATH.DOCS, r'src/img/marketmap.png'),
+            width=1200,
+            height=630,
+            scale=1.0
+        )
+
         context += [f'- [SUCCESS] Deploy Market-Map', marketMap.log, '']
     except Exception as error:
         context += [f'- [FAILED] Deploy Market-Map', f'  : {error}', '']
