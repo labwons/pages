@@ -10,71 +10,73 @@ class Fred(DataFrame):
         # Bond and Interest Rate
         'FEDFUNDS': dict(
             symbol='FEDFUNDS',
-            name='Federal Funds Effective Rate(M)',
+            name='연준 기준금리',
             quoteType='INDICATOR',
+            category='금리지표',
             unit='%',
             comment='Federal Funds Effective Rate (Monthly)'
         ),
-        'DFF': dict(
-            symbol='DFF',
-            name='Federal Funds Effective Rate(D)',
-            quoteType='INDICATOR',
-            unit='%',
-            comment='Federal Funds Effective Rate (Daily)'
-        ),
         'DGS10': dict(
             symbol='DGS10',
-            name='10-Year Constant Maturity(IB)',
+            name='미국채10년',
             quoteType='INDICATOR',
+            category='금리지표',
             unit='%',
             comment='Market Yield on U.S. Treasury Securities at 10-Year Constant Maturity, Quoted on an Investment Basis (Daily)'
         ),
         'DGS5': dict(
             symbol='DGS5',
-            name='5-Year Constant Maturity(IB)',
+            name='미국채5년',
             quoteType='INDICATOR',
+            category='금리지표',
             unit='%',
             comment='Market Yield on U.S. Treasury Securities at 5-Year Constant Maturity, Quoted on an Investment Basis (Daily)'
         ),
         'DGS2': dict(
             symbol='DGS2',
-            name='2-Year Constant Maturity(IB)',
+            name='미국채2년',
             quoteType='INDICATOR',
+            category='금리지표',
             unit='%',
             comment='Market Yield on U.S. Treasury Securities at 2-Year Constant Maturity, Quoted on an Investment Basis (Daily)'
         ),
         'DGS1': dict(
             symbol='DGS1',
-            name='1-Year Constant Maturity(IB)',
+            name='미국채1년',
             quoteType='INDICATOR',
+            category='금리지표',
             unit='%',
             comment='Market Yield on U.S. Treasury Securities at 1-Year Constant Maturity, Quoted on an Investment Basis (Daily)'
         ),
         'T10Y2Y': dict(
             symbol='T10Y2Y',
-            name='Treasury Yield Difference(10Y-2Y)',
+            name='미국채장단기금리차(10Y-2Y)',
             quoteType='INDICATOR',
+            category='금리지표',
             unit='%',
             comment='10-Year Treasury Constant Maturity Minus 2-Year Treasury Constant Maturity (Daily)'
         ),
         'T10Y3M': dict(
             symbol='T10Y3M',
-            name='Treasury Yield Difference(10Y-3M)',
+            name='미국채장단기금리차(10Y-3M)',
             quoteType='INDICATOR',
+            category='금리지표',
             unit='%',
             comment='10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant Maturity (Daily)'
         ),
         'BAMLH0A0HYM2': dict(
             symbol='BAMLH0A0HYM2',
-            name='High Yield Spread',
+            name='미국 하이일드 스프레드',
             quoteType='INDICATOR',
+            category='금리지표',
             unit='%',
             comment='ICE BofA US High Yield Index Option-Adjusted Spread (Daily)'
         ),
         'MORTGAGE30US': dict(
             symbol='MORTGAGE30US',
-            name='30-Year Fixed Rate Mortgage',
+            name='미국 30년고정주택담보대출',
             quoteType='INDICATOR',
+            category='금리지표',
             unit='%',
             comment='30-Year Fixed Rate Mortgage Average in the United States (Weekly)'
         ),
@@ -82,15 +84,17 @@ class Fred(DataFrame):
         # Monetary
         'M2SL': dict(
             symbol='M2SL',
-            name='M2',
+            name='미국 M2',
             quoteType='INDICATOR',
+            category='통화/유동성지표',
             unit='USD(xB)',
             comment='M2: Billions of Dollars (Monthly)'
         ),
         'M2V': dict(
             symbol='M2V',
-            name='Velocity of M2 Money Stock',
+            name='미국 M2통화유동속도',
             quoteType='INDICATOR',
+            category='통화/유동성지표',
             unit='%',
             comment='Velocity of M2 Money Stock (Seasonally Adjusted, Quarterly)'
         ),
@@ -98,94 +102,91 @@ class Fred(DataFrame):
         # Inflation
         'CPIAUCSL': dict(
             symbol='CPIAUCSL',
-            name='CPI(SA)',
+            name='미국 CPI(계절조정)',
             quoteType='INDICATOR',
+            category='물가 / 부동산지표',
             unit='-',
             comment='Consumer Price Index for All Urban Consumers: All Items in U.S. City Average (Seasonally Adjusted, Monthly)'
         ),
         'CPIAUCNS': dict(
             symbol='CPIAUCNS',
-            name='CPI(Not SA)',
+            name='미국 CPI(계절조정 미반영)',
             quoteType='INDICATOR',
+            category='물가 / 부동산지표',
             unit='-',
             comment='Consumer Price Index for All Urban Consumers: All Items in U.S. City Average (Not Seasonally Adjusted, Monthly)'
         ),
         'CORESTICKM159SFRBATL': dict(
             symbol='CORESTICKM159SFRBATL',
-            name='CPI(Sticky Price, YoY)',
+            name='미국 CPI(경직물가, YoY)',
             quoteType='INDICATOR',
+            category='물가 / 부동산지표',
             unit='%',
             comment='Sticky Price Consumer Price Index less Food and Energy (Monthly)'
         ),
         'CPILFESL': dict(
             symbol='CPILFESL',
-            name='CPI(without Food, Energy)',
+            name='미국 CPI(식음료 에너지 제외)',
             quoteType='INDICATOR',
+            category='물가 / 부동산지표',
             unit='-',
             comment='Consumer Price Index for All Urban Consumers: All Items Less Food and Energy in U.S. City Average (Seasonally Adjusted, Monthly)'
         ),
         'T10YIE': dict(
             symbol='T10YIE',
-            name='10-Year Breakeven Inflation Rate',
+            name='미국 10년 기대인플레이션율',
             quoteType='INDICATOR',
+            category='물가 / 부동산지표',
             unit='%',
             comment='10-Year Breakeven Inflation Rate (Daily, Not Seasonally Adjusted)'
         ),
         'T5YIE': dict(
             symbol='T5YIE',
-            name='5-Year Breakeven Inflation Rate',
+            name='미국 5년 기대인플레이션율',
             quoteType='INDICATOR',
+            category='물가 / 부동산지표',
             unit='%',
             comment='5-Year Breakeven Inflation Rate (Daily, Not Seasonally Adjusted)'
-        ),
-        'T5YIFR': dict(
-            symbol='T5YIFR',
-            name='5-Year Forward Inflation Expectation Rate',
-            quoteType='INDICATOR',
-            unit='%',
-            comment='5-Year, 5-Year Forward Inflation Expectation Rate (Not Seasonally Adjusted, Daily)'
         ),
 
         # Labor, GDP, Saving and Others
         'UNRATE': dict(
             symbol='UNRATE',
-            name='Unemployment Rate',
+            name='미국 실업률',
             quoteType='INDICATOR',
+            category='경제 / 심리지표',
             unit='%',
             comment='Unemployment Rate(Seasonally Adjusted, Monthly)'
         ),
-        'ICSA': dict(
-            symbol='ICSA',
-            name='Initial Claims',
-            quoteType='INDICATOR',
-            unit='-',
-            comment='Initial Claims, individual claims for Unemployment Insurance Program (Seasonally Adjusted, Weekly)'
-        ),
         'GDP': dict(
             symbol='GDP',
-            name='Gross Domestic Product',
+            name='미국 명목GDP',
             quoteType='INDICATOR',
+            category='경제 / 심리지표',
             unit='USD(xB)',
             comment='Gross Domestic Product (Seasonally Adjusted, Quarterly)'
         ),
         'GDPC1': dict(
             symbol='GDPC1',
-            name='Real Gross Domestic Product',
+            name='미국 실질GDP',
             quoteType='INDICATOR',
+            category='경제 / 심리지표',
             unit='USD(xB)',
             comment='Real Gross Domestic Product (Seasonally Adjusted, Quarterly)'
         ),
         'PSAVERT': dict(
             symbol='PSAVERT',
-            name='Personal Saving Rate',
+            name='미국 가계저축율',
             quoteType='INDICATOR',
+            category='경제 / 심리지표',
             unit='%',
             comment='Personal Saving Rate (Monthly)'
         ),
         'UMCSENT': dict(
             symbol='UMCSENT',
-            name='Consumer Sentiment',
+            name='미국 소비자 심리지수(미시간 대학교)',
             quoteType='INDICATOR',
+            category='경제 / 심리지표',
             unit='-',
             comment='University of Michigan: Consumer Sentiment (Monthly)'
         ),

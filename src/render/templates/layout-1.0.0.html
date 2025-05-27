@@ -3,46 +3,37 @@
 
 <head>
   <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">{% if not local %}
   <meta name="google-site-verification" content="bacQQ5KRvmfMs3AgsuRVh2Imw23ahtlIVVMZZhdBI7A" />
   <meta name="google-adsense-account" content="ca-pub-7507574593260609">
-  {% block meta %}{% endblock %}
-
+  {% endif %}{% block meta %}{% endblock %}
   {% if not local %}
-  <title>{{ title }}</title>
-  {% else %}
-  <title>Autoway2.1</title>
-  {% endif %}
-
+  <title>{{ title }}</title>{% else %}
+  <title>Autoway2.1</title>{% endif %}
   {% if not local %}
   <!-- Favicons -->
-  <link href="/src/img/favicon.ico" rel="icon">
-  {% endif %}
+  <link href="/src/img/favicon.ico" rel="icon">{% endif %}
     
   <!-- Dependencies -->
   <script src="/src/js/jquery-3.6.1.min.js"></script>
   <script src="/src/js/purecounter-1.0.5.min.js"></script>
   <script src="/src/js/swiper-bundle.min.js" defer></script>
   <script src="/src/js/select2.min.js"></script>
-  <script src="/src/js/plotly-2.35.2-r0.1.min.js"></script>
-  {% if local %}
+  <script src="/src/js/plotly-2.35.2-r0.1.min.js"></script>{% if local %}
   <script src="/src/js/labwons-1.0.0.js" defer></script>
   {% else %}
   <script src="/src/js/labwons-1.0.0.min.js" defer></script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7507574593260609" crossorigin="anonymous"></script>
-  {% endif %}
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7507574593260609" crossorigin="anonymous"></script>{% endif %}
   
   <!-- CSS Files -->
   <link href="/src/css/icon.min.css" rel="stylesheet"> 
   <link href="/src/css/select2.min.css" rel="stylesheet">
-  <link href="/src/css/swiper-bundle.min.css" rel="stylesheet">
-  {% if local %}
+  <link href="/src/css/swiper-bundle.min.css" rel="stylesheet">  {% if local %}
   <link href="/src/css/adsense.css" rel="stylesheet"> 
   <link href="/src/css/style.css" rel="stylesheet">
   {% else %}
   <link href="/src/css/adsense.min.css" rel="stylesheet"> 
-  <link href="/src/css/style.min.css" rel="stylesheet">
-  {% endif %}
+  <link href="/src/css/style.min.css" rel="stylesheet">{% endif %}
   
   <!-- Style Sheet -->{% block style %}{% endblock %}
   
@@ -148,84 +139,6 @@
     </section>
 
     {% block content_addon %}{% endblock %}
-
-    {% if statusSection %}
-    <section class="section section-flow">
-      <div class="container container-title">
-        <h2 class="main-title">STATUS</h2>
-        <p class="sub-title">{{ trading_date }}</p>
-      </div>
-
-      <div class="container container-content">
-        <!-- START Delete When use as template -->
-        <div class="content-number">
-          <i class="bi bi-emoji-smile content-number-icon"></i>
-          <div class="content-number-item">
-            <div class="content-number-value">
-              <span 
-              data-purecounter-start="0" 
-              data-purecounter-end="1200" 
-              data-purecounter-duration="1" 
-              data-purecounter-decimals="0" 
-              data-purecounter-separator="true" 
-              class="purecounter"></span>
-              <span class="content-number-unit"></span>
-            </div>            
-            <p>TEST 1</p>
-          </div>
-        </div>
-
-        <div class="content-number">
-          <i class="bi bi-emoji-smile content-number-icon"></i>
-          <div class="content-number-item">
-            <div class="content-number-value">
-              <span 
-              data-purecounter-start="0" 
-              data-purecounter-end="32.8" 
-              data-purecounter-duration="1" 
-              data-purecounter-decimals="1"
-              class="purecounter"></span>
-              <span class="content-number-unit">%</span>
-            </div>            
-            <p>TEST 2</p>
-          </div>
-        </div>
-
-        <div class="content-number">
-          <i class="bi bi-emoji-smile content-number-icon"></i>
-          <div class="content-number-item">
-            <div class="content-number-value">
-              <span 
-              data-purecounter-start="0" 
-              data-purecounter-end="53.6" 
-              data-purecounter-duration="1" 
-              data-purecounter-decimals="1" 
-              class="purecounter"></span>
-              <span class="content-number-unit">%</span>
-            </div>            
-            <p>TEST 3</p>
-          </div>
-        </div>
-
-        <div class="content-number">
-          <i class="bi bi-emoji-smile content-number-icon"></i>
-          <div class="content-number-item">
-            <div class="content-number-value">
-              <span 
-              data-purecounter-start="0" 
-              data-purecounter-end="-12.0" 
-              data-purecounter-duration="1" 
-              data-purecounter-decimals="1" 
-              class="purecounter"></span>
-              <span class="content-number-unit">%</span>
-            </div>            
-            <p>TEST 4</p>
-          </div>
-        </div>
-        <!-- END Delete When use as template -->
-      </div>
-    </section>
-    {% endif %}
 
     {% if historySection %}
     <section class="section section-flow">

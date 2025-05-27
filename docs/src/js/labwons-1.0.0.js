@@ -763,7 +763,7 @@ if (SERVICE === "bubble"){
 
   $ySlider.css('height', `${$('.slider-vertical').height() - 35}px`);
   $('.y-slider-bottom').css('top', `${$('.slider-vertical').height() - 35 - cssVY / 2}px`);
-  if (__media__.isMobile) {
+  if (__media__.isMobile || __media__.isTablet) {
     $('.slider-vertical').remove();
     $('.service-layer-bottom').remove();
   }
@@ -771,4 +771,41 @@ if (SERVICE === "bubble"){
   setOption();
   setBubbleSearchBar();
   setBubble(currentX, currentY, currentSector);
+}
+
+/* -----------------------------------------------------------
+ * MACRO OPERATION 
+----------------------------------------------------------- */
+let setYaxisOption;
+if (SERVICE === "macro"){
+  const $y1 = $('.y1');
+  const $y2 = $('.y2');
+  
+  // var isDragging = false;
+  
+  setYaxisOption = function() {
+    let _groups = [];
+
+    $y1.empty().append('<option></option>');
+    $y2.empty().append('<option></option>');
+    Object.entries(srcIndicatorOpt)
+    .forEach(([symbol, meta]) => {
+      if (!_groups.includes(meta.group)){
+        $y1.append(`<optgroup label="${meta.group}"></optgroup>`);
+        $y2.append(`<optgroup label="${meta.group}"></optgroup>`);
+        _groups.push(meta.group);
+      }
+      let $_group = $(`optgroup[label="${meta.group}"]`);
+
+      $_group.append(`<option value="${symbol}">${meta.name}</option>`);
+    });
+    $y1.select2({
+      maximumSelectionLength: 3,
+    });
+    $y2.select2({
+      maximumSelectionLength: 3,
+    });
+  };
+
+  setYaxisOption();
 }

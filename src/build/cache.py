@@ -11,14 +11,14 @@ if __name__ == "__main__":
         from ..fetch.market.group import MarketGroup
         from ..fetch.market.index import MarketIndex
         from ..fetch.market.spec import MarketSpec
-        from .service.macro import macro
+        from .service.macro import Macro
     except ImportError:
         from src.common.path import PATH
         from src.common.report import eMail
         from src.fetch.market.group import MarketGroup
         from src.fetch.market.index import MarketIndex
         from src.fetch.market.spec import MarketSpec
-        from src.build.service.macro import macro
+        from src.build.service.macro import Macro
     from datetime import datetime
     import os
 
@@ -53,7 +53,8 @@ if __name__ == "__main__":
 
 
     try:
-        macro = macro(update=not LOCAL_HOST)
+        # macro = Macro(update=not LOCAL_HOST)
+        macro = Macro(update=True)
         if not PATH.MACRO.startswith('http'):
             with open(PATH.MACRO, 'w') as f:
                 f.write(macro.to_json(orient='index').replace('nan', ''))

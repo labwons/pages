@@ -11,6 +11,7 @@ if __name__ == "__main__":
         from ..render.navigate import navigate, minify
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
+        from .service.macro import Macro
         from .service.marketmap import MarketMap
         from .service.portfolio import StockPortfolio
         from .resource.scope import rss, sitemap
@@ -20,6 +21,7 @@ if __name__ == "__main__":
         from src.render.navigate import navigate, minify
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble
+        from src.build.service.macro import Macro
         from src.build.service.marketmap import MarketMap
         from src.build.service.portfolio import StockPortfolio
         from src.build.resource.scope import rss, sitemap
@@ -133,7 +135,6 @@ if __name__ == "__main__":
                     "title": "LAB￦ONS: 시장지도",
                     "nav": NAVIGATION,
                     "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
-                    "statusSection": False,
                     "historySection": False,
                     "statusValue": marketMap.peakPoint.to_dict(),
                     "srcTicker": marketMap.to_json(orient='index'),
@@ -142,41 +143,6 @@ if __name__ == "__main__":
                     "faq": marketMap.faqs
                 })
             )
-
-        import plotly.graph_objs as go
-        import plotly.io as pio
-
-        tickers = []
-        for i in marketMap.index:
-            if i.startswith('N'):
-                continue
-            tickers.append(i)
-        df = marketMap.loc[tickers]
-
-        fig = go.Figure()
-        fig.add_trace(go.Treemap(
-            branchvalues='total',
-            labels=df.name,
-            parents=df.ceiling,
-            values=df['size'],
-            text=df['D-1'],
-            textposition='middle center',
-            texttemplate='%{label}<br>%{text}%',
-            textfont={
-                'color': '#fff'
-            },
-            opacity=0.9,
-            marker={
-                "colors": marketMap.colors.loc[tickers]['D-1']
-            }
-        ))
-        # fig.show()
-        fig.write_image(
-            file=os.path.join(PATH.DOCS, r'src/img/marketmap.png'),
-            width=1200,
-            height=630,
-            scale=1.0
-        )
 
         context += [f'- [SUCCESS] Deploy Market-Map', marketMap.log, '']
     except Exception as error:
@@ -201,7 +167,6 @@ if __name__ == "__main__":
                     "title": "LAB￦ONS: 종목분포",
                     "nav": NAVIGATION,
                     "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
-                    "statusSection": False,
                     "historySection": False,
                     "srcTickers": marketBubble.to_json(orient='index'),
                     "srcSectors": dumps(marketBubble.sector),
@@ -213,6 +178,37 @@ if __name__ == "__main__":
         context += [f'- [SUCCESS] Deploy Market-Bubble', marketBubble.log, '']
     except Exception as error:
         context += [f'- [FAILED] Deploy Market-Bubble', f'  : {error}', '']
+
+
+    # ---------------------------------------------------------------------------------------
+    # BUILD MACRO
+    # ---------------------------------------------------------------------------------------
+    macro = Macro(not LOCAL_HOST)
+    try:
+        with open(
+            file=os.path.join(BASE_DIR, r'macro/index.html'),
+            mode='w',
+            encoding='utf-8'
+        ) as file:
+            file.write(
+                Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
+                    .get_template('macro-1.0.0.html') \
+                    .render({
+                    "local": LOCAL_HOST,
+                    "title": "LAB￦ONS: 거시경제",
+                    "nav": NAVIGATION,
+                    "tradingDate": f'{TRADING_DATE} 기준 / 일부 지연',
+                    "historySection": False,
+                    "srcIndicator": dumps(macro.serialize()).replace(" ", ""),
+                    "srcIndicatorOpt": dumps(macro.meta).replace(" ", ""),
+                    "srcStatus": str(macro.status).replace(" ", ""),
+                    "faq": marketBubble.faqs
+                })
+            )
+
+        context += [f'- [SUCCESS] Deploy Macro', marketBubble.log, '']
+    except Exception as error:
+        context += [f'- [FAILED] Deploy Macro', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------

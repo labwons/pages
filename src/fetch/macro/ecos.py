@@ -4,6 +4,7 @@ except ImportError:
     from src.fetch.web import web
 from datetime import datetime
 from pandas import concat, DataFrame, Series, to_datetime
+from typing import Dict
 from xml.etree.ElementTree import ElementTree, fromstring
 
 
@@ -72,7 +73,7 @@ class Ecos(DataFrame):
     src:DataFrame = DataFrame()
     meta = {}
     raw = {
-        '기준금리': {
+        '한국은행 기준금리': {
             'symbol': '722Y001',
             'code': '0101000',
             'unit': '%',
@@ -574,58 +575,31 @@ class Ecos(DataFrame):
         for name, meta in self.raw.items():
             code = f'{meta["symbol"]}{meta["code"]}'
             data = self.fetch(meta['symbol'], meta['code'])
-            self.meta[code] = {
-                'name': name,
-                'unit': meta['unit'],
-                'category': meta['category']
-            }
             objs[code] = data.copy()
             if meta["YoY"]:
-                self.meta[f'{code}YoY'] = {
-                    'name': f'{name}(YoY)',
-                    'unit': '%',
-                    'category': meta['category']
-                }
                 objs[f'{code}YoY'] = data.dropna().asfreq('M').pct_change(periods=12) * 100
                 if name.startswith('신용대주'):
                     objs[f'{code}YoY'] = objs[f'{code}YoY'].clip(upper=2000)
 
             if meta["MoM"]:
-                self.meta[f'{code}MoM'] = {
-                    'name': f'{name}(MoM)',
-                    'unit': '%',
-                    'category': meta['category']
-                }
-                objs[f'{name}(MoM)'] = data.dropna().asfreq('M').pct_change(periods=1) * 100
+                objs[f'{code}(MoM)'] = data.dropna().asfreq('M').pct_change(periods=1) * 100
 
             if code == '121Y015BECBLB01':
-                self.meta['T10MT2'] = {
-                    'name': '장단기금리차(10Y-2Y)',
-                    'unit': '%',
-                    'category': '금리지표'
-                }
+                # 장단기금리차(10Y - 2Y)
                 objs['T10MT2'] = objs['817Y002010210000'] - objs['817Y002010195000']
-                self.meta['HYSPREAD'] = {
-                    'name': '하이일드스프레드',
-                    'unit': '%',
-                    'category': '금리지표'
-                }
+
+                # 하이일드스프레드
                 objs['HYSPREAD'] = objs['817Y002010320000'] - objs['817Y002010210000']
-                self.meta['LBDIFFN'] = {
-                    'name': '예대금리차(신규)',
-                    'unit': '%',
-                    'category': '금리지표'
-                }
+
+                # 예대금리차(신규)
                 objs['LBDIFFN'] = objs['121Y006BECBLA01'] - objs['121Y002BEABAA2']
-                self.meta['LBDIFFL'] = {
-                    'name': '예대금리차(잔액)',
-                    'unit': '%',
-                    'category': '금리지표'
-                }
+
+                # 예대금리차(잔액)
                 objs['LBDIFFL'] = objs['121Y015BECBLB01'] - objs['121Y013BEABAB2']
 
         df = concat(objs=objs, axis=1)
         super().__init__(df[df.index >= datetime(1990, 1, 1)])
+
         return
 
     def __call__(self, symbol: str, *args):
@@ -654,7 +628,7 @@ class Ecos(DataFrame):
         }
         url = f'http://ecos.bok.or.kr/api/StatisticTableList/{cls.api}/xml/kr/1/10000/'
         data = cls.xml2df(url=url, parser="xml")
-        data = data[data.SRCH_YN == 'Y'].copy()
+        data = data[data['SRCH_YN'] == 'Y'].copy()
         data['STAT_NAME'] = data["STAT_NAME"].apply(lambda x: x[x.find(' ') + 1:])
         data = data.rename(columns=columns)
         return data[columns.values()].set_index(keys='symbol')
@@ -695,6 +669,53 @@ class Ecos(DataFrame):
         if not layer["freq"] == "D":
             series.index = series.index.to_period("M").to_timestamp("M")
         return series
+
+    @classmethod
+    def metaData(cls) -> Dict:
+        _meta = {}
+        for name, meta in cls.raw.items():
+            code = f'{meta["symbol"]}{meta["code"]}'
+            _meta[code] = {
+                'name': name,
+                'unit': meta['unit'],
+                'group': meta['category']
+            }
+            if meta["YoY"]:
+                _meta[f'{code}YoY'] = {
+                    'name': f'{name}(YoY)',
+                    'unit': '%',
+                    'group': meta['category']
+                }
+
+            if meta["MoM"]:
+                _meta[f'{code}MoM'] = {
+                    'name': f'{name}(MoM)',
+                    'unit': '%',
+                    'group': meta['category']
+                }
+
+            if code == '121Y015BECBLB01':
+                _meta['T10MT2'] = {
+                    'name': '장단기금리차(10Y-2Y)',
+                    'unit': '%',
+                    'group': '금리지표'
+                }
+                _meta['HYSPREAD'] = {
+                    'name': '하이일드스프레드',
+                    'unit': '%',
+                    'group': '금리지표'
+                }
+                _meta['LBDIFFN'] = {
+                    'name': '예대금리차(신규)',
+                    'unit': '%',
+                    'group': '금리지표'
+                }
+                _meta['LBDIFFL'] = {
+                    'name': '예대금리차(잔액)',
+                    'unit': '%',
+                    'group': '금리지표'
+                }
+        return _meta
 
     @classmethod
     def xml2df(cls, url: str, parser: str = "") -> DataFrame:
