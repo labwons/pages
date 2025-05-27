@@ -41,22 +41,24 @@ class Macro(DataFrame):
                 "group": item["category"]
             }
 
-        if not update:
-            super().__init__(read_json(PATH.MACRO, orient='index'))
-            self.log = f'END [Build Macro Cache]'
-            return
-
         try:
             tz = timezone(timedelta(hours=9))
             ck = datetime.now(tz)
             objs = [
-                get_index_ohlcv_by_date('20000101', ck.strftime("%Y%m%d"), '1001'),
-                get_index_ohlcv_by_date('20000101', ck.strftime("%Y%m%d"), '2001'),
+                get_index_ohlcv_by_date('20000101', ck.strftime("%Y%m%d"), '1001')['종가'],
+                get_index_ohlcv_by_date('20000101', ck.strftime("%Y%m%d"), '2001')['종가'],
             ]
         except (KeyError, Exception):
             objs = []
             self.log = "  - KRX Not accessible: update failed"
             pass
+
+        if not update:
+            super().__init__(read_json(PATH.MACRO, orient='index'))
+            self.log = f'END [Build Macro Cache]'
+            return
+
+
 
         Ecos.api = "CEW3KQU603E6GA8VX0O9"
         ecos = Ecos()

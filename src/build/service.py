@@ -201,7 +201,7 @@ if __name__ == "__main__":
                     "historySection": False,
                     "srcIndicator": dumps(macro.serialize()).replace(" ", ""),
                     "srcIndicatorOpt": dumps(macro.meta).replace(" ", ""),
-                    "srcStatus": str(macro.status).replace(" ", ""),
+                    "srcStatus": macro.status,
                     "faq": marketBubble.faqs
                 })
             )

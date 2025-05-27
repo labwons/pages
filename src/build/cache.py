@@ -53,8 +53,7 @@ if __name__ == "__main__":
 
 
     try:
-        # macro = Macro(update=not LOCAL_HOST)
-        macro = Macro(update=True)
+        macro = Macro(update=not LOCAL_HOST)
         if not PATH.MACRO.startswith('http'):
             with open(PATH.MACRO, 'w') as f:
                 f.write(macro.to_json(orient='index').replace('nan', ''))

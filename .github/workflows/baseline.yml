@@ -35,7 +35,7 @@ jobs:
     - name: Run application
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)/src
-        export LOCAL_HOST=True
+        export LOCAL_HOST=False
         python src/build/service.py
 
     - name: Commit and Push changes
