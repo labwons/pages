@@ -44,10 +44,11 @@ class Macro(DataFrame):
         try:
             tz = timezone(timedelta(hours=9))
             ck = datetime.now(tz)
-            objs = [
-                get_index_ohlcv_by_date('20000101', ck.strftime("%Y%m%d"), '1001')['종가'],
-                get_index_ohlcv_by_date('20000101', ck.strftime("%Y%m%d"), '2001')['종가'],
-            ]
+            ks = get_index_ohlcv_by_date('20000101', ck.strftime("%Y%m%d"), '1001')['종가']
+            kq = get_index_ohlcv_by_date('20000101', ck.strftime("%Y%m%d"), '2001')['종가']
+            ks.name = 'KOSPI'
+            kq.name = 'KOSDAQ'
+            objs = [ks, kq]
         except (KeyError, Exception):
             objs = []
             self.log = "  - KRX Not accessible: update failed"
@@ -55,10 +56,11 @@ class Macro(DataFrame):
 
         if not update:
             super().__init__(read_json(PATH.MACRO, orient='index'))
+            # if objs:
+            #     index = concat(objs, axis=1)
+            #     self.drop(columns)
             self.log = f'END [Build Macro Cache]'
             return
-
-
 
         Ecos.api = "CEW3KQU603E6GA8VX0O9"
         ecos = Ecos()
