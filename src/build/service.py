@@ -197,7 +197,7 @@ if __name__ == "__main__":
                     "local": LOCAL_HOST,
                     "title": "LAB￦ONS: 거시경제",
                     "nav": NAVIGATION,
-                    "tradingDate": f'{TRADING_DATE} 기준 / 일부 지연',
+                    "tradingDate": f'{TRADING_DATE} (또는 최근 발표일) 기준',
                     "historySection": False,
                     "srcIndicator": dumps(macro.serialize()).replace(" ", ""),
                     "srcIndicatorOpt": dumps(macro.meta).replace(" ", ""),

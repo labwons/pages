@@ -775,6 +775,7 @@ if (SERVICE === "bubble"){
  * MACRO OPERATION 
 ----------------------------------------------------------- */
 let setYaxisOption;
+let plotMacro;
 if (SERVICE === "macro"){
   new PureCounter();
   const $y1 = $('.y1');
@@ -807,14 +808,55 @@ if (SERVICE === "macro"){
     });
   };
 
+  plotMacro = function() {
+
+  };
+
 
   $y1.on('select2:select', function(e){
+    if (y1_selection.length) {
+      let metaN = srcIndicatorOpt[e.params.data.id];
+      let metaO = srcIndicatorOpt[y1_selection[0]];
+      if (metaN.unit != metaO.unit) {
+        Swal.fire({
+          title: "먼저 추가한 지표와 단위가 다릅니다. 계속하시겠습니까?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "추가하기",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            y1_selection.push(e.params.data.id);
+
+            return;
+          }
+        });
+      }
+    }
     y1_selection.push(e.params.data.id);
+    
   });
   $y1.on('select2:unselect', function(e){
     y1_selection = y1_selection.filter(item => item != e.params.data.id);
   });
   $y2.on('select2:select', function(e){
+    if (y2_selection.length) {
+      let metaN = srcIndicatorOpt[e.params.data.id];
+      let metaO = srcIndicatorOpt[y2_selection[0]];
+      if (metaN.unit != metaO.unit) {
+        Swal.fire({
+          title: "먼저 추가한 지표와 단위가 다릅니다. 계속하시겠습니까?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "추가하기",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            y2_selection.push(e.params.data.id);
+
+            return;
+          }
+        });
+      }
+    }
     y2_selection.push(e.params.data.id);
   });
   $y2.on('select2:unselect', function(e){
