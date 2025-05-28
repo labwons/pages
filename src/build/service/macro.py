@@ -1,9 +1,11 @@
 try:
     from ...fetch.macro.ecos import Ecos
     from ...fetch.macro.fred import Fred
+    from ...fetch.macro.naver import krwusd
 except ImportError:
     from src.fetch.macro.ecos import Ecos
     from src.fetch.macro.fred import Fred
+    from src.fetch.macro.naver import krwusd
 from datetime import datetime, timezone, timedelta
 from pandas import concat, DataFrame, read_json
 from pykrx.stock import get_index_ohlcv_by_date
@@ -28,12 +30,13 @@ FAQ = [
 
 class Macro(DataFrame):
     faqs: List[Dict] = FAQ
-    meta: Dict = {}
+    meta: Dict = {'KOSPI': {'name': 'KOSPI', 'unit': '-', 'group': '지수'},
+                  'KOSDAQ': {'name': 'KOSDAQ', 'unit': '-', 'group': '지수'}}
     _log: List[str] = []
     def __init__(self, update:bool=False):
         stime = time()
         self.log = f'RUN [Build Macro Cache]'
-        self.meta = Ecos.metaData()
+        self.meta.update(Ecos.metaData())
         for symbol, item in Fred.predef.items():
             self.meta[symbol] = {
                 "name": item["name"],
@@ -55,10 +58,13 @@ class Macro(DataFrame):
             pass
 
         if not update:
-            super().__init__(read_json(PATH.MACRO, orient='index'))
-            # if objs:
-            #     index = concat(objs, axis=1)
-            #     self.drop(columns)
+            basis = read_json(PATH.MACRO, orient='index')
+            if objs:
+                index = concat(objs, axis=1)
+                basis = basis.drop(columns=index.columns)
+                super().__init__(concat([index, basis], axis=1))
+            else:
+                super().__init__(basis)
             self.log = f'END [Build Macro Cache]'
             return
 
@@ -82,30 +88,48 @@ class Macro(DataFrame):
     @property
     def status(self) -> list:
         selector = [
-            '731Y0030000003',  # 원/달러 환율
-            '817Y002010151000',  # KORIBOR(6개월)
-            '817Y002010195000',  # 국고채2년
-            '817Y002010210000',  # 국고채10년
-            '101Y004BBHA00',  # M2(평잔, 원계열)
-            '901Y056S23A',  # 증시예탁금
-            '901Y056S23E',  # 신용융자잔고
-            '901Y056S23F',  # 신용대주잔고
-            '403Y001*AA',  # 수출지수
-            '901Y062P63AC',  # KB부동산매매지수(아파트, 전국)
-            '901Y063P64AC',  # KB부동산전세지수(아파트, 전국)
-            '901Y067I16E',  # 경기선행지수순환변동
+            ('KOSPI', 'bi-graph-up'),
+            ('KOSDAQ', 'bi-graph-up'),
+            ('731Y0030000003', 'bi-currency-exchange'),  # 원/달러 환율
+            ('817Y002010195000', 'bi-percent'),  # 국고채2년
+            ('817Y002010210000', 'bi-percent'),  # 국고채10년
+            ('901Y056S23A', 'bi-piggy-bank-fill'),  # 증시예탁금
+            ('901Y056S23E', 'bi-cash-stack'),  # 신용융자잔고
+            ('901Y056S23F', 'bi-credit-card-fill'),  # 신용대주잔고
+            ('403Y001*AA', 'bi-truck'),  # 수출지수
+            ('901Y062P63AC', 'bi-house-fill'),  # KB부동산매매지수(아파트, 전국)
+            ('901Y063P64AC', 'bi-house-check-fill'),  # KB부동산전세지수(아파트, 전국)
+            ('901Y067I16E', 'bi-forward-fill'),  # 경기선행지수순환변동
         ]
         data = []
-        for col in selector:
-            serial = self[col].dropna()
-            data.append({
-                'code': col,
-                'date': serial.index[-1].strftime("%Y-%m-%d"),
-                'last': float(serial.iloc[-1]) if self.meta[col]['unit'] in ['%', '-', '원'] else int(serial.iloc[-1]),
-                'pct': float(round(100 * serial.pct_change().values[-1], 2)),
-                'unit': self.meta[col]['unit'],
-                'name': self.meta[col]['name'],
-            })
+        for col, icon in selector:
+            name, unit = self.meta[col]['name'], self.meta[col]['unit']
+            unit = unit.replace("-", "")
+            if col == '731Y0030000003':
+                obj = krwusd()
+                obj['code'] = col
+                obj['unit'] = unit
+                obj['name'] = name
+                obj['icon'] = icon
+                obj['color'] = '#1861A8' if obj['change'] < 0 else '#C92A2A'
+                if obj['change'] > 0:
+                    obj['change'] = f"+{obj['change']}"
+                data.append(obj)
+            else:
+                serial = self[col].dropna()
+                obj = {
+                    'code': col,
+                    'date': serial.index[-1].strftime("%Y-%m-%d"),
+                    'value': float(serial.values[-1]) if unit in ['%', '', '원'] else int(serial.values[-1] / 1000),
+                    'change': float(round(100 * serial.pct_change().values[-1], 2)),
+                    'unit': unit.replace("백만원", "억원"),
+                    'name': name.replace("(아파트, 전국)", ""),
+                    'icon': icon
+                }
+                obj['color'] = '#1861A8' if obj['change'] < 0 else '#C92A2A'
+                if obj['change'] > 0:
+                    obj['change'] = f"+{obj['change']}"
+                data.append(obj)
         return data
 
     def serialize(self) -> dict:
@@ -129,7 +153,7 @@ if __name__ == "__main__":
     # print(macro.log)
     # print(macro.serialize())
     # print(macro.meta)
-    print(str(macro.status))
-    # for s, n in macro.meta.items():
-    #     print(f'{s}: {n["name"]}')
+    # print(macro.status)
+    for n, stat in enumerate(macro.status):
+        print(n + 1, stat)
 

@@ -43,8 +43,6 @@ const __media__ = {
 }
 const __fonts__ = 'NanumGothic, Nanum Gothic, Open Sans, sans-serif';
 
-// new PureCounter();
-
 /* -----------------------------------------------------------
  * MARKET MAP OPERATION 
 ----------------------------------------------------------- */
@@ -778,6 +776,7 @@ if (SERVICE === "bubble"){
 ----------------------------------------------------------- */
 let setYaxisOption;
 if (SERVICE === "macro"){
+  new PureCounter();
   const $y1 = $('.y1');
   const $y2 = $('.y2');
   
@@ -807,5 +806,11 @@ if (SERVICE === "macro"){
     });
   };
 
+
+  $y1.on('select2:select', function(e){
+    console.log(e);
+  });
   setYaxisOption();
+
+
 }
