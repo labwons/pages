@@ -780,7 +780,8 @@ if (SERVICE === "macro"){
   const $y1 = $('.y1');
   const $y2 = $('.y2');
   
-  // var isDragging = false;
+  var y1_selection = [];
+  var y2_selection = [];
   
   setYaxisOption = function() {
     let _groups = [];
@@ -808,8 +809,18 @@ if (SERVICE === "macro"){
 
 
   $y1.on('select2:select', function(e){
-    console.log(e);
+    y1_selection.push(e.params.data.id);
   });
+  $y1.on('select2:unselect', function(e){
+    y1_selection = y1_selection.filter(item => item != e.params.data.id);
+  });
+  $y2.on('select2:select', function(e){
+    y2_selection.push(e.params.data.id);
+  });
+  $y2.on('select2:unselect', function(e){
+    y2_selection = y2_selection.filter(item => item != e.params.data.id);
+  });
+
   setYaxisOption();
 
 
