@@ -104,8 +104,8 @@ if (SERVICE === "marketmap"){
   setMainOptions = function(){
     $mainOptions.empty();
     Object.entries(srcIndicatorOpt).forEach(([key, obj]) => {
-      $mainOptions.append(`<option value="${key}">${obj.label}</option>`)
-    })
+      $mainOptions.append(`<option value="${key}">${obj.label}</option>`);
+    });
     $mainOptions.find('option[value="' + currentOption + '"]').prop('selected', true);
   };
 
@@ -809,55 +809,106 @@ if (SERVICE === "macro"){
   };
 
   plotMacro = function() {
+    let layout = {
+      margin:{
+        l:20, 
+        r:20, 
+        t:10, 
+        b:20
+      }, 
+      hovermode: 'x unified',
+      legend: {
+        bgcolor:'white',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'right',
+        x:1.0,
+        yanchor:'top',
+        y:1.0
+      },
+      xaxis:{
+        tickformat: "%Y/%m/%d",
+        showticklabels: true,
+        showline: true,
+        rangeselector: {
+          buttons: [
+            { step: 'all', label: 'All' },
+            { count: 6, label: '6M', step:'month', stepmode: 'backward'},
+            { count: 1, label: 'YTD', step:'year', stepmode: 'todate'},
+            { count: 1, label: '1Y', step: 'year', stepmode: 'backward' },
+            { count: 3, label: '3Y', step: 'year', stepmode: 'backward' },
+            { count: 5, label: '5Y', step: 'year', stepmode: 'backward' }        
+          ],
+          xanchor: 'left',
+          x: 0,
+          yanchor: 'top',
+          y:1.025
+        },
+      },
+      yaxis:{
+        side: 'left',
+        // position: 0.01,
+        showline: true,
+        zeroline: false,
+        showticklabels: true,
+        tickangle: -90
+      },
+      yaxis2: {
+        overlaying:'y',
+        side:'right',
+        // position: 0,
+        zeroline:false,
+        showline:true,
+        showgrid:false,
+        showticklabels: true,
+        tickangle: -90,
+        linecolor: 'royalblue'
+      },
+      dragmode: 'pan'
+    };
+
+    var y1data = Object.fromEntries(y1_selection.map(key => [key, srcIndicator[key]]));
+    var y2data = Object.fromEntries(y2_selection.map(key => [key, srcIndicator[key]]));
+    var fromdate = 0;
+    for(var n=0; n<y1_selection.length; n++){
+      fromdate = Math.max(...[fromdate, parseInt(y1data[y1_selection[n]].date[0].replaceAll('-', ''))]);
+    }
+    console.log(fromdate);
 
   };
 
-
-  $y1.on('select2:select', function(e){
+  $y1.on('select2:select', async function(e){
     if (y1_selection.length) {
       let metaN = srcIndicatorOpt[e.params.data.id];
       let metaO = srcIndicatorOpt[y1_selection[0]];
       if (metaN.unit != metaO.unit) {
-        Swal.fire({
+        const result = await Swal.fire({
           title: "먼저 추가한 지표와 단위가 다릅니다. 계속하시겠습니까?",
           icon: "question",
           showCancelButton: true,
           confirmButtonText: "추가하기",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            y1_selection.push(e.params.data.id);
-
-            return;
-          }
         });
+        
+        if (result.isConfirmed) {
+          y1_selection.push(e.params.data.id);
+          plotMacro();
+          return;
+        } else {
+          return;
+        }
       }
     }
     y1_selection.push(e.params.data.id);
-    
+    plotMacro();
   });
   $y1.on('select2:unselect', function(e){
     y1_selection = y1_selection.filter(item => item != e.params.data.id);
   });
   $y2.on('select2:select', function(e){
-    if (y2_selection.length) {
-      let metaN = srcIndicatorOpt[e.params.data.id];
-      let metaO = srcIndicatorOpt[y2_selection[0]];
-      if (metaN.unit != metaO.unit) {
-        Swal.fire({
-          title: "먼저 추가한 지표와 단위가 다릅니다. 계속하시겠습니까?",
-          icon: "question",
-          showCancelButton: true,
-          confirmButtonText: "추가하기",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            y2_selection.push(e.params.data.id);
-
-            return;
-          }
-        });
-      }
-    }
-    y2_selection.push(e.params.data.id);
+    
   });
   $y2.on('select2:unselect', function(e){
     y2_selection = y2_selection.filter(item => item != e.params.data.id);
