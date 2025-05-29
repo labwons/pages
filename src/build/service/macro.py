@@ -30,8 +30,8 @@ FAQ = [
 
 class Macro(DataFrame):
     faqs: List[Dict] = FAQ
-    meta: Dict = {'KOSPI': {'name': 'KOSPI', 'unit': '-', 'group': '지수'},
-                  'KOSDAQ': {'name': 'KOSDAQ', 'unit': '-', 'group': '지수'}}
+    meta: Dict = {'KOSPI': {'name': 'KOSPI', 'unit': '-', 'group': '지수', 'format': 'float'},
+                  'KOSDAQ': {'name': 'KOSDAQ', 'unit': '-', 'group': '지수', 'format': 'float'}}
     _log: List[str] = []
     def __init__(self, update:bool=False):
         stime = time()
@@ -41,7 +41,8 @@ class Macro(DataFrame):
             self.meta[symbol] = {
                 "name": item["name"],
                 "unit": item["unit"],
-                "group": item["category"]
+                "group": item["category"],
+                "format": item["format"]
             }
 
         try:
@@ -154,6 +155,8 @@ if __name__ == "__main__":
     # print(macro.serialize())
     # print(macro.meta)
     # print(macro.status)
-    for n, stat in enumerate(macro.status):
-        print(n + 1, stat)
+    for n, meta in enumerate(macro.meta.values()):
+        print(n + 1, meta)
+    # for n, stat in enumerate(macro.status):
+    #     print(n + 1, stat)
 

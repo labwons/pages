@@ -869,15 +869,65 @@ if (SERVICE === "macro"){
       },
       dragmode: 'pan'
     };
+    let option = {
+      displayModeBar: false,
+      responsive: true,
+      showTips: false,
+    }
 
+    var data = [];
     var y1data = Object.fromEntries(y1_selection.map(key => [key, srcIndicator[key]]));
     var y2data = Object.fromEntries(y2_selection.map(key => [key, srcIndicator[key]]));
     var fromdate = 0;
-    for(var n=0; n<y1_selection.length; n++){
-      fromdate = Math.max(...[fromdate, parseInt(y1data[y1_selection[n]].date[0].replaceAll('-', ''))]);
-    }
-    console.log(fromdate);
+    var enddate = 0;
 
+    for(var n = 0; n < y1_selection.length; n++){
+      fromdate = Math.max(...[fromdate, parseInt(y1data[y1_selection[n]].date[0].replaceAll('-', ''))]);
+      enddate = Math.max(...[enddate, parseInt(y1data[y1_selection[n]].date.at(-1).replaceAll('-', ''))]);
+    }
+    for(var n = 0; n < y2_selection.length; n++){
+      fromdate = Math.max(...[fromdate, parseInt(y2data[y2_selection[n]].date[0].replaceAll('-', ''))]);
+      enddate = Math.max(...[enddate, parseInt(y2data[y2_selection[n]].date.at(-1).replaceAll('-', ''))]);
+    }
+    fromdate = ('' + fromdate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+    enddate = ('' + enddate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+    layout.xaxis.range = [fromdate, enddate];
+
+    for (const [key, _data] of Object.entries(y1data)) {
+      let hover = `%{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
+      if (srcIndicatorOpt[key].format === 'int') {
+        hover = `%{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
+      }
+      
+      data.push({
+        x: _data.date,
+        y: _data.data,
+        type: 'scatter',
+        mode: 'lines',
+        name: srcIndicatorOpt[key].name,
+        showlegend: true,
+        hovertemplate: hover,
+        yaxis: 'y1',
+      })
+    }
+    for (const [key, _data] of Object.entries(y2data)) {
+      let hover = `%{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
+      if (srcIndicatorOpt[key].format === 'int') {
+        hover = `%{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
+      }
+      data.push({
+        x: _data.date,
+        y: _data.data,
+        type: 'scatter',
+        mode: 'lines',
+        name: srcIndicatorOpt[key].name,
+        showlegend: true,
+        hovertemplate: hover,
+        yaxis: 'y2',
+      })
+    }
+
+    Plotly.newPlot('plotly', data, layout, option);
   };
 
   $y1.on('select2:select', async function(e){
@@ -906,12 +956,35 @@ if (SERVICE === "macro"){
   });
   $y1.on('select2:unselect', function(e){
     y1_selection = y1_selection.filter(item => item != e.params.data.id);
+    plotMacro();
   });
-  $y2.on('select2:select', function(e){
-    
+  $y2.on('select2:select', async function(e){
+    if (y2_selection.length) {
+      let metaN = srcIndicatorOpt[e.params.data.id];
+      let metaO = srcIndicatorOpt[y2_selection[0]];
+      if (metaN.unit != metaO.unit) {
+        const result = await Swal.fire({
+          title: "먼저 추가한 지표와 단위가 다릅니다. 계속하시겠습니까?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "추가하기",
+        });
+        
+        if (result.isConfirmed) {
+          y2_selection.push(e.params.data.id);
+          plotMacro();
+          return;
+        } else {
+          return;
+        }
+      }
+    }
+    y2_selection.push(e.params.data.id);
+    plotMacro();
   });
   $y2.on('select2:unselect', function(e){
     y2_selection = y2_selection.filter(item => item != e.params.data.id);
+    plotMacro();
   });
 
   setYaxisOption();

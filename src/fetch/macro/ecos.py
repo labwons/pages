@@ -79,7 +79,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         'KORIBOR(3개월)': {
             'symbol': '817Y002',
@@ -87,7 +88,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         'KORIBOR(6개월)': {
             'symbol': '817Y002',
@@ -95,7 +97,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '국고채1년': {
             'symbol': '817Y002',
@@ -103,7 +106,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '국고채2년': {
             'symbol': '817Y002',
@@ -111,7 +115,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '국고채5년': {
             'symbol': '817Y002',
@@ -119,7 +124,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '국고채10년': {
             'symbol': '817Y002',
@@ -127,7 +133,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '회사채3년(AA-)': {
             'symbol': '817Y002',
@@ -135,7 +142,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '회사채3년(BBB-)': {
             'symbol': '817Y002',
@@ -143,7 +151,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '은행수신금리(신규)': {
             'symbol': '121Y002',
@@ -151,7 +160,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '은행수신금리(잔액)': {
             'symbol': '121Y013',
@@ -159,7 +169,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '은행대출금리(신규)': {
             'symbol': '121Y006',
@@ -167,7 +178,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '은행대출금리(잔액)': {
             'symbol': '121Y015',
@@ -175,7 +187,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '금리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
 
         '원/달러환율': {
@@ -184,7 +197,8 @@ class Ecos(DataFrame):
             'unit': '원',
             'category': '통화/유동성지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         'M2(평잔, 원계열)': {
             'symbol': '101Y004',
@@ -192,7 +206,8 @@ class Ecos(DataFrame):
             'unit': '십억원',
             'category': '통화/유동성지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'int'
         },
         'M2(평잔, 계절조정)': {
             'symbol': '101Y003',
@@ -200,7 +215,8 @@ class Ecos(DataFrame):
             'unit': '십억원',
             'category': '통화/유동성지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'int'
         },
         '은행수신(말잔)': {
             'symbol': '104Y013',
@@ -208,7 +224,8 @@ class Ecos(DataFrame):
             'unit': '십억원',
             'category': '통화/유동성지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'int'
         },
         '은행수신(평잔)': {
             'symbol': '104Y014',
@@ -216,7 +233,8 @@ class Ecos(DataFrame):
             'unit': '십억원',
             'category': '통화/유동성지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'int'
         },
         '비은행수신(말잔)': {
             'symbol': '111Y007',
@@ -224,7 +242,8 @@ class Ecos(DataFrame):
             'unit': '십억원',
             'category': '통화/유동성지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'int'
         },
         '비은행수신(평잔)': {
             'symbol': '111Y008',
@@ -232,7 +251,8 @@ class Ecos(DataFrame):
             'unit': '십억원',
             'category': '통화/유동성지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'int'
         },
         '은행여신(말잔)': {
             'symbol': '104Y016',
@@ -240,7 +260,8 @@ class Ecos(DataFrame):
             'unit': '십억원',
             'category': '통화/유동성지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'int'
         },
         '비은행여신(말잔)': {
             'symbol': '111Y009',
@@ -248,7 +269,8 @@ class Ecos(DataFrame):
             'unit': '십억원',
             'category': '통화/유동성지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'int'
         },
         '증시예탁금': {
             'symbol': '901Y056',
@@ -256,7 +278,8 @@ class Ecos(DataFrame):
             'unit': '백만원',
             'category': '통화/유동성지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'int'
         },
         '신용융자잔고': {
             'symbol': '901Y056',
@@ -264,7 +287,8 @@ class Ecos(DataFrame):
             'unit': '백만원',
             'category': '통화/유동성지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'int'
         },
         '신용대주잔고': {
             'symbol': '901Y056',
@@ -272,283 +296,318 @@ class Ecos(DataFrame):
             'unit': '백만원',
             'category': '통화/유동성지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'int'
         },
 
         '수출지수': {
             'symbol': '403Y001',
             'code': '*AA',
-            'unit': '-',
+            'unit': '',
             'category': '수출지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '반도체수출': {
             'symbol': '403Y001',
             'code': '3091AA',
-            'unit': '-',
+            'unit': '',
             'category': '수출지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '반도체/디스플레이장비수출': {
             'symbol': '403Y001',
             'code': '3091AA',
-            'unit': '-',
+            'unit': '',
             'category': '수출지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '스마트폰/무선전화기수출': {
             'symbol': '403Y001',
             'code': '309512AA',
-            'unit': '-',
+            'unit': '',
             'category': '수출지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '자동차수출': {
             'symbol': '403Y001',
             'code': '3121AA',
-            'unit': '-',
+            'unit': '',
             'category': '수출지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '자동차부품수출': {
             'symbol': '403Y001',
             'code': '31213AA',
-            'unit': '-',
+            'unit': '',
             'category': '수출지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '음식료품수출': {
             'symbol': '403Y001',
             'code': '301AA',
-            'unit': '-',
+            'unit': '',
             'category': '수출지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '석탄및석유제품수출': {
             'symbol': '403Y001',
             'code': '304AA',
-            'unit': '-',
+            'unit': '',
             'category': '수출지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '철강수출': {
             'symbol': '403Y001',
             'code': '3071AA',
-            'unit': '-',
+            'unit': '',
             'category': '수출지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '전지수출': {
             'symbol': '403Y001',
             'code': '31013AA',
-            'unit': '-',
+            'unit': '',
             'category': '수출지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '가전수출': {
             'symbol': '403Y001',
             'code': '31015AA',
-            'unit': '-',
+            'unit': '',
             'category': '수출지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
 
         '소비자물가지수': {
             'symbol': '901Y009',
             'code': '0',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '소비자물가지수(식료품 및 에너지 제외)': {
             'symbol': '901Y010',
             'code': 'DB',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '소비자물가지수(서비스)': {
             'symbol': '901Y010',
             'code': '22',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '생산자물가지수': {
             'symbol': '404Y014',
             'code': '*AA',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '생산자물가지수(식료품 및 에너지 제외)': {
             'symbol': '404Y015',
             'code': 'S620AA',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '생산자물가지수(서비스)': {
             'symbol': '404Y014',
             'code': '5AA',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
 
         'KB부동산매매지수(아파트, 전국)': {
             'symbol': '901Y062',
             'code': 'P63AC',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         'KB부동산매매지수(아파트, 서울)': {
             'symbol': '901Y062',
             'code': 'P63ACA',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         'KB부동산전세지수(아파트, 전국)': {
             'symbol': '901Y063',
             'code': 'P64AC',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         'KB부동산전세지수(아파트, 서울)': {
             'symbol': '901Y063',
             'code': 'P64ACA',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         '아파트실거래지수(전국)': {
             'symbol': '901Y089',
             'code': '100',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         '아파트실거래지수(서울)': {
             'symbol': '901Y089',
             'code': '200',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         '아파트실거래지수(수도권)': {
             'symbol': '901Y089',
             'code': '300',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         '아파트실거래지수(경기)': {
             'symbol': '901Y089',
             'code': 'C00',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         '아파트실거래지수(지방광역시)': {
             'symbol': '901Y089',
             'code': 'M00',
-            'unit': '-',
+            'unit': '',
             'category': '물가/부동산지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
 
         '경기선행지수순환변동': {
             'symbol': '901Y067',
             'code': 'I16E',
-            'unit': '-',
+            'unit': '',
             'category': '경제/심리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '경기동행지수순환변동': {
             'symbol': '901Y067',
             'code': 'I16D',
-            'unit': '-',
+            'unit': '',
             'category': '경제/심리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '제조업업황전망': {
             'symbol': '512Y014',
             'code': 'C0000/BA',
-            'unit': '-',
+            'unit': '',
             'category': '경제/심리지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         '제조업신규수주전망': {
             'symbol': '512Y014',
             'code': 'C0000/BD',
-            'unit': '-',
+            'unit': '',
             'category': '경제/심리지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         '제조업수출전망': {
             'symbol': '512Y014',
             'code': 'C0000/BM',
-            'unit': '-',
+            'unit': '',
             'category': '경제/심리지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         '제조업심리지수': {
             'symbol': '512Y014',
             'code': 'C0000/BY',
-            'unit': '-',
+            'unit': '',
             'category': '경제/심리지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         '소비자심리지수': {
             'symbol': '511Y002',
             'code': 'FME/99988',
-            'unit': '-',
+            'unit': '',
             'category': '경제/심리지표',
             'YoY': True,
-            'MoM': True
+            'MoM': True,
+            'format': 'float'
         },
         '뉴스심리지수(실험통계)': {
             'symbol': '521Y001',
             'code': 'A001',
-            'unit': '-',
+            'unit': '',
             'category': '경제/심리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '실업률(원계열)': {
             'symbol': '901Y027',
@@ -556,7 +615,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '경제/심리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
         '실업률(계절조정)': {
             'symbol': '901Y027',
@@ -564,7 +624,8 @@ class Ecos(DataFrame):
             'unit': '%',
             'category': '경제/심리지표',
             'YoY': False,
-            'MoM': False
+            'MoM': False,
+            'format': 'float'
         },
     }
 
@@ -678,42 +739,49 @@ class Ecos(DataFrame):
             _meta[code] = {
                 'name': name,
                 'unit': meta['unit'],
-                'group': meta['category']
+                'group': meta['category'],
+                'format': meta['format']
             }
             if meta["YoY"]:
                 _meta[f'{code}YoY'] = {
                     'name': f'{name}(YoY)',
                     'unit': '%',
-                    'group': meta['category']
+                    'group': meta['category'],
+                    'format': 'float'
                 }
 
             if meta["MoM"]:
                 _meta[f'{code}MoM'] = {
                     'name': f'{name}(MoM)',
                     'unit': '%',
-                    'group': meta['category']
+                    'group': meta['category'],
+                    'format': 'float'
                 }
 
             if code == '121Y015BECBLB01':
                 _meta['T10MT2'] = {
                     'name': '장단기금리차(10Y-2Y)',
                     'unit': '%',
-                    'group': '금리지표'
+                    'group': '금리지표',
+                    'format': 'float'
                 }
                 _meta['HYSPREAD'] = {
                     'name': '하이일드스프레드',
                     'unit': '%',
-                    'group': '금리지표'
+                    'group': '금리지표',
+                    'format': 'float'
                 }
                 _meta['LBDIFFN'] = {
                     'name': '예대금리차(신규)',
                     'unit': '%',
-                    'group': '금리지표'
+                    'group': '금리지표',
+                    'format': 'float'
                 }
                 _meta['LBDIFFL'] = {
                     'name': '예대금리차(잔액)',
                     'unit': '%',
-                    'group': '금리지표'
+                    'group': '금리지표',
+                    'format': 'float'
                 }
         return _meta
 

@@ -14,7 +14,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='금리지표',
             unit='%',
-            comment='Federal Funds Effective Rate (Monthly)'
+            comment='Federal Funds Effective Rate (Monthly)',
+            format='float'
         ),
         'DGS10': dict(
             symbol='DGS10',
@@ -22,7 +23,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='금리지표',
             unit='%',
-            comment='Market Yield on U.S. Treasury Securities at 10-Year Constant Maturity, Quoted on an Investment Basis (Daily)'
+            comment='Market Yield on U.S. Treasury Securities at 10-Year Constant Maturity, Quoted on an Investment Basis (Daily)',
+            format='float'
         ),
         'DGS5': dict(
             symbol='DGS5',
@@ -30,7 +32,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='금리지표',
             unit='%',
-            comment='Market Yield on U.S. Treasury Securities at 5-Year Constant Maturity, Quoted on an Investment Basis (Daily)'
+            comment='Market Yield on U.S. Treasury Securities at 5-Year Constant Maturity, Quoted on an Investment Basis (Daily)',
+            format='float'
         ),
         'DGS2': dict(
             symbol='DGS2',
@@ -38,7 +41,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='금리지표',
             unit='%',
-            comment='Market Yield on U.S. Treasury Securities at 2-Year Constant Maturity, Quoted on an Investment Basis (Daily)'
+            comment='Market Yield on U.S. Treasury Securities at 2-Year Constant Maturity, Quoted on an Investment Basis (Daily)',
+            format='float'
         ),
         'DGS1': dict(
             symbol='DGS1',
@@ -46,7 +50,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='금리지표',
             unit='%',
-            comment='Market Yield on U.S. Treasury Securities at 1-Year Constant Maturity, Quoted on an Investment Basis (Daily)'
+            comment='Market Yield on U.S. Treasury Securities at 1-Year Constant Maturity, Quoted on an Investment Basis (Daily)',
+            format='float'
         ),
         'T10Y2Y': dict(
             symbol='T10Y2Y',
@@ -54,7 +59,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='금리지표',
             unit='%',
-            comment='10-Year Treasury Constant Maturity Minus 2-Year Treasury Constant Maturity (Daily)'
+            comment='10-Year Treasury Constant Maturity Minus 2-Year Treasury Constant Maturity (Daily)',
+            format='float'
         ),
         'T10Y3M': dict(
             symbol='T10Y3M',
@@ -62,7 +68,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='금리지표',
             unit='%',
-            comment='10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant Maturity (Daily)'
+            comment='10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant Maturity (Daily)',
+            format='float'
         ),
         'BAMLH0A0HYM2': dict(
             symbol='BAMLH0A0HYM2',
@@ -70,7 +77,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='금리지표',
             unit='%',
-            comment='ICE BofA US High Yield Index Option-Adjusted Spread (Daily)'
+            comment='ICE BofA US High Yield Index Option-Adjusted Spread (Daily)',
+            format='float'
         ),
         'MORTGAGE30US': dict(
             symbol='MORTGAGE30US',
@@ -78,7 +86,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='금리지표',
             unit='%',
-            comment='30-Year Fixed Rate Mortgage Average in the United States (Weekly)'
+            comment='30-Year Fixed Rate Mortgage Average in the United States (Weekly)',
+            format='float'
         ),
 
         # Monetary
@@ -88,7 +97,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='통화/유동성지표',
             unit='USD(xB)',
-            comment='M2: Billions of Dollars (Monthly)'
+            comment='M2: Billions of Dollars (Monthly)',
+            format='int'
         ),
         'M2V': dict(
             symbol='M2V',
@@ -96,7 +106,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='통화/유동성지표',
             unit='%',
-            comment='Velocity of M2 Money Stock (Seasonally Adjusted, Quarterly)'
+            comment='Velocity of M2 Money Stock (Seasonally Adjusted, Quarterly)',
+            format='float'
         ),
 
         # Inflation
@@ -105,16 +116,18 @@ class Fred(DataFrame):
             name='미국 CPI(계절조정)',
             quoteType='INDICATOR',
             category='물가 / 부동산지표',
-            unit='-',
-            comment='Consumer Price Index for All Urban Consumers: All Items in U.S. City Average (Seasonally Adjusted, Monthly)'
+            unit='',
+            comment='Consumer Price Index for All Urban Consumers: All Items in U.S. City Average (Seasonally Adjusted, Monthly)',
+            format='float'
         ),
         'CPIAUCNS': dict(
             symbol='CPIAUCNS',
             name='미국 CPI(계절조정 미반영)',
             quoteType='INDICATOR',
             category='물가 / 부동산지표',
-            unit='-',
-            comment='Consumer Price Index for All Urban Consumers: All Items in U.S. City Average (Not Seasonally Adjusted, Monthly)'
+            unit='',
+            comment='Consumer Price Index for All Urban Consumers: All Items in U.S. City Average (Not Seasonally Adjusted, Monthly)',
+            format='float'
         ),
         'CORESTICKM159SFRBATL': dict(
             symbol='CORESTICKM159SFRBATL',
@@ -122,15 +135,17 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='물가 / 부동산지표',
             unit='%',
-            comment='Sticky Price Consumer Price Index less Food and Energy (Monthly)'
+            comment='Sticky Price Consumer Price Index less Food and Energy (Monthly)',
+            format='float'
         ),
         'CPILFESL': dict(
             symbol='CPILFESL',
             name='미국 CPI(식음료 에너지 제외)',
             quoteType='INDICATOR',
             category='물가 / 부동산지표',
-            unit='-',
-            comment='Consumer Price Index for All Urban Consumers: All Items Less Food and Energy in U.S. City Average (Seasonally Adjusted, Monthly)'
+            unit='',
+            comment='Consumer Price Index for All Urban Consumers: All Items Less Food and Energy in U.S. City Average (Seasonally Adjusted, Monthly)',
+            format='float'
         ),
         'T10YIE': dict(
             symbol='T10YIE',
@@ -138,7 +153,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='물가 / 부동산지표',
             unit='%',
-            comment='10-Year Breakeven Inflation Rate (Daily, Not Seasonally Adjusted)'
+            comment='10-Year Breakeven Inflation Rate (Daily, Not Seasonally Adjusted)',
+            format='float'
         ),
         'T5YIE': dict(
             symbol='T5YIE',
@@ -146,7 +162,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='물가 / 부동산지표',
             unit='%',
-            comment='5-Year Breakeven Inflation Rate (Daily, Not Seasonally Adjusted)'
+            comment='5-Year Breakeven Inflation Rate (Daily, Not Seasonally Adjusted)',
+            format='float'
         ),
 
         # Labor, GDP, Saving and Others
@@ -156,7 +173,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='경제 / 심리지표',
             unit='%',
-            comment='Unemployment Rate(Seasonally Adjusted, Monthly)'
+            comment='Unemployment Rate(Seasonally Adjusted, Monthly)',
+            format='float'
         ),
         'GDP': dict(
             symbol='GDP',
@@ -164,7 +182,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='경제 / 심리지표',
             unit='USD(xB)',
-            comment='Gross Domestic Product (Seasonally Adjusted, Quarterly)'
+            comment='Gross Domestic Product (Seasonally Adjusted, Quarterly)',
+            format='int'
         ),
         'GDPC1': dict(
             symbol='GDPC1',
@@ -172,7 +191,8 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='경제 / 심리지표',
             unit='USD(xB)',
-            comment='Real Gross Domestic Product (Seasonally Adjusted, Quarterly)'
+            comment='Real Gross Domestic Product (Seasonally Adjusted, Quarterly)',
+            format='float'
         ),
         'PSAVERT': dict(
             symbol='PSAVERT',
@@ -180,15 +200,17 @@ class Fred(DataFrame):
             quoteType='INDICATOR',
             category='경제 / 심리지표',
             unit='%',
-            comment='Personal Saving Rate (Monthly)'
+            comment='Personal Saving Rate (Monthly)',
+            format='float'
         ),
         'UMCSENT': dict(
             symbol='UMCSENT',
             name='미국 소비자 심리지수(미시간 대학교)',
             quoteType='INDICATOR',
             category='경제 / 심리지표',
-            unit='-',
-            comment='University of Michigan: Consumer Sentiment (Monthly)'
+            unit='',
+            comment='University of Michigan: Consumer Sentiment (Monthly)',
+            format='float'
         ),
     }
 
