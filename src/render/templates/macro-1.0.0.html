@@ -99,6 +99,12 @@
       position: relative;
     }
 
+    @media (max-width: 767px) {
+      .service-app {
+        height: 60vh;
+      } 
+    }
+
     .service-app .plot {
       flex: 1 0 auto;
     }
@@ -111,6 +117,21 @@
       font-family: var(--font-family);
       font-size: 12px;
       color: var(--default-color);
+    }
+
+    .js-plotly-plot .plotly .modebar-group {
+      padding-left: 0 !important;
+    }
+
+    .js-plotly-plot .plotly .modebar-group .modebar-btn > i {
+      opacity: 0.3;
+      font-weight: 700;
+    }
+
+    @media (max-width: 767px) {
+      .js-plotly-plot .plotly .modebar-group .modebar-btn > i {
+        opacity: 0.8;
+      }
     }
 
   </style>

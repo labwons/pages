@@ -183,7 +183,9 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # BUILD MACRO
     # ---------------------------------------------------------------------------------------
-    macro = Macro(not LOCAL_HOST)
+    macro = Macro(update=False)
+    # Macro data updates after market is limited. Only index and exchange rate data is updated.
+    # Indicators and other macro data is updated on cache build.
     try:
         with open(
             file=os.path.join(BASE_DIR, r'macro/index.html'),

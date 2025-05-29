@@ -800,6 +800,8 @@ if (SERVICE === "macro"){
 
       $_group.append(`<option value="${symbol}">${meta.name}</option>`);
     });
+    $y1.val(['KOSPI']).trigger('change');
+    y1_selection.push('KOSPI');
     $y1.select2({
       maximumSelectionLength: 3,
     });
@@ -810,6 +812,7 @@ if (SERVICE === "macro"){
 
   plotMacro = function() {
     let layout = {
+      dragmode: __media__.isMobile ? false : 'pan',
       margin:{
         l:20, 
         r:20, 
@@ -850,7 +853,6 @@ if (SERVICE === "macro"){
       },
       yaxis:{
         side: 'left',
-        // position: 0.01,
         showline: true,
         zeroline: false,
         showticklabels: true,
@@ -859,7 +861,6 @@ if (SERVICE === "macro"){
       yaxis2: {
         overlaying:'y',
         side:'right',
-        // position: 0,
         zeroline:false,
         showline:true,
         showgrid:false,
@@ -867,12 +868,13 @@ if (SERVICE === "macro"){
         tickangle: -90,
         linecolor: 'royalblue'
       },
-      dragmode: 'pan'
     };
     let option = {
-      displayModeBar: false,
-      responsive: true,
-      showTips: false,
+      showTips:false,
+      responsive:true,
+      displayModeBar:true,
+      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+      displaylogo:false
     }
 
     var data = [];
@@ -927,7 +929,14 @@ if (SERVICE === "macro"){
       })
     }
 
-    Plotly.newPlot('plotly', data, layout, option);
+    Plotly.newPlot('plotly', data, layout, option)
+    .then(grid => {
+      $('a[data-title="Download plot as a png"]').attr("data-title", "그림으로 저장");
+      $('a[data-title="Zoom"]').attr("data-title", "확대");
+      $('a[data-title="Pan"]').attr("data-title", "이동(패닝)");
+      $('a[data-title="Autoscale"]').attr("data-title", "자동 조정");
+      $('.modebar').prepend($('<div class="modebar-group"><a rel="tooltip" class="modebar-btn" data-title="스크롤 모드" data-toggle="false" data-gravity="n"><i class="bi bi-arrow-down-up"></i></a></div>'));
+    });
   };
 
   $y1.on('select2:select', async function(e){
@@ -987,7 +996,18 @@ if (SERVICE === "macro"){
     plotMacro();
   });
 
-  setYaxisOption();
+  $(document)
+  .on('click', '.bi-arrow-down-up', function() {
+    Plotly.relayout('plotly', {dragmode: false});
+    $(this).css('opacity', '0.8');
+  })
+  .on('click', '.modebar', function(e) {
+    if (!$(e.target).is('i')){
+      $('.bi-arrow-down-up').css('opacity', '0.3');
+    }
+  });
 
+  setYaxisOption();
+  plotMacro();
 
 }
