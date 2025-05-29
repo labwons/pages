@@ -1006,6 +1006,18 @@ if (SERVICE === "macro"){
       $('.bi-arrow-down-up').css('opacity', '0.3');
     }
   });
+  $('.content-number').on('click', function(){
+    var item = $(this).attr('data-symbol');
+    y1_selection = [item];
+    y2_selection = [];
+    $y1.val([]).trigger('change');
+    $y2.val([]).trigger('change');
+    $y1.val(item).trigger('change');
+    plotMacro();
+    $('html, body').animate({
+      scrollTop: $('#main').offset().top
+    }, 1000);
+  });
 
   setYaxisOption();
   plotMacro();

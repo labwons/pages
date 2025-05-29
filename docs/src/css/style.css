@@ -470,6 +470,7 @@ PARTS
   flex-wrap: nowrap;
   align-items: center;
   gap: 24px;
+  cursor: pointer;
 }
 
 @media (max-width: 767px) {
