@@ -9,7 +9,7 @@ class _web(object):
     def req(self, url:str):
         attr = f"_req_{url}_"
         if not hasattr(self, attr):
-            req = requests.get(url)
+            req = requests.get(url, verify=False)
             if not req.status_code == 200:
                 raise ConnectionError
             self.__setattr__(attr, req)

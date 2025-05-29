@@ -534,13 +534,24 @@ if (SERVICE === "bubble"){
       modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
       displaylogo:false,   
     };
+    var hoverX = `%{x:.${xObj.round}f}`;
+    if (xObj.round === 0) {
+      hoverX = `%{x:,d}`;
+    }
+
+    var hoverY = `%{y:.${yObj.round}f}`;
+    if (yObj.round === 0) {
+      hoverY = `%{y:,d}`;
+    }
+
+    var hover = `%{meta}<br>${xObj.label}: ${hoverX}${xObj.unit}<br>${yObj.label}: ${hoverY}${yObj.unit}<extra></extra>`;
     var data = {
       type:'scatter',
       x:[],
       y:[],
       mode:'markers',
       meta:[],
-      hovertemplate: '%{meta}<br>' + xObj.label + ': %{x}' + xObj.unit + '<br>' + yObj.label + ': %{y}' + yObj.unit + '<extra></extra>',
+      hovertemplate: hover,
       hoverlabel: {
         font: {
           family: __fonts__,

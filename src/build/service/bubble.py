@@ -120,5 +120,5 @@ if __name__ == "__main__":
     # print(baseline)
     marketBubble = MarketBubble(baseline)
     print(marketBubble)
-    # print(marketBubble.meta)
+    print(marketBubble.meta)
     # print(marketBubble.sector)

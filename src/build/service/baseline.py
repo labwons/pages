@@ -119,7 +119,7 @@ METADATA = {
         'label': 'EPS',
         'description': '연속 4분기에 대한 EPS 합산',
         'unit': '원',
-		'round': 2,
+		'round': 0,
     },
     'trailingProfitRate': {
         'label': '영업이익률',
