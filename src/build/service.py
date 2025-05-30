@@ -39,23 +39,23 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     PRINT_DATA('display.expand_frame_repr', False)
 
-    BASE_DIR   = PATH.DOCS
-    BASELINE   = True
-    CLOCK      = lambda zone: datetime.now(zone)
-    LOCAL_HOST = os.getenv('LOCAL_HOST') is None
-    LOCAL_ZONE = timezone(timedelta(hours=9))
-    ROUTER     = ''
-    NAVIGATION = navigate()
+    BASE_DIR    = PATH.DOCS
+    BASELINE    = True
+    CLOCK       = lambda zone: datetime.now(zone)
+    LOCAL_ZONE  = timezone(timedelta(hours=9))
+    NAVIGATION  = navigate()
+    ACTION_MODE = os.environ.get("GITHUB_EVENT_NAME", "local")
 
-    if LOCAL_HOST:
+    if ACTION_MODE == "local":
         # FOR LOCAL HOST TESTING, EXTERNAL DIRECTORY IS RECOMMENDED AND USED. USING THE SAME
         # LOCAL HOSTING DIRECTORY WITH DEPLOYMENT DIRECTORY, DEPLOYMENT MIGHT BE CORRUPTED.
         # IF YOU WANT TO USE DIFFERENT PATH FOR LOCAL HOST TESTING, BELOW {ROOT} VARIABLE ARE
         # TO BE CHANGED.
+        BASELINE = False
         BASE_DIR = os.path.join(PATH.DOWNLOADS, 'labwons')
         PATH.copytree(PATH.DOCS, BASE_DIR)
 
-    if not LOCAL_HOST:
+    if ACTION_MODE == "schedule":
         # ON GITHUB ACTIONS, SYSTEM EXITS WHEN THE LATEST TRADING DATE AND CURRENT DATETIME
         # IS NOT MATCHED. THIS CODE IS IMPLEMENTED IN ORDER TO AVOID RUNNING ON WEEKDAY WHILE
         # HOLIDAYS OF THE MARKET.
@@ -69,8 +69,8 @@ if __name__ == "__main__":
             sleep(30)
             now = CLOCK(LOCAL_ZONE)
 
-        if now.hour < 15:
-            BASELINE = False
+    if ACTION_MODE == "workflow_dispatch":
+        BASELINE = False
 
     # ---------------------------------------------------------------------------------------
     # UPDATE BASELINE
@@ -109,8 +109,6 @@ if __name__ == "__main__":
     #     portfolioKeys["track_record"] = portfolioData.history()
     #     if LOCAL_HOST:
     #         portfolioKeys.fulltext()
-    #     if not LOCAL_HOST:
-    #         portfolioKeys.route(ROUTER)
     #     portfolio.html(**portfolioKeys).save(os.path.join(BASE_DIR, 'portfolio'))
     #     context += [f'- [SUCCESS] Deploy Portfolio', portfolioData.log, '']
     # except Exception as error:
@@ -131,7 +129,7 @@ if __name__ == "__main__":
                 Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
                 .get_template('marketmap-1.0.0.html') \
                 .render({
-                    "local": LOCAL_HOST,
+                    "local": ACTION_MODE == "local",
                     "title": "LAB￦ONS: 시장지도",
                     "nav": NAVIGATION,
                     "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
@@ -163,7 +161,7 @@ if __name__ == "__main__":
                 Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
                 .get_template('bubble-1.0.0.html') \
                 .render({
-                    "local": LOCAL_HOST,
+                    "local": ACTION_MODE == "local",
                     "title": "LAB￦ONS: 종목분포",
                     "nav": NAVIGATION,
                     "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
@@ -196,7 +194,7 @@ if __name__ == "__main__":
                 Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
                     .get_template('macro-1.0.0.html') \
                     .render({
-                    "local": LOCAL_HOST,
+                    "local": ACTION_MODE == "local",
                     "title": "LAB￦ONS: 거시경제",
                     "nav": NAVIGATION,
                     "tradingDate": f'{TRADING_DATE} (또는 최근 발표일) 기준',
@@ -217,7 +215,7 @@ if __name__ == "__main__":
     # BUILD RESOURCES
     # ---------------------------------------------------------------------------------------
     try:
-        if not LOCAL_HOST:
+        if not ACTION_MODE == "local":
             minify()
         context += [f'- [SUCCESS] Minify Resources', '']
     except Exception as error:
@@ -241,9 +239,8 @@ if __name__ == "__main__":
         prefix = "FAILED"
     mail.subject = f'[{prefix}] BUILD BASELINE on {datetime.now(LOCAL_ZONE).strftime("%Y/%m/%d %H:%M")}'
 
-    if LOCAL_HOST:
+    if ACTION_MODE == "local":
         print(f'{mail.subject}\n{mail.context}\n')
-        # print(f'{baseline}\n{"-" * 50}\n{marketMap}')
     else:
         mail.send()
 
