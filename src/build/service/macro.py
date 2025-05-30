@@ -130,6 +130,9 @@ class Macro(DataFrame):
                 obj['color'] = '#1861A8' if obj['change'] < 0 else '#C92A2A'
                 if obj['change'] > 0:
                     obj['change'] = f"+{obj['change']}"
+                else:
+                    if col in ['KOSPI', 'KOSDAQ']:
+                        obj['icon'] = obj['icon'].replace('up', 'down')
                 data.append(obj)
         return data
 

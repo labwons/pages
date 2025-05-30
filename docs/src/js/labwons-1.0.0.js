@@ -865,7 +865,7 @@ if (SERVICE === "macro"){
       yaxis:{
         side: 'left',
         showline: true,
-        zeroline: true,
+        zeroline:true,
         zerolinecolor:'grey',
         zerolinewidth: '1.5px',
         showticklabels: true,
@@ -874,9 +874,7 @@ if (SERVICE === "macro"){
       yaxis2: {
         overlaying:'y',
         side:'right',
-        zeroline:true,
-        zerolinecolor:'grey',
-        zerolinewidth: '1.5px',
+        zeroline:false,
         showline:true,
         showgrid:false,
         showticklabels: true,
@@ -911,9 +909,9 @@ if (SERVICE === "macro"){
     layout.xaxis.range = [fromdate, enddate];
 
     for (const [key, _data] of Object.entries(y1data)) {
-      let hover = `${srcIndicatorOpt[key].label}: %{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
+      let hover = `${srcIndicatorOpt[key].name}: %{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
       if (srcIndicatorOpt[key].format === 'int') {
-        hover = `${srcIndicatorOpt[key].label}: %{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
+        hover = `${srcIndicatorOpt[key].name}: %{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
       }
       data.push({
         x: _data.date,
@@ -924,14 +922,21 @@ if (SERVICE === "macro"){
         showlegend: true,
         hovertemplate: hover,
         yaxis: 'y1',
-      })
+      });
     };
 
     for (const [key, _data] of Object.entries(y2data)) {
-      let hover = `${srcIndicatorOpt[key].label}: %{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
+      let hover = `${srcIndicatorOpt[key].name}: %{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
       if (srcIndicatorOpt[key].format === 'int') {
-        hover = `${srcIndicatorOpt[key].label}: %{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
+        hover = `${srcIndicatorOpt[key].name}: %{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
       }
+      if (srcIndicatorOpt[key].unit === '%') {
+        layout.yaxis.zeroline = false;
+        layout.yaxis2.zeroline = true;
+        layout.yaxis2.zerolinecolor = 'grey';
+        layout.yaxis2.zerolinewidth = '1.5px';
+      }
+
       data.push({
         x: _data.date,
         y: _data.data,
@@ -941,8 +946,9 @@ if (SERVICE === "macro"){
         showlegend: true,
         hovertemplate: hover,
         yaxis: 'y2',
-      })
+      });
     };
+
 
     Plotly.newPlot('plotly', data, layout, option)
     .then(grid => {
@@ -952,6 +958,7 @@ if (SERVICE === "macro"){
       $('a[data-title="Autoscale"]').attr("data-title", "자동 조정");
       $('.modebar').prepend($('<div class="modebar-group"><a rel="tooltip" class="modebar-btn" data-title="스크롤 모드" data-toggle="false" data-gravity="n"><i class="bi bi-arrow-down-up"></i></a></div>'));
     });
+    $('#plotly').focus();
   };
 
   $y1.on('select2:select', async function(e){
@@ -969,22 +976,19 @@ if (SERVICE === "macro"){
         if (result.isConfirmed) {
           y1_selection.push(e.params.data.id);
           plotMacro();
-          $(this).blur();
           return;
         } else {
-          $(this).blur();
+          $(this).val( e.params.data.id).trigger('change');
           return;
         }
       }
     }
     y1_selection.push(e.params.data.id);
     plotMacro();
-    $(this).blur();
   });
   $y1.on('select2:unselect', function(e){
     y1_selection = y1_selection.filter(item => item != e.params.data.id);
     plotMacro();
-    $(this).blur();
   });
   $y2.on('select2:select', async function(e){
     if (y2_selection.length) {
@@ -1001,22 +1005,19 @@ if (SERVICE === "macro"){
         if (result.isConfirmed) {
           y2_selection.push(e.params.data.id);
           plotMacro();
-          $(this).blur();
           return;
         } else {
-          $(this).blur();
+          $(this).val( e.params.data.id).trigger('change');
           return;
         }
       }
     }
     y2_selection.push(e.params.data.id);
     plotMacro();
-    $(this).blur();
   });
   $y2.on('select2:unselect', function(e){
     y2_selection = y2_selection.filter(item => item != e.params.data.id);
     plotMacro();
-    $(this).blur();
   });
 
   $(document)
