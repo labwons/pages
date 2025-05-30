@@ -1,7 +1,7 @@
 try:
-    from ..web import web
+    from ..util import web
 except ImportError:
-    from src.fetch.web import web
+    from src.fetch.util import web
 from datetime import datetime
 from pandas import concat, DataFrame, Series, to_datetime
 from typing import Dict

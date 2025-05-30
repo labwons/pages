@@ -1,10 +1,8 @@
 try:
-    from ..web import web
+    from ..util import web, str2num
 except ImportError:
-    from src.fetch.web import web
-from datetime import datetime
-from pandas import DataFrame, Series, isna
-from numpy import nan
+    from src.fetch.util import web, str2num
+from pandas import DataFrame, Series
 from typing import Union
 
 
@@ -43,14 +41,6 @@ class naver:
             dividendYield        2.1
             dtype: float64
 
-    @ipo
-        type        : Union[int, float]
-        description : current price (close)
-
-    @currentPrice
-        type        : Union[int, float]
-        description : current price (close)
-
     @currentPrice
         type        : Union[int, float]
         description : current price (close)
@@ -60,30 +50,20 @@ class naver:
         self._url_main = f"https://finance.naver.com/item/main.naver?code={ticker}"
         return
 
-    @staticmethod
-    def str2num(src: str) -> int or float:
-        if isinstance(src, float):
-            return src
-        src = "".join([char for char in src if char.isdigit() or char == "."])
-        if not src or src == ".":
-            return nan
-        if "." in src:
-            return float(src)
-        return int(src)
-
     @property
     def currentPrice(self) -> Union[int, float]:
         html = web.html(self._url_main)
         curr = [d.text for d in html.find_all("dd") if d.text.startswith("현재가")][0]
-        return self.str2num(curr[curr.index("현재가 ") + 4: curr.index(" 전일대비")])
+        return str2num(curr[curr.index("현재가 ") + 4: curr.index(" 전일대비")])
 
     @property
     def resemblances(self) -> DataFrame:
-        data = web.list(self._url_main)[4]
+        tables = web.list(self._url_main)
+        data = web.list(self._url_main)[5]
         data = data.set_index(keys='종목명').drop(index=['전일대비'])
         data.index.name = None
         for col in data:
-            data[col] = data[col].apply(self.str2num)
+            data[col] = data[col].apply(str2num)
         data = data.T
         data["종목명"] = [i.replace('*', '')[:-6] for i in data.index]
         data.index = [i[-6:] for i in data.index]
@@ -91,18 +71,18 @@ class naver:
 
     @property
     def trailingMultiples(self) -> Series:
-        data = web.list(self._url_main)[8]
+        data = web.list(self._url_main)[9]
         per, eps = map(str, data.columns[-1].split('l'))
         estPE, estEps = map(str, data.iloc[0, -1].split('l'))
         pbr, bps = map(str, data.iloc[1, -1].split('l'))
         return Series({
-            "trailingPE": self.str2num(per),
-            "trailingEps": self.str2num(eps),
-            "estimatePE": self.str2num(estPE),
-            "estimateEps": self.str2num(estEps),
-            "priceToBook": self.str2num(pbr),
-            "bookValue": self.str2num(bps),
-            "dividendYield": self.str2num(data.iloc[-1, -1])
+            "trailingPE": str2num(per),
+            "trailingEps": str2num(eps),
+            "estimatePE": str2num(estPE),
+            "estimateEps": str2num(estEps),
+            "priceToBook": str2num(pbr),
+            "bookValue": str2num(bps),
+            "dividendYield": str2num(data.iloc[-1, -1])
         })
 
 
@@ -119,63 +99,3 @@ if __name__ == "__main__":
     print(naver.resemblances)
     print(naver.trailingMultiples)
 
-    # print(naver.underlyingAsset)
-    # print(naver.nav)
-
-    # import pandas as pd
-    # import requests
-    # import re
-    #
-    # url = "https://navercomp.wisereport.co.kr/v2/company/"
-    #
-    # def GetNvrEncparam(code="005930"):
-    #     re_enc = re.compile("encparam: '(.*)'", re.IGNORECASE)
-    #     re_id = re.compile("id: '([a-zA-Z0-9]*)' ?", re.IGNORECASE)
-    #     _url = f"{url}c1010001.aspx?cmp_cd={code}"
-    #     html = requests.get(_url).text
-    #     encparam = re_enc.search(html).group(1)
-    #     encid = re_id.search(html).group(1)
-    #     print(html)
-    #     params = {
-    #         "cmp_cd": '000660',
-    #         "fin_typ": 0,
-    #         "freq_typ": "A",
-    #         # "extY": 0,
-    #         # "extQ": 0,
-    #         # "encparam": 'bExFc2UxdWlVYTdlaENLZlNLQWs2UT09',
-    #         "encparam": encparam,
-    #         # "id": 'ZTRzQlVCd0'
-    #         "id": encid
-    #     }
-    #     resp = requests.get(
-    #         url=f"{url}/ajax/cF1001.aspx",
-    #         headers={'User-agent': 'Mozilla/5.0'},
-    #         params=params,
-    #     )
-    #     print(resp.text)
-    #     return encparam, encid
-    #
-    # _enc, _id = GetNvrEncparam("000660")
-    #
-    # print(_enc, _id)
-    #
-    #
-    # params = {
-    #     "cmp_cd": '000660',
-    #     "fin_typ": 0,
-    #     "freq_typ": "A",
-    #     # "extY": 0,
-    #     # "extQ": 0,
-    #     # "encparam": 'bExFc2UxdWlVYTdlaENLZlNLQWs2UT09',
-    #     "encparam": _enc,
-    #     # "id": 'ZTRzQlVCd0'
-    #     "id": _id
-    # }
-    # resp = requests.get(
-    #     url=f"{url}/ajax/cF1001.aspx",
-    #     headers={'User-agent': 'Mozilla/5.0'},
-    #     params=params,
-    # )
-    # print(resp.text)
-    # # for t in pd.read_html(resp.text):
-    # #     print(t)

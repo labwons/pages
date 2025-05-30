@@ -1,6 +1,10 @@
 from bs4 import BeautifulSoup
+from numpy import nan
+from pandas import DataFrame
 from urllib.request import urlopen
+from typing import Dict
 import requests, json, pandas, warnings
+
 warnings.filterwarnings("ignore")
 
 
@@ -45,6 +49,37 @@ class _web(object):
             return pandas.read_pickle(url)
         else:
             raise KeyError(f"Unknown data type: {url}")
+
+class multiframes(DataFrame):
+
+    __mem__ = {}
+    def __init__(self, frames:Dict[str, DataFrame]):
+        base = list(frames.values())[0]
+        self.__mem__ = frames.copy()
+        super().__init__(data=base.values, index=base.index, columns=base.columns)
+        return
+
+    def __getattr__(self, item):
+        if item in self.__mem__:
+            return self.__mem__[item]
+        return super().__getattr__(name=item)
+
+
+def str2num(src: str) -> int or float:
+    if isinstance(src, float):
+        return src
+    src = "".join([char for char in src if char.isdigit() or char == "."])
+    if not src or src == ".":
+        return nan
+    if "." in src:
+        return float(src)
+    return int(src)
+
+def cutString(string:str, deleter:list) -> str:
+    _deleter = deleter.copy()
+    while _deleter:
+        string = string.replace(_deleter.pop(0), '')
+    return string
 
 
 # Alias

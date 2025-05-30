@@ -865,14 +865,18 @@ if (SERVICE === "macro"){
       yaxis:{
         side: 'left',
         showline: true,
-        zeroline: false,
+        zeroline: true,
+        zerolinecolor:'grey',
+        zerolinewidth: '1.5px',
         showticklabels: true,
         tickangle: -90
       },
       yaxis2: {
         overlaying:'y',
         side:'right',
-        zeroline:false,
+        zeroline:true,
+        zerolinecolor:'grey',
+        zerolinewidth: '1.5px',
         showline:true,
         showgrid:false,
         showticklabels: true,
@@ -907,11 +911,10 @@ if (SERVICE === "macro"){
     layout.xaxis.range = [fromdate, enddate];
 
     for (const [key, _data] of Object.entries(y1data)) {
-      let hover = `%{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
+      let hover = `${srcIndicatorOpt[key].label}: %{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
       if (srcIndicatorOpt[key].format === 'int') {
-        hover = `%{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
+        hover = `${srcIndicatorOpt[key].label}: %{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
       }
-      
       data.push({
         x: _data.date,
         y: _data.data,
@@ -922,11 +925,12 @@ if (SERVICE === "macro"){
         hovertemplate: hover,
         yaxis: 'y1',
       })
-    }
+    };
+
     for (const [key, _data] of Object.entries(y2data)) {
-      let hover = `%{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
+      let hover = `${srcIndicatorOpt[key].label}: %{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
       if (srcIndicatorOpt[key].format === 'int') {
-        hover = `%{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
+        hover = `${srcIndicatorOpt[key].label}: %{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
       }
       data.push({
         x: _data.date,
@@ -938,7 +942,7 @@ if (SERVICE === "macro"){
         hovertemplate: hover,
         yaxis: 'y2',
       })
-    }
+    };
 
     Plotly.newPlot('plotly', data, layout, option)
     .then(grid => {
@@ -965,18 +969,22 @@ if (SERVICE === "macro"){
         if (result.isConfirmed) {
           y1_selection.push(e.params.data.id);
           plotMacro();
+          $(this).blur();
           return;
         } else {
+          $(this).blur();
           return;
         }
       }
     }
     y1_selection.push(e.params.data.id);
     plotMacro();
+    $(this).blur();
   });
   $y1.on('select2:unselect', function(e){
     y1_selection = y1_selection.filter(item => item != e.params.data.id);
     plotMacro();
+    $(this).blur();
   });
   $y2.on('select2:select', async function(e){
     if (y2_selection.length) {
@@ -993,18 +1001,22 @@ if (SERVICE === "macro"){
         if (result.isConfirmed) {
           y2_selection.push(e.params.data.id);
           plotMacro();
+          $(this).blur();
           return;
         } else {
+          $(this).blur();
           return;
         }
       }
     }
     y2_selection.push(e.params.data.id);
     plotMacro();
+    $(this).blur();
   });
   $y2.on('select2:unselect', function(e){
     y2_selection = y2_selection.filter(item => item != e.params.data.id);
     plotMacro();
+    $(this).blur();
   });
 
   $(document)

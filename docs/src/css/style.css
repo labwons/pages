@@ -451,6 +451,7 @@ PARTS
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
+  gap: 4px;
 }
 /* 
 @media (max-width: 767px) {
