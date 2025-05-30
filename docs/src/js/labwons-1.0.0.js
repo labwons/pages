@@ -978,7 +978,8 @@ if (SERVICE === "macro"){
           plotMacro();
           return;
         } else {
-          $(this).val( e.params.data.id).trigger('change');
+          const newValues = ($(this).val() || []).filter(val => val !== e.params.data.id);
+          $(this).val(newValues).trigger('change');
           return;
         }
       }
@@ -1007,7 +1008,8 @@ if (SERVICE === "macro"){
           plotMacro();
           return;
         } else {
-          $(this).val( e.params.data.id).trigger('change');
+          const newValues = ($(this).val() || []).filter(val => val !== e.params.data.id);
+          $(this).val(newValues).trigger('change');
           return;
         }
       }
@@ -1022,7 +1024,11 @@ if (SERVICE === "macro"){
 
   $(document)
   .on('click', '.bi-arrow-down-up', function() {
-    Plotly.relayout('plotly', {dragmode: false});
+    Plotly.relayout('plotly', {
+      'dragmode': false,
+      'xaxis.fixedrange': true,
+      'yaxis.fixedrange': true
+    });
     $(this).css('opacity', '0.8');
   })
   .on('click', '.modebar', function(e) {
