@@ -23,6 +23,7 @@ if __name__ == "__main__":
     import os
 
     LOCAL_HOST = os.getenv('LOCAL_HOST') is None
+    ACTION_MODE = os.environ.get("GITHUB_EVENT_NAME", "local")
 
     context = ['DETAILS']
     prefix = []
@@ -53,7 +54,7 @@ if __name__ == "__main__":
 
 
     try:
-        macro = Macro(update=not LOCAL_HOST)
+        macro = Macro(update=ACTION_MODE == "schedule")
         if not PATH.MACRO.startswith('http'):
             with open(PATH.MACRO, 'w') as f:
                 f.write(macro.to_json(orient='index').replace('nan', ''))
@@ -65,8 +66,8 @@ if __name__ == "__main__":
     prefix.append(prefix_macro)
 
     try:
-        spec = MarketSpec(update=not LOCAL_HOST)
-        if (not PATH.SPEC.startswith('http')) and (not LOCAL_HOST):
+        spec = MarketSpec(update=ACTION_MODE == "schedule")
+        if not PATH.SPEC.startswith('http'):
             with open(PATH.SPEC, 'w') as f:
                 f.write(spec.to_json(orient='index').replace("nan", ""))
         prefix.append("PARTIALLY FAILED" if "FAIL" in spec.log else "SUCCESS")
@@ -86,7 +87,7 @@ if __name__ == "__main__":
     mail = eMail()
     mail.subject = f'[{prefix}] UPDATE BASELINE CACHE on {datetime.today().strftime("%Y/%m/%d")}'
     mail.context = "\n".join(context)
-    if not LOCAL_HOST:
-        mail.send()
-    else:
+    if ACTION_MODE == "local":
         print(f'{mail.subject}\n{mail.context}\n')
+    else:
+        mail.send()
