@@ -618,7 +618,6 @@ if (SERVICE === "bubble"){
       xValMaxO = grid.layout.xaxis.range[1]; 
       xValMin = grid.layout.xaxis.range[0];
       xValMax = grid.layout.xaxis.range[1];
-      $('a[data-title="Download plot as a png"]').attr("data-title", "그림으로 저장");
       $('a[data-title="Zoom"]').attr("data-title", "확대");
       $('a[data-title="Pan"]').attr("data-title", "이동(패닝)");
       $('a[data-title="Autoscale"]').attr("data-title", "자동 조정");
@@ -846,7 +845,6 @@ if (SERVICE === "macro"){
         y:1.0
       },
       xaxis:{
-        // fixedrange: true,
         tickformat: "%Y/%m/%d",
         showticklabels: true,
         showline: true,
@@ -873,7 +871,6 @@ if (SERVICE === "macro"){
         zerolinewidth: '1.5px',
         showticklabels: true,
         tickangle: -90,
-        // fixedrange: true
       },
       yaxis2: {
         overlaying:'y',
@@ -883,7 +880,6 @@ if (SERVICE === "macro"){
         showgrid:false,
         showticklabels: true,
         tickangle: -90,
-        // fixedrange: true
       },
     };
     let option = {
@@ -956,7 +952,6 @@ if (SERVICE === "macro"){
 
     Plotly.newPlot('plotly', data, layout, option)
     .then(grid => {
-      $('a[data-title="Download plot as a png"]').attr("data-title", "그림으로 저장");
       $('a[data-title="Zoom"]').attr("data-title", "확대");
       $('a[data-title="Pan"]').attr("data-title", "이동(패닝)");
       $('a[data-title="Autoscale"]').attr("data-title", "자동 조정");
@@ -1038,6 +1033,10 @@ if (SERVICE === "macro"){
   .on('click', '.modebar', function(e) {
     if (!$(e.target).is('i')){
       $('.bi-arrow-down-up').css('opacity', '0.3');
+      Plotly.relayout('plotly', {
+        'xaxis.fixedrange': false,
+        'yaxis.fixedrange': false
+      });
     }
   });
   $('.content-number').on('click', function(){
