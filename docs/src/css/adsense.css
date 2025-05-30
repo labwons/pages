@@ -106,10 +106,12 @@
 }
 
 .ad-in-display {
-    display: block;
-    width: 100%;
-    min-height: 240px;
-  }
+  width: 100%;
+  min-height: 240px;  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .ad-in-infeed {
   flex: 1 0 auto;

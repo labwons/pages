@@ -846,7 +846,7 @@ if (SERVICE === "macro"){
         y:1.0
       },
       xaxis:{
-        fixedrange: true,
+        // fixedrange: true,
         tickformat: "%Y/%m/%d",
         showticklabels: true,
         showline: true,
@@ -873,7 +873,7 @@ if (SERVICE === "macro"){
         zerolinewidth: '1.5px',
         showticklabels: true,
         tickangle: -90,
-        fixedrange: true
+        // fixedrange: true
       },
       yaxis2: {
         overlaying:'y',
@@ -883,7 +883,7 @@ if (SERVICE === "macro"){
         showgrid:false,
         showticklabels: true,
         tickangle: -90,
-        fixedrange: true
+        // fixedrange: true
       },
     };
     let option = {
