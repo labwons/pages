@@ -815,9 +815,11 @@ if (SERVICE === "macro"){
     y1_selection.push('KOSPI');
     $y1.select2({
       maximumSelectionLength: 3,
+      minimumResultsForSearch: Infinity
     });
     $y2.select2({
       maximumSelectionLength: 3,
+      minimumResultsForSearch: Infinity
     });
   };
 
@@ -844,6 +846,7 @@ if (SERVICE === "macro"){
         y:1.0
       },
       xaxis:{
+        fixedrange: true,
         tickformat: "%Y/%m/%d",
         showticklabels: true,
         showline: true,
@@ -869,7 +872,8 @@ if (SERVICE === "macro"){
         zerolinecolor:'grey',
         zerolinewidth: '1.5px',
         showticklabels: true,
-        tickangle: -90
+        tickangle: -90,
+        fixedrange: true
       },
       yaxis2: {
         overlaying:'y',
@@ -879,7 +883,7 @@ if (SERVICE === "macro"){
         showgrid:false,
         showticklabels: true,
         tickangle: -90,
-        linecolor: 'royalblue'
+        fixedrange: true
       },
     };
     let option = {

@@ -30,8 +30,8 @@ FAQ = [
 
 class Macro(DataFrame):
     faqs: List[Dict] = FAQ
-    meta: Dict = {'KOSPI': {'name': 'KOSPI', 'unit': '-', 'group': '지수', 'format': 'float'},
-                  'KOSDAQ': {'name': 'KOSDAQ', 'unit': '-', 'group': '지수', 'format': 'float'}}
+    meta: Dict = {'KOSPI': {'name': 'KOSPI', 'unit': '', 'group': '지수', 'format': 'float'},
+                  'KOSDAQ': {'name': 'KOSDAQ', 'unit': '', 'group': '지수', 'format': 'float'}}
     _log: List[str] = []
     def __init__(self, update:bool=False):
         stime = time()
@@ -96,11 +96,11 @@ class Macro(DataFrame):
             ('817Y002010210000', 'bi-percent'),  # 국고채10년
             ('901Y056S23A', 'bi-piggy-bank-fill'),  # 증시예탁금
             ('901Y056S23E', 'bi-cash-stack'),  # 신용융자잔고
-            ('901Y056S23F', 'bi-credit-card-fill'),  # 신용대주잔고
+            ('901Y056S23F', 'bi-credit-card'),  # 신용대주잔고
             ('403Y001*AA', 'bi-truck'),  # 수출지수
-            ('901Y062P63AC', 'bi-house-fill'),  # KB부동산매매지수(아파트, 전국)
-            ('901Y063P64AC', 'bi-house-check-fill'),  # KB부동산전세지수(아파트, 전국)
-            ('901Y067I16E', 'bi-forward-fill'),  # 경기선행지수순환변동
+            ('901Y062P63AC', 'bi-house-up-fill'),  # KB부동산매매지수(아파트, 전국)
+            ('901Y063P64AC', 'bi-house-up-fill'),  # KB부동산전세지수(아파트, 전국)
+            ('901Y067I16E', 'bi-graph-up-arrow'),  # 경기선행지수순환변동
         ]
         data = []
         for col, icon in selector:
@@ -131,7 +131,7 @@ class Macro(DataFrame):
                 if obj['change'] > 0:
                     obj['change'] = f"+{obj['change']}"
                 else:
-                    if col in ['KOSPI', 'KOSDAQ']:
+                    if col in ['KOSPI', 'KOSDAQ', '901Y062P63AC', '901Y063P64AC', '901Y067I16E']:
                         obj['icon'] = obj['icon'].replace('up', 'down')
                 data.append(obj)
         return data
