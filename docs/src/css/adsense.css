@@ -114,6 +114,10 @@
   justify-content: center;
 }
 
+.ad-in-display > .adsbygoogle {
+  width: 100%;
+}
+
 .ad-in-infeed {
   flex: 1 0 auto;
   max-height: 360px;
