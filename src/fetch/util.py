@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from numpy import nan
-from pandas import DataFrame
+from pandas import DataFrame, isna
 from urllib.request import urlopen
 from typing import Dict
 import requests, json, pandas, warnings
@@ -80,6 +80,12 @@ def cutString(string:str, deleter:list) -> str:
     while _deleter:
         string = string.replace(_deleter.pop(0), '')
     return string
+
+def krwFormat(krw: int) -> str:
+    if krw is nan or isna(krw):
+        return krw
+    zo, euk = int(krw // 10000), int(krw % 10000)
+    return f'{zo}조 {euk}억' if zo else f'{euk}억'
 
 
 # Alias

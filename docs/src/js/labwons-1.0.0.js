@@ -909,26 +909,37 @@ if (SERVICE === "macro"){
     layout.xaxis.range = [fromdate, enddate];
 
     for (const [key, _data] of Object.entries(y1data)) {
-      let hover = `${srcIndicatorOpt[key].name}: %{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
-      if (srcIndicatorOpt[key].format === 'int') {
-        hover = `${srcIndicatorOpt[key].name}: %{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
-      }
-      data.push({
+      let meta = srcIndicatorOpt[key];
+      let obj = {
         x: _data.date,
         y: _data.data,
         type: 'scatter',
         mode: 'lines',
-        name: srcIndicatorOpt[key].name,
+        name: meta.name,
         showlegend: true,
-        hovertemplate: hover,
+        hovertemplate: `${meta.name}${meta.hoverTemplate}`,
         yaxis: 'y1',
-      });
+      }
+      if ('meta' in meta) {
+        obj.meta = srcIndicator[key + 'meta'];
+      }
+      data.push(obj);
     };
 
     for (const [key, _data] of Object.entries(y2data)) {
-      let hover = `${srcIndicatorOpt[key].name}: %{y}${srcIndicatorOpt[key].unit}<extra></extra>`;
-      if (srcIndicatorOpt[key].format === 'int') {
-        hover = `${srcIndicatorOpt[key].name}: %{y:,d}${srcIndicatorOpt[key].unit}<extra></extra>`;
+      let meta = srcIndicatorOpt[key];
+      let obj = {
+        x: _data.date,
+        y: _data.data,
+        type: 'scatter',
+        mode: 'lines',
+        name: meta.name,
+        showlegend: true,
+        hovertemplate: `${meta.name}${meta.hoverTemplate}`,
+        yaxis: 'y2',
+      }
+      if ('meta' in meta) {
+        obj.meta = srcIndicator[key + 'meta'];
       }
       if (srcIndicatorOpt[key].unit === '%') {
         layout.yaxis.zeroline = false;
@@ -936,17 +947,7 @@ if (SERVICE === "macro"){
         layout.yaxis2.zerolinecolor = 'grey';
         layout.yaxis2.zerolinewidth = '1.5px';
       }
-
-      data.push({
-        x: _data.date,
-        y: _data.data,
-        type: 'scatter',
-        mode: 'lines',
-        name: srcIndicatorOpt[key].name,
-        showlegend: true,
-        hovertemplate: hover,
-        yaxis: 'y2',
-      });
+      data.push(obj);
     };
 
 

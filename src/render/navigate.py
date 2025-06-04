@@ -3,7 +3,7 @@ try:
 except ImportError:
     from src.common.path import PATH
 from typing import Dict, List, Union
-import csscompressor, jsmin, os
+import csscompressor, rjsmin, os
 
 
 CONTENT_NAMES = {
@@ -39,7 +39,7 @@ def minify():
                 with open(js, 'r', encoding='utf-8') as file:
                     src = file.read()
                 with open(js.replace(".js", ".min.js"), "w", encoding='utf-8') as file:
-                    file.write(jsmin.jsmin(src))
+                    file.write(rjsmin.jsmin(src))
             elif _file.endswith('css') and not _file.endswith('.min.css'):
                 css = os.path.join(_dir, _file)
                 with open(css, 'r', encoding='utf-8') as file:

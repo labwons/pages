@@ -30,8 +30,8 @@ FAQ = [
 
 class Macro(DataFrame):
     faqs: List[Dict] = FAQ
-    meta: Dict = {'KOSPI': {'name': 'KOSPI', 'unit': '', 'group': '지수', 'format': 'float'},
-                  'KOSDAQ': {'name': 'KOSDAQ', 'unit': '', 'group': '지수', 'format': 'float'}}
+    meta: Dict = {'KOSPI': {'name': 'KOSPI', 'unit': '', 'group': '지수', 'hoverTemplate': ': %{y:.2f}<extra></extra>'},
+                  'KOSDAQ': {'name': 'KOSDAQ', 'unit': '', 'group': '지수', 'hoverTemplate': ': %{y:.2f}<extra></extra>'}}
     _log: List[str] = []
     def __init__(self, update:bool=False):
         stime = time()
@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
 
     macro = Macro(update=False)
-    # print(macro)
+    print(macro)
     # print(macro.log)
     # print(macro.serialize())
     # print(macro.meta)

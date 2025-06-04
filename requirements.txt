@@ -1,7 +1,6 @@
 bs4
 csscompressor
 jinja2
-jsmin
 kaleido
 numpy
 pandas
@@ -10,6 +9,7 @@ plotly
 pykrx
 pytz
 requests
+rjsmin
 scipy
 ta
 yfinance

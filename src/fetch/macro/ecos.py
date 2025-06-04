@@ -1,7 +1,7 @@
 try:
-    from ..util import web
+    from ..util import web, krwFormat
 except ImportError:
-    from src.fetch.util import web
+    from src.fetch.util import web, krwFormat
 from datetime import datetime
 from pandas import concat, DataFrame, Series, to_datetime
 from typing import Dict
@@ -80,7 +80,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
         },
         'KORIBOR(3개월)': {
             'symbol': '817Y002',
@@ -89,7 +89,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
         },
         'KORIBOR(6개월)': {
             'symbol': '817Y002',
@@ -98,7 +98,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
         },
         '국고채1년': {
             'symbol': '817Y002',
@@ -107,7 +107,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
         },
         '국고채2년': {
             'symbol': '817Y002',
@@ -116,7 +116,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
         },
         '국고채5년': {
             'symbol': '817Y002',
@@ -125,7 +125,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
         },
         '국고채10년': {
             'symbol': '817Y002',
@@ -134,7 +134,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
         },
         '회사채3년(AA-)': {
             'symbol': '817Y002',
@@ -143,7 +143,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
         },
         '회사채3년(BBB-)': {
             'symbol': '817Y002',
@@ -152,7 +152,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
         },
         '은행수신금리(신규)': {
             'symbol': '121Y002',
@@ -161,7 +161,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
         },
         '은행수신금리(잔액)': {
             'symbol': '121Y013',
@@ -170,7 +170,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
         },
         '은행대출금리(신규)': {
             'symbol': '121Y006',
@@ -179,7 +179,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
         },
         '은행대출금리(잔액)': {
             'symbol': '121Y015',
@@ -188,7 +188,7 @@ class Ecos(DataFrame):
             'category': '금리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
         },
 
         '원/달러환율': {
@@ -198,7 +198,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:,.1f}원<extra></extra>',
         },
         'M2(평잔, 원계열)': {
             'symbol': '101Y004',
@@ -207,7 +207,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': True,
             'MoM': False,
-            'format': 'int'
+            'hoverTemplate': 'post'
         },
         'M2(평잔, 계절조정)': {
             'symbol': '101Y003',
@@ -216,7 +216,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': True,
             'MoM': False,
-            'format': 'int'
+            'hoverTemplate': 'post'
         },
         '은행수신(말잔)': {
             'symbol': '104Y013',
@@ -225,7 +225,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': True,
             'MoM': False,
-            'format': 'int'
+            'hoverTemplate': 'post'
         },
         '은행수신(평잔)': {
             'symbol': '104Y014',
@@ -234,7 +234,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': True,
             'MoM': False,
-            'format': 'int'
+            'hoverTemplate': 'post'
         },
         '비은행수신(말잔)': {
             'symbol': '111Y007',
@@ -243,7 +243,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': True,
             'MoM': False,
-            'format': 'int'
+            'hoverTemplate': 'post'
         },
         '비은행수신(평잔)': {
             'symbol': '111Y008',
@@ -252,7 +252,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': True,
             'MoM': False,
-            'format': 'int'
+            'hoverTemplate': 'post'
         },
         '은행여신(말잔)': {
             'symbol': '104Y016',
@@ -261,7 +261,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': True,
             'MoM': False,
-            'format': 'int'
+            'hoverTemplate': 'post'
         },
         '비은행여신(말잔)': {
             'symbol': '111Y009',
@@ -270,7 +270,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': True,
             'MoM': True,
-            'format': 'int'
+            'hoverTemplate': 'post'
         },
         '증시예탁금': {
             'symbol': '901Y056',
@@ -279,7 +279,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': True,
             'MoM': False,
-            'format': 'int'
+            'hoverTemplate': 'post'
         },
         '신용융자잔고': {
             'symbol': '901Y056',
@@ -288,7 +288,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': True,
             'MoM': False,
-            'format': 'int'
+            'hoverTemplate': 'post'
         },
         '신용대주잔고': {
             'symbol': '901Y056',
@@ -297,7 +297,7 @@ class Ecos(DataFrame):
             'category': '통화/유동성지표',
             'YoY': True,
             'MoM': False,
-            'format': 'int'
+            'hoverTemplate': 'post'
         },
 
         '수출지수': {
@@ -307,7 +307,7 @@ class Ecos(DataFrame):
             'category': '수출지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '반도체수출': {
             'symbol': '403Y001',
@@ -316,7 +316,7 @@ class Ecos(DataFrame):
             'category': '수출지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '반도체/디스플레이장비수출': {
             'symbol': '403Y001',
@@ -325,7 +325,7 @@ class Ecos(DataFrame):
             'category': '수출지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '스마트폰/무선전화기수출': {
             'symbol': '403Y001',
@@ -334,7 +334,7 @@ class Ecos(DataFrame):
             'category': '수출지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '자동차수출': {
             'symbol': '403Y001',
@@ -343,7 +343,7 @@ class Ecos(DataFrame):
             'category': '수출지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '자동차부품수출': {
             'symbol': '403Y001',
@@ -352,7 +352,7 @@ class Ecos(DataFrame):
             'category': '수출지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '음식료품수출': {
             'symbol': '403Y001',
@@ -361,7 +361,7 @@ class Ecos(DataFrame):
             'category': '수출지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '석탄및석유제품수출': {
             'symbol': '403Y001',
@@ -370,7 +370,7 @@ class Ecos(DataFrame):
             'category': '수출지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '철강수출': {
             'symbol': '403Y001',
@@ -379,7 +379,7 @@ class Ecos(DataFrame):
             'category': '수출지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '전지수출': {
             'symbol': '403Y001',
@@ -388,7 +388,7 @@ class Ecos(DataFrame):
             'category': '수출지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '가전수출': {
             'symbol': '403Y001',
@@ -397,7 +397,7 @@ class Ecos(DataFrame):
             'category': '수출지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
 
         '소비자물가지수': {
@@ -407,7 +407,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '소비자물가지수(식료품 및 에너지 제외)': {
             'symbol': '901Y010',
@@ -416,7 +416,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '소비자물가지수(서비스)': {
             'symbol': '901Y010',
@@ -425,7 +425,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '생산자물가지수': {
             'symbol': '404Y014',
@@ -434,7 +434,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '생산자물가지수(식료품 및 에너지 제외)': {
             'symbol': '404Y015',
@@ -443,7 +443,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '생산자물가지수(서비스)': {
             'symbol': '404Y014',
@@ -452,7 +452,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
 
         'KB부동산매매지수(아파트, 전국)': {
@@ -462,7 +462,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.3f}<extra></extra>',
         },
         'KB부동산매매지수(아파트, 서울)': {
             'symbol': '901Y062',
@@ -471,7 +471,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.3f}<extra></extra>',
         },
         'KB부동산전세지수(아파트, 전국)': {
             'symbol': '901Y063',
@@ -480,7 +480,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.3f}<extra></extra>',
         },
         'KB부동산전세지수(아파트, 서울)': {
             'symbol': '901Y063',
@@ -489,7 +489,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.3f}<extra></extra>',
         },
         '아파트실거래지수(전국)': {
             'symbol': '901Y089',
@@ -498,7 +498,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.1f}<extra></extra>',
         },
         '아파트실거래지수(서울)': {
             'symbol': '901Y089',
@@ -507,7 +507,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.1f}%<extra></extra>',
         },
         '아파트실거래지수(수도권)': {
             'symbol': '901Y089',
@@ -516,7 +516,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.1f}<extra></extra>',
         },
         '아파트실거래지수(경기)': {
             'symbol': '901Y089',
@@ -525,7 +525,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.1f}<extra></extra>',
         },
         '아파트실거래지수(지방광역시)': {
             'symbol': '901Y089',
@@ -534,7 +534,7 @@ class Ecos(DataFrame):
             'category': '물가/부동산지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.1f}<extra></extra>',
         },
 
         '경기선행지수순환변동': {
@@ -544,7 +544,7 @@ class Ecos(DataFrame):
             'category': '경제/심리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.1f}<extra></extra>',
         },
         '경기동행지수순환변동': {
             'symbol': '901Y067',
@@ -553,7 +553,7 @@ class Ecos(DataFrame):
             'category': '경제/심리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.1f}<extra></extra>',
         },
         '제조업업황전망': {
             'symbol': '512Y014',
@@ -562,7 +562,7 @@ class Ecos(DataFrame):
             'category': '경제/심리지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:,d}<extra></extra>',
         },
         '제조업신규수주전망': {
             'symbol': '512Y014',
@@ -571,7 +571,7 @@ class Ecos(DataFrame):
             'category': '경제/심리지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:,d}<extra></extra>',
         },
         '제조업수출전망': {
             'symbol': '512Y014',
@@ -580,7 +580,7 @@ class Ecos(DataFrame):
             'category': '경제/심리지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:,d}<extra></extra>',
         },
         '제조업심리지수': {
             'symbol': '512Y014',
@@ -589,7 +589,7 @@ class Ecos(DataFrame):
             'category': '경제/심리지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:,d}<extra></extra>',
         },
         '소비자심리지수': {
             'symbol': '511Y002',
@@ -598,7 +598,7 @@ class Ecos(DataFrame):
             'category': '경제/심리지표',
             'YoY': True,
             'MoM': True,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.1f}<extra></extra>',
         },
         '뉴스심리지수(실험통계)': {
             'symbol': '521Y001',
@@ -607,7 +607,7 @@ class Ecos(DataFrame):
             'category': '경제/심리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.2f}<extra></extra>',
         },
         '실업률(원계열)': {
             'symbol': '901Y027',
@@ -616,7 +616,7 @@ class Ecos(DataFrame):
             'category': '경제/심리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.1f}%<extra></extra>',
         },
         '실업률(계절조정)': {
             'symbol': '901Y027',
@@ -625,7 +625,7 @@ class Ecos(DataFrame):
             'category': '경제/심리지표',
             'YoY': False,
             'MoM': False,
-            'format': 'float'
+            'hoverTemplate': ': %{y:.1f}%<extra></extra>',
         },
     }
 
@@ -637,13 +637,22 @@ class Ecos(DataFrame):
             code = f'{meta["symbol"]}{meta["code"]}'
             data = self.fetch(meta['symbol'], meta['code'])
             objs[code] = data.copy()
+            if meta['hoverTemplate'] == 'post':
+                self.raw[name]['unit'] = '원'
+                self.raw[name]['hoverTemplate'] = ': %{meta}원<extra></extra>'
+                if meta['unit'] == '십억원':
+                    data = 10 * data
+                if meta['unit'] == '백만원':
+                    data = data / 100
+                objs[f'{code}meta'] = data.apply(krwFormat)
+
             if meta["YoY"]:
                 objs[f'{code}YoY'] = data.dropna().asfreq('M').pct_change(periods=12) * 100
                 if name.startswith('신용대주'):
                     objs[f'{code}YoY'] = objs[f'{code}YoY'].clip(upper=2000)
 
             if meta["MoM"]:
-                objs[f'{code}(MoM)'] = data.dropna().asfreq('M').pct_change(periods=1) * 100
+                objs[f'{code}MoM'] = data.dropna().asfreq('M').pct_change(periods=1) * 100
 
             if code == '121Y015BECBLB01':
                 # 장단기금리차(10Y - 2Y)
@@ -740,14 +749,15 @@ class Ecos(DataFrame):
                 'name': name,
                 'unit': meta['unit'],
                 'group': meta['category'],
-                'format': meta['format']
+                'hoverTemplate': meta['hoverTemplate']
             }
+
             if meta["YoY"]:
                 _meta[f'{code}YoY'] = {
                     'name': f'{name}(YoY)',
                     'unit': '%',
                     'group': meta['category'],
-                    'format': 'float'
+                    'hoverTemplate': ': %{y:.2f}%<extra></extra>'
                 }
 
             if meta["MoM"]:
@@ -755,7 +765,7 @@ class Ecos(DataFrame):
                     'name': f'{name}(MoM)',
                     'unit': '%',
                     'group': meta['category'],
-                    'format': 'float'
+                    'hoverTemplate': ': %{y:.2f}%<extra></extra>'
                 }
 
             if code == '121Y015BECBLB01':
@@ -763,25 +773,25 @@ class Ecos(DataFrame):
                     'name': '장단기금리차(10Y-2Y)',
                     'unit': '%',
                     'group': '금리지표',
-                    'format': 'float'
+                    'hoverTemplate': ': %{y:.3f}%<extra></extra>'
                 }
                 _meta['HYSPREAD'] = {
                     'name': '하이일드스프레드',
                     'unit': '%',
                     'group': '금리지표',
-                    'format': 'float'
+                    'hoverTemplate': ': %{y:.3f}%<extra></extra>'
                 }
                 _meta['LBDIFFN'] = {
                     'name': '예대금리차(신규)',
                     'unit': '%',
                     'group': '금리지표',
-                    'format': 'float'
+                    'hoverTemplate': ': %{y:.2f}%<extra></extra>'
                 }
                 _meta['LBDIFFL'] = {
                     'name': '예대금리차(잔액)',
                     'unit': '%',
                     'group': '금리지표',
-                    'format': 'float'
+                    'hoverTemplate': ': %{y:.2f}%<extra></extra>'
                 }
         return _meta
 
@@ -838,11 +848,7 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     Ecos.api = "CEW3KQU603E6GA8VX0O9"
-    Ecos = Ecos()
+    # Ecos = Ecos()
     # print(Ecos.container("252Y001"))
-    # print(Ecos("252Y001", "총지수"))
-    print(Ecos)
-
-
-
-
+    # print((Ecos.fetch('101Y003', 'BBHS00') * 10).apply(krwFormat))
+    # print(Ecos)
