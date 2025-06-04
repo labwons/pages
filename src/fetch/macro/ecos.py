@@ -641,9 +641,9 @@ class Ecos(DataFrame):
                 self.raw[name]['unit'] = '원'
                 self.raw[name]['hoverTemplate'] = ': %{meta}원<extra></extra>'
                 if meta['unit'] == '십억원':
-                    data = 10 * data
+                    data = 1000000000 * data
                 if meta['unit'] == '백만원':
-                    data = data / 100
+                    data = 1000000 * data
                 objs[f'{code}meta'] = data.apply(krwFormat)
 
             if meta["YoY"]:
@@ -751,6 +751,9 @@ class Ecos(DataFrame):
                 'group': meta['category'],
                 'hoverTemplate': meta['hoverTemplate']
             }
+            if meta['hoverTemplate'] == 'post':
+                _meta[code]['unit'] = '원'
+                _meta[code]['hoverTemplate'] = ': %{meta}원<extra></extra>'
 
             if meta["YoY"]:
                 _meta[f'{code}YoY'] = {

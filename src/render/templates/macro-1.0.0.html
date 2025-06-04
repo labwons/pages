@@ -187,10 +187,9 @@
               <span 
               data-purecounter-start="0" 
               data-purecounter-end="{{ item['value'] }}" 
+              data-purecounter-decimals="{{ item['digit'] }}"
               data-purecounter-duration="1.5"{% if item['unit'] == '억원' %} 
-              data-purecounter-decimals="0"
-              data-purecounter-separator="true"{% else %}
-              data-purecounter-decimals="1"{% endif %}
+              data-purecounter-separator="true"{% endif %}
               class="purecounter"></span>
               <span class="content-number-unit">{{ item['unit'] }}</span>
               <span class="content-number-change" style="color:{{ item['color'] }};">({{ item['change'] }}%)</span>

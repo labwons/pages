@@ -920,8 +920,8 @@ if (SERVICE === "macro"){
         hovertemplate: `${meta.name}${meta.hoverTemplate}`,
         yaxis: 'y1',
       }
-      if ('meta' in meta) {
-        obj.meta = srcIndicator[key + 'meta'];
+      if (`${key}meta` in srcIndicator) {
+        obj.meta = srcIndicator[`${key}meta`].data;
       }
       data.push(obj);
     };
@@ -938,8 +938,8 @@ if (SERVICE === "macro"){
         hovertemplate: `${meta.name}${meta.hoverTemplate}`,
         yaxis: 'y2',
       }
-      if ('meta' in meta) {
-        obj.meta = srcIndicator[key + 'meta'];
+      if (`${key}meta` in srcIndicator) {
+        obj.meta = srcIndicator[`${key}meta`].data;
       }
       if (srcIndicatorOpt[key].unit === '%') {
         layout.yaxis.zeroline = false;

@@ -54,8 +54,7 @@ if __name__ == "__main__":
 
 
     try:
-        # macro = Macro(update=ACTION_MODE == "schedule")
-        macro = Macro(update=True)
+        macro = Macro(update=ACTION_MODE in ["schedule", "workflow_dispatch"])
         if not PATH.MACRO.startswith('http'):
             with open(PATH.MACRO, 'w') as f:
                 f.write(macro.to_json(orient='index').replace('nan', ''))
@@ -66,23 +65,23 @@ if __name__ == "__main__":
         context += [f"- [{prefix_macro}] MACRO DATA: ", f'{report}', ""]
     prefix.append(prefix_macro)
 
-    # try:
-    #     spec = MarketSpec(update=ACTION_MODE == "schedule")
-    #     if not PATH.SPEC.startswith('http'):
-    #         with open(PATH.SPEC, 'w') as f:
-    #             f.write(spec.to_json(orient='index').replace("nan", ""))
-    #     prefix.append("PARTIALLY FAILED" if "FAIL" in spec.log else "SUCCESS")
-    #     context += [f"- [{prefix[-1]}] MARKET SPECIFICATION: ", spec.log, ""]
-    # except Exception as report:
-    #     prefix.append('FAILED')
-    #     context += [f"- [{prefix[-1]}] MARKET SPECIFICATION: ", f'{report}', ""]
-    #
-    # if "PARTIALLY FAILED" in prefix:
-    #     prefix = "PARTIALLY FAILED"
-    # elif "FAILED" in prefix:
-    #     prefix = "FAILED"
-    # else:
-    #     prefix = "SUCCESS"
+    try:
+        spec = MarketSpec(update=ACTION_MODE == "schedule")
+        if not PATH.SPEC.startswith('http'):
+            with open(PATH.SPEC, 'w') as f:
+                f.write(spec.to_json(orient='index').replace("nan", ""))
+        prefix.append("PARTIALLY FAILED" if "FAIL" in spec.log else "SUCCESS")
+        context += [f"- [{prefix[-1]}] MARKET SPECIFICATION: ", spec.log, ""]
+    except Exception as report:
+        prefix.append('FAILED')
+        context += [f"- [{prefix[-1]}] MARKET SPECIFICATION: ", f'{report}', ""]
+
+    if "PARTIALLY FAILED" in prefix:
+        prefix = "PARTIALLY FAILED"
+    elif "FAILED" in prefix:
+        prefix = "FAILED"
+    else:
+        prefix = "SUCCESS"
 
 
     mail = eMail()

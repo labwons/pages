@@ -88,52 +88,87 @@ class Macro(DataFrame):
 
     @property
     def status(self) -> list:
-        selector = [
-            ('KOSPI', 'bi-graph-up'),
-            ('KOSDAQ', 'bi-graph-up'),
-            ('731Y0030000003', 'bi-currency-exchange'),  # 원/달러 환율
-            ('817Y002010195000', 'bi-percent'),  # 국고채2년
-            ('817Y002010210000', 'bi-percent'),  # 국고채10년
-            ('901Y056S23A', 'bi-piggy-bank-fill'),  # 증시예탁금
-            ('901Y056S23E', 'bi-cash-stack'),  # 신용융자잔고
-            ('901Y056S23F', 'bi-credit-card'),  # 신용대주잔고
-            ('403Y001*AA', 'bi-truck'),  # 수출지수
-            ('901Y062P63AC', 'bi-house-up-fill'),  # KB부동산매매지수(아파트, 전국)
-            ('901Y063P64AC', 'bi-house-up-fill'),  # KB부동산전세지수(아파트, 전국)
-            ('901Y067I16E', 'bi-graph-up-arrow'),  # 경기선행지수순환변동
-        ]
+        selector = {
+            'KOSPI': {
+                'icon': 'bi-graph-up',
+                'digit': 2,
+            },
+            'KOSDAQ': {
+                'icon': 'bi-graph-up',
+                'digit': 2,
+            },
+            '731Y0030000003': {
+                'icon': 'bi-currency-exchange',  # 원/달러 환율
+                'digit': 1,
+            },
+            '817Y002010195000': {
+                'icon': 'bi-percent',  # 국고채2년
+                'digit': 3,
+            },
+            '817Y002010210000': {
+                'icon': 'bi-percent',  # 국고채10년
+                'digit': 3,
+            },
+            '901Y056S23A': {
+                'icon': 'bi-piggy-bank-fill',  # 증시예탁금
+                'digit': 0,
+            },
+            '901Y056S23E': {
+                'icon': 'bi-cash-stack',  # 신용융자잔고
+                'digit': 0,
+            },
+            '901Y056S23F': {
+                'icon': 'bi-credit-card',  # 신용대주잔고
+                'digit': 0,
+            },
+            '403Y001*AA': {
+                'icon': 'bi-truck',  # 수출지수
+                'digit': 2,
+            },
+            '901Y062P63AC': {
+                'icon': 'bi-house-up-fill',  # KB부동산매매지수(아파트, 전국)
+                'digit': 2,
+            },
+            '901Y063P64AC': {
+                'icon': 'bi-house-up-fill',  # KB부동산전세지수(아파트, 전국)
+                'digit': 2,
+            },
+            '901Y067I16E': {
+                'icon': 'bi-graph-up-arrow',  # 경기선행지수순환변동
+                'digit': 1,
+            },
+        }
+
         data = []
-        for col, icon in selector:
+        for col, spec in selector.items():
             name, unit = self.meta[col]['name'], self.meta[col]['unit']
             unit = unit.replace("-", "")
             if col == '731Y0030000003':
                 obj = krwusd()
-                obj['code'] = col
-                obj['unit'] = unit
-                obj['name'] = name
-                obj['icon'] = icon
-                obj['color'] = '#1861A8' if obj['change'] < 0 else '#C92A2A'
-                if obj['change'] > 0:
-                    obj['change'] = f"+{obj['change']}"
-                data.append(obj)
+                obj.update({
+                    'code': col,
+                    'unit': unit,
+                    'name': name
+                })
             else:
                 serial = self[col].dropna()
                 obj = {
                     'code': col,
                     'date': serial.index[-1].strftime("%Y-%m-%d"),
-                    'value': float(serial.values[-1]) if unit in ['%', '', '원'] else int(serial.values[-1] / 1000),
+                    'value': float(serial.values[-1]) if unit in ['%', '', '원'] else int(serial.values[-1] / 100),
                     'change': float(round(100 * serial.pct_change().values[-1], 2)),
                     'unit': unit.replace("백만원", "억원"),
                     'name': name.replace("(아파트, 전국)", ""),
-                    'icon': icon
                 }
-                obj['color'] = '#1861A8' if obj['change'] < 0 else '#C92A2A'
-                if obj['change'] > 0:
-                    obj['change'] = f"+{obj['change']}"
-                else:
-                    if col in ['KOSPI', 'KOSDAQ', '901Y062P63AC', '901Y063P64AC', '901Y067I16E']:
-                        obj['icon'] = obj['icon'].replace('up', 'down')
-                data.append(obj)
+            obj['digit'] = spec['digit']
+            obj['icon'] = spec['icon']
+            obj['color'] = '#1861A8' if obj['change'] < 0 else '#C92A2A'
+            if obj['change'] > 0:
+                obj['change'] = f"+{obj['change']}"
+            else:
+                if col in ['KOSPI', 'KOSDAQ', '901Y062P63AC', '901Y063P64AC', '901Y067I16E']:
+                    obj['icon'] = obj['icon'].replace('up', 'down')
+            data.append(obj)
         return data
 
     def serialize(self) -> dict:
@@ -158,8 +193,8 @@ if __name__ == "__main__":
     # print(macro.serialize())
     # print(macro.meta)
     # print(macro.status)
-    for n, meta in enumerate(macro.meta.values()):
-        print(n + 1, meta)
-    # for n, stat in enumerate(macro.status):
-    #     print(n + 1, stat)
+    # for n, meta in enumerate(macro.meta.values()):
+    #     print(n + 1, meta)
+    for n, stat in enumerate(macro.status):
+        print(n + 1, stat)
 
