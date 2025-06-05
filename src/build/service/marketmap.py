@@ -170,17 +170,9 @@ KEYS = {
         'iconMax': 'bi-emoji-frown-fill',
         'iconMin': 'bi-emoji-smile-fill',
     },
-    'volume': {
-        'na': '(미제공)',
-        'valueScale': None,
-        'colorScale': RED2GREEN,
-        'defaultColorIndex': 3,
-        'iconMax': 'bi-volume-up-fill',
-        'iconMin': 'bi-volume-off-fill',
-    },
     'beta': {
         'na': '(미제공)',
-        'valueScale': [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75],
+        'valueScale': [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
         'iconMax': 'bi-graph-up-arrow',
@@ -196,7 +188,7 @@ KEYS = {
     },
     'averageRevenueGrowth_A': {
         'na': '(미제공)',
-        'valueScale': None,
+        'valueScale': [0, 3, 6, 9, 12, 15, 18],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
         'iconMax': 'bi-emoji-smile-fill',
@@ -204,7 +196,7 @@ KEYS = {
     },
     'averageProfitGrowth_A': {
         'na': '(미제공)',
-        'valueScale': None,
+        'valueScale': [-10, -5, 0, 5, 10, 15, 20],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
         'iconMax': 'bi-emoji-smile-fill',
@@ -212,7 +204,7 @@ KEYS = {
     },
     'averageEpsGrowth_A': {
         'na': '(미제공)',
-        'valueScale': None,
+        'valueScale': [-10, -5, 0, 5, 10, 15, 20],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
         'iconMax': 'bi-emoji-smile-fill',
@@ -303,7 +295,7 @@ class MarketMap(DataFrame):
             "close", 'floatShares',
             'trailingRevenue', 'trailingEps', 'pctEstimated',
             'RevenueGrowth_Q', 'ProfitGrowth_Q', 'EpsGrowth_Q',
-            "industryCode", "industryName", "sectorCode", "sectorName", "stockSize"
+            "industryCode", "industryName", "sectorCode", "sectorName", "stockSize", 'volume'
         ])
 
         self._check_metadata(baseline.meta)
@@ -318,7 +310,7 @@ class MarketMap(DataFrame):
             if not key in self:
                 raise KeyError(f'MAP metadata: {key} is not in MAP data')
         for col in self.select_dtypes(include=['number']).columns:
-            if col in ['size', 'amount', 'marketCap']: continue
+            if col in ['size', 'amount', 'marketCap', 'volume']: continue
             if not col in baseline_meta:
                 raise ValueError(f'MAP data key : "{col}" is not found in Baseline metadata')
             if not col in self.meta:

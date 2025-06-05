@@ -51,8 +51,10 @@ if __name__ == "__main__":
         # LOCAL HOSTING DIRECTORY WITH DEPLOYMENT DIRECTORY, DEPLOYMENT MIGHT BE CORRUPTED.
         # IF YOU WANT TO USE DIFFERENT PATH FOR LOCAL HOST TESTING, BELOW {ROOT} VARIABLE ARE
         # TO BE CHANGED.
-        CONFIG_BASELINE = False
         SYSTEM_DIR = os.path.join(PATH.DOWNLOADS, 'labwons')
+        CONFIG_BASELINE = False
+        CONFIG_MACRO    = False
+        CONFIG_STATE    = False
         PATH.copytree(PATH.DOCS, SYSTEM_DIR)
 
     if SYSTEM_ENV == "schedule":
@@ -100,9 +102,9 @@ if __name__ == "__main__":
             with open(PATH.SPEC, 'w') as f:
                 f.write(spec.to_json(orient='index').replace("nan", ""))
         prefix = "PARTIALLY FAILED" if "FAIL" in spec.log else "SUCCESS"
-        context += [f"- [{prefix}] MARKET SPECIFICATION: ", spec.log, ""]
+        context += [f"- [{prefix}] MARKET NUMBERS: ", spec.log, ""]
     except Exception as report:
-        context += [f"- [FAILED] MARKET SPECIFICATION: ", f'{report}', ""]
+        context += [f"- [FAILED] MARKET NUMBERS: ", f'{report}', ""]
 
     try:
         baseline = MarketBaseline(update=CONFIG_BASELINE)
@@ -230,11 +232,11 @@ if __name__ == "__main__":
                     "srcIndicator": dumps(macro.serialize()).replace(" ", ""),
                     "srcIndicatorOpt": dumps(macro.meta).replace(" ", ""),
                     "srcStatus": macro.status,
-                    "faq": marketBubble.faqs
+                    "faq": macro.faqs
                 })
             )
 
-        context += [f'- [SUCCESS] Deploy Macro', marketBubble.log, '']
+        context += [f'- [SUCCESS] Deploy Macro', macro.log, '']
     except Exception as error:
         context += [f'- [FAILED] Deploy Macro', f'  : {error}', '']
 

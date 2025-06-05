@@ -51,13 +51,15 @@ class MarketSpec(DataFrame):
 
     def __init__(self, update: bool = True):
         stime = time()
+        self.log = f'RUN [Build Numbers Cache]'
         if not update:
             super().__init__(read_json(PATH.SPEC, orient='index'))
             self.index = self.index.astype(str).str.zfill(6)
+            self.log = f'END [Build Numbers Cache] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
             return
 
         date = datetime.today().strftime("%Y%m%d")
-        self.log = f'RUN [Market Spec Fetch] @{date}'
+        self.log = f'RUN [Build Numbers Cache]'
 
         market = concat([self.fetchMarketCap(date, 'KOSPI'), self.fetchMarketCap(date, 'KOSDAQ')])
         market = market[
@@ -104,7 +106,7 @@ class MarketSpec(DataFrame):
         for col in self:
             self[col] = round(self[col], 4 if col == 'beta' else 2)
 
-        self.log = f'END [Market Spec Fetch] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
+        self.log = f'END [Build Numbers Cache] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
         return
 
     @property

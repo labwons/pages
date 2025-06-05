@@ -103,6 +103,12 @@ METADATA = {
         'unit': '',
 		'round': 4,
     },
+    'shares': {
+        'label': '상장주식수',
+        'description': '상장주식수',
+        'unit': '',
+		'round': 0,
+    },
     'floatShares': {
         'label': '유동주식비율',
         'description': '전체 발행 주식 대비 시장 유동 주식 비율',
@@ -328,7 +334,7 @@ class MarketBaseline(DataFrame):
             merge['trailingEps'] = merge['trailingEps'].apply(lambda x: x if x > 0 else nan)
             merge['trailingPS'] = (merge['marketCap'] / 1e+8) / merge['trailingRevenue']
             merge['trailingPE'] = merge['close'] / merge['trailingEps']
-            merge['turnoverRatio'] = 100 * merge['amount'] / merge['marketCap']
+            merge['turnoverRatio'] = 100 * merge['volume'] / (merge['shares'] * merge['floatShares'] / 100)
             self.log = f'- No-Labeled Keys: {[key for key in merge if key not in METADATA]}'
 
             merge = merge[METADATA.keys()]
@@ -411,7 +417,6 @@ if __name__ == "__main__":
     baseline = MarketBaseline(False)
     print(baseline)
     # print(baseline.log)
-    baseline.show_gaussian('M-1')
-
+    # baseline.show_gaussian('M-1')
 
 

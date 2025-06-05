@@ -136,7 +136,7 @@ if (SERVICE === "marketmap"){
       if(indicator.valueScale[n] == null){
         $(this).html('&nbsp; - &nbsp;');
       } else {
-          $(this).html(String(indicator.valueScale[n]) + indicator.unit);
+        $(this).html(Number(indicator.valueScale[n].toFixed(1)) + indicator.unit);
       }
       $(this).css('background-color', indicator.colorScale[n]);
     });
@@ -476,12 +476,14 @@ if (SERVICE === "bubble"){
       var label = (typeof obj === "object" && obj !== null) ? obj.label : obj;
       if (key == currentX) {
         $x.append(`<option value="${key}" selected>${label}</option>`);
-      } else if (key === currentY) {
-        $y.append(`<option value="${key}" selected>${label}</option>`);
+      } else {
+        $x.append(`<option value="${key}">${label}</option>`);
       }
-      $x.append(`<option value="${key}">${label}</option>`);
-      $y.append(`<option value="${key}">${label}</option>`);
-      
+      if (key === currentY) {
+        $y.append(`<option value="${key}" selected>${label}</option>`);
+      } else {
+        $y.append(`<option value="${key}">${label}</option>`);
+      }      
     });
 
     Object.entries(srcSectors).forEach(([key, obj]) => {

@@ -638,8 +638,6 @@ class Ecos(DataFrame):
             data = self.fetch(meta['symbol'], meta['code'])
             objs[code] = data.copy()
             if meta['hoverTemplate'] == 'post':
-                self.raw[name]['unit'] = '원'
-                self.raw[name]['hoverTemplate'] = ': %{meta}원<extra></extra>'
                 if meta['unit'] == '십억원':
                     data = 1000000000 * data
                 if meta['unit'] == '백만원':
@@ -752,7 +750,6 @@ class Ecos(DataFrame):
                 'hoverTemplate': meta['hoverTemplate']
             }
             if meta['hoverTemplate'] == 'post':
-                _meta[code]['unit'] = '원'
                 _meta[code]['hoverTemplate'] = ': %{meta}원<extra></extra>'
 
             if meta["YoY"]:
