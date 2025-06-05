@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     if SYSTEM_ENV == "workflow_dispatch":
         # SELECTIVE FOR TESTING. CHANGE BEFORE COMMIT & PUSH, IF NEEDED.
-        CONFIG_BASELINE = True
+        CONFIG_BASELINE = False
         CONFIG_MACRO = False
         CONFIG_STATE = False
 

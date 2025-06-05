@@ -295,7 +295,7 @@ class MarketMap(DataFrame):
             "close", 'floatShares',
             'trailingRevenue', 'trailingEps', 'pctEstimated',
             'RevenueGrowth_Q', 'ProfitGrowth_Q', 'EpsGrowth_Q',
-            "industryCode", "industryName", "sectorCode", "sectorName", "stockSize", 'volume'
+            "industryCode", "industryName", "sectorCode", "sectorName", "stockSize", 'volume', 'shares'
         ])
 
         self._check_metadata(baseline.meta)

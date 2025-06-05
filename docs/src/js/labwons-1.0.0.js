@@ -39,7 +39,8 @@ const __media__ = {
   isMobile: window.matchMedia('(min-width: 0px) and (max-width: 767px)').matches,
   isTablet: window.matchMedia('(min-width: 768px) and (max-width: 1023px)').matches,
   isLabtop: window.matchMedia('(min-width: 1024px) and (max-width: 1439px)').matches,
-  isDesktop: window.matchMedia('(min-width: 1440px)').matches
+  isDesktop: window.matchMedia('(min-width: 1440px)').matches,
+  hasCursor: window.matchMedia('(pointer: fine)').matches
 }
 const __fonts__ = 'NanumGothic, Nanum Gothic, Open Sans, sans-serif';
 
@@ -773,7 +774,7 @@ if (SERVICE === "bubble"){
 
   $ySlider.css('height', `${$('.slider-vertical').height() - 35}px`);
   $('.y-slider-bottom').css('top', `${$('.slider-vertical').height() - 35 - cssVY / 2}px`);
-  if (__media__.isMobile || __media__.isTablet) {
+  if (!__media__.hasCursor) {
     $('.slider-vertical').remove();
     $('.service-layer-bottom').remove();
   }
