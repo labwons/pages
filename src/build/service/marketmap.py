@@ -180,7 +180,7 @@ KEYS = {
     },
     'turnoverRatio': {
         'na': '(미제공)',
-        'valueScale': None,
+        'valueScale': [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
         'iconMax': 'bi-arrow-left-right',
@@ -188,7 +188,7 @@ KEYS = {
     },
     'averageRevenueGrowth_A': {
         'na': '(미제공)',
-        'valueScale': [0, 3, 6, 9, 12, 15, 18],
+        'valueScale': [0, 5, 10, 15, 20, 25, 30],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
         'iconMax': 'bi-emoji-smile-fill',
@@ -196,7 +196,7 @@ KEYS = {
     },
     'averageProfitGrowth_A': {
         'na': '(미제공)',
-        'valueScale': [-10, -5, 0, 5, 10, 15, 20],
+        'valueScale': [0, 5, 10, 15, 20, 25, 30],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
         'iconMax': 'bi-emoji-smile-fill',
@@ -204,7 +204,7 @@ KEYS = {
     },
     'averageEpsGrowth_A': {
         'na': '(미제공)',
-        'valueScale': [-10, -5, 0, 5, 10, 15, 20],
+        'valueScale': [0, 10, 20, 30, 40, 50, 60],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
         'iconMax': 'bi-emoji-smile-fill',
@@ -212,7 +212,7 @@ KEYS = {
     },
     'RevenueGrowth_A': {
         'na': '(미제공)',
-        'valueScale': None,
+        'valueScale': [0, 5, 10, 15, 20, 25, 30],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
         'iconMax': 'bi-emoji-smile-fill',
@@ -220,7 +220,7 @@ KEYS = {
     },
     'ProfitGrowth_A': {
         'na': '(미제공)',
-        'valueScale': None,
+        'valueScale': [0, 5, 10, 15, 20, 25, 30],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
         'iconMax': 'bi-emoji-smile-fill',
@@ -228,7 +228,7 @@ KEYS = {
     },
     'EpsGrowth_A': {
         'na': '(미제공)',
-        'valueScale': None,
+        'valueScale': [0, 10, 20, 30, 40, 50, 60],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
         'iconMax': 'bi-emoji-smile-fill',
@@ -292,7 +292,7 @@ class MarketMap(DataFrame):
 
         super().__init__(concat([self, ws_industry, ns_industry, ws_sector, ns_sector, ws_top, ns_top]))
         self.drop(inplace=True, columns=[
-            "close", 'floatShares',
+            "close", 'floatShares', 'amount', 'market', 'marketCap',
             'trailingRevenue', 'trailingEps', 'pctEstimated',
             'RevenueGrowth_Q', 'ProfitGrowth_Q', 'EpsGrowth_Q',
             "industryCode", "industryName", "sectorCode", "sectorName", "stockSize", 'volume', 'shares'
@@ -324,19 +324,11 @@ class MarketMap(DataFrame):
                 continue
 
             mean, std, mn, mx = self[key].mean(), self[key].std(), self[key].min(), self[key].max()
-            if key in ['volume', 'PBR']:
+            if key in ['PBR']:
                 self.meta[key]['valueScale'] = [None, None, None, 0, mean / 2, mean, mean + std]
             elif key in ['estimatedPE', 'trailingPE', 'trailingPS']:
                 dv = (min(mx, mean + 2 * std) - mean) / 4
                 self.meta[key]['valueScale'] = [0.25 * mean, 0.5 * mean, 0.75 * mean, mean, dv, 2 * dv, 3 * dv]
-            elif key == 'turnoverRatio':
-                ks, kq = self[self['market'] == 'kospi'], self[self['market'] == 'kosdaq']
-                ks = 100 * ks['amount'].sum() / ks['marketCap'].sum()
-                kq = 100 * kq['amount'].sum() / kq['marketCap'].sum()
-                dvn = mean - ks
-                dvp = kq - mean
-                self.meta[key]['valueScale'] = [ks, ks + 0.33 * dvn, ks + 0.66 * dvn, mean, mean + 0.33 * dvp, mean + 0.66 * dvp, kq]
-                self.drop(inplace=True, columns=['amount', 'market', 'marketCap'])
             else:
                 en, ep = max(mn, mean - 2 * std), min(mx, mean + 2 * std)
                 dvn, dvp = mean - en, ep - mean
@@ -443,18 +435,9 @@ class MarketMap(DataFrame):
                 drop.append(col)
             if col in drop:
                 continue
-            if col == "volume":
-                if peak.loc['min', col] >= 10000:
-                    peak.loc['min', col] = f"{peak.loc['min', col] // 10000:.0f}만 주"
-                else:
-                    peak.loc['min', col] = f"{peak.loc['min', col]:.0f} 주"
-                if peak.loc['max', col] >= 10000:
-                    peak.loc['max', col] = f"{peak.loc['max', col] // 10000:.0f}만 주"
-                else:
-                    peak.loc['max', col] = f"{peak.loc['max', col]:.0f} 주"
             else:
-                peak.loc['min', col] = f"{peak.loc['min', col]:.1f} {self.meta[col]['unit']}"
-                peak.loc['max', col] = f"{peak.loc['max', col]:.1f} {self.meta[col]['unit']}"
+                peak.loc['min', col] = f"{peak.loc['min', col]:,.1f} {self.meta[col]['unit']}"
+                peak.loc['max', col] = f"{peak.loc['max', col]:,.1f} {self.meta[col]['unit']}"
             peak.loc['minT', col] = self.loc[peak.loc['minT', col], 'name']
             peak.loc['maxT', col] = self.loc[peak.loc['maxT', col], 'name']
             peak.loc['minC', col] = self.meta[col]['colorScale'][0]
@@ -494,10 +477,9 @@ if __name__ == "__main__":
     marketMap = MarketMap(baseline)
     # print(marketMap)
     # print(marketMap.desc)
-    # print(marketMap.peakPoint)
+    print(marketMap.peakPoint)
     # print(marketMap.log)
     # print(marketMap.meta)
     # print(marketMap.gaussian)
-    marketMap.show_gaussian()
     # print(marketMap.colors)
     # print(marketMap.to_dict(orient='index'))
