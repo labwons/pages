@@ -189,7 +189,7 @@ if (SERVICE === "marketmap"){
       text:[],
       textposition: 'outside',
       meta:[],
-      hovertemplate: '%{meta}' + srcIndicatorOpt[key].label + ': %{text}<extra></extra>',
+      hovertemplate: '%{meta}<br>' + srcIndicatorOpt[key].label + ': %{text}<extra></extra>',
       opacity:0.9
     };
     var tickers = [];

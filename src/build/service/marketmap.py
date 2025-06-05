@@ -310,7 +310,7 @@ class MarketMap(DataFrame):
             if not key in self:
                 raise KeyError(f'MAP metadata: {key} is not in MAP data')
         for col in self.select_dtypes(include=['number']).columns:
-            if col in ['size', 'amount', 'marketCap', 'volume']: continue
+            if col in ['size', 'amount', 'marketCap', 'volume', 'shares']: continue
             if not col in baseline_meta:
                 raise ValueError(f'MAP data key : "{col}" is not found in Baseline metadata')
             if not col in self.meta:
