@@ -350,6 +350,58 @@ class MarketBaseline(DataFrame):
     def log(self, log: str):
         self._log.append(log)
 
+    def show_gaussian(self, col:str):
+        # INTERNAL
+        import plotly.graph_objs as go
+        from scipy.stats import norm
+        from pandas import concat, Series
+
+        # x = self[[col, 'name']]
+        y = Series(index=self.index, data=norm.pdf(self[col], self[col].mean(), self[col].std()), name='y')
+        m = self['name'] + '(' + self.index + ')'
+        m.name = 'm'
+        subset = concat([self[col], y, m], axis=1).sort_values(by=col)
+        print(subset)
+        fig = go.Figure()
+
+        fig.add_trace(go.Scatter(
+            x=subset[col],
+            y=subset.y,
+            mode='lines+markers',
+            showlegend=False,
+            meta=subset.m,
+            hovertemplate="%{meta}: %{x}<extra></extra>"
+        ))
+        fig.add_trace(go.Scatter(
+            x=[subset[col].mean() - 2 * subset[col].std()] * len(subset),
+            y=subset.y,
+            mode='lines',
+            showlegend=False,
+            line={
+                'color':'black',
+                'dash':'dot'
+            },
+            hoverinfo='skip'
+        ))
+        fig.add_trace(go.Scatter(
+            x=[subset[col].mean() + 2 * subset[col].std()] * len(subset),
+            y=subset.y,
+            mode='lines',
+            showlegend=False,
+            line={
+                'color': 'black',
+                'dash': 'dot'
+            },
+            hoverinfo='skip'
+        ))
+
+        fig.update_layout(
+            xaxis_title="Value",
+            yaxis_title="Density",
+        )
+        fig.show('browser')
+        return
+
 
 if __name__ == "__main__":
     from pandas import set_option
@@ -359,7 +411,7 @@ if __name__ == "__main__":
     baseline = MarketBaseline(False)
     print(baseline)
     # print(baseline.log)
-    # print(baseline.columns)
-    # print(baseline.loc[['005930', '005380']])
+    baseline.show_gaussian('M-1')
+
 
 

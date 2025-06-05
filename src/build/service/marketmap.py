@@ -398,72 +398,6 @@ class MarketMap(DataFrame):
             #     self[col] = self[col].astype(str).fillna(self.meta[col]['na'])
         return
 
-    def show_gaussian(self):
-        # INTERNAL
-        import plotly.graph_objs as go
-
-        gaussian = self.gaussian
-        visibility = []
-        fig = go.Figure()
-        for n, col in enumerate(self.desc):
-            subset = gaussian[col].sort_values(by='x')
-
-            fig.add_trace(go.Scatter(
-                x=subset.x,
-                y=subset.y,
-                mode='lines+markers',
-                showlegend=False,
-                visible=(n == 0),
-                meta=subset.meta,
-                hovertemplate="%{meta}: %{x}<extra></extra>"
-            ))
-            fig.add_trace(go.Scatter(
-                x=[subset.x.mean() - 2 * subset.x.std()] * len(subset),
-                y=subset.y,
-                mode='lines',
-                showlegend=False,
-                line={
-                    'color':'black',
-                    'dash':'dot'
-                },
-                visible=(n == 0),
-                hoverinfo='skip'
-            ))
-            fig.add_trace(go.Scatter(
-                x=[subset.x.mean() + 2 * subset.x.std()] * len(subset),
-                y=subset.y,
-                mode='lines',
-                showlegend=False,
-                line={
-                    'color': 'black',
-                    'dash': 'dot'
-                },
-                visible=(n == 0),
-                hoverinfo='skip'
-            ))
-
-            visibility.append({
-                "label": col,
-                "method": "update",
-                "args": [{"visible": [(j // 3) == n for j in range(3 * len(self.desc.columns))]}]
-            })
-
-        fig.update_layout(
-            xaxis_title="Value",
-            yaxis_title="Density",
-            updatemenus=[{
-                "buttons": visibility,
-                "direction": "down",
-                "showactive": True,
-                "x": 0.0,
-                "xanchor": "left",
-                "y": 1.05,
-                "yanchor": "top"
-            }]
-        )
-        fig.show()
-        return
-
     @property
     def colors(self) -> DataFrame:
         objs = {}
@@ -544,28 +478,12 @@ class MarketMap(DataFrame):
         return peak
 
     @property
-    def gaussian(self) -> DataFrame:
-        # INTERNAL
-        stocks = self[self.index.str.isdigit()]
-        objs = {}
-        for col in self.desc:
-            x = stocks.sort_values(by=col, ascending=True)
-            obj = DataFrame({
-                'x': x[col].values,
-                'y':norm.pdf(x[col], x[col].mean(), x[col].std()),
-                'meta': x['name'] + '(' + x.index + ')',
-            })
-            objs[col] = obj
-        return concat(objs=objs, axis=1)
-
-    @property
     def log(self) -> str:
         return "\n".join(self._log)
 
     @log.setter
     def log(self, log: str):
         self._log.append(log)
-
 
     @classmethod
     def _format_cap(cls, market_cap:int) -> str:
@@ -588,41 +506,6 @@ if __name__ == "__main__":
     # print(marketMap.log)
     # print(marketMap.meta)
     # print(marketMap.gaussian)
-    # marketMap.show_gaussian()
+    marketMap.show_gaussian()
     # print(marketMap.colors)
     # print(marketMap.to_dict(orient='index'))
-
-    import plotly.graph_objs as go
-    import plotly.io as pio
-
-    tickers = []
-    for i in marketMap.index:
-        if i.startswith('N'):
-            continue
-        tickers.append(i)
-    df = marketMap.loc[tickers]
-
-    fig = go.Figure()
-    fig.add_trace(go.Treemap(
-        branchvalues='total',
-        labels=df.name,
-        parents=df.ceiling,
-        values=df['size'],
-        text=df['D-1'],
-        textposition='middle center',
-        texttemplate='%{label}<br>%{text}%',
-        textfont={
-            'color': '#fff'
-        },
-        opacity=0.9,
-        marker={
-            "colors": marketMap.colors.loc[tickers]['D-1']
-        }
-    ))
-    # fig.show()
-    fig.write_image(
-        file=os.path.join(PATH.DOCS, r'src/img/marketmap.png'),
-        width=1200,
-        height=630,
-        scale=1.0
-    )

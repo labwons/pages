@@ -120,5 +120,33 @@ if __name__ == "__main__":
     # print(baseline)
     marketBubble = MarketBubble(baseline)
     print(marketBubble)
-    print(marketBubble.meta)
+    # print(marketBubble.meta)
     # print(marketBubble.sector)
+
+
+    def filterUpper(df, col, factor:int=2) -> DataFrame:
+        return df[
+            (df[col] >= df[col].mean()) & \
+            (df[col] < (df[col].mean() + factor * df[col].std()))
+        ]
+
+    def filterLower(df, col, factor:int=2) -> DataFrame:
+        return df[
+            (df[col] < df[col].mean()) & \
+            (df[col] >= (df[col].mean() - factor * df[col].std()))
+        ]
+
+
+    choice = marketBubble.copy()
+    choice = filterUpper(choice, 'M-3')
+    choice = filterUpper(choice, 'M-1')
+    choice = filterUpper(choice, 'pct52wLow')
+    # choice = filter_2(choice)
+    # choice = filter_3(choice)
+    print(choice)
+
+    # cond2 = df['M-3'] >= max(df['M-3'].mean(), df['M-3'].median())
+    # cond3 = df['pct52wLow'] >= max(df['M-3'].mean(), df['M-3'].median())
+    # cond4 = df['trailingPE'] <= df['trailingPE'].mean()
+    # pick = df[cond1 & cond2 & cond3 & cond4]
+    # print(pick)

@@ -9,7 +9,8 @@
 name: BUILD BASELINE
 on:
   schedule:
-    - cron: '31 6 * * 1-5'
+    - cron: '31 6 * * 1-5'  # KST 3:31 PM
+    - cron: '30 11 * * 1-5' # KST 8:30 PM
   workflow_dispatch:
 
 jobs:
@@ -35,7 +36,7 @@ jobs:
     - name: Run application
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)/src
-        python src/build/service.py
+        python src/build/deploy.py
 
     - name: Commit and Push changes
       env:

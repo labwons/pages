@@ -36,15 +36,17 @@ class Macro(DataFrame):
     def __init__(self, update:bool=False):
         stime = time()
         self.log = f'RUN [Build Macro Cache]'
+
         self.meta.update(Ecos.metaData())
         for symbol, item in Fred.predef.items():
             self.meta[symbol] = {
                 "name": item["name"],
                 "unit": item["unit"],
                 "group": item["category"],
-                "format": item["format"]
+                "hoverTemplate": item["hoverTemplate"]
             }
 
+        basis = read_json(PATH.MACRO, orient='index')
         try:
             tz = timezone(timedelta(hours=9))
             ck = datetime.now(tz)
@@ -52,29 +54,22 @@ class Macro(DataFrame):
             kq = get_index_ohlcv_by_date('20000101', ck.strftime("%Y%m%d"), '2001')['종가']
             ks.name = 'KOSPI'
             kq.name = 'KOSDAQ'
-            objs = [ks, kq]
+            index = concat([ks, kq], axis=1)
+            basis = concat([index, basis.drop(columns=index.columns)], axis=1)
         except (KeyError, Exception):
-            objs = []
             self.log = "  - KRX Not accessible: update failed"
             pass
 
         if not update:
-            basis = read_json(PATH.MACRO, orient='index')
-            if objs:
-                index = concat(objs, axis=1)
-                basis = basis.drop(columns=index.columns)
-                super().__init__(concat([index, basis], axis=1))
-            else:
-                super().__init__(basis)
+            super().__init__(basis)
             self.log = f'END [Build Macro Cache]'
             return
 
         Ecos.api = "CEW3KQU603E6GA8VX0O9"
         ecos = Ecos()
         fred = Fred()
-        objs += [ecos, fred]
 
-        super().__init__(concat(objs=objs, axis=1))
+        super().__init__(concat(objs=[basis[['KOSPI', 'KOSDAQ']], ecos, fred], axis=1))
         self.log = f'END [Build Macro Cache] / Elapsed: {time() - stime:.2f}s'
         return
 
@@ -155,7 +150,7 @@ class Macro(DataFrame):
                 obj = {
                     'code': col,
                     'date': serial.index[-1].strftime("%Y-%m-%d"),
-                    'value': float(serial.values[-1]) if unit in ['%', '', '원'] else int(serial.values[-1] / 100),
+                    'value': serial.values[-1],
                     'change': float(round(100 * serial.pct_change().values[-1], 2)),
                     'unit': unit.replace("백만원", "억원"),
                     'name': name.replace("(아파트, 전국)", ""),
@@ -168,6 +163,8 @@ class Macro(DataFrame):
             else:
                 if col in ['KOSPI', 'KOSDAQ', '901Y062P63AC', '901Y063P64AC', '901Y067I16E']:
                     obj['icon'] = obj['icon'].replace('up', 'down')
+            if col in ['901Y056S23A', '901Y056S23E', '901Y056S23F']:
+                obj['value'] = obj['value'] / 100
             data.append(obj)
         return data
 
@@ -188,7 +185,7 @@ if __name__ == "__main__":
 
 
     macro = Macro(update=False)
-    print(macro)
+    # print(macro)
     # print(macro.log)
     # print(macro.serialize())
     # print(macro.meta)

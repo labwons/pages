@@ -478,10 +478,10 @@ if (SERVICE === "bubble"){
         $x.append(`<option value="${key}" selected>${label}</option>`);
       } else if (key === currentY) {
         $y.append(`<option value="${key}" selected>${label}</option>`);
-      } else {
-        $x.append(`<option value="${key}">${label}</option>`);
-        $y.append(`<option value="${key}">${label}</option>`);
       }
+      $x.append(`<option value="${key}">${label}</option>`);
+      $y.append(`<option value="${key}">${label}</option>`);
+      
     });
 
     Object.entries(srcSectors).forEach(([key, obj]) => {

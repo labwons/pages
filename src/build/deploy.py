@@ -4,10 +4,13 @@ AUTHOR  : SNOB
 CONTACT : snob.labwons@gmail.com
 ROUTINE : 15:40+09:00UTC on weekday
 """
+from webencodings import CACHE
+
 if __name__ == "__main__":
     try:
         from ..common.path import PATH
         from ..common.report import eMail
+        from ..fetch.market.spec import MarketSpec
         from ..render.navigate import navigate, minify
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
@@ -18,6 +21,7 @@ if __name__ == "__main__":
     except ImportError:
         from src.common.path import PATH
         from src.common.report import eMail
+        from src.fetch.market.spec import MarketSpec
         from src.render.navigate import navigate, minify
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble
@@ -28,7 +32,6 @@ if __name__ == "__main__":
     from datetime import datetime, timezone, timedelta
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
-    from pandas import set_option as PRINT_DATA
     from pykrx.stock import get_nearest_business_day_in_a_week
     from numpy import datetime_as_string
     from time import sleep
@@ -37,14 +40,12 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # ENVIRONMENT SETTINGS
     # ---------------------------------------------------------------------------------------
-    PRINT_DATA('display.expand_frame_repr', False)
-
+    ACTION_MODE = os.environ.get("GITHUB_EVENT_NAME", "local")
     BASE_DIR    = PATH.DOCS
     BASELINE    = True
-    CLOCK       = lambda zone: datetime.now(zone)
-    LOCAL_ZONE  = timezone(timedelta(hours=9))
+    CACHE       = False
+    CLOCK       = lambda: datetime.now(timezone(timedelta(hours=9)))
     NAVIGATION  = navigate()
-    ACTION_MODE = os.environ.get("GITHUB_EVENT_NAME", "local")
 
     if ACTION_MODE == "local":
         # FOR LOCAL HOST TESTING, EXTERNAL DIRECTORY IS RECOMMENDED AND USED. USING THE SAME
@@ -59,35 +60,59 @@ if __name__ == "__main__":
         # ON GITHUB ACTIONS, SYSTEM EXITS WHEN THE LATEST TRADING DATE AND CURRENT DATETIME
         # IS NOT MATCHED. THIS CODE IS IMPLEMENTED IN ORDER TO AVOID RUNNING ON WEEKDAY WHILE
         # HOLIDAYS OF THE MARKET.
-        if get_nearest_business_day_in_a_week() != datetime.today().strftime("%Y%m%d"):
+        if get_nearest_business_day_in_a_week() != CLOCK().strftime("%Y%m%d"):
             raise SystemExit
 
-        # ON GITHUB ACTIONS, IF SCHEDULED CRON TIME IS ACTIVATED BEFORE THE MARKET IS CLOSED,
-        # WHICH ALMOST NEVER HAPPENS, BUILD AND DEPLOY WILL HOLD UNTIL THE MARKET IS CLOSED.
-        now = CLOCK(LOCAL_ZONE)
-        while now.hour == 15 and now.minute < 31:
+        # ON GITHUB ACTIONS, IF SCHEDULED TIME IS ACTIVATED BEFORE THE MARKET IS CLOSED,
+        # WHICH HARDLY HAPPENS, BUILD AND DEPLOY WILL HOLD UNTIL THE MARKET IS CLOSED.
+        now = CLOCK()
+        while (now.hour == 15) and (15 <= now.minute < 31):
             sleep(30)
-            now = CLOCK(LOCAL_ZONE)
+            now = CLOCK()
+
+        if now.hour >= 20:
+            BASELINE = False
+            CACHE = True
 
     if ACTION_MODE == "workflow_dispatch":
+        # SELECTIVE FOR TESTING. CHANGE BEFORE COMMIT & PUSH, IF NEEDED.
         BASELINE = False
+        CACHE = True
 
+
+    context = ["DETAILS"]
     # ---------------------------------------------------------------------------------------
     # UPDATE BASELINE
     # ---------------------------------------------------------------------------------------
-    context = ["DETAILS"]
+    # try:
+    #     group = MarketGroup(update=CACHE)
+    #     if CACHE andnot PATH.GROUP.startswith('http'):
+    #         with open(PATH.GROUP, 'w') as f:
+    #             f.write(group.to_json(orient='index').replace("nan", ""))
+    #     context += [f"- [SUCCESS] MARKET GROUP: ", group.log, ""]
+    # except Exception as report:
+    #     context += [f"- [FAILED] MARKET GROUP: ", f'{report}', ""]
+
+    try:
+        # spec = MarketSpec(update=CACHE)
+        spec = MarketSpec(update=False)
+        if CACHE and not PATH.SPEC.startswith('http'):
+            with open(PATH.SPEC, 'w') as f:
+                f.write(spec.to_json(orient='index').replace("nan", ""))
+        prefix = "PARTIALLY FAILED" if "FAIL" in spec.log else "SUCCESS"
+        context += [f"- [{prefix}] MARKET SPECIFICATION: ", spec.log, ""]
+    except Exception as report:
+        context += [f"- [FAILED] MARKET SPECIFICATION: ", f'{report}', ""]
 
     try:
         baseline = MarketBaseline(update=BASELINE)
         if not PATH.BASE.startswith('http'):
             with open(PATH.BASE, 'w') as f:
                 f.write(baseline.to_json(orient='index').replace("nan", "null"))
-        prefix_baseline = "PARTIALLY FAILED" if baseline.log.count("FAIL") else "SUCCESS"
-        context += [f'- [{prefix_baseline}] BUILD Baseline', baseline.log, '']
+        context += [f'- [SUCCESS] BUILD Baseline', baseline.log, '']
     except Exception as error:
         baseline = MarketBaseline(update=False)
-        prefix_baseline = "FAILED"
-        context += [f'- [{prefix_baseline}] BUILD Baseline', f'  : {error}', '* Using latest baseline', '']
+        context += [f'- [FAILED] BUILD Baseline', f'  : {error}', '* Using latest baseline', '']
 
     TRADING_DATE = baseline['date'].values[0]
     if not isinstance(TRADING_DATE, str):
@@ -181,10 +206,13 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # BUILD MACRO
     # ---------------------------------------------------------------------------------------
-    macro = Macro(update=False)
-    # Macro data updates after market is limited. Only index and exchange rate data is updated.
-    # Indicators and other macro data is updated on cache build.
+    macro = Macro(update=CACHE)
+
     try:
+        if CACHE and not PATH.MACRO.startswith('http'):
+            with open(PATH.MACRO, 'w') as f:
+                f.write(macro.to_json(orient='index').replace('nan', ''))
+
         with open(
             file=os.path.join(BASE_DIR, r'macro/index.html'),
             mode='w',
@@ -237,7 +265,7 @@ if __name__ == "__main__":
     prefix = "SUCCESS"
     if "FAILED" in mail.context:
         prefix = "FAILED"
-    mail.subject = f'[{prefix}] BUILD BASELINE on {datetime.now(LOCAL_ZONE).strftime("%Y/%m/%d %H:%M")}'
+    mail.subject = f'[{prefix}] BUILD BASELINE on {CLOCK().strftime("%Y/%m/%d %H:%M")}'
 
     if ACTION_MODE == "local":
         print(f'{mail.subject}\n{mail.context}\n')
