@@ -57,7 +57,7 @@ if __name__ == "__main__":
         env.copytree(env.DOCS, _docs)
         env.DOCS = _docs
 
-    if env.ENV == 'GITHUB_ACTION' and env.GITHUB_ACTION_EVENT == "schedule":
+    if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "schedule":
         # ON GITHUB ACTIONS, SYSTEM EXITS WHEN THE LATEST TRADING DATE AND CURRENT DATETIME
         # IS NOT MATCHED. THIS CODE IS IMPLEMENTED IN ORDER TO AVOID RUNNING ON WEEKDAY WHILE
         # HOLIDAYS OF THE MARKET.
@@ -76,13 +76,13 @@ if __name__ == "__main__":
             CONFIG_MACRO = True
             CONFIG_STATE = True
 
-    if env.ENV == 'GITHUB_ACTION' and env.GITHUB_ACTION_EVENT == "workflow_dispatch":
+    if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "workflow_dispatch":
         # SELECTIVE FOR TESTING. CHANGE BEFORE COMMIT & PUSH, IF NEEDED.
         CONFIG_BASELINE = False
         CONFIG_MACRO = False
         CONFIG_STATE = False
 
-    if env.ENV == 'GITHUB_ACTION' and env.GITHUB_ACTION_EVENT == "push":
+    if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "push":
         pass
 
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
 
     try:
         financialStatement = FinancialStatement(mode="full update")
-        if env.ENV == "GITHUB_ACTION":
+        if env.ENV == "github_action":
             financialStatement.overview.to_parquet(path=env.FILE.STATEMENT_OVERVIEW, engine='pyarrow')
             financialStatement.annual.to_parquet(path=env.FILE.ANNUAL_STATEMENT, engine='pyarrow')
             financialStatement.quarter.to_parquet(path=env.FILE.QUARTER_STATEMENT, engine='pyarrow')
@@ -285,6 +285,6 @@ if __name__ == "__main__":
 
     print(f'{mail.subject}\n{mail.context}\n')
 
-    if env.ENV == 'GITHUB_ACTION' and env.GITHUB_ACTION_EVENT == "schedule":
+    if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "schedule":
         mail.send()
 
