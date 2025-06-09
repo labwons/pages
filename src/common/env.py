@@ -38,9 +38,9 @@ def copytree(src:str, dst:str):
     return
 
 
-if 'COLAB_GPU' in os.environ or 'COLAB_RELEASE_TAG' in os.environ:
+if any([key.lower().startswith('colab') for key in os.environ]):
     ENV = 'google_colab'
-elif os.environ.get('GITHUB_ACTIONS') == 'true':
+elif any([key.lower().startswith('github') for key in os.environ]):
     ENV = 'github_action'
 else:
     ENV = 'local'
@@ -48,7 +48,7 @@ else:
 GITHUB_ACTION_EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 
 
-if ENV == 'GOOGLE_COLAB' or ENV == 'GITHUB_ACTION':
+if ENV == 'google_colab' or ENV == 'github_action':
     DESKTOP = DOWNLOADS = ROOT = 'https://raw.githubusercontent.com/labwons/pages/main/'
 else:
     ROOT = os.path.dirname(__file__)
@@ -81,7 +81,9 @@ CLOCK = lambda: datetime.now(timezone(timedelta(hours=9)))
 
 if __name__ == "__main__":
 
-    print(ENV)
-    print(FILE.BASELINE)
-    print(FILE.GROUP)
-    print(FILE.ANNUAL_STATEMENT)
+    # print(ENV)
+    # print(FILE.BASELINE)
+    # print(FILE.GROUP)
+    # print(FILE.ANNUAL_STATEMENT)
+    print([key.lower().startswith('user') for key in os.environ])
+    print(any([key.lower().startswith('user') for key in os.environ]))
