@@ -49,14 +49,17 @@ GITHUB_ACTION_EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 
 
 if ENV == 'google_colab':
-    DESKTOP = DOWNLOADS = ROOT = 'https://raw.githubusercontent.com/labwons/pages/main/'
+    ROOT = 'https://raw.githubusercontent.com/labwons/pages/main/'
 else:
     ROOT = os.path.dirname(__file__)
     while not ROOT.endswith('pages'):
         ROOT = os.path.dirname(ROOT)
 
+if ENV == "local":
     DESKTOP = os.path.join(os.environ['USERPROFILE'], 'Desktop')
     DOWNLOADS = os.path.join(os.environ['USERPROFILE'], 'Downloads')
+else:
+    DESKTOP = DOWNLOADS = ROOT
 
 DOCS   = os.path.join(ROOT, r'docs')
 FILE = Dict()
