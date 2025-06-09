@@ -10,9 +10,9 @@ class actionDict(Dict):
         return
 
 ACTION = actionDict(
-    AFTERMARKET=True,
+    AFTERMARKET=False,
     MACRO=False,
-    STATEMENT=False
+    STATEMENT=True
 )
 
 if __name__ == "__main__":
