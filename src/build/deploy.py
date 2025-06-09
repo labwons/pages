@@ -48,6 +48,7 @@ if __name__ == "__main__":
     CONFIG_STATE    = False
 
 
+
     if env.ENV == "local":
         # FOR LOCAL HOST TESTING, EXTERNAL DIRECTORY IS RECOMMENDED AND USED. USING THE SAME
         # LOCAL HOSTING DIRECTORY WITH DEPLOYMENT DIRECTORY, DEPLOYMENT MIGHT BE CORRUPTED.
@@ -110,7 +111,7 @@ if __name__ == "__main__":
     #     context += [f"- [FAILED] MARKET NUMBERS: ", f'{report}', ""]
 
     try:
-        financialStatement = FinancialStatement(mode="full update")
+        financialStatement = FinancialStatement(update=CONFIG_STATE)
         if env.ENV == "github_action":
             financialStatement.overview.to_parquet(path=env.FILE.STATEMENT_OVERVIEW, engine='pyarrow')
             financialStatement.annual.to_parquet(path=env.FILE.ANNUAL_STATEMENT, engine='pyarrow')

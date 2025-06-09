@@ -10,32 +10,30 @@ from time import time
 from typing import Any, List, Union
 from xml.etree.ElementTree import Element, fromstring
 
-if "PATH" not in globals():
+if not "FILE" in globals():
     try:
-        from ...common.path import PATH
+        from ...common.env import FILE
     except ImportError:
-        from src.common.path import PATH
+        from src.common.env import FILE
 
 
 
 class FinancialStatement:
     _log: List[str] = []
 
-    # mode: ['local', 'partial update', 'full update']
-    def __init__(self, mode: str = 'local', *tickers):
-        stime = time()
-        self.log = f'RUN [Build Numbers Cache] {mode.upper()}'
+    def __init__(self, update:bool=False, *tickers):
+        if not update:
+            return
 
-        if mode == 'partial update':
+        stime = time()
+        if update and tickers:
             self.tickers = list(tickers)
+            self.log = f'RUN [Build Numbers Cache] PARTIAL UPDATE N={len(tickers)}'
         else:
-            baseline = read_json(PATH.BASE, orient='index')
+            self.log = f'RUN [Build Numbers Cache] FULL UPDATE'
+            baseline = read_json(FILE.BASELINE, orient='index')
             baseline.index = baseline.index.astype(str).str.zfill(6)
             self.tickers = baseline.index
-
-        if mode == 'local':
-            self.log = f'END [Build Numbers Cache] {len(self):,d} Stocks / Elapsed: {time() - stime:.2f}s'
-            return
 
         overview, annual, quarter = [], {}, {}
         for ticker in self.tickers:
@@ -51,7 +49,7 @@ class FinancialStatement:
         self.annual = concat(annual, axis=1)
         self.quarter = concat(quarter, axis=1)
 
-        self.log = f'END [Build Numbers Cache] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
+        self.log = f'END [Build Numbers Cache] {len(self):,d} Stocks / Elapsed: {time() - stime:.2f}s'
         return
 
     def __len__(self):
@@ -95,7 +93,8 @@ class FinancialStatement:
     def numbers(cls, ticker_or_xml: Union[str, Element], name: str = None) -> Series:
         xml = cls.fetch(ticker_or_xml) if isinstance(ticker_or_xml, str) else ticker_or_xml
         obj = {child.tag: child.text for child in xml.find('price')}
-        obj.update({child.tag: child.text for child in xml.find('consensus')})
+        if xml.find('consensus') is not None:
+            obj.update({child.tag: child.text for child in xml.find('consensus')})
         return Series(obj, name=name)
 
     @classmethod
@@ -114,6 +113,5 @@ class FinancialStatement:
 
 
 if __name__ == "__main__":
-    # fs = FinancialStatement(mode='local')
-    fs = FinancialStatement(mode='full update')
+    fs = FinancialStatement(update=True)
     print(fs.log)
