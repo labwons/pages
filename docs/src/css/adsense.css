@@ -115,7 +115,14 @@
 }
 
 .ad-in-display > .adsbygoogle {
-  width: 100%;
+  min-width: 360px;
+}
+
+@media (max-width: 1023px) {
+  .ad-in-display > .adsbygoogle {
+    min-width: none;
+    width: 100%;
+  }
 }
 
 .ad-in-infeed {
