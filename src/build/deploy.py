@@ -8,8 +8,8 @@ if __name__ == "__main__":
     try:
         from ..common import env
         from ..common.email import eMail
-        from ..fetch.market.spec import MarketSpec
-        from ..fetch.market.fstat import FinancialStatement
+        from ..fetch.market.aftermarket import AfterMarket
+        from ..fetch.market.finances import FinancialStatement
         from ..render.navigate import navigate, minify
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
@@ -21,8 +21,8 @@ if __name__ == "__main__":
     except ImportError:
         from src.common import env
         from src.common.email import eMail
-        from src.fetch.market.spec import MarketSpec
-        from src.fetch.market.fstat import FinancialStatement
+        from src.fetch.market.aftermarket import AfterMarket
+        from src.fetch.market.finances import FinancialStatement
         from src.render.navigate import navigate, minify
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble
@@ -98,16 +98,11 @@ if __name__ == "__main__":
     # except Exception as report:
     #     context += [f"- [FAILED] MARKET GROUP: ", f'{report}', ""]
 
-    # try:
-    #     spec = MarketSpec(CONFIG_STATEMENT)
-    #     if CONFIG_STATEMENT and not PATH.SPEC.startswith('http'):
-    #         with open(PATH.SPEC, 'w') as f:
-    #             f.write(spec.to_json(orient='index').replace("nan", ""))
-    #     prefix = "PARTIALLY FAILED" if "FAIL" in spec.log else "SUCCESS"
-    #     context += [f"- [{prefix}] MARKET NUMBERS: ", spec.log, ""]
-    # except Exception as report:
-    #     context += [f"- [FAILED] MARKET NUMBERS: ", f'{report}', ""]
 
+
+    # ---------------------------------------------------------------------------------------
+    # UPDATE FINANCIAL STATEMENT
+    # ---------------------------------------------------------------------------------------
     try:
         financialStatement = FinancialStatement(update=ACTION.STATEMENT)
         if ACTION.STATEMENT:
@@ -115,9 +110,21 @@ if __name__ == "__main__":
             financialStatement.annual.to_parquet(path=env.FILE.ANNUAL_STATEMENT, engine='pyarrow')
             financialStatement.quarter.to_parquet(path=env.FILE.QUARTER_STATEMENT, engine='pyarrow')
         prefix = "PARTIALLY FAILED" if "FAIL" in financialStatement.log else "SUCCESS"
-        context += [f"- [{prefix}] MARKET NUMBERS: ", financialStatement.log, ""]
+        context += [f"- [{prefix}] MARKET NUMBERS: ", financialStatement.log if ACTION.STATEMENT else "PASSED", ""]
     except Exception as report:
         context += [f"- [FAILED] MARKET NUMBERS: ", f'{report}', ""]
+
+    # ---------------------------------------------------------------------------------------
+    # UPDATE AFTER MARKET DATA
+    # ---------------------------------------------------------------------------------------
+    try:
+        afterMarket = AfterMarket(update=ACTION.AFTERMARKET)
+        if ACTION.AFTERMARKET:
+            afterMarket.data.to_parquet(env.FILE.AFTERMARKET, engine='pyarrow')
+        prefix = "PARTIALLY FAILED" if "FAIL" in afterMarket.log else "SUCCESS"
+        context += [f"- [{prefix}] AFTER MARKET: ", afterMarket.log if ACTION.AFTERMARKET else "PASSED", ""]
+    except Exception as report:
+        context += [f"- [FAILED] AFTER MARKET: ", f'{report}', ""]
 
     try:
         baseline = MarketBaseline(update=ACTION.AFTERMARKET)

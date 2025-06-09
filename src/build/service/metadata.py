@@ -54,42 +54,42 @@ METADATA = Dict(
         digit=2,
         calc='pykrx',
     ),
-    returnOn1Day=dict(
+    return1Day=dict(
         label='1일 수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx:close@d-1 / close - 1',
     ),
-    returnOn1Week=dict(
+    return1Week=dict(
         label='1주 수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx:close@w-1 / close - 1',
     ),
-    returnOn1Month=dict(
+    return1Month=dict(
         label='1개월 수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx:close@m-1 / close - 1',
     ),
-    returnOn3Month=dict(
+    return3Month=dict(
         label='3개월 수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx:close@m-3 / close - 1',
     ),
-    returnOn6Month=dict(
+    return6Month=dict(
         label='6개월 수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx:close@m-6 / close - 1',
     ),
-    returnOn1Year=dict(
+    return1Year=dict(
         label='1년 수익률',
         unit='%',
         dtype=float,

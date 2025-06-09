@@ -61,6 +61,7 @@ if not ENV == 'google_colab':
     FILE = Dict()
     FILE.BASELINE           = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
     FILE.GROUP              = os.path.join(ROOT, r'src/fetch/market/json/group.json')
+    FILE.AFTER_MARKET       = os.path.join(ROOT, r'src/fetch/market/parquet/aftermarket.parquet')
     FILE.ANNUAL_STATEMENT   = os.path.join(ROOT, r'src/fetch/market/parquet/annualstatement.parquet')
     FILE.QUARTER_STATEMENT  = os.path.join(ROOT, r'src/fetch/market/parquet/quarterstatement.parquet')
     FILE.STATEMENT_OVERVIEW = os.path.join(ROOT, r'src/fetch/market/parquet/statementoverview.parquet')

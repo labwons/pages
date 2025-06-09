@@ -10,7 +10,7 @@ class actionDict(Dict):
         return
 
 ACTION = actionDict(
-    AFTERMARKET=False,
+    AFTERMARKET=True,
     MACRO=False,
     STATEMENT=False
 )
