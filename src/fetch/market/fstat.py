@@ -113,5 +113,9 @@ class FinancialStatement:
 
 
 if __name__ == "__main__":
-    fs = FinancialStatement(update=True)
-    print(fs.log)
+    # fs = FinancialStatement(update=True)
+    # print(fs.log)
+    from pandas import read_parquet
+    from src.common.env import FILE
+    df = read_parquet(FILE.ANNUAL_STATEMENT)
+    print(df)

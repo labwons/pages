@@ -15,9 +15,9 @@ if __name__ == "__main__":
         from .service.bubble import MarketBubble
         from .service.macro import Macro
         from .service.marketmap import MarketMap
-        from . import action
         # from .service.portfolio import StockPortfolio
         from .resource.scope import rss, sitemap
+        from .action import ACTION
     except ImportError:
         from src.common import env
         from src.common.email import eMail
@@ -30,7 +30,7 @@ if __name__ == "__main__":
         from src.build.service.marketmap import MarketMap
         # from src.build.service.portfolio import StockPortfolio
         from src.build.resource.scope import rss, sitemap
-        from src.build import action
+        from src.build.action import ACTION
 
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
@@ -42,10 +42,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # ENVIRONMENT SETTINGS
     # ---------------------------------------------------------------------------------------
-    SYSTEM_NAV       = navigate()
-    CONFIG_BASELINE  = False
-    CONFIG_MACRO     = False
-    CONFIG_STATEMENT = False
+    SYSTEM_NAV = navigate()
 
     if env.ENV == "local":
         # FOR LOCAL HOST TESTING, EXTERNAL DIRECTORY IS RECOMMENDED AND USED. USING THE SAME
@@ -55,6 +52,7 @@ if __name__ == "__main__":
         _docs = os.path.join(env.DOWNLOADS, 'labwons')
         env.copytree(env.DOCS, _docs)
         env.DOCS = _docs
+        ACTION.reset()
 
     if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "schedule":
         # ON GITHUB ACTIONS, SYSTEM EXITS WHEN THE LATEST TRADING DATE AND CURRENT DATETIME
@@ -70,25 +68,20 @@ if __name__ == "__main__":
             sleep(30)
             now = env.CLOCK()
 
+        ACTION.reset()
         if now.hour >= 20:
-            CONFIG_BASELINE = False
-            CONFIG_MACRO = True
-            CONFIG_STATEMENT = True
+            ACTION.MACRO = ACTION.STATEMENT = True
         else:
-            CONFIG_BASELINE = True
-            CONFIG_MACRO = False
-            CONFIG_STATEMENT = False
+            ACTION.AFTERMARKET = True
 
     if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "workflow_dispatch":
-        # USE LATEST CONFIGURED PARAMETER (SYSTEM CONSTANT) TO DEPLOY AND BUILD.
-        pass
+        # USE LATEST CACHING RESOURCES TO DEPLOY AND BUILD.
+        ACTION.reset()
 
     if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "push":
         # EXTERNAL CONFIGURATION FOR BUILD CACHING. CONFIGURATION SCRIPT AT //src/build/action.py
         # IF CONFIGURED AND PUSHED, GITHUB ACTION AUTOMATICALLY RUNS AND DEPLOY.
-        CONFIG_BASELINE = action.CONFIG_BASELINE
-        CONFIG_MACRO = action.CONFIG_MACRO
-        CONFIG_STATEMENT = action.CONFIG_STATEMENT
+        pass
 
 
 
@@ -116,8 +109,8 @@ if __name__ == "__main__":
     #     context += [f"- [FAILED] MARKET NUMBERS: ", f'{report}', ""]
 
     try:
-        financialStatement = FinancialStatement(update=CONFIG_STATEMENT)
-        if CONFIG_STATEMENT:
+        financialStatement = FinancialStatement(update=ACTION.STATEMENT)
+        if ACTION.STATEMENT:
             financialStatement.overview.to_parquet(path=env.FILE.STATEMENT_OVERVIEW, engine='pyarrow')
             financialStatement.annual.to_parquet(path=env.FILE.ANNUAL_STATEMENT, engine='pyarrow')
             financialStatement.quarter.to_parquet(path=env.FILE.QUARTER_STATEMENT, engine='pyarrow')
@@ -127,13 +120,13 @@ if __name__ == "__main__":
         context += [f"- [FAILED] MARKET NUMBERS: ", f'{report}', ""]
 
     try:
-        baseline = MarketBaseline(update=CONFIG_BASELINE)
-        with open(env.BASELINE, 'w') as f:
+        baseline = MarketBaseline(update=ACTION.AFTERMARKET)
+        with open(env.FILE.BASELINE, 'w') as f:
             f.write(baseline.to_json(orient='index').replace("nan", "null"))
         context += [f'- [SUCCESS] BUILD Baseline', baseline.log, '']
     except Exception as error:
         baseline = MarketBaseline(update=False)
-        context += [f'- [FAILED] BUILD Baseline', f'  : {error}', '* Using latest baseline', '']
+        context += [f'- [FAILED] BUILD Baseline', f'  : {error}', '  * Using latest baseline', '']
 
     TRADING_DATE = baseline['date'].values[0]
     if not isinstance(TRADING_DATE, str):
@@ -227,10 +220,9 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # BUILD MACRO
     # ---------------------------------------------------------------------------------------
-    macro = Macro(CONFIG_MACRO)
-
     try:
-        if CONFIG_MACRO:
+        macro = Macro(update=ACTION.MACRO)
+        if ACTION.MACRO:
             with open(env.FILE.MACRO, 'w') as f:
                 f.write(macro.to_json(orient='index').replace('nan', ''))
 
