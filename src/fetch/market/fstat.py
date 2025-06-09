@@ -38,7 +38,7 @@ class FinancialStatement:
             return
 
         overview, annual, quarter = [], {}, {}
-        for ticker in self.tickers[:10]:
+        for ticker in self.tickers:
             xml = self.fetch(ticker, debug=False)
             if xml is None:
                 self.log = f'... Empty xml or Failed to fetch: {ticker}'

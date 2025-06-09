@@ -2,7 +2,6 @@ from datetime import datetime, timezone, timedelta
 import os, shutil
 
 
-
 class Dict(dict):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -37,6 +36,7 @@ def copytree(src:str, dst:str):
     shutil.copytree(src, dst, dirs_exist_ok=True)
     return
 
+CLOCK = lambda: datetime.now(timezone(timedelta(hours=9)))
 
 if any([key.lower().startswith('colab') for key in os.environ]):
     ENV = 'google_colab'
@@ -47,46 +47,36 @@ else:
 
 GITHUB_ACTION_EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 
-
-if ENV == 'google_colab':
-    ROOT = 'https://raw.githubusercontent.com/labwons/pages/main/'
-else:
+ROOT, DOCS, FILE, HTML = "", "", "", ""
+if not ENV == 'google_colab':
     ROOT = os.path.dirname(__file__)
     while not ROOT.endswith('pages'):
         ROOT = os.path.dirname(ROOT)
 
-if ENV == "local":
-    DESKTOP = os.path.join(os.environ['USERPROFILE'], 'Desktop')
-    DOWNLOADS = os.path.join(os.environ['USERPROFILE'], 'Downloads')
-else:
-    DESKTOP = DOWNLOADS = ROOT
+    if ENV == "local":
+        DESKTOP = os.path.join(os.environ['USERPROFILE'], 'Desktop')
+        DOWNLOADS = os.path.join(os.environ['USERPROFILE'], 'Downloads')
 
-DOCS   = os.path.join(ROOT, r'docs')
-FILE = Dict()
-FILE.BASELINE           = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
-FILE.GROUP              = os.path.join(ROOT, r'src/fetch/market/json/group.json')
-FILE.ANNUAL_STATEMENT   = os.path.join(ROOT, r'src/fetch/market/parquet/annualstatement.parquet')
-FILE.QUARTER_STATEMENT  = os.path.join(ROOT, r'src/fetch/market/parquet/quarterstatement.parquet')
-FILE.STATEMENT_OVERVIEW = os.path.join(ROOT, r'src/fetch/market/parquet/statementoverview.parquet')
-FILE.MACRO              = os.path.join(ROOT, r'src/fetch/macro/json/macro.json')
+    DOCS   = os.path.join(ROOT, r'docs')
+    FILE = Dict()
+    FILE.BASELINE           = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
+    FILE.GROUP              = os.path.join(ROOT, r'src/fetch/market/json/group.json')
+    FILE.ANNUAL_STATEMENT   = os.path.join(ROOT, r'src/fetch/market/parquet/annualstatement.parquet')
+    FILE.QUARTER_STATEMENT  = os.path.join(ROOT, r'src/fetch/market/parquet/quarterstatement.parquet')
+    FILE.STATEMENT_OVERVIEW = os.path.join(ROOT, r'src/fetch/market/parquet/statementoverview.parquet')
+    FILE.MACRO              = os.path.join(ROOT, r'src/fetch/macro/json/macro.json')
 
+    HTML = Dict()
+    HTML.MAP        = os.path.join(ROOT, r'docs/index.html')
+    HTML.BUBBLE     = os.path.join(ROOT, r'docs/bubble/index.html')
+    HTML.MACRO      = os.path.join(ROOT, r'docs/macro/index.html')
+    HTML.TEMPLATES  = os.path.join(ROOT, r'src/render/templates')
 
-HTML = Dict()
-HTML.MAP        = os.path.join(ROOT, r'docs/index.html')
-HTML.BUBBLE     = os.path.join(ROOT, r'docs/bubble/index.html')
-HTML.MACRO      = os.path.join(ROOT, r'docs/macro/index.html')
-HTML.TEMPLATES  = os.path.join(ROOT, r'src/render/templates')
-
-
-CLOCK = lambda: datetime.now(timezone(timedelta(hours=9)))
 
 
 
 if __name__ == "__main__":
-
-    # print(ENV)
+    print(ENV)
     # print(FILE.BASELINE)
     # print(FILE.GROUP)
     # print(FILE.ANNUAL_STATEMENT)
-    print([key.lower().startswith('user') for key in os.environ])
-    print(any([key.lower().startswith('user') for key in os.environ]))
