@@ -48,7 +48,7 @@ else:
 GITHUB_ACTION_EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 
 
-if ENV == 'google_colab' or ENV == 'github_action':
+if ENV == 'google_colab':
     DESKTOP = DOWNLOADS = ROOT = 'https://raw.githubusercontent.com/labwons/pages/main/'
 else:
     ROOT = os.path.dirname(__file__)
