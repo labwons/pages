@@ -65,15 +65,23 @@ class FinancialStatement:
 
     @classmethod
     def _statement(cls, xml:Element, tag: str) -> DataFrame:
+        # TO MINIMIZE MEMORY USAGE, SOME COLUMN KEYS ARE TO BE DROPPED.
+        EXCLUDE = [
+            '영업이익(발표기준)', '자본금(억원)',
+            '지배주주순이익(억원)', '비지배주주순이익(억원)', '순이익률(%)',
+            '지배주주지분(억원)', '비지배주주지분(억원)', '지배주주순이익률(%)',
+            'BPS(원)', 'DPS(원)', '발행주식수(천주)',
+        ]
         obj = xml.find(tag)
         if obj is None:
             return DataFrame()
-        columns = [val.text for val in obj.findall('field')]
+        columns = [val.text.replace(" ", "") for val in obj.findall('field')]
+        selector = [col for col in columns if not col in EXCLUDE]
         index, data = [], []
         for record in obj.findall('record'):
             index.append(record.find('date').text)
             data.append([val.text for val in record.findall('value')])
-        return DataFrame(index=index, columns=columns, data=data)
+        return DataFrame(index=index, columns=columns, data=data)[selector]
 
     @classmethod
     def fetch(cls, ticker: str, debug: bool = False) -> Union[Any, Element]:
@@ -113,9 +121,5 @@ class FinancialStatement:
 
 
 if __name__ == "__main__":
-    # fs = FinancialStatement(update=True)
-    # print(fs.log)
-    from pandas import read_parquet
-    from src.common.env import FILE
-    df = read_parquet(FILE.ANNUAL_STATEMENT)
-    print(df)
+    fs = FinancialStatement(update=False)
+    print(fs.log)
