@@ -1,2 +1,3 @@
-
-
+CONFIG_BASELINE  = False
+CONFIG_MACRO     = False
+CONFIG_STATEMENT = True
