@@ -1,10 +1,10 @@
 try:
-    from ...common.env import storage
+    from ...common.env import Dict
 except ImportError:
-    from src.common.env import storage
+    from src.common.env import Dict
 
 
-METADATA = storage(
+METADATA = Dict(
     close=dict(
         label='종가',
         unit='원',
