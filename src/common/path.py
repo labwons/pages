@@ -23,6 +23,14 @@ class PATH:
     PORTFOLIO = os.path.join(ROOT, r'src/fetch/stock/json/portfolio.json')
 
     DOCS   = os.path.join(ROOT, r'docs')
+    FILE = Series()
+    FILE.BASELINE           = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
+    FILE.GROUP              = os.path.join(ROOT, r'src/fetch/market/json/group.json')
+    FILE.ANNUAL_STATEMENT   = os.path.join(ROOT, r'src/fetch/market/parquet/annualstatement.parquet')
+    FILE.QUARTER_STATEMENT  = os.path.join(ROOT, r'src/fetch/market/parquet/quarterstatement.parquet')
+    FILE.STATEMENT_OVERVIEW = os.path.join(ROOT, r'src/fetch/market/parquet/statementoverview.parquet')
+    FILE.MACRO              = os.path.join(ROOT, r'src/fetch/macro/json/macro.json')
+
 
     # HTML = html(ROOT)
     HTML = Series()

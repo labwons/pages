@@ -1,15 +1,15 @@
 try:
     from ...common.path import PATH
-    from ...common.decorator import validate_argument
+    from ...common.env import validate_argument
     from .marketmap import BLUE2RED, RED2GREEN, HEX2RGB, CONNECT
 except ImportError:
     from src.common.path import PATH
-    from src.common.decorator import validate_argument
+    from src.common.env import validate_argument
     from src.build.service.marketmap import BLUE2RED, RED2GREEN, HEX2RGB, CONNECT
 from pandas import concat, read_json, isna, to_datetime, DataFrame, MultiIndex
 from typing import List
 
-# REFERENCED BY {config.py}
+# REFERENCED BY {action.py}
 # HOW TO USE
 # 1) 정규장 마감 이후 종목 선택
 # 2) 다음 거래일 매수 체결 후, BUILD 실행 전

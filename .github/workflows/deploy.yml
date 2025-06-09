@@ -12,6 +12,9 @@ on:
     - cron: '31 6 * * 1-5'  # KST 3:31 PM
     - cron: '30 11 * * 1-5' # KST 8:30 PM
   workflow_dispatch:
+  push:
+    paths:
+      - '**/action.py'
 
 jobs:
   build:
