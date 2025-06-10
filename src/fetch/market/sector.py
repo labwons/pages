@@ -128,6 +128,8 @@ class SectorComposition:
         self.data = concat(objs=[data, exceptionals], axis=0)
         self.data['date'] = date
         self.log = f'END [Update Sector Composition] / {len(data)} Stocks / Elapsed: {time() - stime:.2f}s'
+        if "FAIL" in self.log:
+            self.state = "FAILED"
         return
 
     @property
@@ -166,10 +168,13 @@ class SectorComposition:
             else:
                 sleep(5)
                 return cls.fetchWiseGroup(code, date, countdown - 1)
-        else:
-            cls._log[-1] += "SUCCESS"
-            return DataFrame(resp.json()['list'])
+        if "hmg-corp" in resp.text:
+            cls._log[-1] += "FAILED: BLOCKED"
+            return DataFrame()
+        cls._log[-1] += "SUCCESS"
+        return DataFrame(resp.json()['list'])
 
 if __name__ == "__main__":
     sector = SectorComposition()
+    print(sector.state)
     print(sector.log)

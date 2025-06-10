@@ -29,11 +29,8 @@ INTERVALS: Dict[str, int] = {
 
 class AfterMarket:
     _log: List[str] = []
-
-    def __init__(self, update: bool = False):
-        if not update:
-            return
-
+    state:str = "SUCCESS"
+    def __init__(self):
         stime = time()
         self.log = f'RUN [AFTER MARKET]'
         date = get_nearest_business_day_in_a_week()
@@ -41,24 +38,24 @@ class AfterMarket:
 
         try:
             marketCap = get_market_cap_by_ticker(date=date, market='ALL', alternative=True)
-            self.log = f'... {"Failed" if marketCap.empty else "Success"} fetching market cap'
+            self.log = f'... {"FAILED" if marketCap.empty else "Success"} fetching market cap'
         except Exception as reason:
             marketCap = DataFrame()
-            self.log = f'... Failed fetching market cap: {reason}'
+            self.log = f'... FAILED fetching market cap: {reason}'
 
         try:
             multiples = get_market_fundamental(date=date, market='ALL', alternative=True)
-            self.log = f'... {"Failed" if multiples.empty else "Success"} fetching multiples'
+            self.log = f'... {"FAILED" if multiples.empty else "Success"} fetching multiples'
         except Exception as reason:
             multiples = DataFrame()
-            self.log = f'... Failed fetching multiples: {reason}'
+            self.log = f'... FAILED fetching multiples: {reason}'
 
         try:
             foreignRate = get_exhaustion_rates_of_foreign_investment(date=date, market='ALL')
-            self.log = f'... {"Failed" if foreignRate.empty else "Success"} fetching foreign rate'
+            self.log = f'... {"FAILED" if foreignRate.empty else "Success"} fetching foreign rate'
         except Exception as reason:
             foreignRate = DataFrame()
-            self.log = f'... Failed fetching foreign rate: {reason}'
+            self.log = f'... FAILED fetching foreign rate: {reason}'
 
         try:
             ipo = read_html(
@@ -66,20 +63,20 @@ class AfterMarket:
                 encoding='euc-kr'
             )[0].set_index(keys='종목코드')
             ipo.index = ipo.index.astype(str).str.zfill(6)
-            self.log = f'... {"Failed" if ipo.empty else "Success"} fetching ipo list'
+            self.log = f'... {"FAILED" if ipo.empty else "Success"} fetching ipo list'
         except Exception as reason:
             ipo = DataFrame()
-            self.log = f'... Failed fetching ipo list: {reason}'
+            self.log = f'... FAILED fetching ipo list: {reason}'
 
         try:
             ks = Series(index=get_market_ticker_list(date=date, market='KOSPI')).fillna('KOSPI')
             kq = Series(index=get_market_ticker_list(date=date, market='KOSDAQ')).fillna('KOSDAQ')
             marketType = concat([ks, kq], axis=0)
             marketType.name = "market"
-            self.log = f'... {"Failed" if marketType.empty else "Success"} fetching market type'
+            self.log = f'... {"FAILED" if marketType.empty else "Success"} fetching market type'
         except Exception as reason:
             marketType = DataFrame()
-            self.log = f'... Failed fetching market type: {reason}'
+            self.log = f'... FAILED fetching market type: {reason}'
 
         merged = concat([marketCap, multiples, foreignRate], axis=1)
         c_active_ipo = merged.index.isin(ipo.index)
@@ -94,12 +91,14 @@ class AfterMarket:
         try:
             returns = self.fetchReturns(date, merged.index)
             merged = merged.join(returns, how='left')
-            self.log = f'... {"Failed" if returns.empty else "Success"} fetching returns'
+            self.log = f'... {"FAILED" if returns.empty else "Success"} fetching returns'
         except Exception as reason:
-            self.log = f'... Failed fetching returns: {reason}'
+            self.log = f'... FAILED fetching returns: {reason}'
         self.data = merged = merged.sort_values(by='시가총액', ascending=False)
 
         self.log = f'End [AFTER MARKET] / {len(merged)} stocks / Elapsed: {time() - stime:.2f}s'
+        if "FAILED" in self.log:
+            self.state = "PARTIALLY FAILED"
         return
 
     @property

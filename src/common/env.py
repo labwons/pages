@@ -47,31 +47,31 @@ else:
 
 GITHUB_ACTION_EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 
-ROOT, DOCS, FILE, HTML = "", "", "", ""
+ROOT = "https://raw.githubusercontent.com/labwons/pages/main/"
 if not ENV == 'google_colab':
     ROOT = os.path.dirname(__file__)
     while not ROOT.endswith('pages'):
         ROOT = os.path.dirname(ROOT)
 
-    if ENV == "local":
-        DESKTOP = os.path.join(os.environ['USERPROFILE'], 'Desktop')
-        DOWNLOADS = os.path.join(os.environ['USERPROFILE'], 'Downloads')
+if ENV == "local":
+    DESKTOP = os.path.join(os.environ['USERPROFILE'], 'Desktop')
+    DOWNLOADS = os.path.join(os.environ['USERPROFILE'], 'Downloads')
 
-    DOCS   = os.path.join(ROOT, r'docs')
-    FILE = Dict()
-    FILE.BASELINE           = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
-    FILE.SECTOR_COMPOSITION = os.path.join(ROOT, r'src/fetch/market/parquet/sectorcomposition.parquet')
-    FILE.AFTER_MARKET       = os.path.join(ROOT, r'src/fetch/market/parquet/aftermarket.parquet')
-    FILE.ANNUAL_STATEMENT   = os.path.join(ROOT, r'src/fetch/market/parquet/annualstatement.parquet')
-    FILE.QUARTER_STATEMENT  = os.path.join(ROOT, r'src/fetch/market/parquet/quarterstatement.parquet')
-    FILE.STATEMENT_OVERVIEW = os.path.join(ROOT, r'src/fetch/market/parquet/statementoverview.parquet')
-    FILE.MACRO              = os.path.join(ROOT, r'src/fetch/macro/json/macro.json')
+DOCS   = os.path.join(ROOT, r'docs')
+FILE = Dict()
+FILE.BASELINE           = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
+FILE.GROUP              = os.path.join(ROOT, r'src/fetch/market/json/group.json')
+FILE.AFTER_MARKET       = os.path.join(ROOT, r'src/fetch/market/parquet/aftermarket.parquet')
+FILE.ANNUAL_STATEMENT   = os.path.join(ROOT, r'src/fetch/market/parquet/annualstatement.parquet')
+FILE.QUARTER_STATEMENT  = os.path.join(ROOT, r'src/fetch/market/parquet/quarterstatement.parquet')
+FILE.STATEMENT_OVERVIEW = os.path.join(ROOT, r'src/fetch/market/parquet/statementoverview.parquet')
+FILE.MACRO              = os.path.join(ROOT, r'src/fetch/macro/json/macro.json')
 
-    HTML = Dict()
-    HTML.MAP        = os.path.join(ROOT, r'docs/index.html')
-    HTML.BUBBLE     = os.path.join(ROOT, r'docs/bubble/index.html')
-    HTML.MACRO      = os.path.join(ROOT, r'docs/macro/index.html')
-    HTML.TEMPLATES  = os.path.join(ROOT, r'src/render/templates')
+HTML = Dict()
+HTML.MAP        = os.path.join(ROOT, r'docs/index.html')
+HTML.BUBBLE     = os.path.join(ROOT, r'docs/bubble/index.html')
+HTML.MACRO      = os.path.join(ROOT, r'docs/macro/index.html')
+HTML.TEMPLATES  = os.path.join(ROOT, r'src/render/templates')
 
 
 

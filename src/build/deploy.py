@@ -39,6 +39,7 @@ if __name__ == "__main__":
     from pykrx.stock import get_nearest_business_day_in_a_week
     from numpy import datetime_as_string
     from time import sleep
+    import pandas as pd
     import os
 
     # ---------------------------------------------------------------------------------------
@@ -105,13 +106,14 @@ if __name__ == "__main__":
     # UPDATE FINANCIAL STATEMENT
     # ---------------------------------------------------------------------------------------
     if ACTION.STATEMENT:
+        tickers = FinancialStatement.checkTickers(env.FILE.BASELINE)
         try:
-            financialStatement = FinancialStatement(update=ACTION.STATEMENT)
-            financialStatement.overview.to_parquet(path=env.FILE.STATEMENT_OVERVIEW, engine='pyarrow')
-            financialStatement.annual.to_parquet(path=env.FILE.ANNUAL_STATEMENT, engine='pyarrow')
-            financialStatement.quarter.to_parquet(path=env.FILE.QUARTER_STATEMENT, engine='pyarrow')
-            prefix = "PARTIALLY FAILED" if "FAIL" in financialStatement.log else "SUCCESS"
-            context += [f"- [{prefix}] UPDATE FINANCIAL STATEMENT: ", financialStatement.log, ""]
+            financialStatement = FinancialStatement(*tickers)
+            if not financialStatement.state == "PASSED":
+                financialStatement.overview.to_parquet(path=env.FILE.STATEMENT_OVERVIEW, engine='pyarrow')
+                financialStatement.annual.to_parquet(path=env.FILE.ANNUAL_STATEMENT, engine='pyarrow')
+                financialStatement.quarter.to_parquet(path=env.FILE.QUARTER_STATEMENT, engine='pyarrow')
+            context += [f"- [{financialStatement.state}] UPDATE FINANCIAL STATEMENT: ", financialStatement.log, ""]
         except Exception as report:
             context += [f"- [FAILED] UPDATE FINANCIAL STATEMENT: ", f'{report}', ""]
     else:
@@ -122,10 +124,9 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     if ACTION.AFTERMARKET:
         try:
-            afterMarket = AfterMarket(update=ACTION.AFTERMARKET)
+            afterMarket = AfterMarket()
             afterMarket.data.to_parquet(env.FILE.AFTERMARKET, engine='pyarrow')
-            prefix = "PARTIALLY FAILED" if "FAIL" in afterMarket.log else "SUCCESS"
-            context += [f"- [{prefix}] UPDATE AFTER MARKET: ", afterMarket.log, ""]
+            context += [f"- [{afterMarket.state}] UPDATE AFTER MARKET: ", afterMarket.log, ""]
         except Exception as report:
             context += [f"- [FAILED] UPDATE AFTER MARKET: ", f'{report}', ""]
     else:
