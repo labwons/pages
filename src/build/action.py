@@ -10,10 +10,10 @@ class actionDict(Dict):
         return
 
 ACTION = actionDict(
-    AFTERMARKET=False,
+    AFTERMARKET=True,
     MACRO=False,
-    STATEMENT=True,
-    SECTOR=True
+    STATEMENT=False,
+    SECTOR=False
 )
 
 if __name__ == "__main__":
