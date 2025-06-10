@@ -34,7 +34,6 @@ class AfterMarket:
         stime = time()
         self.log = f'RUN [AFTER MARKET]'
         date = get_nearest_business_day_in_a_week()
-        self.tradingDate = datetime.strptime(date, "%Y%m%d").strftime("%Y/%m/%d")
 
         try:
             marketCap = get_market_cap_by_ticker(date=date, market='ALL', alternative=True)
@@ -95,6 +94,7 @@ class AfterMarket:
         except Exception as reason:
             self.log = f'... FAILED fetching returns: {reason}'
         self.data = merged = merged.sort_values(by='시가총액', ascending=False)
+        self.data['date'] = date
 
         self.log = f'End [AFTER MARKET] / {len(merged)} stocks / Elapsed: {time() - stime:.2f}s'
         if "FAILED" in self.log:
