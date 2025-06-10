@@ -136,7 +136,7 @@ if __name__ == "__main__":
     # BUILD BASELINE
     # ---------------------------------------------------------------------------------------
     try:
-        baseline = MarketBaseline(update=ACTION.AFTERMARKET)
+        baseline = MarketBaseline(update=True)
         with open(env.FILE.BASELINE, 'w') as f:
             f.write(baseline.to_json(orient='index').replace("nan", "null"))
         context += [f'- [SUCCESS] BUILD Baseline', baseline.log, '']
