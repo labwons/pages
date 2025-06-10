@@ -65,6 +65,7 @@ FILE.AFTER_MARKET       = os.path.join(ROOT, r'src/fetch/market/parquet/aftermar
 FILE.ANNUAL_STATEMENT   = os.path.join(ROOT, r'src/fetch/market/parquet/annualstatement.parquet')
 FILE.QUARTER_STATEMENT  = os.path.join(ROOT, r'src/fetch/market/parquet/quarterstatement.parquet')
 FILE.STATEMENT_OVERVIEW = os.path.join(ROOT, r'src/fetch/market/parquet/statementoverview.parquet')
+FILE.SECTOR_COMPOSITION = os.path.join(ROOT, r'src/fetch/market/parquet/sectorcomposition.parquet')
 FILE.MACRO              = os.path.join(ROOT, r'src/fetch/macro/json/macro.json')
 
 HTML = Dict()

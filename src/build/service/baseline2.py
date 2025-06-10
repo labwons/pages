@@ -6,7 +6,7 @@ except ImportError:
     from src.common.env import FILE
 from datetime import datetime
 from numpy import nan, datetime_as_string
-from pandas import DataFrame, read_json
+from pandas import DataFrame, read_json, read_parquet
 from time import time
 from typing import Any, Dict, List
 
@@ -24,6 +24,20 @@ class MarketBaseline(DataFrame):
 
         super().__init__()
 
+        sector = read_parquet(FILE.SECTOR_COMPOSITION)
+        sector_date = datetime.strptime(str(sector.pop('date').values[-1]), "%Y%m%d").date()
+        self.log = f'- READ SECTOR COMPOSITION: {str(sector_date).replace("-", "/")}'
+        # print(sector)
+
+        overview = read_parquet(FILE.STATEMENT_OVERVIEW)
+        overview_date = overview.pop('date').value_counts(dropna=False)
+        if len(overview_date) == 1:
+            self.log = f'- READ STATEMENT OVERVIEW: {overview_date.index[0]}'
+        else:
+            report = '\n'.join(f'  {line}' for line in str(overview_date).split('\n')[1:-1])
+            self.log = f'- READ STATEMENT OVERVIEW: LOW RELIABILITY'
+            self.log = f'{report}'
+        overview = self.overview(overview)
 
 
 
@@ -81,6 +95,12 @@ class MarketBaseline(DataFrame):
     @log.setter
     def log(self, log: str):
         self._log.append(log)
+
+    @classmethod
+    def overview(cls, overview:DataFrame) -> DataFrame:
+        print(overview)
+        return overview
+
 
     def show_gaussian(self, col:str):
         # INTERNAL
@@ -142,7 +162,7 @@ if __name__ == "__main__":
 
     baseline = MarketBaseline()
     # print(baseline)
-    # print(baseline.log)
+    print(baseline.log)
     # baseline.show_gaussian('M-1')
 
 
