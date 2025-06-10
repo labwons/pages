@@ -12,7 +12,8 @@ class actionDict(Dict):
 ACTION = actionDict(
     AFTERMARKET=False,
     MACRO=False,
-    STATEMENT=True
+    STATEMENT=False,
+    SECTOR=False
 )
 
 if __name__ == "__main__":

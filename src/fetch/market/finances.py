@@ -39,7 +39,6 @@ class FinancialStatement:
         for ticker in self.tickers:
             xml = self.fetch(ticker, debug=False)
             if xml is None:
-                self.log = f'... Empty xml or Failed to fetch: {ticker}'
                 continue
             overview.append(self.numbers(xml, name=ticker))
             annual[ticker] = self.annualStatement(xml)
@@ -94,7 +93,7 @@ class FinancialStatement:
                 print(text)
             return fromstring(text)
         except Exception as reason:
-            cls._log.append(f'... Failed to fetch: {ticker} / {reason}')
+            cls._log.append(f'... FAILED to fetch: {ticker} / {reason}')
         return
 
     @classmethod
