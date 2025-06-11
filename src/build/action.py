@@ -1,24 +1,34 @@
-try:
-    from ..common.env import dDict
-except ImportError:
-    from src.common.env import dDict
 
-class actionDict(dDict):
-    def reset(self):
-        for key in self:
-            self[key] = False
+class ACTION:
+
+    AFTERMARKET=True
+    MACRO=False
+    STATEMENT=False
+    SECTOR=False
+
+    @classmethod
+    def reset(cls):
+        for key in dir(cls):
+            if not key.startswith('_'):
+                setattr(cls, key, False)
         return
 
-ACTION = actionDict(
-    AFTERMARKET=True,
-    MACRO=False,
-    STATEMENT=False,
-    SECTOR=False
-)
+
+
+
+# ACTION = actionDict(
+#     AFTERMARKET=True,
+#     MACRO=False,
+#     STATEMENT=False,
+#     SECTOR=False
+# )
 
 if __name__ == "__main__":
     print(ACTION)
+    print(ACTION.AFTERMARKET)
     ACTION.reset()
-    print(ACTION)
-    ACTION.MACRO = ACTION.STATEMENT = True
-    print(ACTION)
+    print(ACTION.AFTERMARKET)
+    # print(ACTION)
+    # ACTION.MACRO = ACTION.STATEMENT = True
+    # print(ACTION)
+    # print(ACTION.MACRO)
