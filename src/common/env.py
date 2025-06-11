@@ -10,6 +10,9 @@ class dDict(dict):
                 value = dDict(**value)
             self[key] = value
 
+    def __iter__(self):
+        return iter(self.items())
+
     def __getattr__(self, attr):
         try:
             return self[attr]

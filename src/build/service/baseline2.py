@@ -6,30 +6,47 @@ except ImportError:
     from src.common.env import FILE
 from datetime import datetime
 from numpy import nan, datetime_as_string
-from pandas import DataFrame, read_json, read_parquet
-from time import time
-from typing import Any, Dict, List
+from pandas import DataFrame, Series
+from pandas import concat, read_parquet
+from time import perf_counter
+from typing import Any, Dict, List, Union
 
 
 
+class Tools:
 
-class MarketBaseline(DataFrame):
+    @classmethod
+    def typeCast(cls, value):
+        value = str(value).lower().replace(",", "")
+        if "n" in value:
+            return nan
+        if not any([char.isdigit() for char in value]):
+            return nan
+        return float(value) if "." in value or "-" in value else int(value)
+
+    # @classmethod
+    # def meanGrowthRate(cls, series:Series) -> Union[Any, float]:
+    #     if len(series) != len(series.dropna()):
+    #         return nan
+    #     return (100 * series.pct_change()).mean()
+
+
+
+class MarketBaseline:
 
     _log: List[str] = []
 
     def __init__(self):
-        stime = time()
+        stime = perf_counter()
         self.log = f'RUN [BUILD BASELINE]'
 
+        number = read_parquet(FILE.AFTER_MARKET, dtype_backend="pyarrow")
+        n_date = datetime.strptime(str(number.pop('date').values[-1]), "%Y%m%d%H:%M")
+        self.log = f'- READ AFTER MARKET NUMBERS: {str(n_date).replace("-", "/")}'
+        number = self.number(number)
+        # print(number)
 
-        super().__init__()
-
-        sector = read_parquet(FILE.SECTOR_COMPOSITION)
-        sector_date = datetime.strptime(str(sector.pop('date').values[-1]), "%Y%m%d").date()
-        self.log = f'- READ SECTOR COMPOSITION: {str(sector_date).replace("-", "/")}'
-        # print(sector)
-
-        overview = read_parquet(FILE.STATEMENT_OVERVIEW)
+        overview = read_parquet(FILE.STATEMENT_OVERVIEW, dtype_backend="pyarrow")
         overview_date = overview.pop('date').value_counts(dropna=False)
         if len(overview_date) == 1:
             self.log = f'- READ STATEMENT OVERVIEW: {overview_date.index[0]}'
@@ -38,12 +55,26 @@ class MarketBaseline(DataFrame):
             self.log = f'- READ STATEMENT OVERVIEW: LOW RELIABILITY'
             self.log = f'{report}'
         overview = self.overview(overview)
+        # print(overview)
 
-        numbers = read_parquet(FILE.AFTER_MARKET, dtype_backend="pyarrow")
-        numbers_date = datetime.strptime(str(numbers.pop('date').values[-1]), "%Y%m%d%H:%M")
-        self.log = f'- READ AFTER MARKET NUMBERS: {str(numbers_date.date()).replace("-", "")}'
-        # print(numbers)
+        statementA = read_parquet(FILE.ANNUAL_STATEMENT)
+        self.log = f'- READ ANNUAL STATEMENT'
+        statementA = self.statementA(statementA)
+        print(statementA)
 
+        sector = read_parquet(FILE.SECTOR_COMPOSITION)
+        s_date = datetime.strptime(str(sector.pop('date').values[-1]), "%Y%m%d").strftime("%Y/%m/%d")
+        self.log = f'- READ SECTOR COMPOSITION: {s_date}'
+        sector = self.sector(sector)
+        # print(sector)
+
+        merge = number \
+                .join(overview) \
+                .join(sector)
+        merge = merge[~merge['name'].isna()]
+        # print(merge)
+
+        self.tradingDate = n_date.strftime("%Y/%m/%d")
 
         # baseline = read_json(PATH.BASE, orient='index')
         # basedate = baseline['date'].values[0]
@@ -89,7 +120,7 @@ class MarketBaseline(DataFrame):
         #     self.log = f" * [FAILED] Error while customizing data: {report}"
 
         # super().__init__(merge[["date"] + [col for col in merge.columns if not col == 'date']])
-        self.log = f'END [BUILD BASELINE] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
+        self.log = f'END [BUILD BASELINE] {len(merge)} Stocks / Elapsed: {perf_counter() - stime:.2f}s'
         return
 
     @property
@@ -101,62 +132,111 @@ class MarketBaseline(DataFrame):
         self._log.append(log)
 
     @classmethod
+    def number(cls, number:DataFrame) -> DataFrame:
+        # RENAME AND DROP
+        number = number.rename(columns={p: c for p, c in METADATA.RENAME if p in number.columns})
+        number = number.drop(columns=[col for col in number if not col in METADATA])
+        return number
+
+    @classmethod
     def overview(cls, overview:DataFrame) -> DataFrame:
-        # print(overview)
+        overview = overview.rename(columns={p: c for p, c in METADATA.RENAME if p in overview.columns})
+        overview = overview.drop(columns=[col for col in overview if not col in METADATA])
         return overview
 
+    @classmethod
+    def sector(cls, sector:DataFrame) -> DataFrame:
+        # NOTHING TO MODIFY
+        return sector
 
-    def show_gaussian(self, col:str):
-        # INTERNAL
-        import plotly.graph_objs as go
-        from scipy.stats import norm
-        from pandas import concat, Series
+    @classmethod
+    def statementA(cls, statementA:DataFrame) -> DataFrame:
+        tickers = statementA.columns.get_level_values(0).unique()
+        objs = []
+        # for ticker in ['005930', '361390']:
+        for ticker in tickers:
+            c = statementA[ticker]['연결']
+            s = statementA[ticker]['별도']
+            obj = Series()
+            obj['statementType'] = 'separate' if s.count().sum() > c.count().sum() else 'Consolidated'
 
-        # x = self[[col, 'name']]
-        y = Series(index=self.index, data=norm.pdf(self[col], self[col].mean(), self[col].std()), name='y')
-        m = self['name'] + '(' + self.index + ')'
-        m.name = 'm'
-        subset = concat([self[col], y, m], axis=1).sort_values(by=col)
-        print(subset)
-        fig = go.Figure()
+            statement = s if obj.statementType == "separate" else c
+            statement = statement[statement.index.str.contains('/12') & (~statement.index.str.contains('\\(E\\)'))]
+            statement = statement.map(Tools.typeCast)
 
-        fig.add_trace(go.Scatter(
-            x=subset[col],
-            y=subset.y,
-            mode='lines+markers',
-            showlegend=False,
-            meta=subset.m,
-            hovertemplate="%{meta}: %{x}<extra></extra>"
-        ))
-        fig.add_trace(go.Scatter(
-            x=[subset[col].mean() - 2 * subset[col].std()] * len(subset),
-            y=subset.y,
-            mode='lines',
-            showlegend=False,
-            line={
-                'color':'black',
-                'dash':'dot'
-            },
-            hoverinfo='skip'
-        ))
-        fig.add_trace(go.Scatter(
-            x=[subset[col].mean() + 2 * subset[col].std()] * len(subset),
-            y=subset.y,
-            mode='lines',
-            showlegend=False,
-            line={
-                'color': 'black',
-                'dash': 'dot'
-            },
-            hoverinfo='skip'
-        ))
+            latestStatement = statement.iloc[-1]
+            obj['fiscalDate'] = latestStatement.name
+            obj['fiscalRevenue'] = latestStatement[statement.columns[0]]
+            obj = concat([obj, latestStatement.drop(index=[statement.columns[0]])])
 
-        fig.update_layout(
-            xaxis_title="Value",
-            yaxis_title="Density",
-        )
-        fig.show('browser')
-        return
+            ratedStatement = 100 * statement.pct_change(fill_method=None).iloc[1:]
+            # print(ratedStatement)
+            # obj['averageRevenueGrowth']
+            # obj['averageProfitGrowth']
+            # obj['averageEpsGrowth']
+            # obj['fiscalRevenueGrowth']
+            # obj['fiscalProfitGrowth']
+            # obj['fiscalEpsGrowth']
+            # obj['fiscalDividendGrowth']
+
+            obj.name = ticker
+            objs.append(obj)
+        merge = concat(objs=objs, axis=1).T
+        merge = merge.rename(columns={p: c for p, c in METADATA.RENAME if p in merge.columns})
+        return merge
+
+
+    # def show_gaussian(self, col:str):
+    #     # INTERNAL
+    #     import plotly.graph_objs as go
+    #     from scipy.stats import norm
+    #     from pandas import concat, Series
+    #
+    #     # x = self[[col, 'name']]
+    #     y = Series(index=self.index, data=norm.pdf(self[col], self[col].mean(), self[col].std()), name='y')
+    #     m = self['name'] + '(' + self.index + ')'
+    #     m.name = 'm'
+    #     subset = concat([self[col], y, m], axis=1).sort_values(by=col)
+    #     print(subset)
+    #     fig = go.Figure()
+    #
+    #     fig.add_trace(go.Scatter(
+    #         x=subset[col],
+    #         y=subset.y,
+    #         mode='lines+markers',
+    #         showlegend=False,
+    #         meta=subset.m,
+    #         hovertemplate="%{meta}: %{x}<extra></extra>"
+    #     ))
+    #     fig.add_trace(go.Scatter(
+    #         x=[subset[col].mean() - 2 * subset[col].std()] * len(subset),
+    #         y=subset.y,
+    #         mode='lines',
+    #         showlegend=False,
+    #         line={
+    #             'color':'black',
+    #             'dash':'dot'
+    #         },
+    #         hoverinfo='skip'
+    #     ))
+    #     fig.add_trace(go.Scatter(
+    #         x=[subset[col].mean() + 2 * subset[col].std()] * len(subset),
+    #         y=subset.y,
+    #         mode='lines',
+    #         showlegend=False,
+    #         line={
+    #             'color': 'black',
+    #             'dash': 'dot'
+    #         },
+    #         hoverinfo='skip'
+    #     ))
+    #
+    #     fig.update_layout(
+    #         xaxis_title="Value",
+    #         yaxis_title="Density",
+    #     )
+    #     fig.show('browser')
+    #     return
 
 
 if __name__ == "__main__":
@@ -168,6 +248,7 @@ if __name__ == "__main__":
     # print(baseline)
     print(baseline.log)
     # baseline.show_gaussian('M-1')
+
 
 
 

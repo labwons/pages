@@ -28,6 +28,13 @@ class FinancialStatement:
         self.overview = concat(overview, axis=1).T
         self.annual = concat(annual, axis=1)
         self.quarter = concat(quarter, axis=1)
+        date = self.overview['date'].value_counts(dropna=False)
+        if len(date) == 1:
+            self.log = f'- Resource date: {date.index[0]}'
+        else:
+            report = '\n'.join(f'  {line}' for line in str(date).split('\n')[1:-1])
+            self.log = f'- Resource date: LOW RELIABILITY'
+            self.log = f'{report}'
 
         self.log = f'END [Build Numbers Cache] {len(tickers):,d} Stocks / Elapsed: {time() - stime:.2f}s'
         if "FAILED" in self.log:
