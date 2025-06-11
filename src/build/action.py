@@ -3,9 +3,9 @@
 
 class ACTION:
 
-    AFTERMARKET:bool = True
+    AFTERMARKET:bool = False
     MACRO:bool       = False
-    STATEMENT:bool   = False
+    STATEMENT:bool   = True
     SECTOR:bool      = False
 
     @classmethod
