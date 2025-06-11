@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from io import StringIO
 from pandas import (
     concat,
@@ -16,7 +16,7 @@ from pykrx.stock import (
     get_market_ticker_list
 )
 from requests import get
-from time import time
+from time import perf_counter
 from typing import Dict, Iterable, List
 
 set_option('future.no_silent_downcasting', True)
@@ -32,9 +32,13 @@ class AfterMarket:
     _log: List[str] = []
     state:str = "SUCCESS"
     def __init__(self):
-        stime = time()
+        stime = perf_counter()
+
         self.log = f'RUN [AFTER MARKET]'
+
         date = get_nearest_business_day_in_a_week()
+        time = datetime.now(timezone(timedelta(hours=9)))
+        time = "15:30" if time.hour >= 15 and time.minute >= 30 else time.strftime("%H:%M")
 
         try:
             marketCap = get_market_cap_by_ticker(date=date, market='ALL', alternative=True)
@@ -97,9 +101,9 @@ class AfterMarket:
         except Exception as reason:
             self.log = f'... FAILED fetching returns: {reason}'
         self.data = merged = merged.sort_values(by='시가총액', ascending=False)
-        self.data['date'] = date
+        self.data['date'] = f'{date}{time}'
 
-        self.log = f'End [AFTER MARKET] / {len(merged)} stocks / Elapsed: {time() - stime:.2f}s'
+        self.log = f'End [AFTER MARKET] / {len(merged)} stocks / Elapsed: {perf_counter() - stime:.2f}s'
         if "FAILED" in self.log:
             self.state = "PARTIALLY FAILED"
         return
@@ -146,7 +150,7 @@ class AfterMarket:
 
 
 if __name__ == "__main__":
-    afterMarket = AfterMarket(update=True)
+    afterMarket = AfterMarket()
 
     print(afterMarket.log)
 

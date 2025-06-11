@@ -39,6 +39,10 @@ class MarketBaseline(DataFrame):
             self.log = f'{report}'
         overview = self.overview(overview)
 
+        numbers = read_parquet(FILE.AFTER_MARKET, dtype_backend="pyarrow")
+        numbers_date = datetime.strptime(str(numbers.pop('date').values[-1]), "%Y%m%d%H:%M")
+        self.log = f'- READ AFTER MARKET NUMBERS: {str(numbers_date.date()).replace("-", "")}'
+        # print(numbers)
 
 
         # baseline = read_json(PATH.BASE, orient='index')
@@ -98,7 +102,7 @@ class MarketBaseline(DataFrame):
 
     @classmethod
     def overview(cls, overview:DataFrame) -> DataFrame:
-        print(overview)
+        # print(overview)
         return overview
 
 

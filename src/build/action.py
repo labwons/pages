@@ -18,7 +18,6 @@ if __name__ == "__main__":
     print(ACTION.AFTERMARKET)
     ACTION.reset()
     print(ACTION.AFTERMARKET)
-    # print(ACTION)
     ACTION.MACRO = ACTION.STATEMENT = True
     print(ACTION.STATEMENT)
     print(ACTION.MACRO)
