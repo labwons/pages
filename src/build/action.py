@@ -1,10 +1,9 @@
-
 class ACTION:
 
-    AFTERMARKET=True
-    MACRO=False
-    STATEMENT=False
-    SECTOR=False
+    AFTERMARKET:bool = True
+    MACRO:bool       = False
+    STATEMENT:bool   = False
+    SECTOR:bool      = False
 
     @classmethod
     def reset(cls):
@@ -14,21 +13,12 @@ class ACTION:
         return
 
 
-
-
-# ACTION = actionDict(
-#     AFTERMARKET=True,
-#     MACRO=False,
-#     STATEMENT=False,
-#     SECTOR=False
-# )
-
 if __name__ == "__main__":
     print(ACTION)
     print(ACTION.AFTERMARKET)
     ACTION.reset()
     print(ACTION.AFTERMARKET)
     # print(ACTION)
-    # ACTION.MACRO = ACTION.STATEMENT = True
-    # print(ACTION)
-    # print(ACTION.MACRO)
+    ACTION.MACRO = ACTION.STATEMENT = True
+    print(ACTION.STATEMENT)
+    print(ACTION.MACRO)
