@@ -2,12 +2,12 @@ from datetime import datetime, timezone, timedelta
 import os, shutil
 
 
-class Dict(dict):
+class dDict(dict):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         for key, value in kwargs.items():
             if isinstance(value, dict):
-                value = Dict(**value)
+                value = dDict(**value)
             self[key] = value
 
     def __getattr__(self, attr):
@@ -58,7 +58,7 @@ if ENV == "local":
     DOWNLOADS = os.path.join(os.environ['USERPROFILE'], 'Downloads')
 
 DOCS   = os.path.join(ROOT, r'docs')
-FILE = Dict()
+FILE = dDict()
 FILE.BASELINE           = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
 FILE.GROUP              = os.path.join(ROOT, r'src/fetch/market/json/group.json')
 FILE.AFTER_MARKET       = os.path.join(ROOT, r'src/fetch/market/parquet/aftermarket.parquet')
@@ -68,7 +68,7 @@ FILE.STATEMENT_OVERVIEW = os.path.join(ROOT, r'src/fetch/market/parquet/statemen
 FILE.SECTOR_COMPOSITION = os.path.join(ROOT, r'src/fetch/market/parquet/sectorcomposition.parquet')
 FILE.MACRO              = os.path.join(ROOT, r'src/fetch/macro/json/macro.json')
 
-HTML = Dict()
+HTML = dDict()
 HTML.MAP        = os.path.join(ROOT, r'docs/index.html')
 HTML.BUBBLE     = os.path.join(ROOT, r'docs/bubble/index.html')
 HTML.MACRO      = os.path.join(ROOT, r'docs/macro/index.html')

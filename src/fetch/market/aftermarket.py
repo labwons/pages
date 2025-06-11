@@ -22,8 +22,9 @@ from typing import Dict, Iterable, List
 set_option('future.no_silent_downcasting', True)
 
 INTERVALS: Dict[str, int] = {
-    'D0': 0, 'return1Day': 1, 'return1Week': 7,
-    'return1Month': 30, 'return3Month': 91, 'return6Month': 182, 'return1Year': 365
+    'D0': 0,
+    'return1Day': 1, 'return1Week': 7, 'return1Month': 30,
+    'return3Month': 91, 'return6Month': 182, 'return1Year': 365
 }
 
 

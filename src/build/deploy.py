@@ -39,7 +39,6 @@ if __name__ == "__main__":
     from pykrx.stock import get_nearest_business_day_in_a_week
     from numpy import datetime_as_string
     from time import sleep
-    import pandas as pd
     import os
 
     # ---------------------------------------------------------------------------------------

@@ -1,9 +1,9 @@
 try:
-    from ..common.env import Dict
+    from ..common.env import dDict
 except ImportError:
-    from src.common.env import Dict
+    from src.common.env import dDict
 
-class actionDict(Dict):
+class actionDict(dDict):
     def reset(self):
         for key in self:
             self[key] = False
