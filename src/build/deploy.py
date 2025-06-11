@@ -122,12 +122,12 @@ if __name__ == "__main__":
     # UPDATE AFTER MARKET DATA
     # ---------------------------------------------------------------------------------------
     if ACTION.AFTERMARKET:
-        # try:
-        afterMarket = AfterMarket()
-        afterMarket.data.to_parquet(env.FILE.AFTER_MARKET, engine='pyarrow')
-        context += [f"- [{afterMarket.state}] UPDATE AFTER MARKET: ", afterMarket.log, ""]
-        # except Exception as report:
-        #     context += [f"- [FAILED] UPDATE AFTER MARKET: ", f'{report}', ""]
+        try:
+            afterMarket = AfterMarket()
+            afterMarket.data.to_parquet(env.FILE.AFTER_MARKET, engine='pyarrow')
+            context += [f"- [{afterMarket.state}] UPDATE AFTER MARKET: ", afterMarket.log, ""]
+        except Exception as report:
+            context += [f"- [FAILED] UPDATE AFTER MARKET: ", f'{report}', ""]
     else:
         context += [f"- [PASSED] UPDATE AFTER MARKET: ", ""]
 

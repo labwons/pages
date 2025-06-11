@@ -79,6 +79,8 @@ class AfterMarket:
             self.log = f'... FAILED fetching market type: {reason}'
 
         merged = concat([marketCap, multiples, foreignRate], axis=1)
+        merged = merged.loc[:, ~merged.columns.duplicated(keep='first')]
+
         c_active_ipo = merged.index.isin(ipo.index)
         c_no_konex = ~merged.index.isin(get_market_cap_by_ticker(date=date, market='KONEX').index)
         c_active_trade = merged['거래량'] > 0

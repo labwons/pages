@@ -5,322 +5,371 @@ except ImportError:
 
 
 METADATA = dDict(
-    close=dict(
+    close=dDict(
         label='종가',
         unit='원',
         dtype=int,
         digit=0,
         calc='pykrx',
+        # Adder
     ),
-    marketCap=dict(
+    marketCap=dDict(
         label='시가총액',
         unit='억원',
         dtype=int,
         digit=0,
         calc='pykrx',
+        # Adder
     ),
-    volume=dict(
+    volume=dDict(
         label='거래량',
         unit='',
         dtype=int,
         digit=0,
         calc='pykrx',
+        # Adder
     ),
-    amount=dict(
+    amount=dDict(
         label='거래대금',
         unit='원',
         dtype=int,
         digit=0,
         calc='pykrx',
+        # Adder
     ),
-    priceToBook=dict(
+    priceToBook=dDict(
         label='PBR',
         unit='',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    dividendYield=dict(
+    dividendYield=dDict(
         label='예상 배당수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    foreignRate=dict(
+    foreignRate=dDict(
         label='외인보유율',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    return1Day=dict(
+    return1Day=dDict(
         label='1일 수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx:close@d-1 / close - 1',
+        # Adder
     ),
-    return1Week=dict(
+    return1Week=dDict(
         label='1주 수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx:close@w-1 / close - 1',
+        # Adder
     ),
-    return1Month=dict(
+    return1Month=dDict(
         label='1개월 수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx:close@m-1 / close - 1',
+        # Adder
     ),
-    return3Month=dict(
+    return3Month=dDict(
         label='3개월 수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx:close@m-3 / close - 1',
+        # Adder
     ),
-    return6Month=dict(
+    return6Month=dDict(
         label='6개월 수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx:close@m-6 / close - 1',
+        # Adder
     ),
-    return1Year=dict(
+    return1Year=dDict(
         label='1년 수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx:close@y-1 / close - 1',
+        # Adder
     ),
-    beta=dict(
+    beta=dDict(
         label='베타',
         unit='',
         dtype=float,
         digit=4,
         calc='fnguide',
+        # Adder
     ),
-    shares=dict(
+    shares=dDict(
         label='상장주식수',
         unit='',
         dtype=float,
         digit=0,
         calc='pykrx',
+        # Adder
     ),
-    floatShares=dict(
+    floatShares=dDict(
         label='유동주식비율',
         unit='%',
         dtype=float,
         digit=2,
         calc='fnguide',
+        # Adder
     ),
-    trailingRevenue=dict(
+    trailingRevenue=dDict(
         label='매출액',
         unit='억원',
         dtype=float,
         digit=0,
         calc='fnguide:q[-4:].sum()',
+        # Adder
     ),
-    trailingEps=dict(
+    trailingEps=dDict(
         label='EPS',
         unit='원',
         dtype=float,
         digit=1,
         calc='fnguide',
+        # Adder
     ),
-    trailingProfitRate=dict(
+    trailingProfitRate=dDict(
         label='영업이익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    averageRevenueGrowth_A=dict(
+    averageRevenueGrowth_A=dDict(
         label='연평균 매출성장율',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    averageProfitGrowth_A=dict(
+    averageProfitGrowth_A=dDict(
         label='연평균 영업이익성장율',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    averageEpsGrowth_A=dict(
+    averageEpsGrowth_A=dDict(
         label='연평균 EPS성장율',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    RevenueGrowth_A=dict(
+    RevenueGrowth_A=dDict(
         label='매출성장율(연간)',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    RevenueGrowth_Q=dict(
+    RevenueGrowth_Q=dDict(
         label='매출성장율(분기)',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    ProfitGrowth_A=dict(
+    ProfitGrowth_A=dDict(
         label='영업이익성장율(연간)',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    ProfitGrowth_Q=dict(
+    ProfitGrowth_Q=dDict(
         label='영업이익성장율(분기)',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    EpsGrowth_A=dict(
+    EpsGrowth_A=dDict(
         label='EPS성장율(연간)',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    EpsGrowth_Q=dict(
+    EpsGrowth_Q=dDict(
         label='EPS성장율(분기)',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    fiscalDividendYield=dict(
+    fiscalDividendYield=dDict(
         label='배당수익률',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    fiscalDebtRatio=dict(
+    fiscalDebtRatio=dDict(
         label='부채율',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    pct52wHigh=dict(
+    pct52wHigh=dDict(
         label='52주 최고가 대비',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    pct52wLow=dict(
+    pct52wLow=dDict(
         label='52주 최저가 대비',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    pctEstimated=dict(
+    pctEstimated=dDict(
         label='목표가 대비',
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    estimatedPE=dict(
+    estimatedPE=dDict(
         label='Forward PE',
         unit='',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    trailingPS=dict(
+    trailingPS=dDict(
         label='PSR',
         unit='',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    trailingPE=dict(
+    trailingPE=dDict(
         label='PER',
         unit='',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    turnoverRatio=dict(
+    turnoverRatio=dDict(
         label="거래회전율",
         unit='%',
         dtype=float,
         digit=2,
         calc='pykrx',
+        # Adder
     ),
-    market=dict(
+    market=dDict(
         label='시장구분',
         unit='',
         dtype=str,
         digit=-1,
         calc='pykrx',
+        # Adder
     ),
-    name=dict(
+    name=dDict(
         label='종목명',
         unit='',
         dtype=str,
         digit=-1,
         calc='pykrx',
+        # Adder
     ),
-    industryCode=dict(
+    industryCode=dDict(
         label='산업코드',
         unit='',
         dtype=str,
         digit=-1,
         calc='pykrx',
+        # Adder
     ),
-    industryName=dict(
+    industryName=dDict(
         label='산업명',
         unit='',
         dtype=str,
         digit=-1,
         calc='pykrx',
+        # Adder
     ),
-    sectorCode=dict(
+    sectorCode=dDict(
         label='섹터코드',
         unit='',
         dtype=str,
         digit=-1,
         calc='pykrx',
+        # Adder
     ),
-    sectorName=dict(
+    sectorName=dDict(
         label='섹터명',
         unit='',
         dtype=str,
         digit=-1,
         calc='pykrx',
+        # Adder
     ),
-    stockSize=dict(
+    stockSize=dDict(
         label='대형주여부',
         unit='',
         dtype=str,
         digit=-1,
         calc='pykrx',
+        # Adder
     ),
-    date=dict(
+    date=dDict(
         label='날짜',
         unit='',
         dtype=str,
         digit=-1,
         calc='pykrx',
+        # Adder
     ),
 
 
 )
 
+if __name__ == "__main__":
+    print(METADATA)
+    print(METADATA.close)
+    print(METADATA.close.unit)
