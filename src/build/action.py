@@ -1,3 +1,6 @@
+# PUSH TRIGGERS ACTION
+# ACTION DATE: 2025.06.11. 21:00
+
 class ACTION:
 
     AFTERMARKET:bool = True
@@ -14,7 +17,6 @@ class ACTION:
 
 
 if __name__ == "__main__":
-    print(ACTION)
     print(ACTION.AFTERMARKET)
     ACTION.reset()
     print(ACTION.AFTERMARKET)
