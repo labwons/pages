@@ -46,6 +46,8 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     SYSTEM_NAV = navigate()
 
+    DUPLICATED_CONFIG = False
+
     if env.ENV == "local":
         # FOR LOCAL HOST TESTING, EXTERNAL DIRECTORY IS RECOMMENDED AND USED. USING THE SAME
         # LOCAL HOSTING DIRECTORY WITH DEPLOYMENT DIRECTORY, DEPLOYMENT MIGHT BE CORRUPTED.
@@ -74,6 +76,7 @@ if __name__ == "__main__":
         if now.hour >= 20:
             ACTION.MACRO = ACTION.STATEMENT = True
         else:
+            DUPLICATED_CONFIG = True
             ACTION.AFTERMARKET = True
 
     if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "workflow_dispatch":
@@ -135,7 +138,7 @@ if __name__ == "__main__":
     # BUILD BASELINE
     # ---------------------------------------------------------------------------------------
     try:
-        baseline = MarketBaseline(update=True)
+        baseline = MarketBaseline(update=DUPLICATED_CONFIG)
         with open(env.FILE.BASELINE, 'w') as f:
             f.write(baseline.to_json(orient='index').replace("nan", "null"))
         context += [f'- [SUCCESS] BUILD Baseline', baseline.log, '']
