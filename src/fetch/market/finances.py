@@ -21,9 +21,11 @@ class FinancialStatement:
             xml = self.fetch(ticker, debug=False)
             if xml is None:
                 continue
-            overview.append(self.numbers(xml, name=ticker))
-            annual[ticker] = self.annualStatement(xml)
-            quarter[ticker] = self.quarterStatement(xml)
+            numbers = self.numbers(xml, name=ticker)
+            numbers['statementType'] = bd = self.statementType(xml)
+            overview.append(numbers)
+            annual[ticker] = self.statement(xml, bd, 'annual')
+            quarter[ticker] = self.statement(xml, bd, 'quarter')
 
         self.overview = concat(overview, axis=1).T
         self.annual = concat(annual, axis=1)
@@ -92,30 +94,19 @@ class FinancialStatement:
         return Series(obj, name=name)
 
     @classmethod
-    def annualStatement(cls, ticker_or_xml: Union[str, Element]) -> DataFrame:
-        xml = cls.fetch(ticker_or_xml) if isinstance(ticker_or_xml, str) else ticker_or_xml
+    def statementType(cls, xml:Element) -> str:
         s = cls._statement(xml, 'financial_highlight_ifrs_B/financial_highlight_annual')
         c = cls._statement(xml, 'financial_highlight_ifrs_D/financial_highlight_annual')
         if s.count().sum() > c.count().sum():
-            final = s
-            final['statementType'] = 'separate'
+            return 'separate'
         else:
-            final = c
-            final['statementType'] = 'consolidated'
-        return final
+            return 'consolidated'
 
     @classmethod
-    def quarterStatement(cls, ticker_or_xml: Union[str, Element]) -> DataFrame:
+    def statement(cls, ticker_or_xml: Union[str, Element], bd:str, period:str):
         xml = cls.fetch(ticker_or_xml) if isinstance(ticker_or_xml, str) else ticker_or_xml
-        s = cls._statement(xml, 'financial_highlight_ifrs_B/financial_highlight_quarter')
-        c = cls._statement(xml, 'financial_highlight_ifrs_D/financial_highlight_quarter')
-        if s.count().sum() > c.count().sum():
-            final = s
-            final['statementType'] = 'separate'
-        else:
-            final = c
-            final['statementType'] = 'consolidated'
-        return final
+        bd = {'separate': 'B', 'consolidated': 'D'}[bd]
+        return cls._statement(xml, f'financial_highlight_ifrs_{bd}/financial_highlight_{period}')
 
     @classmethod
     def checkTickers(cls, baseline: str, statement: str = '') -> List[str]:

@@ -18,6 +18,8 @@ class Tools:
     @classmethod
     def typeCast(cls, value):
         value = str(value).lower().replace(",", "")
+        if value in ['separate', 'consolidated']:
+            return value
         if "n" in value:
             return nan
         if not any([char.isdigit() for char in value]):
@@ -60,7 +62,7 @@ class MarketBaseline:
         statementA = read_parquet(FILE.ANNUAL_STATEMENT)
         self.log = f'- READ ANNUAL STATEMENT'
         statementA = self.statementA(statementA)
-        # print(statementA)
+        print(statementA)
 
         sector = read_parquet(FILE.SECTOR_COMPOSITION)
         s_date = datetime.strptime(str(sector.pop('date').values[-1]), "%Y%m%d").strftime("%Y/%m/%d")
@@ -73,7 +75,7 @@ class MarketBaseline:
                 .join(statementA) \
                 .join(sector)
         merge = merge[~merge['name'].isna()]
-        print(merge[merge.index == '323410'])
+
 
         self.tradingDate = n_date.strftime("%Y/%m/%d")
 
@@ -156,21 +158,19 @@ class MarketBaseline:
         objs = []
         for ticker in ['005930', '361390', '323410']:
         # for ticker in tickers:
-            c = statementA[ticker]['연결']
-            s = statementA[ticker]['별도']
-            obj = Series()
-            obj['statementType'] = 'separate' if s.count().sum() > c.count().sum() else 'Consolidated'
-
-            statement = s if obj.statementType == "separate" else c
+            statement = statementA[ticker]
             statement = statement[statement.index.str.contains('/12') & (~statement.index.str.contains('\\(E\\)'))]
             statement = statement.map(Tools.typeCast)
 
-            latestStatement = statement.iloc[-1]
-            obj['fiscalDate'] = latestStatement.name
-            obj['fiscalRevenue'] = latestStatement[statement.columns[0]]
-            obj = concat([obj, latestStatement.drop(index=[statement.columns[0]])])
-
+            recentStatement = statement.iloc[-1]
             ratedStatement = 100 * statement.pct_change(fill_method=None).iloc[1:]
+            obj = Series()
+            obj['statementType'] = recentStatement.statementType
+            obj['fiscalDate'] = recentStatement.name
+            obj['fiscalRevenue'] = recentStatement[statement.columns[0]]
+            obj = concat([obj, recentStatement.drop(index=[statement.columns[0]])])
+
+
             # print(ratedStatement)
             # obj['averageRevenueGrowth']
             # obj['averageProfitGrowth']

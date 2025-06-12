@@ -239,8 +239,8 @@ if __name__ == "__main__":
     # DEPLOY MACRO
     # ---------------------------------------------------------------------------------------
     try:
+        macro = Macro(update=ACTION.MACRO)
         if ACTION.MACRO:
-            macro = Macro(update=ACTION.MACRO)
             with open(env.FILE.MACRO, 'w') as f:
                 f.write(macro.to_json(orient='index').replace('nan', ''))
 
