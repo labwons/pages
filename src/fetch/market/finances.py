@@ -94,16 +94,28 @@ class FinancialStatement:
     @classmethod
     def annualStatement(cls, ticker_or_xml: Union[str, Element]) -> DataFrame:
         xml = cls.fetch(ticker_or_xml) if isinstance(ticker_or_xml, str) else ticker_or_xml
-        separate = cls._statement(xml, 'financial_highlight_ifrs_B/financial_highlight_annual')
-        consolidate = cls._statement(xml, 'financial_highlight_ifrs_D/financial_highlight_annual')
-        return concat({'별도': separate, '연결': consolidate}, axis=1)
+        s = cls._statement(xml, 'financial_highlight_ifrs_B/financial_highlight_annual')
+        c = cls._statement(xml, 'financial_highlight_ifrs_D/financial_highlight_annual')
+        if s.count().sum() > c.count().sum():
+            final = s
+            final['statementType'] = 'separate'
+        else:
+            final = c
+            final['statementType'] = 'consolidated'
+        return final
 
     @classmethod
     def quarterStatement(cls, ticker_or_xml: Union[str, Element]) -> DataFrame:
         xml = cls.fetch(ticker_or_xml) if isinstance(ticker_or_xml, str) else ticker_or_xml
-        separate = cls._statement(xml, 'financial_highlight_ifrs_B/financial_highlight_quarter')
-        consolidate = cls._statement(xml, 'financial_highlight_ifrs_D/financial_highlight_quarter')
-        return concat({'별도': separate, '연결': consolidate}, axis=1)
+        s = cls._statement(xml, 'financial_highlight_ifrs_B/financial_highlight_quarter')
+        c = cls._statement(xml, 'financial_highlight_ifrs_D/financial_highlight_quarter')
+        if s.count().sum() > c.count().sum():
+            final = s
+            final['statementType'] = 'separate'
+        else:
+            final = c
+            final['statementType'] = 'consolidated'
+        return final
 
     @classmethod
     def checkTickers(cls, baseline: str, statement: str = '') -> List[str]:

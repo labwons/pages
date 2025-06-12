@@ -60,7 +60,7 @@ class MarketBaseline:
         statementA = read_parquet(FILE.ANNUAL_STATEMENT)
         self.log = f'- READ ANNUAL STATEMENT'
         statementA = self.statementA(statementA)
-        print(statementA)
+        # print(statementA)
 
         sector = read_parquet(FILE.SECTOR_COMPOSITION)
         s_date = datetime.strptime(str(sector.pop('date').values[-1]), "%Y%m%d").strftime("%Y/%m/%d")
@@ -70,9 +70,10 @@ class MarketBaseline:
 
         merge = number \
                 .join(overview) \
+                .join(statementA) \
                 .join(sector)
         merge = merge[~merge['name'].isna()]
-        # print(merge)
+        print(merge[merge.index == '323410'])
 
         self.tradingDate = n_date.strftime("%Y/%m/%d")
 
@@ -153,8 +154,8 @@ class MarketBaseline:
     def statementA(cls, statementA:DataFrame) -> DataFrame:
         tickers = statementA.columns.get_level_values(0).unique()
         objs = []
-        # for ticker in ['005930', '361390']:
-        for ticker in tickers:
+        for ticker in ['005930', '361390', '323410']:
+        # for ticker in tickers:
             c = statementA[ticker]['연결']
             s = statementA[ticker]['별도']
             obj = Series()
