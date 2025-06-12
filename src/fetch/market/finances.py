@@ -28,8 +28,8 @@ class FinancialStatement:
             quarter[ticker] = q = self.statement(xml, bd, 'quarter')
 
             numbers['statementType'] = bd
-            numbers['reportYears'] = a.index
-            numbers['reportQuarters'] = q.index
+            numbers['reportYears'] = ','.join([i.replace(" ", "") for i in a.index])
+            numbers['reportQuarters'] = ','.join([i.replace(" ", "") for i in q.index])
             overview.append(numbers)
 
         self.overview = concat(overview, axis=1).T
