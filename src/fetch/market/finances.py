@@ -22,10 +22,15 @@ class FinancialStatement:
             if xml is None:
                 continue
             numbers = self.numbers(xml, name=ticker)
-            numbers['statementType'] = bd = self.statementType(xml)
+            bd = self.statementType(xml)
+
+            annual[ticker] = a = self.statement(xml, bd, 'annual')
+            quarter[ticker] = q = self.statement(xml, bd, 'quarter')
+
+            numbers['statementType'] = bd
+            numbers['reportYears'] = a.index
+            numbers['reportQuarters'] = q.index
             overview.append(numbers)
-            annual[ticker] = self.statement(xml, bd, 'annual')
-            quarter[ticker] = self.statement(xml, bd, 'quarter')
 
         self.overview = concat(overview, axis=1).T
         self.annual = concat(annual, axis=1)

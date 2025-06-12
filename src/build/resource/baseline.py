@@ -1,6 +1,6 @@
 try:
-    from .metadata import METADATA
-    from ...common.env import FILE
+    from src.build.service.metadata import METADATA
+    from src.common.env import FILE
 except ImportError:
     from src.build.service.metadata import METADATA
     from src.common.env import FILE
@@ -50,6 +50,7 @@ class MarketBaseline:
 
         overview = read_parquet(FILE.STATEMENT_OVERVIEW, dtype_backend="pyarrow")
         overview_date = overview.pop('date').value_counts(dropna=False)
+        # overview_keys =
         if len(overview_date) == 1:
             self.log = f'- READ STATEMENT OVERVIEW: {overview_date.index[0]}'
         else:
@@ -62,7 +63,12 @@ class MarketBaseline:
         statementA = read_parquet(FILE.ANNUAL_STATEMENT)
         self.log = f'- READ ANNUAL STATEMENT'
         statementA = self.statementA(statementA)
-        print(statementA)
+        # print(statementA)
+
+        statementQ = read_parquet(FILE.QUARTER_STATEMENT)
+        self.log = f'- READ QUARTER STATEMENT'
+        statementQ = self.statementQ(statementQ)
+        # print(statementQ)
 
         sector = read_parquet(FILE.SECTOR_COMPOSITION)
         s_date = datetime.strptime(str(sector.pop('date').values[-1]), "%Y%m%d").strftime("%Y/%m/%d")
@@ -75,7 +81,7 @@ class MarketBaseline:
                 .join(statementA) \
                 .join(sector)
         merge = merge[~merge['name'].isna()]
-
+        # print(merge)
 
         self.tradingDate = n_date.strftime("%Y/%m/%d")
 
@@ -156,35 +162,39 @@ class MarketBaseline:
     def statementA(cls, statementA:DataFrame) -> DataFrame:
         tickers = statementA.columns.get_level_values(0).unique()
         objs = []
-        for ticker in ['005930', '361390', '323410']:
-        # for ticker in tickers:
+        for ticker in tickers:
+        # for ticker in ['005930', '361390', '323410']:
             statement = statementA[ticker]
             statement = statement[statement.index.str.contains('/12') & (~statement.index.str.contains('\\(E\\)'))]
             statement = statement.map(Tools.typeCast)
 
-            recentStatement = statement.iloc[-1]
             ratedStatement = 100 * statement.pct_change(fill_method=None).iloc[1:]
+            recentStatement = statement.iloc[-1]
+            recentRatedStatement = ratedStatement.iloc[-1]
+
             obj = Series()
-            obj['statementType'] = recentStatement.statementType
+            _revenueKey = statement.columns[0]
             obj['fiscalDate'] = recentStatement.name
-            obj['fiscalRevenue'] = recentStatement[statement.columns[0]]
-            obj = concat([obj, recentStatement.drop(index=[statement.columns[0]])])
-
-
-            # print(ratedStatement)
-            # obj['averageRevenueGrowth']
-            # obj['averageProfitGrowth']
-            # obj['averageEpsGrowth']
-            # obj['fiscalRevenueGrowth']
-            # obj['fiscalProfitGrowth']
-            # obj['fiscalEpsGrowth']
-            # obj['fiscalDividendGrowth']
-
+            obj['fiscalRevenue'] = recentStatement[_revenueKey]
+            obj = concat([obj, recentStatement.drop(index=[_revenueKey])])
+            obj['fiscalRevenueGrowth'] = recentRatedStatement[_revenueKey]
+            obj['fiscalProfitGrowth'] = recentRatedStatement['영업이익(억원)']
+            obj['fiscalEpsGrowth'] = recentRatedStatement['EPS(원)']
+            obj['fiscalDividendGrowth'] = recentRatedStatement['배당수익률(%)']
+            obj['averageRevenueGrowth'] = ratedStatement[_revenueKey].mean()
+            obj['averageProfitGrowth'] = ratedStatement['영업이익(억원)'].mean()
+            obj['averageEpsGrowth'] = ratedStatement['EPS(원)'].mean()
+            obj['averageDividendGrowth'] = ratedStatement['배당수익률(%)'].mean()
+            obj['revenueName'] = _revenueKey.replace("(억원)", "")
             obj.name = ticker
             objs.append(obj)
         merge = concat(objs=objs, axis=1).T
         merge = merge.rename(columns={p: c for p, c in METADATA.RENAME if p in merge.columns})
         return merge
+
+    @classmethod
+    def statementQ(cls, statementQ:DataFrame) -> DataFrame:
+        return statementQ
 
 
     # def show_gaussian(self, col:str):

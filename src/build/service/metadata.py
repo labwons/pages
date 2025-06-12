@@ -357,6 +357,91 @@ METADATA = dDict(
         origin='PBR(배)',
         # Adder
     ),
+    fiscalRevenueGrowth=dDict(
+        label='매출성장율(직전 회계연도 기준)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        calc='fnguide:.pct_change().iloc[-1]',
+        origin='',
+        # Adder
+    ),
+    fiscalProfitGrowth=dDict(
+        label='영업이익성장율(직전 회계연도 기준)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        calc='fnguide:.pct_change().iloc[-1]',
+        origin='',
+        # Adder
+    ),
+    fiscalEpsGrowth=dDict(
+        label='EPS성장율(직전 회계연도 기준)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        calc='fnguide:.pct_change().iloc[-1]',
+        origin='',
+        # Adder
+    ),
+    fiscalDividendGrowth=dDict(
+        label='배당성장율(직전 회계연도 기준)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        calc='fnguide:.pct_change().iloc[-1]',
+        origin='',
+        # Adder
+    ),
+    averageRevenueGrowth=dDict(
+        label='연평균 매출성장율',
+        unit='%',
+        dtype=float,
+        digit=2,
+        calc='fnguide:.pct_change().mean()',
+        origin='',
+        # Adder
+    ),
+    averageProfitGrowth=dDict(
+        label='연평균 영업이익성장율',
+        unit='%',
+        dtype=float,
+        digit=2,
+        calc='fnguide:.pct_change().mean()',
+        origin='',
+        # Adder
+    ),
+    averageEpsGrowth=dDict(
+        label='연평균 EPS성장율',
+        unit='%',
+        dtype=float,
+        digit=2,
+        calc='fnguide:.pct_change().mean()',
+        origin='',
+        # Adder
+    ),
+    averageDividendGrowth=dDict(
+        label='연평균 배당성장율',
+        unit='%',
+        dtype=float,
+        digit=2,
+        calc='fnguide:.pct_change().mean()',
+        origin='',
+        # Adder
+    ),
+    revenueName=dDict(
+        label='매출 종류',
+        unit='',
+        dtype=str,
+        digit=0,
+        calc='fnguide',
+        origin='',
+        # Adder
+    ),
+
+
+
+
     trailingRevenue=dDict(
         label='매출액',
         unit='억원',
