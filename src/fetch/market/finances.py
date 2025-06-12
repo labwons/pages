@@ -20,6 +20,7 @@ class FinancialStatement:
         for ticker in tickers:
             xml = self.fetch(ticker, debug=False)
             if xml is None:
+                self.log = f'... EMPTY xml for: {ticker}'
                 continue
             numbers = self.numbers(xml, name=ticker)
             bd = self.statementType(xml)

@@ -50,7 +50,8 @@ class MarketBaseline:
 
         overview = read_parquet(FILE.STATEMENT_OVERVIEW, dtype_backend="pyarrow")
         overview_date = overview.pop('date').value_counts(dropna=False)
-        # overview_keys =
+        statement_yy = overview.pop('reportYears')
+        statement_qq = overview.pop('reportQuarters')
         if len(overview_date) == 1:
             self.log = f'- READ STATEMENT OVERVIEW: {overview_date.index[0]}'
         else:
@@ -61,8 +62,9 @@ class MarketBaseline:
         # print(overview)
 
         statementA = read_parquet(FILE.ANNUAL_STATEMENT)
+        print(statementA['001720'])
         self.log = f'- READ ANNUAL STATEMENT'
-        statementA = self.statementA(statementA)
+        # statementA = self.statementA(statementA, statement_yy)
         # print(statementA)
 
         statementQ = read_parquet(FILE.QUARTER_STATEMENT)
@@ -159,18 +161,22 @@ class MarketBaseline:
         return sector
 
     @classmethod
-    def statementA(cls, statementA:DataFrame) -> DataFrame:
+    def statementA(cls, statementA:DataFrame, yy:Series) -> DataFrame:
         tickers = statementA.columns.get_level_values(0).unique()
         objs = []
-        for ticker in tickers:
-        # for ticker in ['005930', '361390', '323410']:
-            statement = statementA[ticker]
+        # for ticker in tickers:
+        for ticker in ['001720', '005930', '361390', '323410']:
+            index = yy[ticker].split(",")
+            print(index)
+            print(statementA[ticker])
+            statement = statementA[ticker].loc[index]
             statement = statement[statement.index.str.contains('/12') & (~statement.index.str.contains('\\(E\\)'))]
             statement = statement.map(Tools.typeCast)
-
+            print(statement)
             ratedStatement = 100 * statement.pct_change(fill_method=None).iloc[1:]
             recentStatement = statement.iloc[-1]
             recentRatedStatement = ratedStatement.iloc[-1]
+
 
             obj = Series()
             _revenueKey = statement.columns[0]
