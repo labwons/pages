@@ -62,13 +62,14 @@ if ENV == "local":
 
 DOCS   = os.path.join(ROOT, r'docs')
 FILE = dDict()
-FILE.BASELINE           = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
+FILE.BASELINE_DUPLICATED= os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
 FILE.GROUP              = os.path.join(ROOT, r'src/fetch/market/json/group.json')
 FILE.AFTER_MARKET       = os.path.join(ROOT, r'src/fetch/market/parquet/aftermarket.parquet')
 FILE.ANNUAL_STATEMENT   = os.path.join(ROOT, r'src/fetch/market/parquet/annualstatement.parquet')
 FILE.QUARTER_STATEMENT  = os.path.join(ROOT, r'src/fetch/market/parquet/quarterstatement.parquet')
 FILE.STATEMENT_OVERVIEW = os.path.join(ROOT, r'src/fetch/market/parquet/statementoverview.parquet')
 FILE.SECTOR_COMPOSITION = os.path.join(ROOT, r'src/fetch/market/parquet/sectorcomposition.parquet')
+FILE.BASELINE           = os.path.join(ROOT, r'src/fetch/market/parquet/baseline.parquet')
 FILE.MACRO              = os.path.join(ROOT, r'src/fetch/macro/json/macro.json')
 
 HTML = dDict()

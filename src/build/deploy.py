@@ -12,6 +12,7 @@ if __name__ == "__main__":
         from ..fetch.market.finances import FinancialStatement
         from ..fetch.market.sector import SectorComposition
         from ..render.navigate import navigate, minify
+        from .resource.baseline import Baseline
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
         from .service.macro import Macro
@@ -26,6 +27,7 @@ if __name__ == "__main__":
         from src.fetch.market.finances import FinancialStatement
         from src.fetch.market.sector import SectorComposition
         from src.render.navigate import navigate, minify
+        from src.build.resource.baseline import Baseline
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble
         from src.build.service.macro import Macro
@@ -36,6 +38,7 @@ if __name__ == "__main__":
 
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
+    from pandas import read_parquet
     from pykrx.stock import get_nearest_business_day_in_a_week
     from numpy import datetime_as_string
     from time import sleep
@@ -137,9 +140,20 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # BUILD BASELINE
     # ---------------------------------------------------------------------------------------
+    # NO FAIL-SAFE ACTION FOR BASELINE. THIS PROCESS IS MANDATORY.
+    baseline = Baseline()
+    baseline.data.to_parquet(env.FILE.BASELINE, engine='pyarrow')
+    resource = baseline.data
+    TRADING_DATE = baseline.tradingDate
+    context += [f"- [SUCCESS] UPDATE BASELINE: ", baseline.log, ""]
+
+
+    # ---------------------------------------------------------------------------------------
+    # BUILD BASELINE
+    # ---------------------------------------------------------------------------------------
     try:
         baseline = MarketBaseline(update=DUPLICATED_CONFIG)
-        with open(env.FILE.BASELINE, 'w') as f:
+        with open(env.FILE.BASELINE_DUPLICATED, 'w') as f:
             f.write(baseline.to_json(orient='index').replace("nan", "null"))
         context += [f'- [SUCCESS] BUILD Baseline', baseline.log, '']
     except Exception as error:
