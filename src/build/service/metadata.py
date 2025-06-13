@@ -11,7 +11,6 @@ METADATA = dDict(
         unit='원',
         dtype=int,
         digit=0,
-        calc='pykrx',
         origin='종가',
         # Adder
     ),
@@ -20,7 +19,6 @@ METADATA = dDict(
         unit='억원',
         dtype=int,
         digit=0,
-        calc='pykrx',
         origin='시가총액',
         # Adder
     ),
@@ -29,7 +27,6 @@ METADATA = dDict(
         unit='',
         dtype=int,
         digit=0,
-        calc='pykrx',
         origin='거래량',
         # Adder
     ),
@@ -38,7 +35,6 @@ METADATA = dDict(
         unit='원',
         dtype=int,
         digit=0,
-        calc='pykrx',
         origin='거래대금',
         # Adder
     ),
@@ -47,7 +43,6 @@ METADATA = dDict(
         unit='',
         dtype=int,
         digit=0,
-        calc='pykrx',
         origin='상장주식수',
         # Adder
     ),
@@ -56,7 +51,6 @@ METADATA = dDict(
         unit='',
         dtype=float,
         digit=2,
-        calc='pykrx',
         origin='PBR',
         # Adder
     ),
@@ -65,7 +59,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='pykrx',
         origin='DIV',
         # Adder
     ),
@@ -74,7 +67,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='pykrx',
         origin='지분율',
         # Adder
     ),
@@ -83,7 +75,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='pykrx:close@d-1 / close - 1',
         origin='',
         # Adder
     ),
@@ -92,7 +83,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='pykrx:close@w-1 / close - 1',
         origin='',
         # Adder
     ),
@@ -101,7 +91,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='pykrx:close@m-1 / close - 1',
         origin='',
         # Adder
     ),
@@ -110,7 +99,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='pykrx:close@m-3 / close - 1',
         origin='',
         # Adder
     ),
@@ -119,7 +107,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='pykrx:close@m-6 / close - 1',
         origin='',
         # Adder
     ),
@@ -128,7 +115,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='pykrx:close@y-1 / close - 1',
         origin='',
         # Adder
     ),
@@ -137,7 +123,6 @@ METADATA = dDict(
         unit='원',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='high52week',
         # Adder
     ),
@@ -146,7 +131,6 @@ METADATA = dDict(
         unit='원',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='low52week',
         # Adder
     ),
@@ -155,7 +139,6 @@ METADATA = dDict(
         unit='',
         dtype=float,
         digit=4,
-        calc='fnguide',
         origin='',
         # Adder
     ),
@@ -164,7 +147,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide',
         origin='ff_sher_rt',
         # Adder
     ),
@@ -173,7 +155,6 @@ METADATA = dDict(
         unit='',
         dtype=datetime,
         digit=0,
-        calc='fnguide',
         origin='face_value_chg_dt',
         # Adder
     ),
@@ -182,7 +163,6 @@ METADATA = dDict(
         unit='원',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='target_price',
         # Adder
     ),
@@ -191,7 +171,6 @@ METADATA = dDict(
         unit='원',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='eps',
         # Adder
     ),
@@ -200,7 +179,6 @@ METADATA = dDict(
         unit='',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='presume_organ_count',
         # Adder
     ),
@@ -209,7 +187,6 @@ METADATA = dDict(
         unit='',
         dtype=str,
         digit=0,
-        calc='fnguide',
         origin='',
         # Adder
     ),
@@ -218,7 +195,6 @@ METADATA = dDict(
         unit='',
         dtype=str,
         digit=0,
-        calc='fnguide',
         origin='',
         # Adder
     ),
@@ -227,7 +203,6 @@ METADATA = dDict(
         unit='억원',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='',
         # Adder
     ),
@@ -236,7 +211,6 @@ METADATA = dDict(
         unit='억원',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='영업이익(억원)',
         # Adder
     ),
@@ -245,7 +219,6 @@ METADATA = dDict(
         unit='억원',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='당기순이익(억원)',
         # Adder
     ),
@@ -254,7 +227,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide',
         origin='영업이익률(%)',
         # Adder
     ),
@@ -263,7 +235,6 @@ METADATA = dDict(
         unit='억원',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='자산총계(억원)',
         # Adder
     ),
@@ -272,7 +243,6 @@ METADATA = dDict(
         unit='억원',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='자본총계(억원)',
         # Adder
     ),
@@ -281,7 +251,6 @@ METADATA = dDict(
         unit='억원',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='부채총계(억원)',
         # Adder
     ),
@@ -290,7 +259,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide',
         origin='부채비율(%)',
         # Adder
     ),
@@ -299,7 +267,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide',
         origin='유보율(%)',
         # Adder
     ),
@@ -308,7 +275,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide',
         origin='ROA(%)',
         # Adder
     ),
@@ -317,7 +283,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide',
         origin='ROE(%)',
         # Adder
     ),
@@ -326,7 +291,6 @@ METADATA = dDict(
         unit='원',
         dtype=int,
         digit=0,
-        calc='fnguide',
         origin='EPS(원)',
         # Adder
     ),
@@ -335,7 +299,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide',
         origin='배당수익률(%)',
         # Adder
     ),
@@ -344,7 +307,6 @@ METADATA = dDict(
         unit='',
         dtype=float,
         digit=2,
-        calc='fnguide',
         origin='PER(배)',
         # Adder
     ),
@@ -353,7 +315,6 @@ METADATA = dDict(
         unit='',
         dtype=float,
         digit=2,
-        calc='fnguide',
         origin='PBR(배)',
         # Adder
     ),
@@ -362,7 +323,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide:.pct_change().iloc[-1]',
         origin='',
         # Adder
     ),
@@ -371,7 +331,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide:.pct_change().iloc[-1]',
         origin='',
         # Adder
     ),
@@ -380,25 +339,15 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide:.pct_change().iloc[-1]',
         origin='',
         # Adder
     ),
-    fiscalDividendGrowth=dDict(
-        label='배당성장율(직전 회계연도 기준)',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='fnguide:.pct_change().iloc[-1]',
-        origin='',
-        # Adder
-    ),
+
     averageRevenueGrowth=dDict(
         label='연평균 매출성장율',
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide:.pct_change().mean()',
         origin='',
         # Adder
     ),
@@ -407,7 +356,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide:.pct_change().mean()',
         origin='',
         # Adder
     ),
@@ -416,38 +364,14 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='fnguide:.pct_change().mean()',
         origin='',
         # Adder
     ),
-    averageDividendGrowth=dDict(
-        label='연평균 배당성장율',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='fnguide:.pct_change().mean()',
-        origin='',
-        # Adder
-    ),
-    revenueName=dDict(
-        label='매출 종류',
-        unit='',
-        dtype=str,
-        digit=0,
-        calc='fnguide',
-        origin='',
-        # Adder
-    ),
-
-
-
-
     trailingRevenue=dDict(
         label='매출액',
         unit='억원',
         dtype=float,
         digit=0,
-        calc='fnguide:q[-4:].sum()',
         origin='',
         # Adder
     ),
@@ -456,7 +380,6 @@ METADATA = dDict(
         unit='원',
         dtype=float,
         digit=1,
-        calc='fnguide',
         origin='',
         # Adder
     ),
@@ -465,115 +388,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    averageRevenueGrowth_A=dDict(
-        label='연평균 매출성장율',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    averageProfitGrowth_A=dDict(
-        label='연평균 영업이익성장율',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    averageEpsGrowth_A=dDict(
-        label='연평균 EPS성장율',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    RevenueGrowth_A=dDict(
-        label='매출성장율(연간)',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    RevenueGrowth_Q=dDict(
-        label='매출성장율(분기)',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    ProfitGrowth_A=dDict(
-        label='영업이익성장율(연간)',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    ProfitGrowth_Q=dDict(
-        label='영업이익성장율(분기)',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    EpsGrowth_A=dDict(
-        label='EPS성장율(연간)',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    EpsGrowth_Q=dDict(
-        label='EPS성장율(분기)',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    pct52wHigh=dDict(
-        label='52주 최고가 대비',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    pct52wLow=dDict(
-        label='52주 최저가 대비',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
-        origin='',
-        # Adder
-    ),
-    pctEstimated=dDict(
-        label='목표가 대비',
-        unit='%',
-        dtype=float,
-        digit=2,
-        calc='pykrx',
         origin='',
         # Adder
     ),
@@ -582,7 +396,6 @@ METADATA = dDict(
         unit='',
         dtype=float,
         digit=2,
-        calc='pykrx',
         origin='',
         # Adder
     ),
@@ -591,7 +404,6 @@ METADATA = dDict(
         unit='',
         dtype=float,
         digit=2,
-        calc='pykrx',
         origin='',
         # Adder
     ),
@@ -600,7 +412,6 @@ METADATA = dDict(
         unit='',
         dtype=float,
         digit=2,
-        calc='pykrx',
         origin='',
         # Adder
     ),
@@ -609,7 +420,6 @@ METADATA = dDict(
         unit='%',
         dtype=float,
         digit=2,
-        calc='pykrx',
         origin='',
         # Adder
     ),
@@ -618,7 +428,6 @@ METADATA = dDict(
         unit='',
         dtype=str,
         digit=-1,
-        calc='pykrx',
         origin='',
         # Adder
     ),
@@ -627,7 +436,6 @@ METADATA = dDict(
         unit='',
         dtype=str,
         digit=-1,
-        calc='pykrx',
         origin='',
         # Adder
     ),
@@ -636,7 +444,6 @@ METADATA = dDict(
         unit='',
         dtype=str,
         digit=-1,
-        calc='pykrx',
         origin='',
         # Adder
     ),
@@ -645,7 +452,6 @@ METADATA = dDict(
         unit='',
         dtype=str,
         digit=-1,
-        calc='pykrx',
         origin='',
         # Adder
     ),
@@ -654,7 +460,6 @@ METADATA = dDict(
         unit='',
         dtype=str,
         digit=-1,
-        calc='pykrx',
         origin='',
         # Adder
     ),
@@ -663,25 +468,234 @@ METADATA = dDict(
         unit='',
         dtype=str,
         digit=-1,
-        calc='pykrx',
         origin='',
         # Adder
     ),
-    stockSize=dDict(
-        label='대형주여부',
+
+
+
+    # TODO
+    fiscalProfitState=dDict(
+        label='영업이익현황',
         unit='',
         dtype=str,
-        digit=-1,
-        calc='pykrx',
+        digit=0,
         origin='',
         # Adder
     ),
-    date=dDict(
-        label='날짜',
+    fiscalEpsState=dDict(
+        label='EPS현황',
         unit='',
         dtype=str,
-        digit=-1,
-        calc='pykrx',
+        digit=0,
+        origin='',
+        # Adder
+    ),
+    estimatedDate=dDict(
+        label='추정 월',
+        unit='',
+        dtype=str,
+        digit=0,
+        origin='',
+        # Adder
+    ),
+    estimatedRevenue=dDict(
+        label='매출(추정치)',
+        unit='억원',
+        dtype=int,
+        digit=0,
+        origin='',
+        # Adder
+    ),
+    estimatedProfit=dDict(
+        label='영업이익(추정치)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedNetProfit=dDict(
+        label='당기순이익(추정치)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedAsset=dDict(
+        label='총 자산(추정치)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedDebt=dDict(
+        label='총 부채(추정치)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedCapital=dDict(
+        label='총 자본(추정치)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedDebtRatio=dDict(
+        label='부채율(추정치)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedProfitRatio=dDict(
+        label='영업이익율(추정치)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedRoA=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedRoE=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedEps=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedPriceToBook=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedRevenueGrowth=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedProfitGrowth=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    estimatedEpsGrowth=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    revenueType=dDict(
+        label='매출종류',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    recentAsset=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    recentCapital=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    recentDebt=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    recentDebtRatio=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    recentProfitRate=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    trailingProfit=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    pctFiftyTwoWeekHigh=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    pctFiftyTwoWeekLow=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        # Adder
+    ),
+    pctTargetPrice=dDict(
+        label='label',
+        unit='%',
+        dtype=float,
+        digit=2,
         origin='',
         # Adder
     ),

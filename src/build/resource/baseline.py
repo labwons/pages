@@ -5,11 +5,11 @@ except ImportError:
     from src.build.service.metadata import METADATA
     from src.common.env import FILE
 from datetime import datetime
-from numpy import nan, datetime_as_string
+from numpy import nan
 from pandas import DataFrame, Series, isna
 from pandas import concat, read_parquet
 from time import perf_counter
-from typing import Any, Dict, List, Union, Tuple
+from typing import List
 
 
 class Tools:
@@ -233,7 +233,8 @@ class Baseline:
                         # TRAILING VALUES ARE TO BE REGARD AS UNRELIABLE DATA.
                         break
                 obj[label] = trailer.sum()
-
+            if 'trailingRevenue' in obj and 'trailingProfit' in obj:
+                obj['trailingProfitRate'] = 100 * obj['trailingProfit'] / obj['trailingRevenue']
             obj.name = ticker
             objs.append(obj)
         merge = concat(objs=objs, axis=1).T
@@ -316,12 +317,28 @@ if __name__ == "__main__":
 
     set_option('display.expand_frame_repr', False)
 
-    baseline = Baseline()
+    # baseline = Baseline()
     # print(baseline)
-    print(baseline.log)
+    # print(baseline.log)
     # baseline.show_gaussian('M-1')
 
+    from pandas import read_parquet
+    from src.common.env import FILE
 
+    df = read_parquet(FILE.BASELINE, engine='pyarrow')
+    # print(df)
 
+    for c in df:
+        if c not in METADATA:
+            print(f'{c}=dDict(')
+            print(f"\tlabel='label',")
+            print(f"\tunit='%',")
+            print(f"\tdtype=float,")
+            print(f"\tdigit=2,")
+            print(f"\torigin='',")
+            print(f"\t# Adder")
+            print(f"),")
 
-
+    for m, v in METADATA:
+        if m not in df:
+            print(m)
