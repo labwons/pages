@@ -5,9 +5,9 @@ except ImportError:
     from src.build.service.metadata import METADATA
     from src.common.env import FILE
 from datetime import datetime
-from numpy import nan
+from numpy import nan, log
 from pandas import DataFrame, Series, isna
-from pandas import concat, read_parquet
+from pandas import concat
 from time import perf_counter
 from typing import List
 
@@ -26,13 +26,13 @@ class Tools:
         return float(value) if "." in value or "-" in value else int(value)
 
     @classmethod
-    def profitGrowth(cls, profit:Series) -> List:
+    def profitGrowth(cls, profit:Series, debug:bool=False) -> List:
         prev = profit.values[0]
-        if 0 <= prev <= 1:
+        if -1 <= prev <= 1:
             prev = nan
         value, label = [], []
         for curr in profit.iloc[1:]:
-            if 0 < curr <= 1:
+            if -1 <= curr <= 1:
                 curr = nan
             if prev is None or isna(prev) or isna(curr):
                 value.append(nan)
@@ -49,6 +49,9 @@ class Tools:
             prev = curr
         values = Series(value)
         average = values.mean() if len(values.dropna()) >= 2 else nan
+        if debug:
+            print(values)
+            print(average)
         return [value[-1], label[-1], average]
 
 
@@ -97,7 +100,9 @@ class Baseline:
         # print(sector)
 
         merge = self.merge(number, overview, statementA, statementQ, sector)
+        self.checkMetadata(merge)
         self.data = merge
+
         # print(merge)
         # merge.to_clipboard()
 
@@ -175,17 +180,20 @@ class Baseline:
             if not estimated.empty:
                 # IF THERE IS ESTIMATED STATEMENT(추정치), CLOSEST ESTIMATION DATE WILL BE USED.
                 # ESTIMATIONG FOR GROWTH IS ONLY USED FOR REVENUE, PROFIT, AND EPS.
-                EST_GROWTH_COLUMNS = ['estimatedRevenue', 'estimatedProfit', 'estimatedEps']
-                est = concat([recentStatement, estimated.iloc[0]], axis=1).T
-                est = est.rename(
-                    columns={p: c.replace("fiscal", "estimated") for p, c in METADATA.RENAME if p in est.columns}
-                )
-                est = est.rename(columns={est.columns[0]:'estimatedRevenue'})
-                estRated = 100 * est.pct_change(fill_method=None)[EST_GROWTH_COLUMNS]
-                estRated = estRated.rename(columns={c: f'{c}Growth' for c in estRated.columns})
 
+                est = concat([recentStatement, estimated.iloc[0]], axis=1).T
+                est = est.rename(columns={p: c.replace("fiscal", "estimated") for p, c in METADATA.RENAME if p in est})
+                est = est.rename(columns={est.columns[0]:'estimatedRevenue'})
                 obj['estimatedDate'] = est.index[-1]
-                obj = concat([obj, est.iloc[-1], estRated.iloc[-1]])
+                obj = concat([obj, est.iloc[-1]])
+
+                if recentStatement[_revenueKey] < 5:
+                    obj['estimatedRevenueGrowth'] = nan
+                else:
+                    obj['estimatedRevenueGrowth'] = 100 * est.pct_change(fill_method=None).iloc[-1]['estimatedRevenue']
+
+                obj['estimatedProfitGrowth'] = Tools.profitGrowth(est['estimatedProfit'])[0]
+                obj['estimatedEpsGrowth'] = Tools.profitGrowth(est['estimatedEps'])[0]
 
             obj['revenueType'] = _revenueKey.replace("(억원)", "")
             obj.name = ticker
@@ -196,6 +204,8 @@ class Baseline:
 
     @classmethod
     def statementQ(cls, statementQ:DataFrame, qq:Series) -> DataFrame:
+        from numpy import seterr
+        seterr(all='raise')
         tickers = statementQ.columns.get_level_values(0).unique()
         objs = []
         for ticker in tickers:
@@ -219,20 +229,24 @@ class Baseline:
             obj['recentDebt'] = recentQuarter['부채총계(억원)']
             obj['recentDebtRatio'] = recentQuarter['부채비율(%)']
             obj['recentProfitRate'] = recentQuarter['영업이익률(%)']
+            if recentQuarter[statement.columns[0]] < 5:
+                # IF REVENUE IS LESS THAN 5억원, PROFIT RATE IS NOT USED.
+                obj['recentProfitRate'] = nan
 
-            for key, label in {
-                statement.columns[0]: 'trailingRevenue',
-                '영업이익(억원)': 'trailingProfit',
-                'EPS(원)': 'trailingEps'
-            }.items():
-                trailer = statement[key].iloc[-4:]
-                if trailer.isnull().sum():
-                    trailer = statement[key].iloc[-5:-1]
+            if len(statement) >= 4:
+                for key, label in {
+                    statement.columns[0]: 'trailingRevenue',
+                    '영업이익(억원)': 'trailingProfit',
+                    'EPS(원)': 'trailingEps'
+                }.items():
+                    trailer = statement[key].iloc[-4:]
                     if trailer.isnull().sum():
-                        # IF THE NUMBER OF TRAILING VALUES IS LESS THAN FOUR,
-                        # TRAILING VALUES ARE TO BE REGARD AS UNRELIABLE DATA.
-                        break
-                obj[label] = trailer.sum()
+                        trailer = statement[key].iloc[-5:-1]
+                        if trailer.isnull().sum():
+                            # IF THE NUMBER OF TRAILING VALUES IS LESS THAN FOUR,
+                            # TRAILING VALUES ARE TO BE REGARD AS UNRELIABLE DATA.
+                            break
+                    obj[label] = trailer.sum()
             if 'trailingRevenue' in obj and 'trailingProfit' in obj:
                 obj['trailingProfitRate'] = 100 * obj['trailingProfit'] / obj['trailingRevenue']
             obj.name = ticker
@@ -256,60 +270,106 @@ class Baseline:
         merge['trailingPS'] = (merge['marketCap'] / 1e+8) / merge['trailingRevenue']
         merge['trailingPE'] = merge['close'] / merge['trailingEps'].apply(lambda x: x if x > 0 else nan)
         merge['turnoverRatio'] = 100 * merge['volume'] / (merge['shares'] * merge['floatShares'] / 100)
+
+        for key, meta in METADATA:
+            if key == "RENAME":
+                continue
+            if  not meta.limit:
+                continue
+            if str(meta.limit).startswith('statistic'):
+                lower = merge[key].mean() - int(meta.limit.split(":")[-1]) * merge[key].std()
+                upper = merge[key].mean() + int(meta.limit.split(":")[-1]) * merge[key].std()
+                merge[key] = merge[key].apply(lambda x: x if lower < x < upper else nan)
+            if type(meta.limit) == list:
+                merge[key] = merge[key].clip(lower=meta.limit[0], upper=meta.limit[1])
+
         return merge
 
+    @classmethod
+    def checkMetadata(cls,base:DataFrame):
+        ndef = [c for c in base if c not in METADATA]
+        if ndef:
+            print("METADATA 미정의 항목")
+            for c in ndef:
+                print(f'{c}=dDict(')
+                print(f"\tlabel='label',")
+                print(f"\tunit='%',")
+                print(f"\tdtype=float,")
+                print(f"\tdigit=2,")
+                print(f"\torigin='',")
+                print(f"\t# Adder")
+                print(f"),")
 
-    # def show_gaussian(self, col:str):
-    #     # INTERNAL
-    #     import plotly.graph_objs as go
-    #     from scipy.stats import norm
-    #     from pandas import concat, Series
-    #
-    #     # x = self[[col, 'name']]
-    #     y = Series(index=self.index, data=norm.pdf(self[col], self[col].mean(), self[col].std()), name='y')
-    #     m = self['name'] + '(' + self.index + ')'
-    #     m.name = 'm'
-    #     subset = concat([self[col], y, m], axis=1).sort_values(by=col)
-    #     print(subset)
-    #     fig = go.Figure()
-    #
-    #     fig.add_trace(go.Scatter(
-    #         x=subset[col],
-    #         y=subset.y,
-    #         mode='lines+markers',
-    #         showlegend=False,
-    #         meta=subset.m,
-    #         hovertemplate="%{meta}: %{x}<extra></extra>"
-    #     ))
-    #     fig.add_trace(go.Scatter(
-    #         x=[subset[col].mean() - 2 * subset[col].std()] * len(subset),
-    #         y=subset.y,
-    #         mode='lines',
-    #         showlegend=False,
-    #         line={
-    #             'color':'black',
-    #             'dash':'dot'
-    #         },
-    #         hoverinfo='skip'
-    #     ))
-    #     fig.add_trace(go.Scatter(
-    #         x=[subset[col].mean() + 2 * subset[col].std()] * len(subset),
-    #         y=subset.y,
-    #         mode='lines',
-    #         showlegend=False,
-    #         line={
-    #             'color': 'black',
-    #             'dash': 'dot'
-    #         },
-    #         hoverinfo='skip'
-    #     ))
-    #
-    #     fig.update_layout(
-    #         xaxis_title="Value",
-    #         yaxis_title="Density",
-    #     )
-    #     fig.show('browser')
-    #     return
+        ddef = [m for m, v in METADATA if m not in base and not "RENAME" == m]
+        if ddef:
+            print("불필요 METADATA 항목")
+            for m in ddef:
+                print(m)
+        return
+
+    @classmethod
+    def gaussian(cls, data:DataFrame, col:str):
+        # INTERNAL
+        import plotly.graph_objs as go
+        from scipy.stats import norm
+        from pandas import concat, Series
+
+
+        y = Series(index=data.index, data=norm.pdf(data[col], data[col].mean(), data[col].std()), name='y')
+        m = data['name'] + '(' + data.index + ')'
+        m.name = 'm'
+        subset = concat([data[col], y, m], axis=1).sort_values(by=col)
+
+        # print(data[data.index.isin(subset.tail(5).index)])
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=subset[col],
+            y=subset.y,
+            mode='lines+markers',
+            showlegend=False,
+            meta=subset.m,
+            hovertemplate="%{meta}: %{x}<extra></extra>"
+        ))
+        fig.add_trace(go.Scatter(
+            x=[subset[col].mean() - 2 * subset[col].std()] * len(subset),
+            y=subset.y,
+            mode='lines',
+            showlegend=False,
+            line={
+                'color':'black',
+                'dash':'dot'
+            },
+            hoverinfo='skip'
+        ))
+        fig.add_trace(go.Scatter(
+            x=[subset[col].mean() + 1 * subset[col].std()] * len(subset),
+            y=subset.y,
+            mode='lines',
+            showlegend=False,
+            line={
+                'color': 'black',
+                'dash': 'dot'
+            },
+            hoverinfo='skip'
+        ))
+        fig.add_trace(go.Scatter(
+            x=[subset[col].mean() + 2 * subset[col].std()] * len(subset),
+            y=subset.y,
+            mode='lines',
+            showlegend=False,
+            line={
+                'color': 'black',
+                'dash': 'dot'
+            },
+            hoverinfo='skip'
+        ))
+
+        fig.update_layout(
+            xaxis_title="Value",
+            yaxis_title="Density",
+        )
+        fig.show('browser')
+        return
 
 
 if __name__ == "__main__":
@@ -317,28 +377,16 @@ if __name__ == "__main__":
 
     set_option('display.expand_frame_repr', False)
 
-    # baseline = Baseline()
-    # print(baseline)
-    # print(baseline.log)
-    # baseline.show_gaussian('M-1')
-
-    from pandas import read_parquet
     from src.common.env import FILE
+    from pandas import read_parquet
+
+    baseline = Baseline()
+    print(baseline.log)
+    baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
+
+    # print(baseline.data)
+    # print(baseline.data.columns)
 
     df = read_parquet(FILE.BASELINE, engine='pyarrow')
-    # print(df)
-
-    for c in df:
-        if c not in METADATA:
-            print(f'{c}=dDict(')
-            print(f"\tlabel='label',")
-            print(f"\tunit='%',")
-            print(f"\tdtype=float,")
-            print(f"\tdigit=2,")
-            print(f"\torigin='',")
-            print(f"\t# Adder")
-            print(f"),")
-
-    for m, v in METADATA:
-        if m not in df:
-            print(m)
+    print(df.columns)
+    Baseline.gaussian(df, 'fiscalProfitRatio')
