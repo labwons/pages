@@ -1,5 +1,5 @@
 try:
-    from ...common.env import dDict
+    from src.common.env import dDict
 except ImportError:
     from src.common.env import dDict
 from datetime import datetime
@@ -13,6 +13,7 @@ METADATA = dDict(
         digit=0,
         origin='종가',
         limit=False,
+        apps=[],
         # Adder
     ),
     marketCap=dDict(
@@ -22,6 +23,7 @@ METADATA = dDict(
         digit=0,
         origin='시가총액',
         limit=False,
+        apps=[],
         # Adder
     ),
     volume=dDict(
@@ -31,6 +33,7 @@ METADATA = dDict(
         digit=0,
         origin='거래량',
         limit=False,
+        apps=[],
         # Adder
     ),
     amount=dDict(
@@ -40,6 +43,7 @@ METADATA = dDict(
         digit=0,
         origin='거래대금',
         limit=False,
+        apps=[],
         # Adder
     ),
     shares=dDict(
@@ -49,6 +53,7 @@ METADATA = dDict(
         digit=0,
         origin='상장주식수',
         limit=False,
+        apps=[],
         # Adder
     ),
     priceToBook=dDict(
@@ -58,6 +63,7 @@ METADATA = dDict(
         digit=2,
         origin='PBR',
         limit=False,
+        apps=[],
         # Adder
     ),
     dividendYield=dDict(
@@ -67,6 +73,7 @@ METADATA = dDict(
         digit=2,
         origin='DIV',
         limit=False,
+        apps=[],
         # Adder
     ),
     foreignRate=dDict(
@@ -76,6 +83,7 @@ METADATA = dDict(
         digit=2,
         origin='지분율',
         limit=False,
+        apps=[],
         # Adder
     ),
     return1Day=dDict(
@@ -85,6 +93,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     return1Week=dDict(
@@ -94,6 +103,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     return1Month=dDict(
@@ -103,6 +113,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     return3Month=dDict(
@@ -112,6 +123,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     return6Month=dDict(
@@ -121,6 +133,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     return1Year=dDict(
@@ -130,6 +143,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiftyTwoWeekHigh=dDict(
@@ -139,6 +153,7 @@ METADATA = dDict(
         digit=0,
         origin='high52week',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiftyTwoWeekLow=dDict(
@@ -148,6 +163,7 @@ METADATA = dDict(
         digit=0,
         origin='low52week',
         limit=False,
+        apps=[],
         # Adder
     ),
     beta=dDict(
@@ -157,6 +173,7 @@ METADATA = dDict(
         digit=4,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     floatShares=dDict(
@@ -166,6 +183,7 @@ METADATA = dDict(
         digit=2,
         origin='ff_sher_rt',
         limit=False,
+        apps=[],
         # Adder
     ),
     stockSplitDate=dDict(
@@ -175,6 +193,7 @@ METADATA = dDict(
         digit=0,
         origin='face_value_chg_dt',
         limit=False,
+        apps=[],
         # Adder
     ),
     targetPrice=dDict(
@@ -184,6 +203,7 @@ METADATA = dDict(
         digit=0,
         origin='target_price',
         limit=False,
+        apps=[],
         # Adder
     ),
     forwardEps=dDict(
@@ -193,6 +213,7 @@ METADATA = dDict(
         digit=0,
         origin='eps',
         limit=False,
+        apps=[],
         # Adder
     ),
     numberOfEstimation=dDict(
@@ -202,6 +223,7 @@ METADATA = dDict(
         digit=0,
         origin='presume_organ_count',
         limit=False,
+        apps=[],
         # Adder
     ),
     statementType=dDict(
@@ -211,6 +233,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalDate=dDict(
@@ -220,6 +243,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalRevenue=dDict(
@@ -229,6 +253,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit='statistic:1',
+        apps=[],
         # Adder
     ),
     fiscalProfit=dDict(
@@ -238,6 +263,7 @@ METADATA = dDict(
         digit=0,
         origin='영업이익(억원)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalNetProfit=dDict(
@@ -247,6 +273,7 @@ METADATA = dDict(
         digit=0,
         origin='당기순이익(억원)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalProfitRatio=dDict(
@@ -256,6 +283,7 @@ METADATA = dDict(
         digit=2,
         origin='영업이익률(%)',
         limit='statistic:1',
+        apps=[],
         # Adder
     ),
     fiscalAsset=dDict(
@@ -265,6 +293,7 @@ METADATA = dDict(
         digit=0,
         origin='자산총계(억원)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalCapital=dDict(
@@ -274,6 +303,7 @@ METADATA = dDict(
         digit=0,
         origin='자본총계(억원)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalDebt=dDict(
@@ -283,6 +313,7 @@ METADATA = dDict(
         digit=0,
         origin='부채총계(억원)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalDebtRatio=dDict(
@@ -292,6 +323,7 @@ METADATA = dDict(
         digit=2,
         origin='부채비율(%)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalRetentionRatio=dDict(
@@ -301,6 +333,7 @@ METADATA = dDict(
         digit=2,
         origin='유보율(%)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalRoA=dDict(
@@ -310,6 +343,7 @@ METADATA = dDict(
         digit=2,
         origin='ROA(%)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalRoE=dDict(
@@ -319,6 +353,7 @@ METADATA = dDict(
         digit=2,
         origin='ROE(%)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalEps=dDict(
@@ -328,6 +363,7 @@ METADATA = dDict(
         digit=0,
         origin='EPS(원)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalDividendYield=dDict(
@@ -337,6 +373,7 @@ METADATA = dDict(
         digit=2,
         origin='배당수익률(%)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalPE = dDict(
@@ -346,6 +383,7 @@ METADATA = dDict(
         digit=2,
         origin='PER(배)',
         limit='statistic:1',
+        apps=[],
         # Adder
     ),
     fiscalPriceToBook=dDict(
@@ -355,6 +393,7 @@ METADATA = dDict(
         digit=2,
         origin='PBR(배)',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalRevenueGrowth=dDict(
@@ -364,6 +403,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalProfitGrowth=dDict(
@@ -373,6 +413,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalEpsGrowth=dDict(
@@ -382,6 +423,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
 
@@ -392,6 +434,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit='statistic:1',
+        apps=[],
         # Adder
     ),
     averageProfitGrowth=dDict(
@@ -401,6 +444,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     averageEpsGrowth=dDict(
@@ -410,6 +454,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit='statistic:2',
+        apps=[],
         # Adder
     ),
     trailingRevenue=dDict(
@@ -419,6 +464,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     trailingEps=dDict(
@@ -428,6 +474,7 @@ METADATA = dDict(
         digit=1,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     trailingProfitRate=dDict(
@@ -437,6 +484,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedPE=dDict(
@@ -446,6 +494,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     trailingPS=dDict(
@@ -455,6 +504,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=[0, 200],
+        apps=[],
         # Adder
     ),
     trailingPE=dDict(
@@ -464,6 +514,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit='statistic:2',
+        apps=[],
         # Adder
     ),
     turnoverRatio=dDict(
@@ -473,6 +524,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     market=dDict(
@@ -482,6 +534,7 @@ METADATA = dDict(
         digit=-1,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     name=dDict(
@@ -491,6 +544,7 @@ METADATA = dDict(
         digit=-1,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     industryCode=dDict(
@@ -500,6 +554,7 @@ METADATA = dDict(
         digit=-1,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     industryName=dDict(
@@ -509,6 +564,7 @@ METADATA = dDict(
         digit=-1,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     sectorCode=dDict(
@@ -518,6 +574,7 @@ METADATA = dDict(
         digit=-1,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     sectorName=dDict(
@@ -527,6 +584,7 @@ METADATA = dDict(
         digit=-1,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalProfitState=dDict(
@@ -536,6 +594,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     fiscalEpsState=dDict(
@@ -545,6 +604,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedDate=dDict(
@@ -554,6 +614,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedRevenue=dDict(
@@ -563,6 +624,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedProfit=dDict(
@@ -572,6 +634,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedNetProfit=dDict(
@@ -581,6 +644,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedAsset=dDict(
@@ -590,6 +654,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedDebt=dDict(
@@ -599,6 +664,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedCapital=dDict(
@@ -608,6 +674,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedDebtRatio=dDict(
@@ -617,6 +684,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedProfitRatio=dDict(
@@ -626,6 +694,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedRoA=dDict(
@@ -635,6 +704,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedRoE=dDict(
@@ -644,6 +714,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedEps=dDict(
@@ -653,6 +724,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedPriceToBook=dDict(
@@ -662,6 +734,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedRevenueGrowth=dDict(
@@ -671,6 +744,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedProfitGrowth=dDict(
@@ -680,6 +754,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     estimatedEpsGrowth=dDict(
@@ -689,6 +764,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     revenueType=dDict(
@@ -698,6 +774,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     recentAsset=dDict(
@@ -707,6 +784,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     recentCapital=dDict(
@@ -716,6 +794,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     recentDebt=dDict(
@@ -725,6 +804,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     recentDebtRatio=dDict(
@@ -734,6 +814,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     recentProfitRate=dDict(
@@ -743,6 +824,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     trailingProfit=dDict(
@@ -752,6 +834,7 @@ METADATA = dDict(
         digit=0,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     pctFiftyTwoWeekHigh=dDict(
@@ -761,6 +844,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     pctFiftyTwoWeekLow=dDict(
@@ -770,6 +854,7 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
         # Adder
     ),
     pctTargetPrice=dDict(
@@ -779,10 +864,176 @@ METADATA = dDict(
         digit=2,
         origin='',
         limit=False,
+        apps=[],
+        # Adder
+    ),
+    yoyRevenue=dDict(
+        label='매출액(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit='statistic:1',
+        apps=[],
+        # Adder
+    ),
+    yoyProfit=dDict(
+        label='영업이익(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        apps=[],
+        # Adder
+    ),
+    yoyNetProfit=dDict(
+        label='당기순이익(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit='statistic:2',
+        apps=[],
+        # Adder
+    ),
+    yoyAsset=dDict(
+        label='총 자산(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        apps=[],
+        # Adder
+    ),
+    yoyDebt=dDict(
+        label='총 부채(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        apps=[],
+        # Adder
+    ),
+    yoyCapital=dDict(
+        label='총 자본(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        apps=[],
+        # Adder
+    ),
+    yoyDebtRatio=dDict(
+        label='부채비율(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        apps=[],
+        # Adder
+    ),
+    yoyRetentionRatio=dDict(
+        label='유보율(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        apps=[],
+        # Adder
+    ),
+    yoyProfitRatio=dDict(
+        label='영업이익율(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        apps=[],
+        # Adder
+    ),
+    yoyRoA=dDict(
+        label='RoA(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        apps=[],
+        # Adder
+    ),
+    yoyRoE=dDict(
+        label='RoE(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        apps=[],
+        # Adder
+    ),
+    yoyEps=dDict(
+        label='EPS(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit='statistic:1',
+        apps=[],
+        # Adder
+    ),
+    yoyPriceToBook=dDict(
+        label='PBR(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        apps=[],
+        # Adder
+    ),
+    yoyDividendYield=dDict(
+        label='배당수익률(YoY)',
+        unit='%',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        apps=[],
         # Adder
     ),
 )
 METADATA.RENAME = dDict(**{item.origin: key for key, item in METADATA if item.origin})
+
+
+
+MARKETMAP = dDict(
+    COLORS=dDict(
+        BLUE2RED = [
+            '#1861A8', # R24 G97 B168
+            '#228BE6', # R34 G139 B230
+            '#74C0FC', # R116 G192 B252
+            '#A6A6A6', # R168 G168 B168
+            '#FF8787', # R255 G135 B135
+            '#F03E3E', # R240 G62 B62
+            '#C92A2A'  # R201 G42 B42
+        ],
+        RED2GREEN = [
+            '#F63538', # R246 G53 B56
+            '#BF4045', # R191 G64 B69
+            '#8B444E', # R139 G68 B78
+            '#414554', # R65 G69 B84
+            '#35764E', # R53 G118 B78
+            '#2F9E4F', # R47 G158 B79
+            '#30CC5A'  # R48 G204 B90
+        ]
+    )
+)
 
 
 if __name__ == "__main__":

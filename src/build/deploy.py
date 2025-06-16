@@ -209,7 +209,6 @@ if __name__ == "__main__":
                     "srcTicker": marketMap.to_json(orient='index'),
                     "srcColors": marketMap.colors.to_json(orient='index'),
                     "srcIndicatorOpt": dumps(marketMap.meta),
-                    "faq": marketMap.faqs
                 })
             )
 

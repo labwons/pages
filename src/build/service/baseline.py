@@ -1,5 +1,5 @@
 try:
-    from . import metadata
+    from src.build.resource import metadata
     from ...fetch.market.state import MarketState
     from ...fetch.market.group import MarketGroup
     from ...fetch.market.spec import MarketSpec

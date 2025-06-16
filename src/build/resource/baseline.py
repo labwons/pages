@@ -1,13 +1,13 @@
 try:
-    from src.build.service.metadata import METADATA
+    from .metadata import METADATA
     from src.common.env import FILE
 except ImportError:
-    from src.build.service.metadata import METADATA
+    from src.build.resource.metadata import METADATA
     from src.common.env import FILE
 from datetime import datetime
-from numpy import nan, log
-from pandas import DataFrame, Series, isna
-from pandas import concat
+from numpy import nan
+from pandas import DataFrame, Series
+from pandas import concat, isna, read_parquet
 from time import perf_counter
 from typing import List
 
@@ -86,7 +86,7 @@ class Baseline:
         statementA = read_parquet(FILE.ANNUAL_STATEMENT)
         self.log = f'- READ ANNUAL STATEMENT'
         statementA = self.statementA(statementA, statement_yy)
-        # print(statementA)
+        # # print(statementA)
 
         statementQ = read_parquet(FILE.QUARTER_STATEMENT)
         self.log = f'- READ QUARTER STATEMENT'
@@ -215,13 +215,9 @@ class Baseline:
             estimated = statement[statement.index.str.contains('\\(E\\)')].copy()
             provision = statement[statement.index.str.contains('\\(P\\)')].copy()
             statement = statement[~statement.index.isin(estimated.index)]
-
             recentQuarter = statement.loc[statement.index[-1]]
             if not provision.empty:
                 recentQuarter = statement.iloc[-1].combine_first(statement.iloc[-2])
-
-            # TODO
-            # YoY 계산 및 추가
 
             obj = Series()
             obj['recentAsset'] = recentQuarter['자산총계(억원)']
@@ -249,6 +245,17 @@ class Baseline:
                     obj[label] = trailer.sum()
             if 'trailingRevenue' in obj and 'trailingProfit' in obj:
                 obj['trailingProfitRate'] = 100 * obj['trailingProfit'] / obj['trailingRevenue']
+
+            lastQ = str(recentQuarter.name).replace("(P)", "").split("/")
+            yearAgo = statement[statement.index == f'{int(lastQ[0]) - 1}/{lastQ[-1]}']
+            if not yearAgo.empty:
+                frm = concat([yearAgo.iloc[0], recentQuarter], axis=1).T
+                yoy = 100 * frm.pct_change(fill_method=None)
+                yoy = yoy.rename(columns={p: c.replace("fiscal", "yoy") for p, c in METADATA.RENAME if p in yoy})
+                yoy = yoy.rename(columns={yoy.columns[0]: "yoyRevenue"})
+                obj = concat([obj, yoy.iloc[-1]], axis=0)
+                obj['yoyEps'] = Tools.profitGrowth(frm['EPS(원)'])[0]
+
             obj.name = ticker
             objs.append(obj)
         merge = concat(objs=objs, axis=1).T
@@ -297,6 +304,7 @@ class Baseline:
                 print(f"\tdtype=float,")
                 print(f"\tdigit=2,")
                 print(f"\torigin='',")
+                print(f"\tlimit=False,")
                 print(f"\t# Adder")
                 print(f"),")
 
@@ -380,13 +388,12 @@ if __name__ == "__main__":
     from src.common.env import FILE
     from pandas import read_parquet
 
-    baseline = Baseline()
-    print(baseline.log)
-    baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
-
+    # baseline = Baseline()
+    # print(baseline.log)
+    # baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
     # print(baseline.data)
     # print(baseline.data.columns)
 
     df = read_parquet(FILE.BASELINE, engine='pyarrow')
     print(df.columns)
-    Baseline.gaussian(df, 'fiscalProfitRatio')
+    Baseline.gaussian(df, 'yoyEps')
