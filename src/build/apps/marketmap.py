@@ -227,8 +227,8 @@ class MarketMap:
             minv = METADATA[key].dtype(data.min())
             maxv = METADATA[key].dtype(data.max())
             if METADATA[key].dtype == float:
-                minv = round(minv, METADATA[key].digit)
-                maxv = round(maxv, METADATA[key].digit)
+                minv = f'{minv:,.1f}
+                maxv = f'{maxv:,.1f}
             objs[key] = [
                 f'{"-" if len(_min) > 1 else minv}{METADATA[key].unit}',
                 f'{"-" if len(_max) > 1 else maxv}{METADATA[key].unit}',
