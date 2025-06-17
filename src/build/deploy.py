@@ -17,8 +17,6 @@ if __name__ == "__main__":
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
         from .service.macro import Macro
-        # from .service.marketmap import MarketMap
-        # from .service.portfolio import StockPortfolio
         from .resource.scope import rss, sitemap
         from .action import ACTION
     except ImportError:
@@ -33,14 +31,11 @@ if __name__ == "__main__":
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble
         from src.build.service.macro import Macro
-        # from src.build.service.marketmap import MarketMap
-        # from src.build.service.portfolio import StockPortfolio
         from src.build.resource.scope import rss, sitemap
         from src.build.action import ACTION
 
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
-    from pandas import read_parquet
     from pykrx.stock import get_nearest_business_day_in_a_week
     from numpy import datetime_as_string
     from time import sleep
@@ -153,7 +148,6 @@ if __name__ == "__main__":
     # DEPLOY MARKET MAP
     # ---------------------------------------------------------------------------------------
     marketMap = MarketMap(baseline.data)
-
     try:
         with open(
                 file=os.path.join(env.DOCS, 'index.html'),
@@ -168,13 +162,11 @@ if __name__ == "__main__":
                     "title": "LAB￦ONS: \uc2dc\uc7a5\uc9c0\ub3c4",
                     "nav": SYSTEM_NAV,
                     "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
-                    "historySection": False,
                     "statusValue": marketMap.stat.to_dict(),
                     "srcTicker": marketMap.data.to_json(orient='index'),
                     "srcIndicatorOpt": dumps(marketMap.meta),
                 })
             )
-
         context += [f'- [SUCCESS] Deploy Market-Map', marketMap.log, '']
     except Exception as error:
         context += [f'- [FAILED] Deploy Market-Map', f'  : {error}', '']
@@ -233,10 +225,9 @@ if __name__ == "__main__":
                 .get_template('bubble-1.0.0.html') \
                 .render({
                     "local": env.ENV == "local",
-                    "title": "LAB￦ONS: 종목분포",
+                    "title": "LAB￦ONS: \uc885\ubaa9\ubd84\ud3ec",
                     "nav": SYSTEM_NAV,
                     "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
-                    "historySection": False,
                     "srcTickers": marketBubble.to_json(orient='index'),
                     "srcSectors": dumps(marketBubble.sector),
                     "srcIndicatorOpt": dumps(marketBubble.meta),
@@ -271,7 +262,6 @@ if __name__ == "__main__":
                     "title": "LAB￦ONS: 거시경제",
                     "nav": SYSTEM_NAV,
                     "tradingDate": f'{TRADING_DATE} (또는 최근 발표일) 기준',
-                    "historySection": False,
                     "srcIndicator": dumps(macro.serialize()).replace(" ", ""),
                     "srcIndicatorOpt": dumps(macro.meta).replace(" ", ""),
                     "srcStatus": macro.status,

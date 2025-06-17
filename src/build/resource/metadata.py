@@ -991,200 +991,192 @@ MARKETMAP = dDict(
         scale=[-3, -2, -1, 0, 1, 2, 3],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
         iconMax='bi-graph-up-arrow',
+        iconMin='bi-graph-down-arrow',
         # map-attribute
     ),
     return1Week=dDict(
         scale=[-6, -4, -2, 0, 2, 4, 6],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
         iconMax='bi-graph-up-arrow',
+        iconMin='bi-graph-down-arrow',
         # map-attribute
     ),
     return1Month=dDict(
         scale=[-10, -6.7, -3.3, 0, 3.3, 6.7, 10],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
         iconMax='bi-graph-up-arrow',
+        iconMin='bi-graph-down-arrow',
         # map-attribute
     ),
     return3Month=dDict(
         scale=[-18, -12, -6, 0, 6, 12, 18],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
         iconMax='bi-graph-up-arrow',
+        iconMin='bi-graph-down-arrow',
         # map-attribute
     ),
     return6Month=dDict(
         scale=[-24, -16, -8, 0, 8, 16, 24],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
         iconMax='bi-graph-up-arrow',
+        iconMin='bi-graph-down-arrow',
         # map-attribute
     ),
     return1Year=dDict(
         scale=[-30, -20, -10, 0, 10, 20, 30],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
         iconMax='bi-graph-up-arrow',
+        iconMin='bi-graph-down-arrow',
         # map-attribute
     ),
     pctFiftyTwoWeekHigh=dDict(
         scale=[-30, -20, -10, 0, 0, 0, 0],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
         iconMax='bi-graph-up-arrow',
+        iconMin='bi-graph-down-arrow',
         # map-attribute
     ),
     pctFiftyTwoWeekLow=dDict(
         scale=[0, 0, 0, 0, 10, 20, 30],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
         iconMax='bi-graph-up-arrow',
+        iconMin='bi-graph-down-arrow',
         # map-attribute
     ),
     pctTargetPrice=dDict(
         scale=[-20, -10, -5, 0, 5, 10, 15],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
         iconMax='bi-graph-up-arrow',
+        iconMin='bi-graph-down-arrow',
         # map-attribute
     ),
     dividendYield=dDict(
         scale=[0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
+        iconMax='bi-hand-thumbs-up',
+        iconMin='bi-hand-thumbs-down',
         # map-attribute
     ),
     foreignRate=dDict(
         scale=[0, 0, 0, 0, 20, 40, 60],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
+        iconMax='bi-person-up',
+        iconMin='bi-person-down',
         # map-attribute
     ),
     beta=dDict(
         scale=[0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
         iconMax='bi-graph-up-arrow',
-        # map-attribute
-    ),
-    estimatedProfitRate=dDict(
-        scale=[-15, -10, -5, 0, 5, 10, 15],
-        color='BLUE2RED',
-        index=3,
         iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
-        # map-attribute
-    ),
-    trailingProfitRate=dDict(
-        scale=[-15, -10, -5, 0, 5, 10, 15],
-        color='BLUE2RED',
-        index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
-        # map-attribute
-    ),
-    recentProfitRate=dDict(
-        scale=[-15, -10, -5, 0, 5, 10, 15],
-        color='BLUE2RED',
-        index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
-        # map-attribute
-    ),
-    trailingPE=dDict(
-        scale=[5, 10, 20, 30, 40, 50, 60],
-        color='BLUE2RED',
-        index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
-        # map-attribute
-    ),
-    estimatedPE=dDict(
-        scale=[5, 10, 20, 30, 40, 50, 60],
-        color='BLUE2RED',
-        index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
-        # map-attribute
-    ),
-    trailingPS=dDict(
-        scale=[0.5, 2, 3.5, 5, 6.5, 8, 9.5],
-        color='BLUE2RED',
-        index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
-        # map-attribute
-    ),
-    estimatedRevenueGrowth=dDict(
-        scale=[-10, -5, 0, 5, 10, 15, 20],
-        color='BLUE2RED',
-        index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
-        # map-attribute
-    ),
-    estimatedProfitGrowth=dDict(
-        scale=[-50, -25, 0, 25, 50, 75, 100],
-        color='BLUE2RED',
-        index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
-        # map-attribute
-    ),
-    estimatedEpsGrowth=dDict(
-        scale=[-50, -25, 0, 25, 50, 75, 100],
-        color='BLUE2RED',
-        index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
         # map-attribute
     ),
     yoyRevenue=dDict(
         scale=[-30, -20, -10, 0, 10, 20, 30],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
+        iconMax='bi-building-up',
+        iconMin='bi-building-down',
         # map-attribute
     ),
     yoyProfit=dDict(
         scale=[-120, -80, -40, 0, 40, 80, 120],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
+        iconMax='bi-database-up',
+        iconMin='bi-database-down',
         # map-attribute
     ),
     yoyEps=dDict(
         scale=[-90, -60, -30, 0, 30, 60, 90],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
         iconMax='bi-graph-up-arrow',
+        iconMin='bi-graph-down-arrow',
+        # map-attribute
+    ),
+    trailingPS=dDict(
+        scale=[0.5, 2, 3.5, 5, 6.5, 8, 9.5],
+        color='BLUE2RED',
+        index=3,
+        iconMax='bi-arrow-up-square',
+        iconMin='bi-arrow-down-square',
+        # map-attribute
+    ),
+    trailingPE=dDict(
+        scale=[5, 10, 20, 30, 40, 50, 60],
+        color='BLUE2RED',
+        index=3,
+        iconMax='bi-arrow-up-square',
+        iconMin='bi-arrow-down-square',
+        # map-attribute
+    ),
+    trailingProfitRate=dDict(
+        scale=[-15, -10, -5, 0, 5, 10, 15],
+        color='BLUE2RED',
+        index=3,
+        iconMax='bi-building-up',
+        iconMin='bi-building-down',
+        # map-attribute
+    ),
+    estimatedRevenueGrowth=dDict(
+        scale=[-10, -5, 0, 5, 10, 15, 20],
+        color='BLUE2RED',
+        index=3,
+        iconMax='bi-building-up',
+        iconMin='bi-building-down',
+        # map-attribute
+    ),
+    estimatedProfitRate=dDict(
+        scale=[-15, -10, -5, 0, 5, 10, 15],
+        color='BLUE2RED',
+        index=3,
+        iconMax='bi-database-up',
+        iconMin='bi-database-down',
+        # map-attribute
+    ),
+    estimatedProfitGrowth=dDict(
+        scale=[-50, -25, 0, 25, 50, 75, 100],
+        color='BLUE2RED',
+        index=3,
+        iconMax='bi-database-up',
+        iconMin='bi-database-down',
+        # map-attribute
+    ),
+    estimatedEpsGrowth=dDict(
+        scale=[-50, -25, 0, 25, 50, 75, 100],
+        color='BLUE2RED',
+        index=3,
+        iconMax='bi-graph-up-arrow',
+        iconMin='bi-graph-down-arrow',
+        # map-attribute
+    ),
+    estimatedPE=dDict(
+        scale=[5, 10, 20, 30, 40, 50, 60],
+        color='BLUE2RED',
+        index=3,
+        iconMax='bi-arrow-up-square',
+        iconMin='bi-arrow-down-square',
         # map-attribute
     ),
     turnoverRatio=dDict(
         scale=[0.5, 1, 2, 3, 4, 5, 6],
         color='BLUE2RED',
         index=3,
-        iconMin='bi-graph-down-arrow',
-        iconMax='bi-graph-up-arrow',
+        iconMax='bi-arrow-repeat',
+        iconMin='bi-slash-circle',
         # map-attribute
     ),
 

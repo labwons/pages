@@ -137,7 +137,7 @@ if (SERVICE === "marketmap"){
       if(indicator.scale[n] == null){
         $(this).html('&nbsp; - &nbsp;');
       } else {
-        $(this).html(Number(indicator.scale[n].toFixed(1)) + indicator.unit);
+        $(this).html(indicator.scale[n] + indicator.unit);
       }
       $(this).css('background-color', indicator.color[n]);
     });
@@ -318,11 +318,6 @@ if (SERVICE === "marketmap"){
       data.parents.push(obj.ceiling);
       data.values.push(obj.size);
       data.text.push(obj[key]);
-      // if (obj[key] == null) {
-      //   data.text.push(srcIndicatorOpt[key].na);
-      // } else {
-      //   data.text.push(obj[key] + srcIndicatorOpt[key].unit);
-      // }
       data.meta.push(obj.meta);
       data.marker.colors.push(obj[`${key}Color`]);
     });

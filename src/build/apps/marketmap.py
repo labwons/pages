@@ -9,222 +9,13 @@ from pandas import concat, DataFrame
 from pandas.errors import IntCastingNaNError
 from pykrx.stock import get_index_portfolio_deposit_file
 from time import time
-from typing import Any, Dict, List
-
-
-
-HEX2RGB = lambda x: (int(x[1:3], 16), int(x[3:5], 16), int(x[5:], 16))
-CONNECT = lambda x, x1, y1, x2, y2: ( (y2 - y1) / (x2 - x1) ) * (x - x1) + y1
-
-
-# KEYS = {
-#     'D-1': {
-#         'na': '(미제공)',
-#         'valueScale': [-3, -2, -1, 0, 1, 2, 3],
-#         'colorScale': BLUE2RED,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'W-1': {
-#         'na': '(미제공)',
-#         'valueScale': [-6, -4, -2, 0, 2, 4, 6],
-#         'colorScale': BLUE2RED,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'M-1': {
-#         'na': '(미제공)',
-#         'valueScale': [-10, -6.7, -3.3, 0, 3.3, 6.7, 10],
-#         'colorScale': BLUE2RED,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'M-3': {
-#         'na': '(미제공)',
-#         'valueScale': [-18, -12, -6, 0, 6, 12, 18],
-#         'colorScale': BLUE2RED,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'M-6': {
-#         'na': '(미제공)',
-#         'valueScale': [-24, -16, -8, 0, 8, 16, 24],
-#         'colorScale': BLUE2RED,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'Y-1': {
-#         'na': '(미제공)',
-#         'valueScale': [-30, -20, -10, 0, 10, 20, 30],
-#         'colorScale': BLUE2RED,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'pct52wHigh': {
-#         'na': '(미제공)',
-#         'valueScale': [-30, -20, -10, 0, None, None, None],
-#         'colorScale': BLUE2RED,
-#         'defaultColorIndex': 0,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'pct52wLow': {
-#         'na': '(미제공)',
-#         'valueScale': [None, None, None, 0, 10, 20, 30],
-#         'colorScale': BLUE2RED,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'dividendYield': {
-#         'na': '(미제공)',
-#         'valueScale': [0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 0,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'fiscalDividendYield': {
-#         'na': '(미제공)',
-#         'valueScale': [0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 0,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'foreignRate': {
-#         'na': '(미제공)',
-#         'valueScale': [None, None, None, 0, 20, 40, 60],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'trailingProfitRate': {
-#         'na': '(미제공)',
-#         'valueScale': [-15, -10, -5, 0, 5, 10, 15],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-emoji-smile-fill',
-#         'iconMin': 'bi-emoji-frown-fill',
-#     },
-#     'trailingPE': {
-#         'na': '(적자 | 미제공)',
-#         'valueScale': None,
-#         'colorScale': RED2GREEN[::-1],
-#         'defaultColorIndex': 6,
-#         'iconMax': 'bi-emoji-frown-fill',
-#         'iconMin': 'bi-emoji-smile-fill',
-#     },
-#     'trailingPS': {
-#         'na': '(미제공)',
-#         'valueScale': None,
-#         'colorScale': RED2GREEN[::-1],
-#         'defaultColorIndex': 6,
-#         'iconMax': 'bi-emoji-frown-fill',
-#         'iconMin': 'bi-emoji-smile-fill',
-#     },
-#     'estimatedPE': {
-#         'na': '(적자 | 미제공)',
-#         'valueScale': None,
-#         'colorScale': RED2GREEN[::-1],
-#         'defaultColorIndex': 6,
-#         'iconMax': 'bi-hand-thumbs-down-fill',
-#         'iconMin': 'bi-hand-thumbs-up-fill',
-#     },
-#     'PBR': {
-#         'na': '(미제공)',
-#         'valueScale': None,
-#         'colorScale': RED2GREEN[::-1],
-#         'defaultColorIndex': 6,
-#         'iconMax': 'bi-emoji-frown-fill',
-#         'iconMin': 'bi-emoji-smile-fill',
-#     },
-#     'fiscalDebtRatio' : {
-#         'na': '(미제공)',
-#         'valueScale':  [30, 60, 90, 120, 150, 180, 210],
-#         'colorScale': RED2GREEN[::-1],
-#         'defaultColorIndex': 6,
-#         'iconMax': 'bi-emoji-frown-fill',
-#         'iconMin': 'bi-emoji-smile-fill',
-#     },
-#     'beta': {
-#         'na': '(미제공)',
-#         'valueScale': [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-graph-up-arrow',
-#         'iconMin': 'bi-graph-down-arrow',
-#     },
-#     'turnoverRatio': {
-#         'na': '(미제공)',
-#         'valueScale': [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-arrow-left-right',
-#         'iconMin': 'bi-three-dots',
-#     },
-#     'averageRevenueGrowth_A': {
-#         'na': '(미제공)',
-#         'valueScale': [0, 5, 10, 15, 20, 25, 30],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-emoji-smile-fill',
-#         'iconMin': 'bi-emoji-frown-fill',
-#     },
-#     'averageProfitGrowth_A': {
-#         'na': '(미제공)',
-#         'valueScale': [0, 5, 10, 15, 20, 25, 30],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-emoji-smile-fill',
-#         'iconMin': 'bi-emoji-frown-fill',
-#     },
-#     'averageEpsGrowth_A': {
-#         'na': '(미제공)',
-#         'valueScale': [0, 10, 20, 30, 40, 50, 60],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-emoji-smile-fill',
-#         'iconMin': 'bi-emoji-frown-fill',
-#     },
-#     'RevenueGrowth_A': {
-#         'na': '(미제공)',
-#         'valueScale': [0, 5, 10, 15, 20, 25, 30],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-emoji-smile-fill',
-#         'iconMin': 'bi-emoji-frown-fill',
-#     },
-#     'ProfitGrowth_A': {
-#         'na': '(미제공)',
-#         'valueScale': [0, 5, 10, 15, 20, 25, 30],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-emoji-smile-fill',
-#         'iconMin': 'bi-emoji-frown-fill',
-#     },
-#     'EpsGrowth_A': {
-#         'na': '(미제공)',
-#         'valueScale': [0, 10, 20, 30, 40, 50, 60],
-#         'colorScale': RED2GREEN,
-#         'defaultColorIndex': 3,
-#         'iconMax': 'bi-emoji-smile-fill',
-#         'iconMin': 'bi-emoji-frown-fill',
-#     }
-# }
+from typing import List
 
 
 class MarketMap:
 
     _log: List[str] = []
-    # meta: Dict[str, Dict[str, Any]] = KEYS.copy()
+
     def __init__(self, baseline:DataFrame):
         stime = time()
         self.log = f'BUILD [MARKET MAP]'
@@ -334,7 +125,7 @@ class MarketMap:
                 'label': METADATA[key].label,
                 'unit': METADATA[key].unit,
                 'scale': _meta.scale,
-                'color': _meta.color,
+                'color': [self.rgb2hex(*rgb) for rgb in MARKETMAP.COLORS[_meta.color]],
             }
         self.meta = meta
 
@@ -343,6 +134,10 @@ class MarketMap:
         self.log = f'BUILD [MARKET MAP] FINISHED'
         self.log = f'- {len(self.data)} Items / Elapsed: {time() - stime:.2f}s'
         return
+
+    @classmethod
+    def rgb2hex(cls, r, g, b) -> str:
+        return f'#{hex(int(r))[2:]}{hex(int(g))[2:]}{hex(int(b))[2:]}'
 
     @classmethod
     def largeCaps(cls) -> list:
@@ -382,14 +177,13 @@ class MarketMap:
         return DataFrame(data=objs).set_index(keys='ticker')
 
     @classmethod
-    def paint(cls, frm:DataFrame):
-        rgb2hex = lambda r, g, b: f'#{hex(int(r))[2:]}{hex(int(g))[2:]}{hex(int(b))[2:]}'
+    def paint(cls, frm:DataFrame) -> DataFrame:
         connect = lambda x, x1, y1, x2, y2: ((y2 - y1) / (x2 - x1)) * (x - x1) + y1
         def _paint_(_value, _scale, _color, _index):
             if _value <= _scale[0]:
-                return rgb2hex(*_color[0])
+                return cls.rgb2hex(*_color[0])
             if _value >= _scale[-1]:
-                return rgb2hex(*_color[-1])
+                return cls.rgb2hex(*_color[-1])
 
             n = 0
             while n < len(_scale) - 1:
@@ -402,7 +196,7 @@ class MarketMap:
 
             r1, g1, b1 = _color[n]
             r2, g2, b2 = _color[n + 1]
-            return rgb2hex(
+            return cls.rgb2hex(
                 connect(_value, _scale[n], r1, _scale[n + 1], r2),
                 connect(_value, _scale[n], g1, _scale[n + 1], g2),
                 connect(_value, _scale[n], b1, _scale[n + 1], b2)
@@ -421,10 +215,9 @@ class MarketMap:
         return colors
 
     @classmethod
-    def minmax(cls, frm:DataFrame):
+    def minmax(cls, frm:DataFrame) -> DataFrame:
         objs = {}
         cols = ["min", "max", "minT", "maxT", "minC", "maxC", "minI", "maxI", "label"]
-        rgb2hex = lambda r, g, b: f'#{hex(int(r))[2:]}{hex(int(g))[2:]}{hex(int(b))[2:]}'
         for key, meta in MARKETMAP:
             if key == 'COLORS':
                 continue
@@ -438,52 +231,16 @@ class MarketMap:
                 maxv = round(maxv, METADATA[key].digit)
             objs[key] = [
                 f'{"-" if len(_min) > 1 else minv}{METADATA[key].unit}',
-                f'{"-" if len(_min) > 1 else maxv}{METADATA[key].unit}',
+                f'{"-" if len(_max) > 1 else maxv}{METADATA[key].unit}',
                 "(복수 종목)" if len(_min) > 1 else _min.iloc[0]['name'],
                 "(복수 종목)" if len(_max) > 1 else _max.iloc[0]['name'],
-                rgb2hex(*MARKETMAP.COLORS[meta.color][0]),
-                rgb2hex(*MARKETMAP.COLORS[meta.color][-1]),
-                meta.iconMax,
+                cls.rgb2hex(*MARKETMAP.COLORS[meta.color][0]),
+                cls.rgb2hex(*MARKETMAP.COLORS[meta.color][-1]),
                 meta.iconMin,
+                meta.iconMax,
                 METADATA[key].label
             ]
         return DataFrame(data=objs, index=cols)
-
-    # @property
-    # def desc(self) -> DataFrame:
-    #     tg = self[self.index.str.isdigit()]
-    #     desc = tg.describe()
-    #     mn = {col: ",".join(tg[tg[col] == tg[col].min()].index) for col in desc}
-    #     mx = {col: ",".join(tg[tg[col] == tg[col].max()].index) for col in desc}
-    #     desc = concat([desc, DataFrame([mn, mx], index=["minT", "maxT"])])
-    #     return desc
-    #
-    # @property
-    # def peakPoint(self) -> DataFrame:
-    #     desc = self.desc.copy()
-    #     peak = desc.loc[["min", "max", "minT", "maxT"]]
-    #     drop = ['size']
-    #     for col in peak:
-    #         if ','in peak.loc['minT', col] or ',' in peak.loc['maxT', col]:
-    #             drop.append(col)
-    #         if col in drop:
-    #             continue
-    #         else:
-    #             peak.loc['min', col] = f"{peak.loc['min', col]:,.1f} {self.meta[col]['unit']}"
-    #             peak.loc['max', col] = f"{peak.loc['max', col]:,.1f} {self.meta[col]['unit']}"
-    #         peak.loc['minT', col] = self.loc[peak.loc['minT', col], 'name']
-    #         peak.loc['maxT', col] = self.loc[peak.loc['maxT', col], 'name']
-    #         peak.loc['minC', col] = self.meta[col]['colorScale'][0]
-    #         peak.loc['maxC', col] = self.meta[col]['colorScale'][-1]
-    #         peak.loc['minI', col] = self.meta[col]['iconMin']
-    #         peak.loc['maxI', col] = self.meta[col]['iconMax']
-    #         peak.loc['label', col] = self.meta[col]['label']
-    #
-    #     peak = peak.drop(columns=drop)
-    #     for key in self.meta:
-    #         for _destroy in ['iconMax', 'iconMin']:
-    #             del self.meta[key][_destroy]
-    #     return peak
 
     @property
     def log(self) -> str:
@@ -508,13 +265,6 @@ if __name__ == "__main__":
 
     marketMap = MarketMap(baseline)
     print(marketMap.log)
-    print(marketMap.data.columns)
-    print(marketMap.stat)
-    # print(marketMap)
-    # print(marketMap.desc)
-    # print(marketMap.peakPoint)
-    # print(marketMap.log)
-    # print(marketMap.meta)
-    # print(marketMap.gaussian)
-    # print(marketMap.colors)
-    # print(marketMap.to_dict(orient='index'))
+    # print(marketMap.data.columns)
+    print(marketMap.meta)
+    # print(marketMap.stat)
