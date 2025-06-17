@@ -15,6 +15,13 @@ from typing import List
 class Tools:
 
     @classmethod
+    def krw2currency(cls, krw:int, div:int=0) -> str:
+        if div:
+            krw = krw / div
+        zo, euk = int(krw // 10000), int(krw % 10000)
+        return f'{zo}조 {euk}억' if zo else f'{euk}억'
+
+    @classmethod
     def typeCast(cls, value):
         value = str(value).lower().replace(",", "")
         if value in ['separate', 'consolidated']:
@@ -192,8 +199,13 @@ class Baseline:
                 else:
                     obj['estimatedRevenueGrowth'] = 100 * est.pct_change(fill_method=None).iloc[-1]['estimatedRevenue']
 
-                obj['estimatedProfitGrowth'] = Tools.profitGrowth(est['estimatedProfit'])[0]
-                obj['estimatedEpsGrowth'] = Tools.profitGrowth(est['estimatedEps'])[0]
+                pg = Tools.profitGrowth(est['estimatedProfit'])
+                obj['estimatedProfitGrowth'] = pg[0]
+                obj['estimatedProfitGrowthState'] = pg[1]
+
+                eg = Tools.profitGrowth(est['estimatedEps'])
+                obj['estimatedEpsGrowth'] = eg[0]
+                obj['estimatedEpsGrowthState'] = eg[1]
 
             obj['revenueType'] = _revenueKey.replace("(억원)", "")
             obj.name = ticker
@@ -254,7 +266,12 @@ class Baseline:
                 yoy = yoy.rename(columns={p: c.replace("fiscal", "yoy") for p, c in METADATA.RENAME if p in yoy})
                 yoy = yoy.rename(columns={yoy.columns[0]: "yoyRevenue"})
                 obj = concat([obj, yoy.iloc[-1]], axis=0)
-                obj['yoyEps'] = Tools.profitGrowth(frm['EPS(원)'])[0]
+                ps = Tools.profitGrowth(frm['영업이익(억원)'])
+                es = Tools.profitGrowth(frm['EPS(원)'])
+                obj['yoyProfit'] = ps[0]
+                obj['yoyProfitState'] = ps[1]
+                obj['yoyEps'] = es[0]
+                obj['yoyEpsState'] = es[1]
 
             obj.name = ticker
             objs.append(obj)
@@ -278,17 +295,19 @@ class Baseline:
         merge['trailingPE'] = merge['close'] / merge['trailingEps'].apply(lambda x: x if x > 0 else nan)
         merge['turnoverRatio'] = 100 * merge['volume'] / (merge['shares'] * merge['floatShares'] / 100)
 
-        for key, meta in METADATA:
-            if key == "RENAME":
-                continue
-            if  not meta.limit:
-                continue
-            if str(meta.limit).startswith('statistic'):
-                lower = merge[key].mean() - int(meta.limit.split(":")[-1]) * merge[key].std()
-                upper = merge[key].mean() + int(meta.limit.split(":")[-1]) * merge[key].std()
-                merge[key] = merge[key].apply(lambda x: x if lower < x < upper else nan)
-            if type(meta.limit) == list:
-                merge[key] = merge[key].clip(lower=meta.limit[0], upper=meta.limit[1])
+        # TODO
+        # USE IN BUBBLE
+        # for key, meta in METADATA:
+        #     if key == "RENAME":
+        #         continue
+        #     if  not meta.limit:
+        #         continue
+        #     if str(meta.limit).startswith('statistic'):
+        #         lower = merge[key].mean() - int(meta.limit.split(":")[-1]) * merge[key].std()
+        #         upper = merge[key].mean() + int(meta.limit.split(":")[-1]) * merge[key].std()
+        #         merge[key] = merge[key].apply(lambda x: x if lower < x < upper else nan)
+        #     if type(meta.limit) == list:
+        #         merge[key] = merge[key].clip(lower=meta.limit[0], upper=meta.limit[1])
 
         return merge
 
@@ -338,39 +357,26 @@ class Baseline:
             meta=subset.m,
             hovertemplate="%{meta}: %{x}<extra></extra>"
         ))
-        fig.add_trace(go.Scatter(
-            x=[subset[col].mean() - 2 * subset[col].std()] * len(subset),
-            y=subset.y,
-            mode='lines',
-            showlegend=False,
-            line={
-                'color':'black',
-                'dash':'dot'
-            },
-            hoverinfo='skip'
-        ))
-        fig.add_trace(go.Scatter(
-            x=[subset[col].mean() + 1 * subset[col].std()] * len(subset),
-            y=subset.y,
-            mode='lines',
-            showlegend=False,
-            line={
-                'color': 'black',
-                'dash': 'dot'
-            },
-            hoverinfo='skip'
-        ))
-        fig.add_trace(go.Scatter(
-            x=[subset[col].mean() + 2 * subset[col].std()] * len(subset),
-            y=subset.y,
-            mode='lines',
-            showlegend=False,
-            line={
-                'color': 'black',
-                'dash': 'dot'
-            },
-            hoverinfo='skip'
-        ))
+
+        xs = [
+            [subset[col].mean() - 2 * subset[col].std()] * len(subset),
+            [subset[col].mean() - 1 * subset[col].std()] * len(subset),
+            [subset[col].mean() + 1 * subset[col].std()] * len(subset),
+            [subset[col].mean() + 2 * subset[col].std()] * len(subset),
+            [subset[col].mean()] * len(subset)
+        ]
+        for x in xs:
+            fig.add_trace(go.Scatter(
+                x=x,
+                y=subset.y,
+                mode='lines',
+                showlegend=False,
+                line={
+                    'color':'black',
+                    'dash':'dot'
+                },
+                hoverinfo='skip'
+            ))
 
         fig.update_layout(
             xaxis_title="Value",
@@ -395,5 +401,6 @@ if __name__ == "__main__":
     # print(baseline.data.columns)
 
     df = read_parquet(FILE.BASELINE, engine='pyarrow')
-    print(df.columns)
-    Baseline.gaussian(df, 'yoyEps')
+    # df.to_clipboard()
+    # print(df.columns)
+    # Baseline.gaussian(df, 'turnoverRatio')

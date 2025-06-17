@@ -68,7 +68,7 @@ if (SERVICE === "marketmap"){
 
   var currentMapViewer = 'all';
   var currentBarViewer = 'industry';
-  var currentOption    = 'D-1';
+  var currentOption    = 'return1Day';
   
   mouseEvent.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 
@@ -134,12 +134,12 @@ if (SERVICE === "marketmap"){
   setScaleBar = function(){
     let indicator = srcIndicatorOpt[currentOption];
     $mapLegend.each(function(n) {
-      if(indicator.valueScale[n] == null){
+      if(indicator.scale[n] == null){
         $(this).html('&nbsp; - &nbsp;');
       } else {
-        $(this).html(Number(indicator.valueScale[n].toFixed(1)) + indicator.unit);
+        $(this).html(Number(indicator.scale[n].toFixed(1)) + indicator.unit);
       }
-      $(this).css('background-color', indicator.colorScale[n]);
+      $(this).css('background-color', indicator.color[n]);
     });
   };
   
@@ -208,7 +208,7 @@ if (SERVICE === "marketmap"){
     tickers.sort((a, b) => a[key] - b[key]).forEach(item => {
       data.x.push(Math.abs(item[key]));
       data.y.push(item.name);
-      data.marker.color.push(srcColors[item.ticker][key]);
+      data.marker.color.push(item[`${key}Color`]);
       data.text.push(item[key] + srcIndicatorOpt[key].unit);
       data.meta.push(item.meta);
     });
@@ -317,13 +317,14 @@ if (SERVICE === "marketmap"){
       data.labels.push(obj.name);
       data.parents.push(obj.ceiling);
       data.values.push(obj.size);
-      if (obj[key] == null) {
-        data.text.push(srcIndicatorOpt[key].na);
-      } else {
-        data.text.push(obj[key] + srcIndicatorOpt[key].unit);
-      }
+      data.text.push(obj[key]);
+      // if (obj[key] == null) {
+      //   data.text.push(srcIndicatorOpt[key].na);
+      // } else {
+      //   data.text.push(obj[key] + srcIndicatorOpt[key].unit);
+      // }
       data.meta.push(obj.meta);
-      data.marker.colors.push(srcColors[ticker][key]);
+      data.marker.colors.push(obj[`${key}Color`]);
     });
     Plotly.newPlot('plotly', [data], layout, option);
   }
@@ -351,7 +352,7 @@ if (SERVICE === "marketmap"){
 
   $mapReset.on('click', function() {
     currentMapViewer = 'all';
-    currentOption = 'D-1';
+    currentOption = 'return1Day';
     setMainTypes(true);
     setMainOptions();
     setScaleBar();

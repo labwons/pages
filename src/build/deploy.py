@@ -13,10 +13,11 @@ if __name__ == "__main__":
         from ..fetch.market.sector import SectorComposition
         from ..render.navigate import navigate, minify
         from .resource.baseline import Baseline
+        from .apps.marketmap import MarketMap
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
         from .service.macro import Macro
-        from .service.marketmap import MarketMap
+        # from .service.marketmap import MarketMap
         # from .service.portfolio import StockPortfolio
         from .resource.scope import rss, sitemap
         from .action import ACTION
@@ -28,10 +29,11 @@ if __name__ == "__main__":
         from src.fetch.market.sector import SectorComposition
         from src.render.navigate import navigate, minify
         from src.build.resource.baseline import Baseline
+        from src.build.apps.marketmap import MarketMap
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble
         from src.build.service.macro import Macro
-        from src.build.service.marketmap import MarketMap
+        # from src.build.service.marketmap import MarketMap
         # from src.build.service.portfolio import StockPortfolio
         from src.build.resource.scope import rss, sitemap
         from src.build.action import ACTION
@@ -147,6 +149,36 @@ if __name__ == "__main__":
     TRADING_DATE = baseline.tradingDate
     context += [f"- [SUCCESS] UPDATE BASELINE: ", baseline.log, ""]
 
+    # ---------------------------------------------------------------------------------------
+    # DEPLOY MARKET MAP
+    # ---------------------------------------------------------------------------------------
+    marketMap = MarketMap(baseline.data)
+
+    try:
+        with open(
+                file=os.path.join(env.DOCS, 'index.html'),
+                mode='w',
+                encoding='utf-8'
+        ) as file:
+            file.write(
+                Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
+                    .get_template('marketmap-1.0.0.html') \
+                    .render({
+                    "local": env.ENV == "local",
+                    "title": "LAB￦ONS: \uc2dc\uc7a5\uc9c0\ub3c4",
+                    "nav": SYSTEM_NAV,
+                    "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
+                    "historySection": False,
+                    "statusValue": marketMap.stat.to_dict(),
+                    "srcTicker": marketMap.data.to_json(orient='index'),
+                    "srcIndicatorOpt": dumps(marketMap.meta),
+                })
+            )
+
+        context += [f'- [SUCCESS] Deploy Market-Map', marketMap.log, '']
+    except Exception as error:
+        context += [f'- [FAILED] Deploy Market-Map', f'  : {error}', '']
+
 
     # ---------------------------------------------------------------------------------------
     # BUILD BASELINE
@@ -184,37 +216,6 @@ if __name__ == "__main__":
     #     context += [f'- [SUCCESS] Deploy Portfolio', portfolioData.log, '']
     # except Exception as error:
     #     context += [f'- [FAILED] Deploy Portfolio',f'  : {error}', '']
-
-    # ---------------------------------------------------------------------------------------
-    # DEPLOY MARKET MAP
-    # ---------------------------------------------------------------------------------------
-    marketMap = MarketMap(baseline)
-
-    try:
-        with open(
-            file=os.path.join(env.DOCS, 'index.html'),
-            mode='w',
-            encoding='utf-8'
-        ) as file:
-            file.write(
-                Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
-                .get_template('marketmap-1.0.0.html') \
-                .render({
-                    "local": env.ENV == "local",
-                    "title": "LAB￦ONS: 시장지도",
-                    "nav": SYSTEM_NAV,
-                    "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
-                    "historySection": False,
-                    "statusValue": marketMap.peakPoint.to_dict(),
-                    "srcTicker": marketMap.to_json(orient='index'),
-                    "srcColors": marketMap.colors.to_json(orient='index'),
-                    "srcIndicatorOpt": dumps(marketMap.meta),
-                })
-            )
-
-        context += [f'- [SUCCESS] Deploy Market-Map', marketMap.log, '']
-    except Exception as error:
-        context += [f'- [FAILED] Deploy Market-Map', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------
