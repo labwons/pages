@@ -12,7 +12,7 @@ if __name__ == "__main__":
         from ..fetch.market.finances import FinancialStatement
         from ..fetch.market.sector import SectorComposition
         from ..render.navigate import navigate, minify
-        from .resource.baseline import Baseline
+        from .baseline.baseline import Baseline
         from .apps.marketmap import MarketMap
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         from src.fetch.market.finances import FinancialStatement
         from src.fetch.market.sector import SectorComposition
         from src.render.navigate import navigate, minify
-        from src.build.resource.baseline import Baseline
+        from src.build.baseline.baseline import Baseline
         from src.build.apps.marketmap import MarketMap
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble

@@ -1,9 +1,9 @@
 try:
-    from ..resource.baseleine import Tools
-    from ..resource.metadata import METADATA, MARKETMAP
+    from ..baseline.baseleine import Tools
+    from ..baseline.metadata import METADATA, MARKETMAP
 except ImportError:
-    from src.build.resource.baseline import Tools
-    from src.build.resource.metadata import METADATA, MARKETMAP
+    from src.build.baseline.baseline import Tools
+    from src.build.baseline.metadata import METADATA, MARKETMAP
 from datetime import datetime
 from pandas import concat, DataFrame
 from pandas.errors import IntCastingNaNError

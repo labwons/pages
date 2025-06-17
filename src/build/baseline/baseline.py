@@ -2,7 +2,7 @@ try:
     from .metadata import METADATA
     from src.common.env import FILE
 except ImportError:
-    from src.build.resource.metadata import METADATA
+    from src.build.baseline.metadata import METADATA
     from src.common.env import FILE
 from datetime import datetime
 from numpy import nan

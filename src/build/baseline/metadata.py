@@ -1036,7 +1036,7 @@ MARKETMAP = dDict(
         # map-attribute
     ),
     pctFiftyTwoWeekHigh=dDict(
-        scale=[-30, -20, -10, 0, 0, 0, 0],
+        scale=[-45, -30, -15, 0, 0, 0, 0],
         color='BLUE2RED',
         index=3,
         iconMax='bi-graph-up-arrow',
@@ -1044,7 +1044,7 @@ MARKETMAP = dDict(
         # map-attribute
     ),
     pctFiftyTwoWeekLow=dDict(
-        scale=[0, 0, 0, 0, 10, 20, 30],
+        scale=[0, 0, 0, 0, 15, 30, 45],
         color='BLUE2RED',
         index=3,
         iconMax='bi-graph-up-arrow',
@@ -1052,8 +1052,8 @@ MARKETMAP = dDict(
         # map-attribute
     ),
     pctTargetPrice=dDict(
-        scale=[-20, -10, -5, 0, 5, 10, 15],
-        color='BLUE2RED',
+        scale=[-20, -10, -5, 0, 5, 10, 20],
+        color='GREEN2RED',
         index=3,
         iconMax='bi-graph-up-arrow',
         iconMin='bi-graph-down-arrow',
@@ -1061,15 +1061,15 @@ MARKETMAP = dDict(
     ),
     dividendYield=dDict(
         scale=[0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
-        color='BLUE2RED',
-        index=3,
+        color='RED2GREEN',
+        index=0,
         iconMax='bi-hand-thumbs-up',
         iconMin='bi-hand-thumbs-down',
         # map-attribute
     ),
     foreignRate=dDict(
         scale=[0, 0, 0, 0, 20, 40, 60],
-        color='BLUE2RED',
+        color='RED2GREEN',
         index=3,
         iconMax='bi-person-up',
         iconMin='bi-person-down',
@@ -1077,7 +1077,7 @@ MARKETMAP = dDict(
     ),
     beta=dDict(
         scale=[0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2],
-        color='BLUE2RED',
+        color='RED2GREEN',
         index=3,
         iconMax='bi-graph-up-arrow',
         iconMin='bi-graph-down-arrow',
@@ -1085,7 +1085,7 @@ MARKETMAP = dDict(
     ),
     yoyRevenue=dDict(
         scale=[-30, -20, -10, 0, 10, 20, 30],
-        color='BLUE2RED',
+        color='RED2GREEN',
         index=3,
         iconMax='bi-building-up',
         iconMin='bi-building-down',
@@ -1093,7 +1093,7 @@ MARKETMAP = dDict(
     ),
     yoyProfit=dDict(
         scale=[-120, -80, -40, 0, 40, 80, 120],
-        color='BLUE2RED',
+        color='RED2GREEN',
         index=3,
         iconMax='bi-database-up',
         iconMin='bi-database-down',
@@ -1101,7 +1101,7 @@ MARKETMAP = dDict(
     ),
     yoyEps=dDict(
         scale=[-90, -60, -30, 0, 30, 60, 90],
-        color='BLUE2RED',
+        color='RED2GREEN',
         index=3,
         iconMax='bi-graph-up-arrow',
         iconMin='bi-graph-down-arrow',
@@ -1109,7 +1109,7 @@ MARKETMAP = dDict(
     ),
     trailingPS=dDict(
         scale=[0.5, 2, 3.5, 5, 6.5, 8, 9.5],
-        color='BLUE2RED',
+        color='GREEN2RED',
         index=3,
         iconMax='bi-arrow-up-square',
         iconMin='bi-arrow-down-square',
@@ -1117,7 +1117,7 @@ MARKETMAP = dDict(
     ),
     trailingPE=dDict(
         scale=[5, 10, 20, 30, 40, 50, 60],
-        color='BLUE2RED',
+        color='GREEN2RED',
         index=3,
         iconMax='bi-arrow-up-square',
         iconMin='bi-arrow-down-square',
@@ -1125,7 +1125,7 @@ MARKETMAP = dDict(
     ),
     trailingProfitRate=dDict(
         scale=[-15, -10, -5, 0, 5, 10, 15],
-        color='BLUE2RED',
+        color='RED2GREEN',
         index=3,
         iconMax='bi-building-up',
         iconMin='bi-building-down',
@@ -1133,7 +1133,7 @@ MARKETMAP = dDict(
     ),
     estimatedRevenueGrowth=dDict(
         scale=[-10, -5, 0, 5, 10, 15, 20],
-        color='BLUE2RED',
+        color='RED2GREEN',
         index=3,
         iconMax='bi-building-up',
         iconMin='bi-building-down',
@@ -1141,7 +1141,7 @@ MARKETMAP = dDict(
     ),
     estimatedProfitRate=dDict(
         scale=[-15, -10, -5, 0, 5, 10, 15],
-        color='BLUE2RED',
+        color='RED2GREEN',
         index=3,
         iconMax='bi-database-up',
         iconMin='bi-database-down',
@@ -1149,7 +1149,7 @@ MARKETMAP = dDict(
     ),
     estimatedProfitGrowth=dDict(
         scale=[-50, -25, 0, 25, 50, 75, 100],
-        color='BLUE2RED',
+        color='RED2GREEN',
         index=3,
         iconMax='bi-database-up',
         iconMin='bi-database-down',
@@ -1157,7 +1157,7 @@ MARKETMAP = dDict(
     ),
     estimatedEpsGrowth=dDict(
         scale=[-50, -25, 0, 25, 50, 75, 100],
-        color='BLUE2RED',
+        color='RED2GREEN',
         index=3,
         iconMax='bi-graph-up-arrow',
         iconMin='bi-graph-down-arrow',
@@ -1165,7 +1165,7 @@ MARKETMAP = dDict(
     ),
     estimatedPE=dDict(
         scale=[5, 10, 20, 30, 40, 50, 60],
-        color='BLUE2RED',
+        color='GREEN2RED',
         index=3,
         iconMax='bi-arrow-up-square',
         iconMin='bi-arrow-down-square',
@@ -1173,7 +1173,7 @@ MARKETMAP = dDict(
     ),
     turnoverRatio=dDict(
         scale=[0.5, 1, 2, 3, 4, 5, 6],
-        color='BLUE2RED',
+        color='GREEN2RED',
         index=3,
         iconMax='bi-arrow-repeat',
         iconMin='bi-slash-circle',

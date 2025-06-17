@@ -1,10 +1,8 @@
 try:
-    from src.build.resource import metadata
     from ...fetch.market.state import MarketState
     from ...fetch.market.group import MarketGroup
     from ...fetch.market.spec import MarketSpec
 except ImportError:
-    from src.build.service import metadata
     from src.fetch.market.state import MarketState
     from src.fetch.market.group import MarketGroup
     from src.fetch.market.spec import MarketSpec
