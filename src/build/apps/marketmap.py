@@ -105,11 +105,11 @@ class MarketMap:
             refactor.loc[(refactor[key] == 'nan%') | (refactor[key] == 'nan'), key] = '미제공'
             refactor.loc[["WS0000", "NS0000"], key] = ""
 
-        advance = ['estimatedProfitGrowthState', 'estimatedEpsGrowthState', 'trailingEps',
+        advance = ['estimatedProfitState', 'estimatedEpsState', 'trailingEps',
                    'yoyProfitState', 'yoyEpsState']
         refactor = refactor.join(resource[advance])
-        refactor['estimatedProfitGrowth'] = refactor['estimatedProfitGrowthState'].combine_first(refactor['estimatedProfitGrowth'])
-        refactor['estimatedEpsGrowth'] = refactor['estimatedEpsGrowthState'].combine_first(refactor['estimatedEpsGrowth'])
+        refactor['estimatedProfitGrowth'] = refactor['estimatedProfitState'].combine_first(refactor['estimatedProfitGrowth'])
+        refactor['estimatedEpsGrowth'] = refactor['estimatedEpsState'].combine_first(refactor['estimatedEpsGrowth'])
         refactor['trailingPE'] = refactor[['trailingPE', 'trailingEps']].apply(lambda r: '적자' if r.trailingEps <= 0 else r.trailingPE , axis=1)
         refactor['yoyProfit'] = refactor['yoyProfitState'].combine_first(refactor['yoyProfit'])
         refactor['yoyEps'] = refactor['yoyEpsState'].combine_first(refactor['yoyEps'])
@@ -261,9 +261,7 @@ if __name__ == "__main__":
     from src.common.env import FILE
     from pandas import read_parquet
 
-    baseline = read_parquet(FILE.BASELINE, engine='pyarrow')
-
-    marketMap = MarketMap(baseline)
+    marketMap = MarketMap(read_parquet(FILE.BASELINE, engine='pyarrow'))
     print(marketMap.log)
     # print(marketMap.data.columns)
     print(marketMap.meta)

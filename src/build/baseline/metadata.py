@@ -228,7 +228,7 @@ METADATA = dDict(
         dtype=int,
         digit=0,
         origin='',
-        limit='statistic:1',
+        limit=False,
         # Adder
     ),
     fiscalProfit=dDict(
@@ -691,7 +691,7 @@ METADATA = dDict(
         limit=False,
         # Adder
     ),
-    estimatedProfitGrowthState=dDict(
+    estimatedProfitState=dDict(
         label='영업이익성장율(추정치) 상태',
         unit='',
         dtype=str,
@@ -700,7 +700,7 @@ METADATA = dDict(
         limit=False,
         # Adder
     ),
-    estimatedEpsGrowthState=dDict(
+    estimatedEpsState=dDict(
         label='EPS성장율(추정치) 상태',
         unit='',
         dtype=str,
@@ -765,6 +765,15 @@ METADATA = dDict(
     ),
     trailingProfit=dDict(
         label='영업이익(4분기 연속)',
+        unit='억원',
+        dtype=int,
+        digit=0,
+        origin='',
+        limit=False,
+        # Adder
+    ),
+    trailingNetProfit=dDict(
+        label='당기순이익(4분기 연속)',
         unit='억원',
         dtype=int,
         digit=0,
@@ -1182,6 +1191,67 @@ MARKETMAP = dDict(
 
 )
 
+
+BUBBLES = dDict(
+    COLORS=dDict(
+        G10=(92,168,155),
+        G15=(86, 152, 168),
+        G20=(96, 103, 184),
+        G25=(195, 102, 56),
+        G30=(96, 185, 120),
+        G35=(94, 156, 59),
+        G40=(142, 182, 77),
+        G45=(207, 90, 92),
+        G50=(210, 145, 65),
+        G55=(86, 80, 199),
+        G99=(132, 62, 173)
+    ),
+    SELECTOR=[
+        # 수익률 지표
+        'return1Day', 'return1Week', 'return1Month', 'return3Month', 'return6Month', 'return1Year',
+        'pctFiftyTwoWeekHigh', 'pctFiftyTwoWeekLow', 'pctTargetPrice', 'dividendYield',
+
+        # 수급 지표
+        'volume', 'turnoverRatio', 'foreignRate',
+
+        # Multiples
+        'trailingPS', 'trailingPE', 'priceToBook',
+        'estimatedPE', 'estimatedPriceToBook',
+
+        # 재무
+        'fiscalRevenue', 'fiscalProfit', 'fiscalNetProfit',
+        'estimatedRevenue', 'estimatedProfit', 'estimatedNetProfit',
+        'trailingRevenue', 'trailingProfit',
+
+        # 재무 비율
+        'fiscalProfitRate', 'fiscalRoA', 'fiscalRoE',
+        'fiscalRevenueGrowth', 'fiscalProfitGrowth', 'fiscalProfitState',
+        'estimatedRevenueGrowth', 'estimatedProfitGrowth', 'estimatedProfitState',
+        'recentProfitRate', 'trailingProfitRate',
+        'averageRevenueGrowth', 'averageProfitGrowth',
+        'estimatedProfitRate', 'estimatedRoA', 'estimatedRoE',
+        'fiscalDebtRatio', 'estimatedDebtRatio', 'recentDebtRatio',
+        'yoyRevenue', 'yoyProfit', 'yoyNetProfit', 'yoyProfitState',
+        'yoyAsset', 'yoyDebt',
+
+        # 투자 지표
+        'fiscalEps', 'forwardEps', 'estimatedEps',
+        'fiscalEpsGrowth', 'fiscalEpsState',
+        'trailingEps',
+        'estimatedEpsGrowth', 'estimatedEpsState',
+        'averageEpsGrowth',
+        'beta', 'yoyEps', 'yoyEpsState',
+
+        # 기타
+        'revenueType', 'name',
+    ],
+    KRW=[
+        'fiscalRevenue', 'fiscalProfit', 'fiscalNetProfit',
+        'estimatedRevenue', 'estimatedProfit', 'estimatedNetProfit',
+        'trailingRevenue', 'trailingProfit',
+    ]
+
+)
 
 if __name__ == "__main__":
     print(METADATA)

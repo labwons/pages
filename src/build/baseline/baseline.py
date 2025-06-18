@@ -9,13 +9,15 @@ from numpy import nan
 from pandas import DataFrame, Series
 from pandas import concat, isna, read_parquet
 from time import perf_counter
-from typing import List
+from typing import List, Union
 
 
 class Tools:
 
     @classmethod
-    def krw2currency(cls, krw:int, div:int=0) -> str:
+    def krw2currency(cls, krw:int, div:int=0) -> Union[str, float]:
+        if isna(krw):
+            return nan
         if div:
             krw = krw / div
         zo, euk = int(krw // 10000), int(krw % 10000)
@@ -201,11 +203,11 @@ class Baseline:
 
                 pg = Tools.profitGrowth(est['estimatedProfit'])
                 obj['estimatedProfitGrowth'] = pg[0]
-                obj['estimatedProfitGrowthState'] = pg[1]
+                obj['estimatedProfitState'] = pg[1]
 
                 eg = Tools.profitGrowth(est['estimatedEps'])
                 obj['estimatedEpsGrowth'] = eg[0]
-                obj['estimatedEpsGrowthState'] = eg[1]
+                obj['estimatedEpsState'] = eg[1]
 
             obj['revenueType'] = _revenueKey.replace("(억원)", "")
             obj.name = ticker
@@ -245,6 +247,7 @@ class Baseline:
                 for key, label in {
                     statement.columns[0]: 'trailingRevenue',
                     '영업이익(억원)': 'trailingProfit',
+                    '당기순이익(억원)': 'trailingNetProfit',
                     'EPS(원)': 'trailingEps'
                 }.items():
                     trailer = statement[key].iloc[-4:]
@@ -294,21 +297,6 @@ class Baseline:
         merge['trailingPS'] = (merge['marketCap'] / 1e+8) / merge['trailingRevenue']
         merge['trailingPE'] = merge['close'] / merge['trailingEps'].apply(lambda x: x if x > 0 else nan)
         merge['turnoverRatio'] = 100 * merge['volume'] / (merge['shares'] * merge['floatShares'] / 100)
-
-        # TODO
-        # USE IN BUBBLE
-        # for key, meta in METADATA:
-        #     if key == "RENAME":
-        #         continue
-        #     if  not meta.limit:
-        #         continue
-        #     if str(meta.limit).startswith('statistic'):
-        #         lower = merge[key].mean() - int(meta.limit.split(":")[-1]) * merge[key].std()
-        #         upper = merge[key].mean() + int(meta.limit.split(":")[-1]) * merge[key].std()
-        #         merge[key] = merge[key].apply(lambda x: x if lower < x < upper else nan)
-        #     if type(meta.limit) == list:
-        #         merge[key] = merge[key].clip(lower=meta.limit[0], upper=meta.limit[1])
-
         return merge
 
     @classmethod
@@ -394,13 +382,14 @@ if __name__ == "__main__":
     from src.common.env import FILE
     from pandas import read_parquet
 
-    # baseline = Baseline()
-    # print(baseline.log)
-    # baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
+    baseline = Baseline()
+    print(baseline.log)
+    baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
+    baseline.data.to_clipboard()
     # print(baseline.data)
     # print(baseline.data.columns)
 
-    df = read_parquet(FILE.BASELINE, engine='pyarrow')
+    # df = read_parquet(FILE.BASELINE, engine='pyarrow')
     # df.to_clipboard()
     # print(df.columns)
     # Baseline.gaussian(df, 'turnoverRatio')

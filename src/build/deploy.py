@@ -2,7 +2,7 @@
 TITLE   : BUILD LABWONS
 AUTHOR  : SNOB
 CONTACT : snob.labwons@gmail.com
-ROUTINE : 15:40+09:00UTC on weekday
+ROUTINE : 15:30+09:00UTC on weekday
 """
 if __name__ == "__main__":
     try:
@@ -14,10 +14,10 @@ if __name__ == "__main__":
         from ..render.navigate import navigate, minify
         from .baseline.baseline import Baseline
         from .apps.marketmap import MarketMap
+        from .apps.sitemap import rss, sitemap
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
         from .service.macro import Macro
-        from .resource.scope import rss, sitemap
         from .action import ACTION
     except ImportError:
         from src.common import env
@@ -28,10 +28,10 @@ if __name__ == "__main__":
         from src.render.navigate import navigate, minify
         from src.build.baseline.baseline import Baseline
         from src.build.apps.marketmap import MarketMap
+        from src.build.apps.sitemap import rss, sitemap
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble
         from src.build.service.macro import Macro
-        from src.build.resource.scope import rss, sitemap
         from src.build.action import ACTION
 
     from jinja2 import Environment, FileSystemLoader
