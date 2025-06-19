@@ -11,8 +11,12 @@ if __name__ == "__main__":
         from ..fetch.market.aftermarket import AfterMarket
         from ..fetch.market.finances import FinancialStatement
         from ..fetch.market.sector import SectorComposition
+        from ..fetch.macro.ecosNew import Ecos
+        from ..fetch.macro.fredNew import Fred
         from ..render.navigate import navigate, minify
-        from .baseline.baseline import Baseline
+        from .baseline.metadata import ECOSMETA, FREDMETA
+        from .baseline.market import MarketBaseline
+        from .baseline.macro import MacroBaseline
         from .apps.marketmap import MarketMap
         from .apps.bubble import MarketBubble
         from .apps.sitemap import rss, sitemap
@@ -24,8 +28,12 @@ if __name__ == "__main__":
         from src.fetch.market.aftermarket import AfterMarket
         from src.fetch.market.finances import FinancialStatement
         from src.fetch.market.sector import SectorComposition
+        from src.fetch.macro.ecosNew import Ecos
+        from src.fetch.macro.fredNew import Fred
         from src.render.navigate import navigate, minify
-        from src.build.baseline.baseline import Baseline
+        from src.build.baseline.metadata import ECOSMETA, FREDMETA
+        from src.build.baseline.market import MarketBaseline
+        from src.build.baseline.macro import MacroBaseline
         from src.build.apps.marketmap import MarketMap
         from src.build.apps.bubble import MarketBubble
         from src.build.apps.sitemap import rss, sitemap
@@ -88,6 +96,33 @@ if __name__ == "__main__":
 
     context = ["DETAILS"]
     # ---------------------------------------------------------------------------------------
+    # UPDATE MACRO: ECOS
+    # ---------------------------------------------------------------------------------------
+    if ACTION.MACRO:
+        try:
+            Ecos.api = "CEW3KQU603E6GA8VX0O9"
+            ecos = Ecos()
+            ecos.data(ECOSMETA).to_parquet(path=env.FILE.ECOS, engine='pyarrow')
+            context += [f"- [SUCCESS] UPDATE ECOS: ", ecos.log, ""]
+        except Exception as report:
+            context += [f"- [FAILED] UPDATE ECOS: ", f'{report}', ""]
+    else:
+        context += [f"- [PASSED] UPDATE ECOS: ", ""]
+
+    # ---------------------------------------------------------------------------------------
+    # UPDATE MACRO: FRED
+    # ---------------------------------------------------------------------------------------
+    if ACTION.MACRO:
+        try:
+            fred = Fred()
+            fred.data(FREDMETA).to_parquet(path=env.FILE.FRED, engine='pyarrow')
+            context += [f"- [SUCCESS] UPDATE FRED: ", fred.log, ""]
+        except Exception as report:
+            context += [f"- [FAILED] UPDATE FRED: ", f'{report}', ""]
+    else:
+        context += [f"- [PASSED] UPDATE FRED: ", ""]
+
+    # ---------------------------------------------------------------------------------------
     # UPDATE SECTOR COMPOSITION
     # ---------------------------------------------------------------------------------------
     if ACTION.SECTOR:
@@ -139,13 +174,16 @@ if __name__ == "__main__":
         from pandas import read_parquet
         resource = read_parquet(env.FILE.BASELINE, engine='pyarrow')
         TRADING_DATE = "LOCAL"
-        context += [f"- [PASSED] UPDATE BASELINE: READ ON LOCAL ENV.", ""]
+        context += [f"- [PASSED] UPDATE MARKET BASELINE: READ ON LOCAL ENV.", ""]
     else:
-        baseline = Baseline()
+        baseline = MarketBaseline()
         baseline.data.to_parquet(env.FILE.BASELINE, engine='pyarrow')
         resource = baseline.data
         TRADING_DATE = baseline.tradingDate
-        context += [f"- [SUCCESS] UPDATE BASELINE: ", baseline.log, ""]
+        context += [f"- [SUCCESS] UPDATE MARKET BASELINE: ", baseline.log, ""]
+
+    macro = MacroBaseline()
+    macro.data.to_parquet(env.FILE.MACRO_BASELINE, engine='pyarrow')
 
     # ---------------------------------------------------------------------------------------
     # DEPLOY MARKET MAP
@@ -222,34 +260,34 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # DEPLOY MACRO
     # ---------------------------------------------------------------------------------------
-    try:
-        macro = Macro(update=ACTION.MACRO)
-        if ACTION.MACRO:
-            with open(env.FILE.MACRO, 'w') as f:
-                f.write(macro.to_json(orient='index').replace('nan', ''))
-
-        with open(
-            file=os.path.join(env.DOCS, r'macro/index.html'),
-            mode='w',
-            encoding='utf-8'
-        ) as file:
-            file.write(
-                Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
-                    .get_template('macro-1.0.0.html') \
-                    .render({
-                    "local": env.ENV == "local",
-                    "title": "LAB￦ONS: 거시경제",
-                    "nav": SYSTEM_NAV,
-                    "tradingDate": f'{TRADING_DATE} (또는 최근 발표일) 기준',
-                    "srcIndicator": dumps(macro.serialize()).replace(" ", ""),
-                    "srcIndicatorOpt": dumps(macro.meta).replace(" ", ""),
-                    "srcStatus": macro.status,
-                })
-            )
-
-        context += [f'- [SUCCESS] Deploy Macro', macro.log, '']
-    except Exception as error:
-        context += [f'- [FAILED] Deploy Macro', f'  : {error}', '']
+    # try:
+    #     macro = Macro(update=ACTION.MACRO)
+    #     if ACTION.MACRO:
+    #         with open(env.FILE.MACRO, 'w') as f:
+    #             f.write(macro.to_json(orient='index').replace('nan', ''))
+    #
+    #     with open(
+    #         file=os.path.join(env.DOCS, r'macro/index.html'),
+    #         mode='w',
+    #         encoding='utf-8'
+    #     ) as file:
+    #         file.write(
+    #             Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
+    #                 .get_template('macro-1.0.0.html') \
+    #                 .render({
+    #                 "local": env.ENV == "local",
+    #                 "title": "LAB￦ONS: 거시경제",
+    #                 "nav": SYSTEM_NAV,
+    #                 "tradingDate": f'{TRADING_DATE} (또는 최근 발표일) 기준',
+    #                 "srcIndicator": dumps(macro.serialize()).replace(" ", ""),
+    #                 "srcIndicatorOpt": dumps(macro.meta).replace(" ", ""),
+    #                 "srcStatus": macro.status,
+    #             })
+    #         )
+    #
+    #     context += [f'- [SUCCESS] Deploy Macro', macro.log, '']
+    # except Exception as error:
+    #     context += [f'- [FAILED] Deploy Macro', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------

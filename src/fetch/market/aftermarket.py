@@ -103,7 +103,7 @@ class AfterMarket:
         self.data = merged = merged.sort_values(by='시가총액', ascending=False)
         self.data['date'] = f'{date}{time}'
 
-        self.log = f'End: {perf_counter() - stime:.2f}s'
+        self.log = f'  >> End: {perf_counter() - stime:.2f}s'
         self._log[0] += f': {len(self.data)} items'
         if "FAILED" in self.log:
             self.state = "PARTIALLY FAILED"

@@ -42,11 +42,11 @@ class FinancialStatement:
             self.log = f'     Resource date: {date.index[0]}'
         else:
             report = '\n'.join(f'     {line}' for line in str(date).split('\n')[1:-1])
-            self.log = f'- Resource date: LOW RELIABILITY'
+            self.log = f'     Resource date: LOW RELIABILITY'
             self.log = f'{report}'
 
         self.log = f'  >> END: {perf_counter() - stime:.2f}s'
-        self._log += f': {len(tickers):,d} items'
+        self._log[0] += f': {len(tickers):,d} items'
         if "FAILED" in self.log:
             self.state = "PARTIALLY FAILED"
         return
