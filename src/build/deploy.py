@@ -205,7 +205,7 @@ if __name__ == "__main__":
 
         context += [f'- [SUCCESS] DEPLOY BUBBLES', marketBubble.log, '']
     except Exception as error:
-        context += [f'- [FAILED] Deploy Market-Bubble', f'  : {error}', '']
+        context += [f'- [FAILED] DEPLOY BUBBLES', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------
@@ -286,19 +286,19 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # DEPLOY RESOURCES
     # ---------------------------------------------------------------------------------------
-    try:
-        if not env.ENV == "local":
+    if not env.ENV == "local":
+        try:
             minify()
-        context += [f'- [SUCCESS] DEPLOY RESOURCES (MINIFY)', '']
-    except Exception as error:
-        context += [f'- [FAILED] DEPLOY RESOURCES (MINIFY)', f'  : {error}', '']
+            context += [f'- [SUCCESS] MINIFY RESOURCES ', '']
+        except Exception as error:
+            context += [f'- [FAILED] MINIFY RESOURCES ', f'  : {error}', '']
 
-    try:
-        rss(env.DOCS, "https://labwons.com", os.path.join(env.DOCS, "feed.xml"))
-        sitemap(env.DOCS, "https://labwons.com", os.path.join(env.DOCS, "sitemap.xml"))
-        context += [f'- [SUCCESS] DEPLOY Sitemap and RSS', '']
-    except Exception as error:
-        context += [f'- [FAILED] DEPLOY Sitemap and RSS', f'  : {error}', '']
+        try:
+            rss(env.DOCS, "https://labwons.com", os.path.join(env.DOCS, "feed.xml"))
+            sitemap(env.DOCS, "https://labwons.com", os.path.join(env.DOCS, "sitemap.xml"))
+            context += [f'- [SUCCESS] DEPLOY Sitemap and RSS', '']
+        except Exception as error:
+            context += [f'- [FAILED] DEPLOY Sitemap and RSS', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------

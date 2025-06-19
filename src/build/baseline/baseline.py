@@ -71,11 +71,11 @@ class Baseline:
 
     def __init__(self):
         stime = perf_counter()
-        self.log = f'RUN [BUILD BASELINE]'
+        self.log = f'  >> BUILD [BASELINE]'
 
         number = read_parquet(FILE.AFTER_MARKET, dtype_backend="pyarrow")
         n_date = datetime.strptime(str(number.pop('date').values[-1]), "%Y%m%d%H:%M")
-        self.log = f'- READ AFTER MARKET NUMBERS: {str(n_date).replace("-", "/")}'
+        self.log = f'     READ AFTER MARKET NUMBERS: {str(n_date).replace("-", "/")}'
         number = self.number(number)
         # print(number)
 
@@ -84,27 +84,27 @@ class Baseline:
         statement_yy = overview.pop('reportYears')
         statement_qq = overview.pop('reportQuarters')
         if len(overview_date) == 1:
-            self.log = f'- READ STATEMENT OVERVIEW: {overview_date.index[0]}'
+            self.log = f'     READ STATEMENT OVERVIEW: {overview_date.index[0]}'
         else:
-            report = '\n'.join(f'  {line}' for line in str(overview_date).split('\n')[1:-1])
-            self.log = f'- READ STATEMENT OVERVIEW: LOW RELIABILITY'
+            report = '\n'.join(f'     {line}' for line in str(overview_date).split('\n')[1:-1])
+            self.log = f'     READ STATEMENT OVERVIEW: LOW RELIABILITY'
             self.log = f'{report}'
         overview = self.overview(overview)
         # print(overview)
 
         statementA = read_parquet(FILE.ANNUAL_STATEMENT)
-        self.log = f'- READ ANNUAL STATEMENT'
+        self.log = f'     READ ANNUAL STATEMENT'
         statementA = self.statementA(statementA, statement_yy)
         # # print(statementA)
 
         statementQ = read_parquet(FILE.QUARTER_STATEMENT)
-        self.log = f'- READ QUARTER STATEMENT'
+        self.log = f'     READ QUARTER STATEMENT'
         statementQ = self.statementQ(statementQ, statement_qq)
         # print(statementQ)
 
         sector = read_parquet(FILE.SECTOR_COMPOSITION)
         s_date = datetime.strptime(str(sector.pop('date').values[-1]), "%Y%m%d").strftime("%Y/%m/%d")
-        self.log = f'- READ SECTOR COMPOSITION: {s_date}'
+        self.log = f'     READ SECTOR COMPOSITION: {s_date}'
         sector = self.sector(sector)
         # print(sector)
 
@@ -117,12 +117,13 @@ class Baseline:
 
         self.tradingDate = n_date.strftime("%Y/%m/%d")
 
-        self.log = f'END [BUILD BASELINE] {len(merge)} Stocks / Elapsed: {perf_counter() - stime:.2f}s'
+        self.log = f'  >> BUILD END: {perf_counter() - stime:.2f}s'
+        self._log[0] += f'{len(merge)} items'
         return
 
     @property
     def log(self) -> str:
-        return "\n".join(self._log)
+        return "  \n".join(self._log)
 
     @log.setter
     def log(self, log: str):
