@@ -47,7 +47,59 @@
       justify-content: space-between;
     }
 
-    .service-nav select {
+    .service-nav .service-config,
+    .service-nav .service-search {
+      flex: 0 0 auto;
+      max-width: 40%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
+    @media (max-width: 767px) {
+      .service-nav .service-config {
+        flex: 1 0 auto;
+        max-width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+    }
+
+    .service-nav .service-config .opt-x,
+    .service-nav .service-config .opt-y {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    @media (max-width: 767px) {
+      .service-nav .service-config .opt-x,
+      .service-nav .service-config .opt-y {
+        width: 100%;
+      }
+    }
+    .service-nav .service-config .axis-name {
+      flex: 0 0 auto;
+      padding: 4px 8px;
+      color: #fff;
+      font-family: var(--font-family);
+      font-size: 14px;
+      font-weight: 700;
+      background-color: var(--nav-color);
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+    }
+
+    .bubble-select {
       font-family: var(--font-family);
       font-size: 14px;
       color: #999;
@@ -59,17 +111,9 @@
       border-radius: 4px;
       box-sizing: border-box;
       cursor: pointer;
-    }
-
-    .service-nav .service-config,
-    .service-nav .service-search {
-      flex: 0 0 auto;
-      max-width: 40%;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
     .service-nav .service-search {
@@ -110,7 +154,7 @@
         justify-content: space-between;
       }
       
-      .service-nav .service-config select {
+      .bubble-select {
         flex: 1 0 auto;
         min-width: auto;
       }
@@ -333,12 +377,18 @@
           <!-- MARKET BUBBLE -->
           <div class="service-nav">
             <div class="service-config">
-              <select name="opt-x" class="bubble-x"></select>
-              <select name="opt-y" class="bubble-y"></select>
+              <div class="opt-x">
+                <span class="axis-name">X</span>
+                <select name="opt-x" class="bubble-select bubble-x"></select>
+              </div>
+              <div class="opt-y">
+                <span class="axis-name">Y</span>
+                <select name="opt-y" class="bubble-select bubble-y"></select>
+              </div>              
             </div>
             <div class="service-search">
-              <select class="bubble-sector"></select>
-              <select class="bubble-searchbar"></select>
+              <select class="bubble-select bubble-sector"></select>
+              <select class="bubble-select bubble-searchbar"></select>
             </div>
           </div>
           

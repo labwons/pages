@@ -183,29 +183,29 @@ if __name__ == "__main__":
     # DEPLOY BUBBLE
     # ---------------------------------------------------------------------------------------
     marketBubble = MarketBubble(resource)
-    # try:
-    with open(
-            file=os.path.join(env.DOCS, r'bubble/index.html'),
-            mode='w',
-            encoding='utf-8'
-    ) as file:
-        file.write(
-            Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
-                .get_template('bubble-1.0.0.html') \
-                .render({
-                "local": env.ENV == "local",
-                "title": "LAB￦ONS: \uc885\ubaa9\ubd84\ud3ec",
-                "nav": SYSTEM_NAV,
-                "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
-                "srcTickers": marketBubble.data.to_json(orient='index'),
-                "srcSectors": marketBubble.sectors.to_json(orient='index'),
-                "srcIndicatorOpt": dumps(marketBubble.meta),
-            })
-        )
+    try:
+        with open(
+                file=os.path.join(env.DOCS, r'bubble/index.html'),
+                mode='w',
+                encoding='utf-8'
+        ) as file:
+            file.write(
+                Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
+                    .get_template('bubble-1.0.0.html') \
+                    .render({
+                    "local": env.ENV == "local",
+                    "title": "LAB￦ONS: \uc885\ubaa9\ubd84\ud3ec",
+                    "nav": SYSTEM_NAV,
+                    "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
+                    "srcTickers": marketBubble.data.to_json(orient='index'),
+                    "srcSectors": marketBubble.sectors.to_json(orient='index'),
+                    "srcIndicatorOpt": dumps(marketBubble.meta),
+                })
+            )
 
-    context += [f'- [SUCCESS] DEPLOY BUBBLES', marketBubble.log, '']
-    # except Exception as error:
-    #     context += [f'- [FAILED] Deploy Market-Bubble', f'  : {error}', '']
+        context += [f'- [SUCCESS] DEPLOY BUBBLES', marketBubble.log, '']
+    except Exception as error:
+        context += [f'- [FAILED] Deploy Market-Bubble', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------
