@@ -8,7 +8,7 @@ from datetime import datetime
 from pandas import concat, DataFrame
 from pandas.errors import IntCastingNaNError
 from pykrx.stock import get_index_portfolio_deposit_file
-from time import time
+from time import perf_counter
 from typing import List
 
 
@@ -17,8 +17,8 @@ class MarketMap:
     _log: List[str] = []
 
     def __init__(self, baseline:DataFrame):
-        stime = time()
-        self.log = f'BUILD [MARKET MAP]'
+        stime = perf_counter()
+        self.log = f'  >> BUILD [MARKET MAP]'
 
         resource = baseline.copy()
 
@@ -131,8 +131,8 @@ class MarketMap:
 
         self.stat = self.minmax(base)
 
-        self.log = f'BUILD [MARKET MAP] FINISHED'
-        self.log = f'- {len(self.data)} Items / Elapsed: {time() - stime:.2f}s'
+        self.log = f'  >> BUILD END: {perf_counter() - stime:.2f}s'
+        self._log[0] += f': {len(self.data)} items'
         return
 
     @classmethod
@@ -144,7 +144,7 @@ class MarketMap:
         try:
             return get_index_portfolio_deposit_file('2203') + get_index_portfolio_deposit_file('1028')
         except Exception as reason:
-            cls._log.append(f"- skipped fetching krx350: {reason}")
+            cls._log.append(f"     * skipped fetching krx350: {reason}")
             return []
 
     @classmethod

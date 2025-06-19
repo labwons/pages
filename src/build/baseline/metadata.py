@@ -1243,7 +1243,7 @@ BUBBLES = dDict(
         'beta', 'yoyEps', 'yoyEpsState',
 
         # 기타
-        'revenueType', 'name',
+        'revenueType', 'name', 'sectorCode'
     ],
     KRW=[
         'fiscalRevenue', 'fiscalProfit', 'fiscalNetProfit',

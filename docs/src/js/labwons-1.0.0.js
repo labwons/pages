@@ -453,8 +453,8 @@ if (SERVICE === "bubble"){
 
   var isDragging = false;
   var slider = '';
-  var currentX = 'D-1';
-  var currentY = 'M-6';
+  var currentX = 'return1Day';
+  var currentY = 'return3Month';
   var currentSector = 'ALL';
   var yValMin = 100;
   var yValMax = 0;
@@ -470,22 +470,21 @@ if (SERVICE === "bubble"){
     $y.empty();
     $sectors.empty();
     Object.entries(srcIndicatorOpt).forEach(([key, obj]) => {
-      var label = (typeof obj === "object" && obj !== null) ? obj.label : obj;
+      if (obj.dtype === "str") { return }
       if (key == currentX) {
-        $x.append(`<option value="${key}" selected>${label}</option>`);
+        $x.append(`<option value="${key}" selected>${obj.label}</option>`);
       } else {
-        $x.append(`<option value="${key}">${label}</option>`);
+        $x.append(`<option value="${key}">${obj.label}</option>`);
       }
       if (key === currentY) {
-        $y.append(`<option value="${key}" selected>${label}</option>`);
+        $y.append(`<option value="${key}" selected>${obj.label}</option>`);
       } else {
-        $y.append(`<option value="${key}">${label}</option>`);
+        $y.append(`<option value="${key}">${obj.label}</option>`);
       }      
     });
 
     Object.entries(srcSectors).forEach(([key, obj]) => {
-      var label = (typeof obj === "object" && obj !== null) ? obj.label : obj;
-      $sectors.append(`<option value="${key}">${label}</option>`);
+      $sectors.append(`<option value="${key}">${obj.sectorName}</option>`);
     })
   };
 
@@ -533,23 +532,40 @@ if (SERVICE === "bubble"){
       modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
       displaylogo:false,   
     };
-    var hoverX = `%{x:.${xObj.round}f}`;
-    if (xObj.round === 0) {
+
+    var labelX = xObj.label;
+    if (labelX.includes("(")) {
+      labelX = labelX.replace(/\([^)]*\)/g, '');
+    }
+    var hoverX = `%{x:.${xObj.digit}f}`;
+    if (xObj.dtype === 'int') {
       hoverX = `%{x:,d}`;
     }
-
-    var hoverY = `%{y:.${yObj.round}f}`;
-    if (yObj.round === 0) {
-      hoverY = `%{y:,d}`;
+    if (xObj.text) {
+      hoverX = '%{text}';
     }
 
-    var hover = `%{meta}<br>${xObj.label}: ${hoverX}${xObj.unit}<br>${yObj.label}: ${hoverY}${yObj.unit}<extra></extra>`;
+    var labelY = yObj.label;
+    if (labelY.includes("(")) {
+      labelY = labelY.replace(/\([^)]*\)/g, '');
+    }
+    var hoverY = `%{y:.${yObj.digit}f}`;
+    if (yObj.dtype === 'int') {
+      hoverY = `%{y:,d}`;
+    }
+    if (yObj.text) {
+      hoverY = '%{customdata}';
+    }
+
+    var hover = `%{meta}<br>${labelX}: ${hoverX}${xObj.unit}<br>${labelY}: ${hoverY}${yObj.unit}<extra></extra>`;
     var data = {
       type:'scatter',
       x:[],
       y:[],
       mode:'markers',
       meta:[],
+      text:[],
+      customdata:[],
       hovertemplate: hover,
       hoverlabel: {
         font: {
@@ -564,19 +580,24 @@ if (SERVICE === "bubble"){
           width:1.0,
         },
         opacity: 0.7,        
-          },
+      },
     };
     
     Object.entries(srcTickers).forEach(([ticker, obj]) => {
       if ( (sector != 'ALL') && (sector != obj.sectorCode) ) {
         return;
       }
-      
       data.x.push(obj[x]);
       data.y.push(obj[y]);
       data.meta.push(obj.meta);
       data.marker.size.push(obj.size);
-      data.marker.color.push(srcSectors[obj.sectorCode].color);		
+      data.marker.color.push(srcSectors[obj.sectorCode].color);	
+      if (xObj.text){
+        data.text.push(obj[`${x}Text`]);
+      }	
+      if (yObj.text){
+        data.customdata.push(obj[`${y}Text`]);
+      }	
     });
     
     

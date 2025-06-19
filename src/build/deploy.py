@@ -14,9 +14,10 @@ if __name__ == "__main__":
         from ..render.navigate import navigate, minify
         from .baseline.baseline import Baseline
         from .apps.marketmap import MarketMap
+        from .apps.bubble import MarketBubble
         from .apps.sitemap import rss, sitemap
         from .service.baseline import MarketBaseline
-        from .service.bubble import MarketBubble
+        # from .service.bubble import MarketBubble
         from .service.macro import Macro
         from .action import ACTION
     except ImportError:
@@ -28,9 +29,10 @@ if __name__ == "__main__":
         from src.render.navigate import navigate, minify
         from src.build.baseline.baseline import Baseline
         from src.build.apps.marketmap import MarketMap
+        from src.build.apps.bubble import MarketBubble
         from src.build.apps.sitemap import rss, sitemap
         from src.build.service.baseline import MarketBaseline
-        from src.build.service.bubble import MarketBubble
+        # from src.build.service.bubble import MarketBubble
         from src.build.service.macro import Macro
         from src.build.action import ACTION
 
@@ -138,16 +140,22 @@ if __name__ == "__main__":
     # BUILD BASELINE
     # ---------------------------------------------------------------------------------------
     # NO FAIL-SAFE ACTION FOR BASELINE. THIS PROCESS IS MANDATORY.
-    baseline = Baseline()
-    baseline.data.to_parquet(env.FILE.BASELINE, engine='pyarrow')
-    resource = baseline.data
-    TRADING_DATE = baseline.tradingDate
-    context += [f"- [SUCCESS] UPDATE BASELINE: ", baseline.log, ""]
+    if env.ENV == "local":
+        from pandas import read_parquet
+        resource = read_parquet(env.FILE.BASELINE, engine='pyarrow')
+        TRADING_DATE = "LOCAL"
+        context += [f"- [PASSED] UPDATE BASELINE: READ ON LOCAL ENV.", ""]
+    else:
+        baseline = Baseline()
+        baseline.data.to_parquet(env.FILE.BASELINE, engine='pyarrow')
+        resource = baseline.data
+        TRADING_DATE = baseline.tradingDate
+        context += [f"- [SUCCESS] UPDATE BASELINE: ", baseline.log, ""]
 
     # ---------------------------------------------------------------------------------------
     # DEPLOY MARKET MAP
     # ---------------------------------------------------------------------------------------
-    marketMap = MarketMap(baseline.data)
+    marketMap = MarketMap(resource)
     try:
         with open(
                 file=os.path.join(env.DOCS, 'index.html'),
@@ -167,26 +175,54 @@ if __name__ == "__main__":
                     "srcIndicatorOpt": dumps(marketMap.meta),
                 })
             )
-        context += [f'- [SUCCESS] Deploy Market-Map', marketMap.log, '']
+        context += [f'- [SUCCESS] DEPLOY MARKET MAP', marketMap.log, '']
     except Exception as error:
-        context += [f'- [FAILED] Deploy Market-Map', f'  : {error}', '']
+        context += [f'- [FAILED] DEPLOY MARKET MAP', f'  : {error}', '']
+
+    # ---------------------------------------------------------------------------------------
+    # DEPLOY BUBBLE
+    # ---------------------------------------------------------------------------------------
+    marketBubble = MarketBubble(resource)
+    # try:
+    with open(
+            file=os.path.join(env.DOCS, r'bubble/index.html'),
+            mode='w',
+            encoding='utf-8'
+    ) as file:
+        file.write(
+            Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
+                .get_template('bubble-1.0.0.html') \
+                .render({
+                "local": env.ENV == "local",
+                "title": "LAB￦ONS: \uc885\ubaa9\ubd84\ud3ec",
+                "nav": SYSTEM_NAV,
+                "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
+                "srcTickers": marketBubble.data.to_json(orient='index'),
+                "srcSectors": marketBubble.sectors.to_json(orient='index'),
+                "srcIndicatorOpt": dumps(marketBubble.meta),
+            })
+        )
+
+    context += [f'- [SUCCESS] DEPLOY BUBBLES', marketBubble.log, '']
+    # except Exception as error:
+    #     context += [f'- [FAILED] Deploy Market-Bubble', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------
     # BUILD BASELINE
     # ---------------------------------------------------------------------------------------
-    try:
-        baseline = MarketBaseline(update=DUPLICATED_CONFIG)
-        with open(env.FILE.BASELINE_DUPLICATED, 'w') as f:
-            f.write(baseline.to_json(orient='index').replace("nan", "null"))
-        context += [f'- [SUCCESS] BUILD Baseline', baseline.log, '']
-    except Exception as error:
-        baseline = MarketBaseline(update=False)
-        context += [f'- [FAILED] BUILD Baseline', f'  : {error}', '  * Using latest baseline', '']
-
-    TRADING_DATE = baseline['date'].values[0]
-    if not isinstance(TRADING_DATE, str):
-        TRADING_DATE = f"{datetime_as_string(TRADING_DATE, unit='D').replace('-', '/')}"
+    # try:
+    #     baseline = MarketBaseline(update=DUPLICATED_CONFIG)
+    #     with open(env.FILE.BASELINE_DUPLICATED, 'w') as f:
+    #         f.write(baseline.to_json(orient='index').replace("nan", "null"))
+    #     context += [f'- [SUCCESS] BUILD Baseline', baseline.log, '']
+    # except Exception as error:
+    #     baseline = MarketBaseline(update=False)
+    #     context += [f'- [FAILED] BUILD Baseline', f'  : {error}', '  * Using latest baseline', '']
+    #
+    # TRADING_DATE = baseline['date'].values[0]
+    # if not isinstance(TRADING_DATE, str):
+    #     TRADING_DATE = f"{datetime_as_string(TRADING_DATE, unit='D').replace('-', '/')}"
 
     # ---------------------------------------------------------------------------------------
     # UPDATE PORTFOLIO
@@ -210,34 +246,7 @@ if __name__ == "__main__":
     #     context += [f'- [FAILED] Deploy Portfolio',f'  : {error}', '']
 
 
-    # ---------------------------------------------------------------------------------------
-    # DEPLOY BUBBLE
-    # ---------------------------------------------------------------------------------------
-    marketBubble = MarketBubble(baseline)
-    try:
-        with open(
-            file=os.path.join(env.DOCS, r'bubble/index.html'),
-            mode='w',
-            encoding='utf-8'
-        ) as file:
-            file.write(
-                Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
-                .get_template('bubble-1.0.0.html') \
-                .render({
-                    "local": env.ENV == "local",
-                    "title": "LAB￦ONS: \uc885\ubaa9\ubd84\ud3ec",
-                    "nav": SYSTEM_NAV,
-                    "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
-                    "srcTickers": marketBubble.to_json(orient='index'),
-                    "srcSectors": dumps(marketBubble.sector),
-                    "srcIndicatorOpt": dumps(marketBubble.meta),
-                    "faq": marketBubble.faqs
-                })
-            )
 
-        context += [f'- [SUCCESS] Deploy Market-Bubble', marketBubble.log, '']
-    except Exception as error:
-        context += [f'- [FAILED] Deploy Market-Bubble', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------
@@ -280,16 +289,16 @@ if __name__ == "__main__":
     try:
         if not env.ENV == "local":
             minify()
-        context += [f'- [SUCCESS] Minify Resources', '']
+        context += [f'- [SUCCESS] DEPLOY RESOURCES (MINIFY)', '']
     except Exception as error:
-        context += [f'- [FAILED] Minify Resources', f'  : {error}', '']
+        context += [f'- [FAILED] DEPLOY RESOURCES (MINIFY)', f'  : {error}', '']
 
     try:
         rss(env.DOCS, "https://labwons.com", os.path.join(env.DOCS, "feed.xml"))
         sitemap(env.DOCS, "https://labwons.com", os.path.join(env.DOCS, "sitemap.xml"))
-        context += [f'- [SUCCESS] Build RSS and Sitemap', '']
+        context += [f'- [SUCCESS] DEPLOY Sitemap and RSS', '']
     except Exception as error:
-        context += [f'- [FAILED] Build RSS and Sitemap', f'  : {error}', '']
+        context += [f'- [FAILED] DEPLOY Sitemap and RSS', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------

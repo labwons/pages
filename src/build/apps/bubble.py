@@ -6,10 +6,10 @@ except ImportError:
     from src.build.baseline.baseline import Tools
 from datetime import datetime
 from numpy import nan
-from pandas import DataFrame, Series
+from pandas import DataFrame, Series, concat
 from pandas.errors import IntCastingNaNError
 from time import perf_counter
-from typing import Any, Dict, List
+from typing import List
 
 
 class MarketBubble:
@@ -20,7 +20,7 @@ class MarketBubble:
     # sector: Dict[str, Dict[str, str]] = {"ALL": {"label": "전체", "color": "royalblue"}}
     def __init__(self, baseline:DataFrame):
         stime = perf_counter()
-        self.log = f'BUILD [MARKET BUBBLE]'
+        self.log = f'  >> BUILD [BUBBLES]'
 
         resource = baseline.copy()
 
@@ -71,46 +71,28 @@ class MarketBubble:
         self.sectors = baseline[['sectorCode', 'sectorName', 'color']] \
                        .drop_duplicates().dropna() \
                        .set_index(keys="sectorCode")
+        self.sectors = concat([
+            DataFrame({'sectorName': "전체", 'color': 'royalblue'}, index=['ALL']),
+            self.sectors
+        ])
 
         # METADATA
         meta = {}
         for key in BUBBLES.SELECTOR:
             _meta = METADATA[key]
-            mean = self.data[key].mean() if  _meta.dtype != str and _meta.dtype != datetime else '',
+            mean = self.data[key].mean() if  _meta.dtype != str and _meta.dtype != datetime else nan
             meta[key] = {
                 "label": _meta.label,
                 "unit": _meta.unit,
-                "mean": mean,
+                "mean": round(mean, 4),
+                "dtype": "int" if "int" in str(_meta.dtype) else "float" if "float" in str(_meta.dtype) else "str",
                 "digit": _meta.digit,
+                "text": key in BUBBLES.KRW
             }
+        self.meta = meta
 
-
-
-        # sectors['colors'] = sectors['sectorCode'].apply(lambda code: self.rgb2hex(*BUBBLES.COLORS[code]))
-
-
-
-
-        # for code, name in self[["sectorCode", "sectorName"]].drop_duplicates().dropna().itertuples(index=False):
-        #     self.sector[code] = {'label': name, 'color': colors[code]}
-        #
-        # self.drop(inplace=True, index=abnormal.index)
-        # self.drop(inplace=True, columns=[
-        #     "close", "marketCap", "amount", "market", "date",
-        #     "industryCode", "industryName", "sectorName", "stockSize",
-        # ])
-        #
-        # meta = {}
-        # for col in self.meta:
-        #     if col in self:
-        #         meta[col] = self.meta[col]
-        #         if not self.meta[col]['round'] == -1:
-        #             meta[col]['mean'] = round(self[col].mean(), 2)
-        # self.meta = meta
-        #
-        # self._round_up()
-        #
-        # self.log = f'END [Build Market Bubble] {len(self)} Items / Elapsed: {time() - stime:.2f}s'
+        self.log = f'  >> BUILD END: {perf_counter() - stime:.2f}s'
+        self._log[0] += f': {len(self.data):,d} items'
         return
 
     @classmethod
@@ -136,11 +118,12 @@ if __name__ == "__main__":
     from src.common.env import FILE
     from pandas import read_parquet
 
-    marketBubble = MarketBubble(read_parquet(FILE.BASELINE, engine='pyarrow'))
-    print(marketBubble.data)
+    # marketBubble = MarketBubble(read_parquet(FILE.BASELINE, engine='pyarrow'))
+    # print(marketBubble.data)
     # print(marketBubble.data.columns)
     # print(marketBubble.sectors)
     # print(marketBubble.meta)
+
 
 
 
