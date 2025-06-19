@@ -98,7 +98,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE MACRO: ECOS
     # ---------------------------------------------------------------------------------------
-    if ACTION.MACRO:
+    if ACTION.ECOS:
         try:
             Ecos.api = "CEW3KQU603E6GA8VX0O9"
             ecos = Ecos()
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE MACRO: FRED
     # ---------------------------------------------------------------------------------------
-    if ACTION.MACRO:
+    if ACTION.FRED:
         try:
             fred = Fred()
             fred.data(FREDMETA).to_parquet(path=env.FILE.FRED, engine='pyarrow')
@@ -172,23 +172,29 @@ if __name__ == "__main__":
     # NO FAIL-SAFE ACTION FOR BASELINE. THIS PROCESS IS MANDATORY.
     if env.ENV == "local":
         from pandas import read_parquet
-        resource = read_parquet(env.FILE.BASELINE, engine='pyarrow')
+        marketData = read_parquet(env.FILE.BASELINE, engine='pyarrow')
         TRADING_DATE = "LOCAL"
         context += [f"- [PASSED] UPDATE MARKET BASELINE: READ ON LOCAL ENV.", ""]
+
+        macroData = read_parquet(env.FILE.MACRO_BASELINE, engine='pyarrow')
+        context += [f"- [PASSED] UPDATE MACRO BASELINE: READ ON LOCAL ENV.", ""]
     else:
         baseline = MarketBaseline()
-        baseline.data.to_parquet(env.FILE.BASELINE, engine='pyarrow')
-        resource = baseline.data
+        marketData = baseline.data
+        marketData.to_parquet(env.FILE.BASELINE, engine='pyarrow')
         TRADING_DATE = baseline.tradingDate
         context += [f"- [SUCCESS] UPDATE MARKET BASELINE: ", baseline.log, ""]
 
-    macro = MacroBaseline()
-    macro.data.to_parquet(env.FILE.MACRO_BASELINE, engine='pyarrow')
+        macro = MacroBaseline()
+        macroData = macro.data
+        macroData.to_parquet(env.FILE.MACRO_BASELINE, engine='pyarrow')
+        context += [f"- [SUCCESS] UPDATE MACRO BASELINE: ", baseline.log, ""]
+
 
     # ---------------------------------------------------------------------------------------
     # DEPLOY MARKET MAP
     # ---------------------------------------------------------------------------------------
-    marketMap = MarketMap(resource)
+    marketMap = MarketMap(marketData)
     try:
         with open(file=os.path.join(env.DOCS, 'index.html'), mode='w', encoding='utf-8') as file:
             file.write(
@@ -211,7 +217,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # DEPLOY BUBBLE
     # ---------------------------------------------------------------------------------------
-    marketBubble = MarketBubble(resource)
+    marketBubble = MarketBubble(marketData)
     try:
         with open(file=os.path.join(env.DOCS, r'bubble/index.html'), mode='w', encoding='utf-8') as file:
             file.write(

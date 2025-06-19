@@ -8,7 +8,7 @@ import csscompressor, rjsmin, os
 
 CONTENT_NAMES = {
     "bubble": "종목 분포",
-    "macro": "거시 경제",
+    "macro": "경제 지표",
     "portfolio": "투자 기록",
 }
 

@@ -3,10 +3,11 @@
 
 class ACTION:
 
-    AFTERMARKET:bool = False
-    MACRO:bool       = False
-    STATEMENT:bool   = True
-    SECTOR:bool      = False
+    AFTERMARKET: bool = False
+    STATEMENT: bool   = False
+    SECTOR: bool      = False
+    ECOS: bool        = False
+    FRED: bool        = False
 
     @classmethod
     def reset(cls):
@@ -22,4 +23,3 @@ if __name__ == "__main__":
     print(ACTION.AFTERMARKET)
     ACTION.MACRO = ACTION.STATEMENT = True
     print(ACTION.STATEMENT)
-    print(ACTION.MACRO)

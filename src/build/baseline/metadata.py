@@ -2162,6 +2162,25 @@ FREDMETA = dDict(**{
     ),
 })
 
+KRX = dDict(
+    KOSPI=dDict(
+        symbol='1001',
+        unit= '',
+        digit=2,
+        dtype=float,
+        category='지수',
+        hover= ': %{y:.2f}<extra></extra>',
+    ),
+    KOSDAQ=dDict(
+        symbol='2001',
+        unit= '',
+        digit=2,
+        dtype=float,
+        category='지수',
+        hover= ': %{y:.2f}<extra></extra>',
+    ),
+)
+
 if __name__ == "__main__":
     # print(METADATA)
     # print(METADATA.close)
