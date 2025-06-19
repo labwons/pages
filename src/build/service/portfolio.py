@@ -210,20 +210,7 @@ class StockPortfolio(DataFrame):
 
 
 if __name__ == "__main__":
-    from src.build.service.baseline import MarketBaseline
+
     from pandas import set_option
     from numpy import datetime_as_string
     set_option('display.expand_frame_repr', False)
-
-
-    baseline = MarketBaseline(update=False)
-    # print(baseline)
-    # print(baseline.loc[['021240']])
-
-    portfolio = StockPortfolio(baseline)
-    print(portfolio.log)
-    print("*" * 100)
-    print(portfolio)
-    # print(portfolio.columns.tolist())
-    # print(portfolio.status())
-    print(portfolio.history())

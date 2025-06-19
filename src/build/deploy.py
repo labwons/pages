@@ -16,8 +16,6 @@ if __name__ == "__main__":
         from .apps.marketmap import MarketMap
         from .apps.bubble import MarketBubble
         from .apps.sitemap import rss, sitemap
-        from .service.baseline import MarketBaseline
-        # from .service.bubble import MarketBubble
         from .service.macro import Macro
         from .action import ACTION
     except ImportError:
@@ -31,15 +29,12 @@ if __name__ == "__main__":
         from src.build.apps.marketmap import MarketMap
         from src.build.apps.bubble import MarketBubble
         from src.build.apps.sitemap import rss, sitemap
-        from src.build.service.baseline import MarketBaseline
-        # from src.build.service.bubble import MarketBubble
         from src.build.service.macro import Macro
         from src.build.action import ACTION
 
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
     from pykrx.stock import get_nearest_business_day_in_a_week
-    from numpy import datetime_as_string
     from time import sleep
     import os
 
@@ -157,11 +152,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     marketMap = MarketMap(resource)
     try:
-        with open(
-                file=os.path.join(env.DOCS, 'index.html'),
-                mode='w',
-                encoding='utf-8'
-        ) as file:
+        with open(file=os.path.join(env.DOCS, 'index.html'), mode='w', encoding='utf-8') as file:
             file.write(
                 Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
                     .get_template('marketmap-1.0.0.html') \
@@ -184,11 +175,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     marketBubble = MarketBubble(resource)
     try:
-        with open(
-                file=os.path.join(env.DOCS, r'bubble/index.html'),
-                mode='w',
-                encoding='utf-8'
-        ) as file:
+        with open(file=os.path.join(env.DOCS, r'bubble/index.html'), mode='w', encoding='utf-8') as file:
             file.write(
                 Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
                     .get_template('bubble-1.0.0.html') \
@@ -206,23 +193,6 @@ if __name__ == "__main__":
         context += [f'- [SUCCESS] DEPLOY BUBBLES', marketBubble.log, '']
     except Exception as error:
         context += [f'- [FAILED] DEPLOY BUBBLES', f'  : {error}', '']
-
-
-    # ---------------------------------------------------------------------------------------
-    # BUILD BASELINE
-    # ---------------------------------------------------------------------------------------
-    # try:
-    #     baseline = MarketBaseline(update=DUPLICATED_CONFIG)
-    #     with open(env.FILE.BASELINE_DUPLICATED, 'w') as f:
-    #         f.write(baseline.to_json(orient='index').replace("nan", "null"))
-    #     context += [f'- [SUCCESS] BUILD Baseline', baseline.log, '']
-    # except Exception as error:
-    #     baseline = MarketBaseline(update=False)
-    #     context += [f'- [FAILED] BUILD Baseline', f'  : {error}', '  * Using latest baseline', '']
-    #
-    # TRADING_DATE = baseline['date'].values[0]
-    # if not isinstance(TRADING_DATE, str):
-    #     TRADING_DATE = f"{datetime_as_string(TRADING_DATE, unit='D').replace('-', '/')}"
 
     # ---------------------------------------------------------------------------------------
     # UPDATE PORTFOLIO
@@ -274,7 +244,6 @@ if __name__ == "__main__":
                     "srcIndicator": dumps(macro.serialize()).replace(" ", ""),
                     "srcIndicatorOpt": dumps(macro.meta).replace(" ", ""),
                     "srcStatus": macro.status,
-                    "faq": macro.faqs
                 })
             )
 

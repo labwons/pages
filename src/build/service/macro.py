@@ -17,19 +17,7 @@ if "PATH" not in globals():
     except ImportError:
         from src.common.path import PATH
 
-
-FAQ = [
-    {'q': '사용법을 모르겠어요.', 'a': '영상을 통해 사용법을 확인하세요. (영상 준비 중)'},
-    {'q': '자료 출처가 어디인가요?', 'a': '한국은행 경제통계시스템과 미국 연방준비경제데이터 시스템 입니다. 일부 데이터(YoY, MoM)은 가공되었습니다.'},
-    {'q': '언제 업데이트 되나요?', 'a': '주가 지수는 정규장 시간 마감(15:30) 이후 15분~30분 내, 기타 데이터는 한국 시간 저녁 9시 이후에 업데이트 됩니다.'},
-    {'q': '사용하다 불편한 점이 있어요. 고쳐주세요.',
-     'a': '고장 신고, 정보 정정 및 기타 문의는 snob.labwons@gmail.com 으로 연락주세요!<i class="bi bi-emoji-smile-fill"></i>'},
-    {'q': '정보 수정이 필요해요.',
-     'a': '고장 신고, 정보 정정 및 기타 문의는 snob.labwons@gmail.com 으로 연락주세요!<i class="bi bi-emoji-smile-fill"></i>'},
-]
-
 class Macro(DataFrame):
-    faqs: List[Dict] = FAQ
     meta: Dict = {'KOSPI': {'name': 'KOSPI', 'unit': '', 'group': '지수', 'hoverTemplate': ': %{y:.2f}<extra></extra>'},
                   'KOSDAQ': {'name': 'KOSDAQ', 'unit': '', 'group': '지수', 'hoverTemplate': ': %{y:.2f}<extra></extra>'}}
     _log: List[str] = []

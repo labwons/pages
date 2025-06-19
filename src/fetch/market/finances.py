@@ -1,7 +1,7 @@
 from pandas import concat, DataFrame, read_json, read_parquet, Series
 from re import DOTALL, sub
 from requests import get
-from time import time
+from time import perf_counter
 from typing import Any, List, Union
 from xml.etree.ElementTree import Element, fromstring
 
@@ -14,13 +14,14 @@ class FinancialStatement:
             self.state = "PASSED"
             return
 
-        stime = time()
-        self.log = f'RUN [Build Numbers Cache]'
+        stime = perf_counter()
+        self.log = f'  >> RUN [CACHING NUMBERS]'
+
         overview, annual, quarter = [], {}, {}
         for ticker in tickers:
             xml = self.fetch(ticker, debug=False)
             if xml is None:
-                self.log = f'... EMPTY xml for: {ticker}'
+                self.log = f'     ... EMPTY xml for: {ticker}'
                 continue
             numbers = self.numbers(xml, name=ticker)
             bd = self.statementType(xml)
@@ -38,13 +39,14 @@ class FinancialStatement:
         self.quarter = concat(quarter, axis=1)
         date = self.overview['date'].value_counts(dropna=False)
         if len(date) == 1:
-            self.log = f'- Resource date: {date.index[0]}'
+            self.log = f'     Resource date: {date.index[0]}'
         else:
-            report = '\n'.join(f'  {line}' for line in str(date).split('\n')[1:-1])
+            report = '\n'.join(f'     {line}' for line in str(date).split('\n')[1:-1])
             self.log = f'- Resource date: LOW RELIABILITY'
             self.log = f'{report}'
 
-        self.log = f'END [Build Numbers Cache] {len(tickers):,d} Stocks / Elapsed: {time() - stime:.2f}s'
+        self.log = f'  >> END: {perf_counter() - stime:.2f}s'
+        self._log += f': {len(tickers):,d} items'
         if "FAILED" in self.log:
             self.state = "PARTIALLY FAILED"
         return
