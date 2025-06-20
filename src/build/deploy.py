@@ -279,40 +279,12 @@ if __name__ == "__main__":
                     "tradingDate": f'{TRADING_DATE} (또는 최근 발표일) 기준',
                     "srcIndicator": dumps(macro.serialize()),
                     "srcIndicatorOpt": dumps(macro.meta),
-                    # "srcStatus": macro.status,
+                    "srcStatus": macro.status,
                 })
             )
-        context += [f'- [SUCCESS] DEPLOY BUBBLES', macro.log, '']
+        context += [f'- [SUCCESS] DEPLOY MACRO', macro.log, '']
     except Exception as error:
         context += [f'- [FAILED] DEPLOY MACRO', f'  : {error}', '']
-    # try:
-    #     macro = Macro(update=ACTION.MACRO)
-    #     if ACTION.MACRO:
-    #         with open(env.FILE.MACRO, 'w') as f:
-    #             f.write(macro.to_json(orient='index').replace('nan', ''))
-    #
-    #     with open(
-    #         file=os.path.join(env.DOCS, r'macro/index.html'),
-    #         mode='w',
-    #         encoding='utf-8'
-    #     ) as file:
-    #         file.write(
-    #             Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
-    #                 .get_template('macro-1.0.0.html') \
-    #                 .render({
-    #                 "local": env.ENV == "local",
-    #                 "title": "LAB￦ONS: 거시경제",
-    #                 "nav": SYSTEM_NAV,
-    #                 "tradingDate": f'{TRADING_DATE} (또는 최근 발표일) 기준',
-    #                 "srcIndicator": dumps(macro.serialize()).replace(" ", ""),
-    #                 "srcIndicatorOpt": dumps(macro.meta).replace(" ", ""),
-    #                 "srcStatus": macro.status,
-    #             })
-    #         )
-    #
-    #     context += [f'- [SUCCESS] Deploy Macro', macro.log, '']
-    # except Exception as error:
-    #     context += [f'- [FAILED] Deploy Macro', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------

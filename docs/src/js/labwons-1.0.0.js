@@ -830,8 +830,8 @@ if (SERVICE === "macro"){
 
       $_group.append(`<option value="${symbol}">${meta.name}</option>`);
     });
-    $y1.val(['KOSPI']).trigger('change');
-    y1_selection.push('KOSPI');
+    $y1.val(['1001']).trigger('change');
+    y1_selection.push('1001');
     $y1.select2({
       maximumSelectionLength: 3,
       minimumResultsForSearch: Infinity

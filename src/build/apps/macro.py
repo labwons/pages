@@ -1,9 +1,11 @@
 try:
     from ..baseline.metadata import ECOSMETA, FREDMETA, KRXMETA, MACRO
     from ...fetch.macro.naver import krwusd
+    from ...common.util import krw2currency
 except ImportError:
     from src.build.baseline.metadata import ECOSMETA, FREDMETA, KRXMETA, MACRO
     from src.fetch.macro.naver import krwusd
+    from src.common.util import krw2currency
 from pandas import concat, DataFrame
 from time import perf_counter
 from typing import Dict, List
@@ -44,10 +46,11 @@ class Macro:
 
     @property
     def status(self) -> list:
+        conv = {'십억원': 1e+9, '억원': 1e+8, '천만원': 1e+7, '백만원': 1e+6}
         data = []
         for symbol, meta in MACRO.STATUS:
 
-            # conv = {'십억원': 1e+9, '억원': 1e+8, '천만원': 1e+7, '백만원': 1e+6}
+
             name = self.meta[symbol]['name']
             unit = self.meta[symbol]['unit'].replace("-", "")
             if symbol == '731Y0030000003':
@@ -55,12 +58,17 @@ class Macro:
                 obj.update({'code': symbol, 'unit': unit, 'name': name})
             else:
                 serial = self.data[symbol].dropna()
+                value = serial.values[-1]
+                if unit in conv:
+                    value = krw2currency(value * conv[unit])
+                    unit = "원"
+
                 obj = {
                     'code': symbol,
                     'date': serial.index[-1].strftime("%Y-%m-%d"),
-                    'value': serial.values[-1],
+                    'value': value,
                     'change': float(round(100 * serial.pct_change().values[-1], 2)),
-                    'unit': unit.replace("백만원", "억원"),
+                    'unit': unit,
                     'name': name.replace("(아파트, 전국)", ""),
                 }
             obj['digit'] = meta.digit
@@ -71,8 +79,7 @@ class Macro:
             else:
                 if symbol in ['1001', '2001', '901Y062P63AC', '901Y063P64AC', '901Y067I16E']:
                     obj['icon'] = obj['icon'].replace('up', 'down')
-            if symbol in ['901Y056S23A', '901Y056S23E', '901Y056S23F']:
-                obj['value'] = obj['value'] / 100
+
             data.append(obj)
         return data
 

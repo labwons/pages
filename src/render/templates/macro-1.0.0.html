@@ -151,6 +151,77 @@
       font-size: 18px !important;
     }
 
+    .content-number {
+      flex: 1 0 auto;
+      width: 20%;
+      padding: 20px 30px;
+      background-color: #fff;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 24px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 767px) {
+      .content-number {
+        width: 100%;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .content-number {
+        width: 45%;
+      }
+    }
+
+    @media (min-width: 1024px) and (max-width: 1439px) {
+      .content-number {
+        width: 30%;
+      }
+    }
+
+    .content-number-icon {
+      font-size: 42px;
+    }
+
+    .content-number-item {
+      flex: 1 0 auto;
+    }
+
+    .content-number-item .content-number-name {
+      margin: 0;
+      font-family: var(--font-family);
+      font-size: 14px;
+      color: var(--default-color);
+    }
+
+    .content-number-item .content-number-value > span {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--nav-color)
+    }
+
+    @media (max-width: 767px) {
+      .content-number-item .content-number-value > span {
+        font-size: 24px;
+      }
+    }
+
+    .content-number-item .content-number-unit {
+      font-size: 18px !important;
+    }
+
+    .content-number-item .content-number-change {
+      font-family: var(--font-family);
+      font-size: 16px !important;
+    }
+
   </style>
 {% endblock %}
 
@@ -196,20 +267,21 @@
         <div class="content-number" data-symbol="{{ item['code'] }}" title="기준 일자: {{ item['date'] }}">
           <i class="bi {{ item['icon'] }} content-number-icon" style="color:{{ item['color'] }};"></i>
           <div class="content-number-item">
-            <div class="content-number-value">
-              <span 
-              data-purecounter-start="0" 
-              data-purecounter-end="{{ item['value'] }}" 
-              data-purecounter-decimals="{{ item['digit'] }}"
-              data-purecounter-duration="1.5"{% if item['unit'] == '억원' %} 
-              data-purecounter-separator="true"{% endif %}
-              class="purecounter"></span>
-              <span class="content-number-unit">{{ item['unit'] }}</span>
-              <span class="content-number-change" style="color:{{ item['color'] }};">({{ item['change'] }}%)</span>
-            </div>            
             <div class="content-number-label">
               <span class="content-number-name">{{ item['name'] }}</span>
             </div>
+            <div class="content-number-value">{% if item['code'] in ['901Y056S23A', '901Y056S23E', '901Y056S23F'] %}
+              <span>{{ item['value'] }}</span>{% else %}
+              <span 
+                data-purecounter-start="0" 
+                data-purecounter-end="{{ item['value'] }}" 
+                data-purecounter-decimals="{{ item['digit'] }}"
+                data-purecounter-duration="1.5"
+                class="purecounter">
+              </span>{% endif %}
+              <span class="content-number-unit">{{ item['unit'] }}</span>
+            </div>
+            <div class="content-number-change" style="color:{{ item['color'] }};">{{ item['change'] }}%</div>
           </div>
         </div>
         {% endfor %}
