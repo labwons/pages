@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # ENVIRONMENT SETTINGS
     # ---------------------------------------------------------------------------------------
-    SYSTEM_NAV = navigate()
+    SYSTEM_NAV = navigate(DOCS)
 
     DUPLICATED_CONFIG = False
 
@@ -106,7 +106,8 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE MACRO: FRED
     # ---------------------------------------------------------------------------------------
-    if GITHUB.CONFIG.FRED:
+    # if GITHUB.CONFIG.FRED:
+    if ENV == "local":
         try:
             fred = Fred()
             fred.data(FREDMETA).to_parquet(path=FILE.FRED, engine='pyarrow')
@@ -286,7 +287,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     if not ENV == "local":
         try:
-            minify()
+            minify(DOCS)
             context += [f'- [SUCCESS] MINIFY RESOURCES ', '']
         except Exception as error:
             context += [f'- [FAILED] MINIFY RESOURCES ', f'  : {error}', '']

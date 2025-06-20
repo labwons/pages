@@ -1,7 +1,3 @@
-try:
-    from ..common.env import DOCS
-except ImportError:
-    from src.common.env import DOCS
 from numpy import nan, isnan
 from pandas import Series, isna
 from email.mime.text import MIMEText
@@ -63,20 +59,20 @@ class eMail(MIMEMultipart):
         return
 
 
-def navigate() -> List[Dict[str, Union[str, dict]]]:
+def navigate(root:str) -> List[Dict[str, Union[str, dict]]]:
     CONTENT_NAMES = {
         "bubble": "종목 분포",
         "macro": "경제 지표",
     }
     nav: List[Dict] = [{"href": f"/", "content": "시장 지도"}]
     for content in CONTENT_NAMES:
-        if not content in os.listdir(DOCS):
+        if not content in os.listdir(root):
             continue
         nav.append({'href': f'/{content}', 'content': CONTENT_NAMES[content]})
         if content == "portfolio":
 
             sub = []
-            for sub_content in os.listdir(os.path.join(DOCS, content)):
+            for sub_content in os.listdir(os.path.join(root, content)):
                 if sub_content.startswith('index'):
                     continue
                 name = ""
@@ -85,8 +81,8 @@ def navigate() -> List[Dict[str, Union[str, dict]]]:
     return nav
 
 
-def minify():
-    for _dir, _folder, _files in os.walk(DOCS):
+def minify(root:str):
+    for _dir, _folder, _files in os.walk(root):
         for _file in _files:
             if _file.endswith('js') and not _file.endswith('.min.js'):
                 js = os.path.join(_dir, _file)

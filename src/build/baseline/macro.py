@@ -45,4 +45,3 @@ if __name__ == "__main__":
 
     macro = MacroBaseline()
     print(macro.log)
-    print(macro.meta)

@@ -135,11 +135,7 @@ class FinancialStatement:
 
 
 if __name__ == "__main__":
-    if "FILE" not in globals():
-        try:
-            from src.common.env import FILE
-        except ModuleNotFoundError:
-            pass
+    from src.common.env import FILE
 
     fs = FinancialStatement(*FinancialStatement.checkTickers(FILE.BASELINE))
     print(fs.log)
