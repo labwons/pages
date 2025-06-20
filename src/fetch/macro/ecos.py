@@ -249,8 +249,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     Ecos.api = "CEW3KQU603E6GA8VX0O9"
-    Ecos = Ecos()
-    Ecos.src.to_clipboard()
+    ecos = Ecos()
+    ecos.src.to_clipboard()
     # print(Ecos.container("252Y001"))
     # print((Ecos.fetch('101Y003', 'BBHS00') * 10).apply(krwFormat))
     # print(Ecos)

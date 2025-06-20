@@ -35,12 +35,8 @@ if __name__ == "__main__":
         from src.build.apps.macro import Macro
         from src.build.apps.sitemap import rss, sitemap
         from src.build.util import navigate, minify, eMail
-
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
-    from pykrx.stock import get_nearest_business_day_in_a_week
-    from shutil import copytree
-    from time import sleep
     import os
 
     # ---------------------------------------------------------------------------------------
@@ -55,6 +51,7 @@ if __name__ == "__main__":
         # LOCAL HOSTING DIRECTORY WITH DEPLOYMENT DIRECTORY, DEPLOYMENT MIGHT BE CORRUPTED.
         # IF YOU WANT TO USE DIFFERENT PATH FOR LOCAL HOST TESTING, BELOW {ROOT} VARIABLE ARE
         # TO BE CHANGED.
+        from shutil import copytree
         copytree(PATH.DOCS, PATH.STUB, dirs_exist_ok=True)
         PATH.DOCS = PATH.STUB
         GITHUB.CONFIG.RESET()
@@ -63,12 +60,14 @@ if __name__ == "__main__":
         # ON GITHUB ACTIONS, SYSTEM EXITS WHEN THE LATEST TRADING DATE AND CURRENT DATETIME
         # IS NOT MATCHED. THIS CODE IS IMPLEMENTED IN ORDER TO AVOID RUNNING ON WEEKDAY WHILE
         # HOLIDAYS OF THE MARKET.
+        from pykrx.stock import get_nearest_business_day_in_a_week
         if get_nearest_business_day_in_a_week() != CLOCK().strftime("%Y%m%d"):
             raise SystemExit
 
         # ON GITHUB ACTIONS, IF SCHEDULED TIME IS ACTIVATED BEFORE THE MARKET IS CLOSED,
         # WHICH HARDLY HAPPENS, BUILD AND DEPLOY WILL HOLD UNTIL THE MARKET IS CLOSED.
         now = CLOCK()
+        from time import sleep
         while (now.hour == 15) and (15 <= now.minute < 31):
             sleep(30)
             now = CLOCK()
@@ -80,7 +79,7 @@ if __name__ == "__main__":
             GITHUB.CONFIG.AFTERMARKET = True
 
     if GITHUB.EVENT == "workflow_dispatch":
-        # USE LATEST CACHING RESOURCES TO DEPLOY AND BUILD.
+        # CLEAN-UP DEPLOYMENT
         GITHUB.CONFIG.RESET()
 
     if GITHUB.EVENT == "push":
