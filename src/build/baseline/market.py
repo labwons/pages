@@ -1,68 +1,17 @@
 try:
     from .metadata import METADATA
-    from src.common.env import FILE
+    from ..util import typeCast, profitGrowth
+    from ...common.env import FILE
 except ImportError:
     from src.build.baseline.metadata import METADATA
+    from src.build.util import typeCast, profitGrowth
     from src.common.env import FILE
 from datetime import datetime
 from numpy import nan
 from pandas import DataFrame, Series
-from pandas import concat, isna, read_parquet
+from pandas import concat
 from time import perf_counter
-from typing import List, Union
-
-
-class Tools:
-
-    @classmethod
-    def krw2currency(cls, krw:int, div:int=0) -> Union[str, float]:
-        if isna(krw):
-            return nan
-        if div:
-            krw = krw / div
-        zo, euk = int(krw // 10000), int(krw % 10000)
-        return f'{zo}조 {euk}억' if zo else f'{euk}억'
-
-    @classmethod
-    def typeCast(cls, value):
-        value = str(value).lower().replace(",", "")
-        if value in ['separate', 'consolidated']:
-            return value
-        if "n" in value:
-            return nan
-        if not any([char.isdigit() for char in value]):
-            return nan
-        return float(value) if "." in value or "-" in value else int(value)
-
-    @classmethod
-    def profitGrowth(cls, profit:Series, debug:bool=False) -> List:
-        prev = profit.values[0]
-        if -1 <= prev <= 1:
-            prev = nan
-        value, label = [], []
-        for curr in profit.iloc[1:]:
-            if -1 <= curr <= 1:
-                curr = nan
-            if prev is None or isna(prev) or isna(curr):
-                value.append(nan)
-                label.append(nan)
-            elif prev < 0 <= curr:
-                value.append(nan)
-                label.append("흑자 전환")
-            elif curr < 0 <= prev:
-                value.append(nan)
-                label.append("적자 전환")
-            else:
-                value.append(100 * (curr - prev) / abs(prev))
-                label.append(nan)
-            prev = curr
-        values = Series(value)
-        average = values.mean() if len(values.dropna()) >= 2 else nan
-        if debug:
-            print(values)
-            print(average)
-        return [value[-1], label[-1], average]
-
+from typing import List
 
 
 class MarketBaseline:
@@ -141,7 +90,7 @@ class MarketBaseline:
         overview = overview.rename(columns={p: c for p, c in METADATA.RENAME if p in overview.columns})
         overview = overview.drop(columns=[col for col in overview if not col in METADATA])
         typecast = overview.columns.difference(['stockSplitDate', 'statementType'])
-        overview[typecast] = overview[typecast].map(Tools.typeCast)
+        overview[typecast] = overview[typecast].map(typeCast)
         return overview
 
     @classmethod
@@ -156,7 +105,7 @@ class MarketBaseline:
         for ticker in tickers:
             statement = statementA[ticker].loc[yy[ticker].split(",")]
             statement = statement.dropna(how='all', axis=0)
-            statement = statement.map(Tools.typeCast)
+            statement = statement.map(typeCast)
             estimated = statement[statement.index.str.contains('\\(E\\)')].copy()
             provision = statement[statement.index.str.contains('\\(P\\)')].copy()
             statement = statement[~statement.index.isin(estimated.index)]
@@ -177,15 +126,15 @@ class MarketBaseline:
             if not revenueGrowth.empty:
                 obj['fiscalRevenueGrowth'] = revenueGrowth.values[-1]
                 obj['averageRevenueGrowth'] = revenueGrowth.mean()
-                profitGrowth = Series(
+                pg = Series(
                     index=['fiscalProfitGrowth', 'fiscalProfitState', 'averageProfitGrowth'],
-                    data=Tools.profitGrowth(statement['영업이익(억원)'])
+                    data=profitGrowth(statement['영업이익(억원)'])
                 )
-                epsGrowth = Series(
+                eg = Series(
                     index=['fiscalEpsGrowth', 'fiscalEpsState', 'averageEpsGrowth'],
-                    data= Tools.profitGrowth(statement['EPS(원)'])
+                    data= profitGrowth(statement['EPS(원)'])
                 )
-                obj = concat([obj, profitGrowth, epsGrowth])
+                obj = concat([obj, pg, eg])
 
             if not estimated.empty:
                 # IF THERE IS ESTIMATED STATEMENT(추정치), CLOSEST ESTIMATION DATE WILL BE USED.
@@ -202,11 +151,11 @@ class MarketBaseline:
                 else:
                     obj['estimatedRevenueGrowth'] = 100 * est.pct_change(fill_method=None).iloc[-1]['estimatedRevenue']
 
-                pg = Tools.profitGrowth(est['estimatedProfit'])
+                pg = profitGrowth(est['estimatedProfit'])
                 obj['estimatedProfitGrowth'] = pg[0]
                 obj['estimatedProfitState'] = pg[1]
 
-                eg = Tools.profitGrowth(est['estimatedEps'])
+                eg = profitGrowth(est['estimatedEps'])
                 obj['estimatedEpsGrowth'] = eg[0]
                 obj['estimatedEpsState'] = eg[1]
 
@@ -226,7 +175,7 @@ class MarketBaseline:
         for ticker in tickers:
             statement = statementQ[ticker].loc[qq[ticker].split(",")]
             statement = statement.dropna(how='all', axis=0)
-            statement = statement.map(Tools.typeCast)
+            statement = statement.map(typeCast)
             estimated = statement[statement.index.str.contains('\\(E\\)')].copy()
             provision = statement[statement.index.str.contains('\\(P\\)')].copy()
             statement = statement[~statement.index.isin(estimated.index)]
@@ -270,8 +219,8 @@ class MarketBaseline:
                 yoy = yoy.rename(columns={p: c.replace("fiscal", "yoy") for p, c in METADATA.RENAME if p in yoy})
                 yoy = yoy.rename(columns={yoy.columns[0]: "yoyRevenue"})
                 obj = concat([obj, yoy.iloc[-1]], axis=0)
-                ps = Tools.profitGrowth(frm['영업이익(억원)'])
-                es = Tools.profitGrowth(frm['EPS(원)'])
+                ps = profitGrowth(frm['영업이익(억원)'])
+                es = profitGrowth(frm['EPS(원)'])
                 obj['yoyProfit'] = ps[0]
                 obj['yoyProfitState'] = ps[1]
                 obj['yoyEps'] = es[0]
@@ -383,7 +332,7 @@ if __name__ == "__main__":
     from src.common.env import FILE
     from pandas import read_parquet
 
-    baseline = Baseline()
+    baseline = MarketBaseline()
     print(baseline.log)
     baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
     baseline.data.to_clipboard()

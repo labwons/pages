@@ -1,7 +1,9 @@
 try:
-    from ...common.util import web, krw2currency
+    from ...common.util import krw2currency
+    from ..util import web
 except ImportError:
-    from src.common.util import web, krw2currency
+    from src.common.util import krw2currency
+    from src.fetch.util import web
 from datetime import datetime
 from pandas import concat, DataFrame, Series, to_datetime
 from time import perf_counter
@@ -247,7 +249,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     Ecos.api = "CEW3KQU603E6GA8VX0O9"
-    # Ecos = Ecos()
+    Ecos = Ecos()
+    Ecos.src.to_clipboard()
     # print(Ecos.container("252Y001"))
     # print((Ecos.fetch('101Y003', 'BBHS00') * 10).apply(krwFormat))
     # print(Ecos)

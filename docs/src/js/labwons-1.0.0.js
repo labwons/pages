@@ -937,7 +937,7 @@ if (SERVICE === "macro"){
         mode: 'lines',
         name: meta.name,
         showlegend: true,
-        hovertemplate: `${meta.name}${meta.hoverTemplate}`,
+        hovertemplate: `${meta.name}${meta.hover}`,
         yaxis: 'y1',
       }
       if (`${key}meta` in srcIndicator) {
@@ -955,7 +955,7 @@ if (SERVICE === "macro"){
         mode: 'lines',
         name: meta.name,
         showlegend: true,
-        hovertemplate: `${meta.name}${meta.hoverTemplate}`,
+        hovertemplate: `${meta.name}${meta.hover}`,
         yaxis: 'y2',
       }
       if (`${key}meta` in srcIndicator) {

@@ -6,9 +6,9 @@ except ImportError:
     from src.build.baseline.metadata import ECOSMETA, FREDMETA, KRXMETA, MACRO
     from src.fetch.macro.naver import krwusd
     from src.common.util import krw2currency
-from pandas import concat, DataFrame
+from pandas import DataFrame
 from time import perf_counter
-from typing import Dict, List
+from typing import List
 
 
 class Macro:

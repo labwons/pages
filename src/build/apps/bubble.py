@@ -1,9 +1,9 @@
 try:
+    from ...common.util import krw2currency
     from ..baseline.metadata import METADATA, BUBBLES
-    from ..baseline.market import Tools
 except ImportError:
+    from src.common.util import krw2currency
     from src.build.baseline.metadata import METADATA, BUBBLES
-    from src.build.baseline.market import Tools
 from datetime import datetime
 from numpy import nan
 from pandas import DataFrame, Series, concat
@@ -39,7 +39,7 @@ class MarketBubble:
         baseline['size'] = self.normalize(baseline['marketCap'], 7, 100)
         baseline['name'] = baseline[['name', 'market']].apply(lambda r: f'{r["name"]}*' if r.market == 'KOSDAQ' else r['name'], axis=1)
         baseline['meta'] = baseline.name + '(' + baseline.index + ')<br>' \
-                           + '시가총액: ' + baseline['marketCap'].apply(Tools.krw2currency, div=1e+8) + '원<br>' \
+                           + '시가총액: ' + baseline['marketCap'].apply(krw2currency) + '원<br>' \
                            + '종가: ' + baseline.close.apply(lambda x: f"{x:,d}원")
         baseline['color'] = baseline['sectorCode'].apply(lambda code: self.rgb2hex(*BUBBLES.COLORS[code]))
 
@@ -64,7 +64,7 @@ class MarketBubble:
                 refactor[key] = round(refactor[key], meta.digit)
         refactor = refactor[BUBBLES.SELECTOR + ['size', 'meta', 'color']]
         for key in BUBBLES.KRW:
-            refactor[f'{key}Text'] = refactor[key].apply(Tools.krw2currency)
+            refactor[f'{key}Text'] = refactor[key].apply(krw2currency)
         self.data = refactor
 
         # SECTOR DATA
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     from src.common.env import FILE
     from pandas import read_parquet
 
-    # marketBubble = MarketBubble(read_parquet(FILE.BASELINE, engine='pyarrow'))
+    marketBubble = MarketBubble(read_parquet(FILE.BASELINE, engine='pyarrow'))
     # print(marketBubble.data)
     # print(marketBubble.data.columns)
     # print(marketBubble.sectors)

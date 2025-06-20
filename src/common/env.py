@@ -1,54 +1,17 @@
+try:
+    from .struct import dDict
+except ImportError:
+    from src.common.struct import dDict
 from datetime import datetime, timezone, timedelta
-import os, shutil
+import os
 
-
-class dDict(dict):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        for key, value in kwargs.items():
-            if isinstance(value, dict):
-                value = dDict(**value)
-            self[key] = value
-
-    def __iter__(self):
-        return iter(self.items())
-
-    def __getattr__(self, attr):
-        try:
-            return self[attr]
-        except KeyError:
-            raise AttributeError(f"No such attribute: {attr}")
-
-    def __setattr__(self, attr, value):
-        self[attr] = value
-
-
-def copy(src:str, dst:str, rename:str=""):
-    if not os.path.exists(src):
-        raise FileNotFoundError(f"원본 파일이 존재하지 않습니다: {src}")
-
-    ext = f".{src.split('.')[-1]}"
-    new = os.path.basename(src) if not rename else f"{rename}{ext}"
-    dst = os.path.join(dst, new)
-    if not os.path.isfile(dst):
-        shutil.copy2(src=src, dst=dst)
-    return dst
-
-
-def copytree(src:str, dst:str):
-    shutil.copytree(src, dst, dirs_exist_ok=True)
-    return
 
 CLOCK = lambda: datetime.now(timezone(timedelta(hours=9)))
-
+ENV   = "local"
 if any([key.lower().startswith('colab') for key in os.environ]):
     ENV = 'google_colab'
-elif any([key.lower().startswith('github') for key in os.environ]):
+if any([key.lower().startswith('github') for key in os.environ]):
     ENV = 'github_action'
-else:
-    ENV = 'local'
-
-GITHUB_ACTION_EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 
 ROOT = "https://raw.githubusercontent.com/labwons/pages/main/"
 if not ENV == 'google_colab':
@@ -56,11 +19,8 @@ if not ENV == 'google_colab':
     while not ROOT.endswith('pages'):
         ROOT = os.path.dirname(ROOT)
 
-if ENV == "local":
-    DESKTOP = os.path.join(os.environ['USERPROFILE'], 'Desktop')
-    DOWNLOADS = os.path.join(os.environ['USERPROFILE'], 'Downloads')
-
 DOCS   = os.path.join(ROOT, r'docs')
+
 FILE = dDict()
 FILE.AFTER_MARKET       = os.path.join(ROOT, r'src/fetch/market/parquet/aftermarket.parquet')
 FILE.ANNUAL_STATEMENT   = os.path.join(ROOT, r'src/fetch/market/parquet/annualstatement.parquet')
@@ -77,8 +37,29 @@ HTML = dDict()
 HTML.MAP        = os.path.join(ROOT, r'docs/index.html')
 HTML.BUBBLE     = os.path.join(ROOT, r'docs/bubble/index.html')
 HTML.MACRO      = os.path.join(ROOT, r'docs/macro/index.html')
-HTML.TEMPLATES  = os.path.join(ROOT, r'src/render/templates')
 
+PATH = dDict()
+PATH.DOCS = os.path.join(ROOT, r'docs')
+PATH.TEMPLATES = os.path.join(ROOT, r'src/build/apps/templates')
+if ENV == "local":
+    PATH.DESKTOP = os.path.join(os.environ['USERPROFILE'], 'Desktop')
+    PATH.DOWNLOADS = os.path.join(os.environ['USERPROFILE'], 'Downloads')
+    PATH.STUB = os.path.join(PATH.DOWNLOADS, 'labwons')
+
+GITHUB = dDict()
+GITHUB.EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
+GITHUB.CONFIG = dDict(
+    AFTERMARKET = False,
+    STATEMENT = False,
+    SECTOR = False,
+    ECOS = False,
+    FRED = False
+)
+def _reset():
+    for key, val in GITHUB.CONFIG:
+        if not key == "RESET":
+            GITHUB.CONFIG[key] = False
+GITHUB.CONFIG.RESET = _reset
 
 
 
@@ -87,3 +68,8 @@ if __name__ == "__main__":
     # print(FILE.BASELINE)
     # print(FILE.GROUP)
     # print(FILE.ANNUAL_STATEMENT)
+    print(GITHUB.CONFIG)
+    GITHUB.CONFIG.RESET()
+    print(GITHUB.CONFIG)
+    GITHUB.CONFIG.ECOS = GITHUB.CONFIG.STATEMENT = True
+    print(GITHUB.CONFIG)

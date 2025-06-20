@@ -1,8 +1,8 @@
 try:
-    from ..baseline.market import Tools
+    from ...common.util import krw2currency
     from ..baseline.metadata import METADATA, MARKETMAP
 except ImportError:
-    from src.build.baseline.market import Tools
+    from src.common.util import krw2currency
     from src.build.baseline.metadata import METADATA, MARKETMAP
 from datetime import datetime
 from pandas import concat, DataFrame
@@ -44,7 +44,7 @@ class MarketMap:
         baseline['name'] = baseline[['name', 'market']].apply(lambda r: f'{r["name"]}*' if r.market == 'KOSDAQ' else r['name'], axis=1)
         baseline['ceiling'] = baseline['industryName']
         baseline['meta'] = baseline.name + '(' + baseline.index + ')<br>' \
-                     + '시가총액: ' + baseline['size'].apply(Tools.krw2currency) + '원<br>' \
+                     + '시가총액: ' + baseline['size'].apply(krw2currency) + '원<br>' \
                      + '종가: ' + baseline.close.apply(lambda x: f"{x:,d}원")
 
         # IF INDUSTRY == SECTOR, INDUSTRY INFORMATION WILL BE DROPPED.
@@ -62,7 +62,7 @@ class MarketMap:
         ws_sector.index = ws_sector.index.str.pad(width=6, side="left", fillchar='W')
 
         ws_top = DataFrame(baseline.select_dtypes(include=['int']).sum()).T
-        ws_top[['name', 'meta']] = ['대형주', Tools.krw2currency(ws_top.iloc[0]['size'])]
+        ws_top[['name', 'meta']] = ['대형주', krw2currency(ws_top.iloc[0]['size'])]
         ws_top.index = ['WS0000']
 
         # EXCLUDE SAMSUNG(005930) CASE
@@ -75,7 +75,7 @@ class MarketMap:
         ns_sector.index = ns_sector.index.str.pad(width=6, side="left", fillchar='N')
 
         ns_top = DataFrame(baseline[~baseline.index.isin(['005930'])].select_dtypes(include=['int']).sum()).T
-        ns_top[['name', 'meta']] = ["대형주(삼성전자 제외)", Tools.krw2currency(ns_top.iloc[0]['size'])]
+        ns_top[['name', 'meta']] = ["대형주(삼성전자 제외)", krw2currency(ns_top.iloc[0]['size'])]
         ns_top.index = ['NS0000']
 
         base = concat([baseline, ws_industry, ns_industry, ws_sector, ns_sector, ws_top, ns_top])
@@ -165,7 +165,7 @@ class MarketMap:
                 "name": name,
                 "size": size,
                 "ceiling": 'TBD' if key.startswith('sector') else group.iloc[0]['sectorName'],
-                'meta': f'{name}<br>시가총액: {Tools.krw2currency(size)}원'
+                'meta': f'{name}<br>시가총액: {krw2currency(size)}원'
             })
             '''
             Exception Grouping Factors:

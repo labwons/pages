@@ -6,14 +6,12 @@ ROUTINE : 15:30+09:00UTC on weekday
 """
 if __name__ == "__main__":
     try:
-        from ..common import env
-        from ..common.email import eMail
+        from ..common.env import *
         from ..fetch.market.aftermarket import AfterMarket
         from ..fetch.market.finances import FinancialStatement
         from ..fetch.market.sector import SectorComposition
         from ..fetch.macro.ecos import Ecos
         from ..fetch.macro.fred import Fred
-        from ..render.navigate import navigate, minify
         from .baseline.metadata import ECOSMETA, FREDMETA
         from .baseline.market import MarketBaseline
         from .baseline.macro import MacroBaseline
@@ -21,16 +19,14 @@ if __name__ == "__main__":
         from .apps.bubble import MarketBubble
         from .apps.macro import Macro
         from .apps.sitemap import rss, sitemap
-        from .action import ACTION
+        from .util import navigate, minify, eMail
     except ImportError:
-        from src.common import env
-        from src.common.email import eMail
+        from src.common.env import *
         from src.fetch.market.aftermarket import AfterMarket
         from src.fetch.market.finances import FinancialStatement
         from src.fetch.market.sector import SectorComposition
         from src.fetch.macro.ecos import Ecos
         from src.fetch.macro.fred import Fred
-        from src.render.navigate import navigate, minify
         from src.build.baseline.metadata import ECOSMETA, FREDMETA
         from src.build.baseline.market import MarketBaseline
         from src.build.baseline.macro import MacroBaseline
@@ -38,11 +34,12 @@ if __name__ == "__main__":
         from src.build.apps.bubble import MarketBubble
         from src.build.apps.macro import Macro
         from src.build.apps.sitemap import rss, sitemap
-        from src.build.action import ACTION
+        from src.build.util import navigate, minify, eMail
 
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
     from pykrx.stock import get_nearest_business_day_in_a_week
+    from shutil import copytree
     from time import sleep
     import os
 
@@ -53,43 +50,41 @@ if __name__ == "__main__":
 
     DUPLICATED_CONFIG = False
 
-    if env.ENV == "local":
+    if ENV == "local":
         # FOR LOCAL HOST TESTING, EXTERNAL DIRECTORY IS RECOMMENDED AND USED. USING THE SAME
         # LOCAL HOSTING DIRECTORY WITH DEPLOYMENT DIRECTORY, DEPLOYMENT MIGHT BE CORRUPTED.
         # IF YOU WANT TO USE DIFFERENT PATH FOR LOCAL HOST TESTING, BELOW {ROOT} VARIABLE ARE
         # TO BE CHANGED.
-        _docs = os.path.join(env.DOWNLOADS, 'labwons')
-        env.copytree(env.DOCS, _docs)
-        env.DOCS = _docs
-        ACTION.reset()
+        copytree(PATH.DOCS, PATH.STUB, dirs_exist_ok=True)
+        PATH.DOCS = PATH.STUB
+        GITHUB.CONFIG.RESET()
 
-    if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "schedule":
+    if GITHUB.EVENT == "schedule":
         # ON GITHUB ACTIONS, SYSTEM EXITS WHEN THE LATEST TRADING DATE AND CURRENT DATETIME
         # IS NOT MATCHED. THIS CODE IS IMPLEMENTED IN ORDER TO AVOID RUNNING ON WEEKDAY WHILE
         # HOLIDAYS OF THE MARKET.
-        if get_nearest_business_day_in_a_week() != env.CLOCK().strftime("%Y%m%d"):
+        if get_nearest_business_day_in_a_week() != CLOCK().strftime("%Y%m%d"):
             raise SystemExit
 
         # ON GITHUB ACTIONS, IF SCHEDULED TIME IS ACTIVATED BEFORE THE MARKET IS CLOSED,
         # WHICH HARDLY HAPPENS, BUILD AND DEPLOY WILL HOLD UNTIL THE MARKET IS CLOSED.
-        now = env.CLOCK()
+        now = CLOCK()
         while (now.hour == 15) and (15 <= now.minute < 31):
             sleep(30)
-            now = env.CLOCK()
+            now = CLOCK()
 
-        ACTION.reset()
+        GITHUB.CONFIG.RESET()
         if now.hour >= 20:
-            ACTION.MACRO = ACTION.STATEMENT = True
+            GITHUB.CONFIG.ECOS = GITHUB.CONFIG.FRED = GITHUB.CONFIG.STATEMENT = True
         else:
-            DUPLICATED_CONFIG = True
-            ACTION.AFTERMARKET = True
+            GITHUB.CONFIG.AFTERMARKET = True
 
-    if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "workflow_dispatch":
+    if GITHUB.EVENT == "workflow_dispatch":
         # USE LATEST CACHING RESOURCES TO DEPLOY AND BUILD.
-        ACTION.reset()
+        GITHUB.CONFIG.RESET()
 
-    if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "push":
-        # EXTERNAL CONFIGURATION FOR BUILD CACHING. CONFIGURATION SCRIPT AT //src/build/action.py
+    if GITHUB.EVENT == "push":
+        # EXTERNAL CONFIGURATION FOR BUILD CACHING. CONFIGURATION SCRIPT AT //src/common/env.py
         # IF CONFIGURED AND PUSHED, GITHUB ACTION AUTOMATICALLY RUNS AND DEPLOY.
         pass
 
@@ -98,11 +93,11 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE MACRO: ECOS
     # ---------------------------------------------------------------------------------------
-    if ACTION.ECOS:
+    if GITHUB.CONFIG.ECOS:
         try:
             Ecos.api = "CEW3KQU603E6GA8VX0O9"
             ecos = Ecos()
-            ecos.data(ECOSMETA).to_parquet(path=env.FILE.ECOS, engine='pyarrow')
+            ecos.data(ECOSMETA).to_parquet(path=FILE.ECOS, engine='pyarrow')
             context += [f"- [SUCCESS] UPDATE ECOS: ", ecos.log, ""]
         except Exception as report:
             context += [f"- [FAILED] UPDATE ECOS: ", f'{report}', ""]
@@ -112,10 +107,10 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE MACRO: FRED
     # ---------------------------------------------------------------------------------------
-    if ACTION.FRED:
+    if GITHUB.CONFIG.FRED:
         try:
             fred = Fred()
-            fred.data(FREDMETA).to_parquet(path=env.FILE.FRED, engine='pyarrow')
+            fred.data(FREDMETA).to_parquet(path=FILE.FRED, engine='pyarrow')
             context += [f"- [SUCCESS] UPDATE FRED: ", fred.log, ""]
         except Exception as report:
             context += [f"- [FAILED] UPDATE FRED: ", f'{report}', ""]
@@ -125,11 +120,11 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE SECTOR COMPOSITION
     # ---------------------------------------------------------------------------------------
-    if ACTION.SECTOR:
+    if GITHUB.CONFIG.SECTOR:
         try:
             sector = SectorComposition()
             if sector.state == "SUCCESS":
-                sector.data.to_parquet(path=env.FILE.SECTOR_COMPOSITION, engine='pyarrow')
+                sector.data.to_parquet(path=FILE.SECTOR_COMPOSITION, engine='pyarrow')
             context += [f"- [{sector.state}] UPDATE SECTOR COMPOSITION: ", sector.log, ""]
         except Exception as report:
             context += [f"- [FAILED] UPDATE SECTOR COMPOSITION: ", f'{report}', ""]
@@ -139,14 +134,14 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE FINANCIAL STATEMENT
     # ---------------------------------------------------------------------------------------
-    if ACTION.STATEMENT:
-        tickers = FinancialStatement.checkTickers(env.FILE.BASELINE)
+    if GITHUB.CONFIG.STATEMENT:
+        tickers = FinancialStatement.checkTickers(FILE.BASELINE)
         try:
             financialStatement = FinancialStatement(*tickers)
             if not financialStatement.state == "PASSED":
-                financialStatement.overview.to_parquet(path=env.FILE.STATEMENT_OVERVIEW, engine='pyarrow')
-                financialStatement.annual.to_parquet(path=env.FILE.ANNUAL_STATEMENT, engine='pyarrow')
-                financialStatement.quarter.to_parquet(path=env.FILE.QUARTER_STATEMENT, engine='pyarrow')
+                financialStatement.overview.to_parquet(path=FILE.STATEMENT_OVERVIEW, engine='pyarrow')
+                financialStatement.annual.to_parquet(path=FILE.ANNUAL_STATEMENT, engine='pyarrow')
+                financialStatement.quarter.to_parquet(path=FILE.QUARTER_STATEMENT, engine='pyarrow')
             context += [f"- [{financialStatement.state}] UPDATE FINANCIAL STATEMENT: ", financialStatement.log, ""]
         except Exception as report:
             context += [f"- [FAILED] UPDATE FINANCIAL STATEMENT: ", f'{report}', ""]
@@ -156,10 +151,10 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE AFTER MARKET DATA
     # ---------------------------------------------------------------------------------------
-    if ACTION.AFTERMARKET:
+    if GITHUB.CONFIG.AFTERMARKET:
         try:
             afterMarket = AfterMarket()
-            afterMarket.data.to_parquet(env.FILE.AFTER_MARKET, engine='pyarrow')
+            afterMarket.data.to_parquet(FILE.AFTER_MARKET, engine='pyarrow')
             context += [f"- [{afterMarket.state}] UPDATE AFTER MARKET: ", afterMarket.log, ""]
         except Exception as report:
             context += [f"- [FAILED] UPDATE AFTER MARKET: ", f'{report}', ""]
@@ -170,24 +165,24 @@ if __name__ == "__main__":
     # BUILD BASELINE
     # ---------------------------------------------------------------------------------------
     # NO FAIL-SAFE ACTION FOR BASELINE. THIS PROCESS IS MANDATORY.
-    if env.ENV == "local":
+    if ENV == "local":
         from pandas import read_parquet
-        marketData = read_parquet(env.FILE.BASELINE, engine='pyarrow')
+        marketData = read_parquet(FILE.BASELINE, engine='pyarrow')
         TRADING_DATE = "LOCAL"
         context += [f"- [PASSED] BUILD MARKET BASELINE:", "  >> READ ON LOCAL ENV.", ""]
 
-        macroData = read_parquet(env.FILE.MACRO_BASELINE, engine='pyarrow')
+        macroData = read_parquet(FILE.MACRO_BASELINE, engine='pyarrow')
         context += [f"- [PASSED] BUILD MACRO BASELINE:", "  >> READ ON LOCAL ENV.", ""]
     else:
         baseline = MarketBaseline()
         marketData = baseline.data
-        marketData.to_parquet(env.FILE.BASELINE, engine='pyarrow')
+        marketData.to_parquet(FILE.BASELINE, engine='pyarrow')
         TRADING_DATE = baseline.tradingDate
         context += [f"- [SUCCESS] BUILD MARKET BASELINE: ", baseline.log, ""]
 
         macro = MacroBaseline()
         macroData = macro.data
-        macroData.to_parquet(env.FILE.MACRO_BASELINE, engine='pyarrow')
+        macroData.to_parquet(FILE.MACRO_BASELINE, engine='pyarrow')
         context += [f"- [SUCCESS] BUILD MACRO BASELINE: ", macro.log, ""]
 
 
@@ -196,12 +191,12 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     marketMap = MarketMap(marketData)
     try:
-        with open(file=os.path.join(env.DOCS, 'index.html'), mode='w', encoding='utf-8') as file:
+        with open(file=os.path.join(DOCS, 'index.html'), mode='w', encoding='utf-8') as file:
             file.write(
-                Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
+                Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
                     .get_template('marketmap-1.0.0.html') \
                     .render({
-                    "local": env.ENV == "local",
+                    "local": ENV == "local",
                     "title": "LAB￦ONS: \uc2dc\uc7a5\uc9c0\ub3c4",
                     "nav": SYSTEM_NAV,
                     "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
@@ -219,12 +214,12 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     marketBubble = MarketBubble(marketData)
     try:
-        with open(file=os.path.join(env.DOCS, r'bubble/index.html'), mode='w', encoding='utf-8') as file:
+        with open(file=os.path.join(DOCS, r'bubble/index.html'), mode='w', encoding='utf-8') as file:
             file.write(
-                Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
+                Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
                     .get_template('bubble-1.0.0.html') \
                     .render({
-                    "local": env.ENV == "local",
+                    "local": ENV == "local",
                     "title": "LAB￦ONS: \uc885\ubaa9\ubd84\ud3ec",
                     "nav": SYSTEM_NAV,
                     "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
@@ -268,12 +263,12 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     macro = Macro(macroData)
     try:
-        with open(file=os.path.join(env.DOCS, r'macro/index.html'), mode='w', encoding='utf-8') as file:
+        with open(file=os.path.join(DOCS, r'macro/index.html'), mode='w', encoding='utf-8') as file:
             file.write(
-                Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
+                Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
                     .get_template('macro-1.0.0.html') \
                     .render({
-                    "local": env.ENV == "local",
+                    "local": ENV == "local",
                     "title": "LAB￦ONS: \uacbd\uc81c\u0020\uc9c0\ud45c",
                     "nav": SYSTEM_NAV,
                     "tradingDate": f'{TRADING_DATE} (또는 최근 발표일) 기준',
@@ -290,7 +285,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # DEPLOY RESOURCES
     # ---------------------------------------------------------------------------------------
-    if not env.ENV == "local":
+    if not ENV == "local":
         try:
             minify()
             context += [f'- [SUCCESS] MINIFY RESOURCES ', '']
@@ -298,8 +293,8 @@ if __name__ == "__main__":
             context += [f'- [FAILED] MINIFY RESOURCES ', f'  : {error}', '']
 
         try:
-            rss(env.DOCS, "https://labwons.com", os.path.join(env.DOCS, "feed.xml"))
-            sitemap(env.DOCS, "https://labwons.com", os.path.join(env.DOCS, "sitemap.xml"))
+            rss(DOCS, "https://labwons.com", os.path.join(DOCS, "feed.xml"))
+            sitemap(DOCS, "https://labwons.com", os.path.join(DOCS, "sitemap.xml"))
             context += [f'- [SUCCESS] DEPLOY Sitemap and RSS', '']
         except Exception as error:
             context += [f'- [FAILED] DEPLOY Sitemap and RSS', f'  : {error}', '']
@@ -311,10 +306,10 @@ if __name__ == "__main__":
     mail = eMail()
     mail.context = "\n".join([f"TRADING DATE: {TRADING_DATE}"] + context)
     mail.subject = (f'[{"FAILED" if "FAILED" in mail.context else "SUCCESS"}] '
-                    f'BUILD BASELINE on {env.CLOCK().strftime("%Y/%m/%d %H:%M")}')
+                    f'BUILD BASELINE on {CLOCK().strftime("%Y/%m/%d %H:%M")}')
 
     print(f'{mail.subject}\n{mail.context}\n')
 
-    if env.ENV == 'github_action' and env.GITHUB_ACTION_EVENT == "schedule":
+    if GITHUB.EVENT == "schedule" or GITHUB.EVENT == "push":
         mail.send()
 
