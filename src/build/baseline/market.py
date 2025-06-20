@@ -9,7 +9,7 @@ except ImportError:
 from datetime import datetime
 from numpy import nan
 from pandas import DataFrame, Series
-from pandas import concat
+from pandas import concat, read_parquet
 from time import perf_counter
 from typing import List
 
@@ -330,7 +330,7 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     from src.common.env import FILE
-    from pandas import read_parquet
+
 
     baseline = MarketBaseline()
     print(baseline.log)
