@@ -86,8 +86,8 @@ def rss(root: str, domain:str, save:str="") -> str:
 
 # 예제 실행
 if __name__ == "__main__":
-    from src.common.path import PATH
+    from src.common.env import DOCS
 
     domain = "https://www.labwons.com"
-    print(sitemap(PATH.DOCS, domain))
-    print(rss(PATH.DOCS, domain))
+    print(sitemap(DOCS, domain))
+    print(rss(DOCS, domain))

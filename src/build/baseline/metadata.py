@@ -2162,7 +2162,7 @@ FREDMETA = dDict(**{
     ),
 })
 
-KRX = dDict(
+KRXMETA = dDict(
     KOSPI=dDict(
         symbol='1001',
         unit= '',
@@ -2179,6 +2179,60 @@ KRX = dDict(
         category='지수',
         hover= ': %{y:.2f}<extra></extra>',
     ),
+)
+
+MACRO = dDict(
+    STATUS=dDict(**{
+        '1001':dDict(
+            icon='bi-graph-up',
+            digit=2,
+        ),
+        '2001':dDict(
+            icon='bi-graph-up',
+            digit=2,
+        ),
+        '731Y0030000003':dDict(
+            icon='bi-currency-exchange',  # 원/달러 환율
+            digit=1,
+        ),
+        '817Y002010195000':dDict(
+            icon='bi-percent',  # 국고채2년
+            digit=3,
+        ),
+        '817Y002010210000':dDict(
+            icon='bi-percent',  # 국고채10년
+            digit=3,
+        ),
+        '901Y056S23A':dDict(
+            icon='bi-piggy-bank-fill',  # 증시예탁금
+            digit=0,
+        ),
+        '901Y056S23E':dDict(
+            icon='bi-cash-stack',  # 신용융자잔고
+            digit=0,
+        ),
+        '901Y056S23F':dDict(
+            icon='bi-credit-card',  # 신용대주잔고
+            digit=0,
+        ),
+        '403Y001*AA':dDict(
+            icon='bi-truck',  # 수출지수
+            digit=2,
+        ),
+        '901Y062P63AC':dDict(
+            icon='bi-house-up-fill',  # KB부동산매매지수(아파트, 전국)
+            digit=2,
+        ),
+        '901Y063P64AC':dDict(
+            icon='bi-house-up-fill',  # KB부동산전세지수(아파트, 전국)
+            digit=2,
+        ),
+        '901Y067I16E':dDict(
+            icon='bi-graph-up-arrow',  # 경기선행지수순환변동
+            digit=1,
+        ),
+
+    })
 )
 
 if __name__ == "__main__":

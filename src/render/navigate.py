@@ -1,7 +1,7 @@
 try:
-    from ..common.path import PATH
+    from ..common.env import DOCS
 except ImportError:
-    from src.common.path import PATH
+    from src.common.env import DOCS
 from typing import Dict, List, Union
 import csscompressor, rjsmin, os
 
@@ -15,13 +15,13 @@ CONTENT_NAMES = {
 def navigate() -> List[Dict[str, Union[str, dict]]]:
     nav: List[Dict] = [{"href": f"/", "content": "시장 지도"}]
     for content in CONTENT_NAMES:
-        if not content in os.listdir(PATH.DOCS):
+        if not content in os.listdir(DOCS):
             continue
         nav.append({'href': f'/{content}', 'content': CONTENT_NAMES[content]})
         if content == "portfolio":
 
             sub = []
-            for sub_content in os.listdir(os.path.join(PATH.DOCS, content)):
+            for sub_content in os.listdir(os.path.join(DOCS, content)):
                 if sub_content.startswith('index'):
                     continue
                 name = "" # TODO 
@@ -32,7 +32,7 @@ def navigate() -> List[Dict[str, Union[str, dict]]]:
 
 
 def minify():
-    for _dir, _folder, _files in os.walk(PATH.DOCS):
+    for _dir, _folder, _files in os.walk(DOCS):
         for _file in _files:
             if _file.endswith('js') and not _file.endswith('.min.js'):
                 js = os.path.join(_dir, _file)

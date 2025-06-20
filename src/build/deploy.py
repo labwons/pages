@@ -11,16 +11,16 @@ if __name__ == "__main__":
         from ..fetch.market.aftermarket import AfterMarket
         from ..fetch.market.finances import FinancialStatement
         from ..fetch.market.sector import SectorComposition
-        from ..fetch.macro.ecosNew import Ecos
-        from ..fetch.macro.fredNew import Fred
+        from ..fetch.macro.ecos import Ecos
+        from ..fetch.macro.fred import Fred
         from ..render.navigate import navigate, minify
         from .baseline.metadata import ECOSMETA, FREDMETA
         from .baseline.market import MarketBaseline
         from .baseline.macro import MacroBaseline
         from .apps.marketmap import MarketMap
         from .apps.bubble import MarketBubble
+        from .apps.macro import Macro
         from .apps.sitemap import rss, sitemap
-        from .service.macro import Macro
         from .action import ACTION
     except ImportError:
         from src.common import env
@@ -28,16 +28,16 @@ if __name__ == "__main__":
         from src.fetch.market.aftermarket import AfterMarket
         from src.fetch.market.finances import FinancialStatement
         from src.fetch.market.sector import SectorComposition
-        from src.fetch.macro.ecosNew import Ecos
-        from src.fetch.macro.fredNew import Fred
+        from src.fetch.macro.ecos import Ecos
+        from src.fetch.macro.fred import Fred
         from src.render.navigate import navigate, minify
         from src.build.baseline.metadata import ECOSMETA, FREDMETA
         from src.build.baseline.market import MarketBaseline
         from src.build.baseline.macro import MacroBaseline
         from src.build.apps.marketmap import MarketMap
         from src.build.apps.bubble import MarketBubble
+        from src.build.apps.macro import Macro
         from src.build.apps.sitemap import rss, sitemap
-        from src.build.service.macro import Macro
         from src.build.action import ACTION
 
     from jinja2 import Environment, FileSystemLoader
@@ -174,21 +174,21 @@ if __name__ == "__main__":
         from pandas import read_parquet
         marketData = read_parquet(env.FILE.BASELINE, engine='pyarrow')
         TRADING_DATE = "LOCAL"
-        context += [f"- [PASSED] UPDATE MARKET BASELINE: READ ON LOCAL ENV.", ""]
+        context += [f"- [PASSED] BUILD MARKET BASELINE:", "  >> READ ON LOCAL ENV.", ""]
 
         macroData = read_parquet(env.FILE.MACRO_BASELINE, engine='pyarrow')
-        context += [f"- [PASSED] UPDATE MACRO BASELINE: READ ON LOCAL ENV.", ""]
+        context += [f"- [PASSED] BUILD MACRO BASELINE:", "  >> READ ON LOCAL ENV.", ""]
     else:
         baseline = MarketBaseline()
         marketData = baseline.data
         marketData.to_parquet(env.FILE.BASELINE, engine='pyarrow')
         TRADING_DATE = baseline.tradingDate
-        context += [f"- [SUCCESS] UPDATE MARKET BASELINE: ", baseline.log, ""]
+        context += [f"- [SUCCESS] BUILD MARKET BASELINE: ", baseline.log, ""]
 
         macro = MacroBaseline()
         macroData = macro.data
         macroData.to_parquet(env.FILE.MACRO_BASELINE, engine='pyarrow')
-        context += [f"- [SUCCESS] UPDATE MACRO BASELINE: ", baseline.log, ""]
+        context += [f"- [SUCCESS] BUILD MACRO BASELINE: ", macro.log, ""]
 
 
     # ---------------------------------------------------------------------------------------
@@ -266,6 +266,25 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # DEPLOY MACRO
     # ---------------------------------------------------------------------------------------
+    macro = Macro(macroData)
+    try:
+        with open(file=os.path.join(env.DOCS, r'macro/index.html'), mode='w', encoding='utf-8') as file:
+            file.write(
+                Environment(loader=FileSystemLoader(env.HTML.TEMPLATES)) \
+                    .get_template('macro-1.0.0.html') \
+                    .render({
+                    "local": env.ENV == "local",
+                    "title": "LAB￦ONS: \uacbd\uc81c\u0020\uc9c0\ud45c",
+                    "nav": SYSTEM_NAV,
+                    "tradingDate": f'{TRADING_DATE} (또는 최근 발표일) 기준',
+                    "srcIndicator": dumps(macro.serialize()),
+                    "srcIndicatorOpt": dumps(macro.meta),
+                    # "srcStatus": macro.status,
+                })
+            )
+        context += [f'- [SUCCESS] DEPLOY BUBBLES', macro.log, '']
+    except Exception as error:
+        context += [f'- [FAILED] DEPLOY MACRO', f'  : {error}', '']
     # try:
     #     macro = Macro(update=ACTION.MACRO)
     #     if ACTION.MACRO:

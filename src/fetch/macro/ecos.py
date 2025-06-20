@@ -1,14 +1,15 @@
 try:
-    from ..util import web, krwFormat
+    from ...common.util import web, krw2currency
 except ImportError:
-    from src.fetch.util import web, krwFormat
+    from src.common.util import web, krw2currency
 from datetime import datetime
 from pandas import concat, DataFrame, Series, to_datetime
-from typing import Dict
+from time import perf_counter
+from typing import Dict, List
 from xml.etree.ElementTree import ElementTree, fromstring
 
 
-class Ecos(DataFrame):
+class Ecos:
     """
     ECOS (Bank of Korea, Economic Statistics System) Provided data
     * API key required for this <class; ecos>
@@ -70,604 +71,9 @@ class Ecos(DataFrame):
             Freq: Q-DEC, Name: 총지수, Length: 68, dtype: float64
     """
     api:str = ""
-    src:DataFrame = DataFrame()
-    meta = {}
-    raw = {
-        '한국은행 기준금리': {
-            'symbol': '722Y001',
-            'code': '0101000',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
-        },
-        'KORIBOR(3개월)': {
-            'symbol': '817Y002',
-            'code': '010150000',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
-        },
-        'KORIBOR(6개월)': {
-            'symbol': '817Y002',
-            'code': '010151000',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
-        },
-        '국고채1년': {
-            'symbol': '817Y002',
-            'code': '010190000',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
-        },
-        '국고채2년': {
-            'symbol': '817Y002',
-            'code': '010195000',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
-        },
-        '국고채5년': {
-            'symbol': '817Y002',
-            'code': '010200001',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
-        },
-        '국고채10년': {
-            'symbol': '817Y002',
-            'code': '010210000',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
-        },
-        '회사채3년(AA-)': {
-            'symbol': '817Y002',
-            'code': '010300000',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
-        },
-        '회사채3년(BBB-)': {
-            'symbol': '817Y002',
-            'code': '010320000',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.3f}%<extra></extra>',
-        },
-        '은행수신금리(신규)': {
-            'symbol': '121Y002',
-            'code': 'BEABAA2',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
-        },
-        '은행수신금리(잔액)': {
-            'symbol': '121Y013',
-            'code': 'BEABAB2',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
-        },
-        '은행대출금리(신규)': {
-            'symbol': '121Y006',
-            'code': 'BECBLA01',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
-        },
-        '은행대출금리(잔액)': {
-            'symbol': '121Y015',
-            'code': 'BECBLB01',
-            'unit': '%',
-            'category': '금리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}%<extra></extra>',
-        },
-
-        '원/달러환율': {
-            'symbol': '731Y003',
-            'code': '0000003',
-            'unit': '원',
-            'category': '통화/유동성지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:,.1f}원<extra></extra>',
-        },
-        'M2(평잔, 원계열)': {
-            'symbol': '101Y004',
-            'code': 'BBHA00',
-            'unit': '십억원',
-            'category': '통화/유동성지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': 'post'
-        },
-        'M2(평잔, 계절조정)': {
-            'symbol': '101Y003',
-            'code': 'BBHS00',
-            'unit': '십억원',
-            'category': '통화/유동성지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': 'post'
-        },
-        '은행수신(말잔)': {
-            'symbol': '104Y013',
-            'code': 'BCB8',
-            'unit': '십억원',
-            'category': '통화/유동성지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': 'post'
-        },
-        '은행수신(평잔)': {
-            'symbol': '104Y014',
-            'code': 'BCA8',
-            'unit': '십억원',
-            'category': '통화/유동성지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': 'post'
-        },
-        '비은행수신(말잔)': {
-            'symbol': '111Y007',
-            'code': '1000000',
-            'unit': '십억원',
-            'category': '통화/유동성지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': 'post'
-        },
-        '비은행수신(평잔)': {
-            'symbol': '111Y008',
-            'code': '1000000',
-            'unit': '십억원',
-            'category': '통화/유동성지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': 'post'
-        },
-        '은행여신(말잔)': {
-            'symbol': '104Y016',
-            'code': 'BDCA1',
-            'unit': '십억원',
-            'category': '통화/유동성지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': 'post'
-        },
-        '비은행여신(말잔)': {
-            'symbol': '111Y009',
-            'code': '1000000',
-            'unit': '십억원',
-            'category': '통화/유동성지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': 'post'
-        },
-        '증시예탁금': {
-            'symbol': '901Y056',
-            'code': 'S23A',
-            'unit': '백만원',
-            'category': '통화/유동성지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': 'post'
-        },
-        '신용융자잔고': {
-            'symbol': '901Y056',
-            'code': 'S23E',
-            'unit': '백만원',
-            'category': '통화/유동성지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': 'post'
-        },
-        '신용대주잔고': {
-            'symbol': '901Y056',
-            'code': 'S23F',
-            'unit': '백만원',
-            'category': '통화/유동성지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': 'post'
-        },
-
-        '수출지수': {
-            'symbol': '403Y001',
-            'code': '*AA',
-            'unit': '',
-            'category': '수출지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '반도체수출': {
-            'symbol': '403Y001',
-            'code': '3091AA',
-            'unit': '',
-            'category': '수출지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '반도체/디스플레이장비수출': {
-            'symbol': '403Y001',
-            'code': '3091AA',
-            'unit': '',
-            'category': '수출지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '스마트폰/무선전화기수출': {
-            'symbol': '403Y001',
-            'code': '309512AA',
-            'unit': '',
-            'category': '수출지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '자동차수출': {
-            'symbol': '403Y001',
-            'code': '3121AA',
-            'unit': '',
-            'category': '수출지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '자동차부품수출': {
-            'symbol': '403Y001',
-            'code': '31213AA',
-            'unit': '',
-            'category': '수출지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '음식료품수출': {
-            'symbol': '403Y001',
-            'code': '301AA',
-            'unit': '',
-            'category': '수출지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '석탄및석유제품수출': {
-            'symbol': '403Y001',
-            'code': '304AA',
-            'unit': '',
-            'category': '수출지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '철강수출': {
-            'symbol': '403Y001',
-            'code': '3071AA',
-            'unit': '',
-            'category': '수출지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '전지수출': {
-            'symbol': '403Y001',
-            'code': '31013AA',
-            'unit': '',
-            'category': '수출지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '가전수출': {
-            'symbol': '403Y001',
-            'code': '31015AA',
-            'unit': '',
-            'category': '수출지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-
-        '소비자물가지수': {
-            'symbol': '901Y009',
-            'code': '0',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '소비자물가지수(식료품 및 에너지 제외)': {
-            'symbol': '901Y010',
-            'code': 'DB',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '소비자물가지수(서비스)': {
-            'symbol': '901Y010',
-            'code': '22',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '생산자물가지수': {
-            'symbol': '404Y014',
-            'code': '*AA',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '생산자물가지수(식료품 및 에너지 제외)': {
-            'symbol': '404Y015',
-            'code': 'S620AA',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '생산자물가지수(서비스)': {
-            'symbol': '404Y014',
-            'code': '5AA',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-
-        'KB부동산매매지수(아파트, 전국)': {
-            'symbol': '901Y062',
-            'code': 'P63AC',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:.3f}<extra></extra>',
-        },
-        'KB부동산매매지수(아파트, 서울)': {
-            'symbol': '901Y062',
-            'code': 'P63ACA',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:.3f}<extra></extra>',
-        },
-        'KB부동산전세지수(아파트, 전국)': {
-            'symbol': '901Y063',
-            'code': 'P64AC',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:.3f}<extra></extra>',
-        },
-        'KB부동산전세지수(아파트, 서울)': {
-            'symbol': '901Y063',
-            'code': 'P64ACA',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:.3f}<extra></extra>',
-        },
-        '아파트실거래지수(전국)': {
-            'symbol': '901Y089',
-            'code': '100',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:.1f}<extra></extra>',
-        },
-        '아파트실거래지수(서울)': {
-            'symbol': '901Y089',
-            'code': '200',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:.1f}%<extra></extra>',
-        },
-        '아파트실거래지수(수도권)': {
-            'symbol': '901Y089',
-            'code': '300',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:.1f}<extra></extra>',
-        },
-        '아파트실거래지수(경기)': {
-            'symbol': '901Y089',
-            'code': 'C00',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:.1f}<extra></extra>',
-        },
-        '아파트실거래지수(지방광역시)': {
-            'symbol': '901Y089',
-            'code': 'M00',
-            'unit': '',
-            'category': '물가/부동산지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:.1f}<extra></extra>',
-        },
-
-        '경기선행지수순환변동': {
-            'symbol': '901Y067',
-            'code': 'I16E',
-            'unit': '',
-            'category': '경제/심리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.1f}<extra></extra>',
-        },
-        '경기동행지수순환변동': {
-            'symbol': '901Y067',
-            'code': 'I16D',
-            'unit': '',
-            'category': '경제/심리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.1f}<extra></extra>',
-        },
-        '제조업업황전망': {
-            'symbol': '512Y014',
-            'code': 'C0000/BA',
-            'unit': '',
-            'category': '경제/심리지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:,d}<extra></extra>',
-        },
-        '제조업신규수주전망': {
-            'symbol': '512Y014',
-            'code': 'C0000/BD',
-            'unit': '',
-            'category': '경제/심리지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:,d}<extra></extra>',
-        },
-        '제조업수출전망': {
-            'symbol': '512Y014',
-            'code': 'C0000/BM',
-            'unit': '',
-            'category': '경제/심리지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:,d}<extra></extra>',
-        },
-        '제조업심리지수': {
-            'symbol': '512Y014',
-            'code': 'C0000/BY',
-            'unit': '',
-            'category': '경제/심리지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:,d}<extra></extra>',
-        },
-        '소비자심리지수': {
-            'symbol': '511Y002',
-            'code': 'FME/99988',
-            'unit': '',
-            'category': '경제/심리지표',
-            'YoY': True,
-            'MoM': True,
-            'hoverTemplate': ': %{y:.1f}<extra></extra>',
-        },
-        '뉴스심리지수(실험통계)': {
-            'symbol': '521Y001',
-            'code': 'A001',
-            'unit': '',
-            'category': '경제/심리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.2f}<extra></extra>',
-        },
-        '실업률(원계열)': {
-            'symbol': '901Y027',
-            'code': 'I61BC/I28A',
-            'unit': '%',
-            'category': '경제/심리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.1f}%<extra></extra>',
-        },
-        '실업률(계절조정)': {
-            'symbol': '901Y027',
-            'code': 'I61BC/I28B',
-            'unit': '%',
-            'category': '경제/심리지표',
-            'YoY': False,
-            'MoM': False,
-            'hoverTemplate': ': %{y:.1f}%<extra></extra>',
-        },
-    }
-
+    _log: List[str] = []
     def __init__(self):
         self.src = self.fetchSrc()
-
-        objs = {}
-        for name, meta in self.raw.items():
-            code = f'{meta["symbol"]}{meta["code"]}'
-            data = self.fetch(meta['symbol'], meta['code'])
-            objs[code] = data.copy()
-            if meta['hoverTemplate'] == 'post':
-                if meta['unit'] == '십억원':
-                    data = 1000000000 * data
-                if meta['unit'] == '백만원':
-                    data = 1000000 * data
-                objs[f'{code}meta'] = data.apply(krwFormat)
-
-            if meta["YoY"]:
-                objs[f'{code}YoY'] = data.dropna().asfreq('M').pct_change(periods=12) * 100
-                if name.startswith('신용대주'):
-                    objs[f'{code}YoY'] = objs[f'{code}YoY'].clip(upper=2000)
-
-            if meta["MoM"]:
-                objs[f'{code}MoM'] = data.dropna().asfreq('M').pct_change(periods=1) * 100
-
-            if code == '121Y015BECBLB01':
-                # 장단기금리차(10Y - 2Y)
-                objs['T10MT2'] = objs['817Y002010210000'] - objs['817Y002010195000']
-
-                # 하이일드스프레드
-                objs['HYSPREAD'] = objs['817Y002010320000'] - objs['817Y002010210000']
-
-                # 예대금리차(신규)
-                objs['LBDIFFN'] = objs['121Y006BECBLA01'] - objs['121Y002BEABAA2']
-
-                # 예대금리차(잔액)
-                objs['LBDIFFL'] = objs['121Y015BECBLB01'] - objs['121Y013BEABAB2']
-
-        df = concat(objs=objs, axis=1)
-        super().__init__(df[df.index >= datetime(1990, 1, 1)])
-
         return
 
     def __call__(self, symbol: str, *args):
@@ -738,62 +144,6 @@ class Ecos(DataFrame):
             series.index = series.index.to_period("M").to_timestamp("M")
         return series
 
-    @classmethod
-    def metaData(cls) -> Dict:
-        _meta = {}
-        for name, meta in cls.raw.items():
-            code = f'{meta["symbol"]}{meta["code"]}'
-            _meta[code] = {
-                'name': name,
-                'unit': meta['unit'],
-                'group': meta['category'],
-                'hoverTemplate': meta['hoverTemplate']
-            }
-            if meta['hoverTemplate'] == 'post':
-                _meta[code]['hoverTemplate'] = ': %{meta}원<extra></extra>'
-
-            if meta["YoY"]:
-                _meta[f'{code}YoY'] = {
-                    'name': f'{name}(YoY)',
-                    'unit': '%',
-                    'group': meta['category'],
-                    'hoverTemplate': ': %{y:.2f}%<extra></extra>'
-                }
-
-            if meta["MoM"]:
-                _meta[f'{code}MoM'] = {
-                    'name': f'{name}(MoM)',
-                    'unit': '%',
-                    'group': meta['category'],
-                    'hoverTemplate': ': %{y:.2f}%<extra></extra>'
-                }
-
-            if code == '121Y015BECBLB01':
-                _meta['T10MT2'] = {
-                    'name': '장단기금리차(10Y-2Y)',
-                    'unit': '%',
-                    'group': '금리지표',
-                    'hoverTemplate': ': %{y:.3f}%<extra></extra>'
-                }
-                _meta['HYSPREAD'] = {
-                    'name': '하이일드스프레드',
-                    'unit': '%',
-                    'group': '금리지표',
-                    'hoverTemplate': ': %{y:.3f}%<extra></extra>'
-                }
-                _meta['LBDIFFN'] = {
-                    'name': '예대금리차(신규)',
-                    'unit': '%',
-                    'group': '금리지표',
-                    'hoverTemplate': ': %{y:.2f}%<extra></extra>'
-                }
-                _meta['LBDIFFL'] = {
-                    'name': '예대금리차(잔액)',
-                    'unit': '%',
-                    'group': '금리지표',
-                    'hoverTemplate': ': %{y:.2f}%<extra></extra>'
-                }
-        return _meta
 
     @classmethod
     def xml2df(cls, url: str, parser: str = "") -> DataFrame:
@@ -840,7 +190,56 @@ class Ecos(DataFrame):
                 getter.update({t.tag: t.text})
             data.append(getter)
         return DataFrame(data=data) if data else DataFrame()
+    @property
+    def log(self) -> str:
+        return "\n".join(self._log)
 
+    @log.setter
+    def log(self, log: str):
+        self._log.append(log)
+
+    def data(self, metadata:dict) -> DataFrame:
+        stime = perf_counter()
+        self.log = f'  >> RUN [CACHING ECOS]'
+
+        conv = {'십억원': 1e+9, '억원': 1e+8, '천만원': 1e+7, '백만원': 1e+6}
+        ecos = Ecos()
+        objs = {}
+        for label, meta in metadata:
+            code = f'{meta.symbol}{meta.code}'
+            try:
+                objs[code] = series = ecos(meta.symbol, meta.code)
+            except Exception as reason:
+                self.log = f'     ... FAILED to fetch: {label}: {reason}'
+                continue
+            if meta.unit in conv:
+                objs[f'{code}Text'] = (conv[meta.unit] * objs[code]).apply(krw2currency)
+
+            if meta.YoY:
+                objs[f'{code}YoY'] = series.dropna().asfreq('M').pct_change(periods=12) * 100
+                if label.startswith('신용대주'):
+                    objs[f'{code}YoY'] = objs[f'{code}YoY'].clip(upper=2000)
+
+            if meta["MoM"]:
+                objs[f'{code}MoM'] = series.dropna().asfreq('M').pct_change(periods=1) * 100
+
+            if code == '121Y015BECBLB01':
+                # 장단기금리차(10Y - 2Y)
+                objs['T10MT2'] = objs['817Y002010210000'] - objs['817Y002010195000']
+
+                # 하이일드스프레드
+                objs['HYSPREAD'] = objs['817Y002010320000'] - objs['817Y002010210000']
+
+                # 예대금리차(신규)
+                objs['LBDIFFN'] = objs['121Y006BECBLA01'] - objs['121Y002BEABAA2']
+
+                # 예대금리차(잔액)
+                objs['LBDIFFL'] = objs['121Y015BECBLB01'] - objs['121Y013BEABAB2']
+        data = concat(objs=objs, axis=1)
+        data = data[data.index >= datetime(1990, 1, 1)]
+
+        self.log = f'  >> END: {perf_counter() - stime:.2f}s'
+        return data
 
 
 if __name__ == "__main__":
