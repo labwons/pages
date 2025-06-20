@@ -313,6 +313,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      cursor: pointer;
     }
     .service-status-values .service-status-value > i {
       font-size: 24px;
@@ -490,19 +491,18 @@
 
         <div class="swiper">
           <div class="swiper-wrapper">
-
             
             <div class="swiper-slide">
               <div class="service-status-content">
                 <h3>1일 수익률</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="377300">
                     <i class="bi bi-graph-up-arrow" style="color:#c92a2a;"></i>
                     <p style="color:#c92a2a;">29.9%</p>
                     <span>카카오페이</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="375500">
                     <i class="bi bi-graph-down-arrow" style="color:#1861a8;"></i>
                     <p style="color:#1861a8;">-4.9%</p>
                     <span>DL이앤씨</span>
@@ -515,13 +515,13 @@
               <div class="service-status-content">
                 <h3>1주 수익률</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="035420">
                     <i class="bi bi-graph-up-arrow" style="color:#c92a2a;"></i>
                     <p style="color:#c92a2a;">34.4%</p>
                     <span>NAVER</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="225570">
                     <i class="bi bi-graph-down-arrow" style="color:#1861a8;"></i>
                     <p style="color:#1861a8;">-12.2%</p>
                     <span>넥슨게임즈*</span>
@@ -534,13 +534,13 @@
               <div class="service-status-content">
                 <h3>1개월 수익률</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="377300">
                     <i class="bi bi-graph-up-arrow" style="color:#c92a2a;"></i>
                     <p style="color:#c92a2a;">168.0%</p>
                     <span>카카오페이</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="352480">
                     <i class="bi bi-graph-down-arrow" style="color:#1861a8;"></i>
                     <p style="color:#1861a8;">-24.7%</p>
                     <span>씨앤씨인터내셔널*</span>
@@ -553,13 +553,13 @@
               <div class="service-status-content">
                 <h3>3개월 수익률</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="377300">
                     <i class="bi bi-graph-up-arrow" style="color:#c92a2a;"></i>
                     <p style="color:#c92a2a;">148.4%</p>
                     <span>카카오페이</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="002710">
                     <i class="bi bi-graph-down-arrow" style="color:#1861a8;"></i>
                     <p style="color:#1861a8;">-39.6%</p>
                     <span>TCC스틸</span>
@@ -572,13 +572,13 @@
               <div class="service-status-content">
                 <h3>6개월 수익률</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="082270">
                     <i class="bi bi-graph-up-arrow" style="color:#c92a2a;"></i>
                     <p style="color:#c92a2a;">393.1%</p>
                     <span>젬백스*</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="091120">
                     <i class="bi bi-graph-down-arrow" style="color:#1861a8;"></i>
                     <p style="color:#1861a8;">-60.3%</p>
                     <span>이엠텍*</span>
@@ -591,13 +591,13 @@
               <div class="service-status-content">
                 <h3>1년 수익률</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="082270">
                     <i class="bi bi-graph-up-arrow" style="color:#c92a2a;"></i>
                     <p style="color:#c92a2a;">552.3%</p>
                     <span>젬백스*</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="348370">
                     <i class="bi bi-graph-down-arrow" style="color:#1861a8;"></i>
                     <p style="color:#1861a8;">-78.6%</p>
                     <span>엔켐*</span>
@@ -610,13 +610,13 @@
               <div class="service-status-content">
                 <h3>52주최고가대비</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="None">
                     <i class="bi bi-graph-up-arrow" style="color:#c92a2a;"></i>
                     <p style="color:#c92a2a;">-%</p>
                     <span>(복수 종목)</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="348370">
                     <i class="bi bi-graph-down-arrow" style="color:#1861a8;"></i>
                     <p style="color:#1861a8;">-78.6%</p>
                     <span>엔켐*</span>
@@ -629,13 +629,13 @@
               <div class="service-status-content">
                 <h3>52주최저가대비</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="082270">
                     <i class="bi bi-graph-up-arrow" style="color:#c92a2a;"></i>
                     <p style="color:#c92a2a;">589.9%</p>
                     <span>젬백스*</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="None">
                     <i class="bi bi-graph-down-arrow" style="color:#1861a8;"></i>
                     <p style="color:#1861a8;">-%</p>
                     <span>(복수 종목)</span>
@@ -648,13 +648,13 @@
               <div class="service-status-content">
                 <h3>목표가대비</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="377300">
                     <i class="bi bi-graph-up-arrow" style="color:#f63538;"></i>
                     <p style="color:#f63538;">107.8%</p>
                     <span>카카오페이</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="039200">
                     <i class="bi bi-graph-down-arrow" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">-52.0%</p>
                     <span>오스코텍*</span>
@@ -667,13 +667,13 @@
               <div class="service-status-content">
                 <h3>배당수익률</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="009240">
                     <i class="bi bi-hand-thumbs-up" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">18.8%</p>
                     <span>한샘</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="None">
                     <i class="bi bi-hand-thumbs-down" style="color:#f63538;"></i>
                     <p style="color:#f63538;">-%</p>
                     <span>(복수 종목)</span>
@@ -686,13 +686,13 @@
               <div class="service-status-content">
                 <h3>외인보유율</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="034950">
                     <i class="bi bi-person-up" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">80.8%</p>
                     <span>한국기업평가*</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="None">
                     <i class="bi bi-person-down" style="color:#f63538;"></i>
                     <p style="color:#f63538;">-%</p>
                     <span>(복수 종목)</span>
@@ -705,13 +705,13 @@
               <div class="service-status-content">
                 <h3>베타</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="402340">
                     <i class="bi bi-graph-up-arrow" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">1.94</p>
                     <span>SK스퀘어</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="053800">
                     <i class="bi bi-graph-down-arrow" style="color:#f63538;"></i>
                     <p style="color:#f63538;">0.07</p>
                     <span>안랩*</span>
@@ -724,13 +724,13 @@
               <div class="service-status-content">
                 <h3>매출액(YoY)</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="302440">
                     <i class="bi bi-building-up" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">594.0%</p>
                     <span>SK바이오사이언스</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="048410">
                     <i class="bi bi-building-down" style="color:#f63538;"></i>
                     <p style="color:#f63538;">-86.0%</p>
                     <span>현대바이오*</span>
@@ -743,13 +743,13 @@
               <div class="service-status-content">
                 <h3>영업이익(YoY)</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="012450">
                     <i class="bi bi-database-up" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">3,060.0%</p>
                     <span>한화에어로스페이스</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="399720">
                     <i class="bi bi-database-down" style="color:#f63538;"></i>
                     <p style="color:#f63538;">-955.2%</p>
                     <span>가온칩스*</span>
@@ -762,13 +762,13 @@
               <div class="service-status-content">
                 <h3>EPS(YoY)</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="010620">
                     <i class="bi bi-graph-up-arrow" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">2,510.6%</p>
                     <span>HD현대미포</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="373220">
                     <i class="bi bi-graph-down-arrow" style="color:#f63538;"></i>
                     <p style="color:#f63538;">-31,050.0%</p>
                     <span>LG에너지솔루션</span>
@@ -781,13 +781,13 @@
               <div class="service-status-content">
                 <h3>PSR</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="087010">
                     <i class="bi bi-arrow-up-square" style="color:#f63538;"></i>
                     <p style="color:#f63538;">1,082.1</p>
                     <span>펩트론*</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="032190">
                     <i class="bi bi-arrow-down-square" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">0.1</p>
                     <span>다우데이타*</span>
@@ -800,13 +800,13 @@
               <div class="service-status-content">
                 <h3>PER</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="277810">
                     <i class="bi bi-arrow-up-square" style="color:#f63538;"></i>
                     <p style="color:#f63538;">7,073.2</p>
                     <span>레인보우로보틱스*</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="071320">
                     <i class="bi bi-arrow-down-square" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">2.9</p>
                     <span>지역난방공사</span>
@@ -819,13 +819,13 @@
               <div class="service-status-content">
                 <h3>영업이익률</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="041190">
                     <i class="bi bi-building-up" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">94.7%</p>
                     <span>우리기술투자*</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="087010">
                     <i class="bi bi-building-down" style="color:#f63538;"></i>
                     <p style="color:#f63538;">-392.2%</p>
                     <span>펩트론*</span>
@@ -838,13 +838,13 @@
               <div class="service-status-content">
                 <h3>매출성장율(추정치)</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="298380">
                     <i class="bi bi-building-up" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">320.9%</p>
                     <span>에이비엘바이오*</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="402340">
                     <i class="bi bi-building-down" style="color:#f63538;"></i>
                     <p style="color:#f63538;">-47.4%</p>
                     <span>SK스퀘어</span>
@@ -857,13 +857,13 @@
               <div class="service-status-content">
                 <h3>영업이익율(추정치)</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="402340">
                     <i class="bi bi-database-up" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">165.0%</p>
                     <span>SK스퀘어</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="087010">
                     <i class="bi bi-database-down" style="color:#f63538;"></i>
                     <p style="color:#f63538;">-487.1%</p>
                     <span>펩트론*</span>
@@ -876,13 +876,13 @@
               <div class="service-status-content">
                 <h3>영업이익성장율(추정치)</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="003670">
                     <i class="bi bi-database-up" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">11,284.7%</p>
                     <span>포스코퓨처엠</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="087010">
                     <i class="bi bi-database-down" style="color:#f63538;"></i>
                     <p style="color:#f63538;">-106.3%</p>
                     <span>펩트론*</span>
@@ -895,13 +895,13 @@
               <div class="service-status-content">
                 <h3>EPS성장율(추정치)</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="007070">
                     <i class="bi bi-graph-up-arrow" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">5,708.0%</p>
                     <span>GS리테일</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="046890">
                     <i class="bi bi-graph-down-arrow" style="color:#f63538;"></i>
                     <p style="color:#f63538;">-156.3%</p>
                     <span>서울반도체*</span>
@@ -914,13 +914,13 @@
               <div class="service-status-content">
                 <h3>Forward PE</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="278280">
                     <i class="bi bi-arrow-up-square" style="color:#f63538;"></i>
                     <p style="color:#f63538;">1,747.8</p>
                     <span>천보*</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="015760">
                     <i class="bi bi-arrow-down-square" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">2.4</p>
                     <span>한국전력</span>
@@ -933,13 +933,13 @@
               <div class="service-status-content">
                 <h3>거래회전율</h3>
                 <div class="service-status-values">
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="377300">
                     <i class="bi bi-arrow-repeat" style="color:#f63538;"></i>
                     <p style="color:#f63538;">23.8%</p>
                     <span>카카오페이</span>                    
                   </div>
 
-                  <div class="service-status-value">
+                  <div class="service-status-value" data-ticker="268280">
                     <i class="bi bi-slash-circle" style="color:#30cc5a;"></i>
                     <p style="color:#30cc5a;">0.1%</p>
                     <span>미원에스씨</span>
@@ -948,7 +948,6 @@
               </div>
             </div>
             
-
           </div>
           <div class="swiper-button-prev"></div>
           <div class="swiper-button-next"></div>
@@ -976,7 +975,7 @@
         </div>
 
         <div class="content-service color-orange">
-          <i class="bi bi-geo"></i>
+          <i class="bi bi-pin-map"></i>
           <h3>종목 분포</h3>
           <p>코스피와 코스닥 시가총액 중위값 이상의 약 1,300여개 종목을 2차원 산포도로 표시하였습니다. <strong>종목 발굴</strong>에 유용하게 사용할 수 있습니다.</p>
           <a href="/bubble" class="goto-service"><span>바로가기</span><i class="bi bi-arrow-right"></i></a>
