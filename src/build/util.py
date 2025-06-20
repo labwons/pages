@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from smtplib import SMTP
 from typing import Dict, List, Union
-import csscompressor, rjsmin, os
+import csscompressor, rjsmin, os, shutil
 
 
 class eMail(MIMEMultipart):
@@ -100,7 +100,6 @@ def minify(root:str):
                 continue
     return
 
-
 def typeCast(value):
     value = str(value).lower().replace(",", "")
     if value in ['separate', 'consolidated']:
@@ -140,3 +139,12 @@ def profitGrowth(profit:Series, debug:bool=False) -> List:
         print(average)
     return [value[-1], label[-1], average]
 
+def clearPath(path:str):
+    for filename in os.listdir(path):
+        file_path = os.path.join(path, filename)
+        if os.path.isfile(file_path) or os.path.islink(file_path):
+            os.remove(file_path)
+        elif os.path.isdir(file_path):
+            shutil.rmtree(file_path)
+        else:
+            pass

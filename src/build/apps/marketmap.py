@@ -217,7 +217,7 @@ class MarketMap:
     @classmethod
     def minmax(cls, frm:DataFrame) -> DataFrame:
         objs = {}
-        cols = ["min", "max", "minT", "maxT", "minC", "maxC", "minI", "maxI", "label"]
+        cols = ["min", "max", "minT", "maxT", "minC", "maxC", "minI", "maxI", "label", "minTicker", "maxTicker"]
         for key, meta in MARKETMAP:
             if key == 'COLORS':
                 continue
@@ -238,7 +238,9 @@ class MarketMap:
                 cls.rgb2hex(*MARKETMAP.COLORS[meta.color][-1]),
                 meta.iconMin,
                 meta.iconMax,
-                METADATA[key].label
+                METADATA[key].label,
+                None if len(_min) > 1 else _min.index[0],
+                None if len(_max) > 1 else _max.index[0],
             ]
         return DataFrame(data=objs, index=cols)
 
@@ -264,5 +266,5 @@ if __name__ == "__main__":
     marketMap = MarketMap(read_parquet(FILE.BASELINE, engine='pyarrow'))
     print(marketMap.log)
     # print(marketMap.data.columns)
-    print(marketMap.meta)
-    # print(marketMap.stat)
+    # print(marketMap.meta)
+    print(marketMap.stat)

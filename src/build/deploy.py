@@ -18,8 +18,9 @@ if __name__ == "__main__":
         from .apps.marketmap import MarketMap
         from .apps.bubble import MarketBubble
         from .apps.macro import Macro
+        from .apps.stocks import Stocks
         from .apps.sitemap import rss, sitemap
-        from .util import navigate, minify, eMail
+        from .util import navigate, minify, eMail, clearPath
     except ImportError:
         from src.common.env import *
         from src.fetch.market.aftermarket import AfterMarket
@@ -33,8 +34,9 @@ if __name__ == "__main__":
         from src.build.apps.marketmap import MarketMap
         from src.build.apps.bubble import MarketBubble
         from src.build.apps.macro import Macro
+        from src.build.apps.stocks import Stocks
         from src.build.apps.sitemap import rss, sitemap
-        from src.build.util import navigate, minify, eMail
+        from src.build.util import navigate, minify, eMail, clearPath
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
     import os
@@ -43,16 +45,14 @@ if __name__ == "__main__":
     # ENVIRONMENT SETTINGS
     # ---------------------------------------------------------------------------------------
     SYSTEM_NAV = navigate(DOCS)
-
-    DUPLICATED_CONFIG = False
-
     if ENV == "local":
         # FOR LOCAL HOST TESTING, EXTERNAL DIRECTORY IS RECOMMENDED AND USED. USING THE SAME
         # LOCAL HOSTING DIRECTORY WITH DEPLOYMENT DIRECTORY, DEPLOYMENT MIGHT BE CORRUPTED.
         # IF YOU WANT TO USE DIFFERENT PATH FOR LOCAL HOST TESTING, BELOW {ROOT} VARIABLE ARE
         # TO BE CHANGED.
         from shutil import copytree
-        copytree(PATH.DOCS, PATH.STUB, dirs_exist_ok=True)
+        clearPath(PATH.STUB)
+        copytree(DOCS, PATH.STUB, dirs_exist_ok=True)
         PATH.DOCS = PATH.STUB
         GITHUB.CONFIG.RESET()
 
@@ -106,8 +106,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE MACRO: FRED
     # ---------------------------------------------------------------------------------------
-    # if GITHUB.CONFIG.FRED:
-    if ENV == "local":
+    if GITHUB.CONFIG.FRED:
         try:
             fred = Fred()
             fred.data(FREDMETA).to_parquet(path=FILE.FRED, engine='pyarrow')
@@ -191,7 +190,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     marketMap = MarketMap(marketData)
     try:
-        with open(file=os.path.join(DOCS, 'index.html'), mode='w', encoding='utf-8') as file:
+        with open(file=os.path.join(PATH.DOCS, 'index.html'), mode='w', encoding='utf-8') as file:
             file.write(
                 Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
                     .get_template('marketmap-1.0.0.html') \
@@ -214,7 +213,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     marketBubble = MarketBubble(marketData)
     try:
-        with open(file=os.path.join(DOCS, r'bubble/index.html'), mode='w', encoding='utf-8') as file:
+        with open(file=os.path.join(PATH.DOCS, r'bubble/index.html'), mode='w', encoding='utf-8') as file:
             file.write(
                 Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
                     .get_template('bubble-1.0.0.html') \
@@ -234,27 +233,27 @@ if __name__ == "__main__":
         context += [f'- [FAILED] DEPLOY BUBBLES', f'  : {error}', '']
 
     # ---------------------------------------------------------------------------------------
-    # UPDATE PORTFOLIO
+    # DEPLOY STOCKS
     # ---------------------------------------------------------------------------------------
-    # try:
-    #     portfolioData = StockPortfolio(baseline)
+    # PATH.STOCKS = os.path.join(PATH.DOCS, r'stocks')
+    # os.makedirs(PATH.STOCKS, exist_ok=True)
+    # clearPath(PATH.STOCKS)
     #
-    #     portfolioJsKeys = {
-    #         "srcTickers": portfolioData.status().to_json(orient='index')
-    #     }
-    #     portfolio.javascript(**portfolioJsKeys).save(os.path.join(env.DOCS, r'src/js/'))
-    #     portfolioKeys = config.templateKeys()
-    #     portfolioKeys.merge(**portfolio.defaultPortfolioAttribute)
-    #     portfolioKeys["trading_date"] = f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900'
-    #     portfolioKeys["track_record"] = portfolioData.history()
-    #     if LOCAL_HOST:
-    #         portfolioKeys.fulltext()
-    #     portfolio.html(**portfolioKeys).save(os.path.join(env.DOCS, 'portfolio'))
-    #     context += [f'- [SUCCESS] Deploy Portfolio', portfolioData.log, '']
-    # except Exception as error:
-    #     context += [f'- [FAILED] Deploy Portfolio',f'  : {error}', '']
-
-
+    # fromMap = marketMap.stat.loc[["minTicker", "maxTicker"]].values.flatten().tolist()[:1]
+    #
+    # stocks = Stocks(marketData, *fromMap)
+    # for stock in stocks:
+    #     os.makedirs(os.path.join(PATH.STOCKS, rf'{stock.name}'), exist_ok=True)
+    #     with open(file=os.path.join(PATH.STOCKS, rf'{stock.name}/index.html'), mode='w', encoding='utf-8') as file:
+    #         file.write(
+    #             Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
+    #                 .get_template('stock-1.0.0.html') \
+    #                 .render({
+    #                 "local": ENV == "local",
+    #                 "title": f"LAB￦ONS: {stock['name']}",
+    #                 "nav": SYSTEM_NAV,
+    #             })
+    #         )
 
 
 
@@ -263,7 +262,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     macro = Macro(macroData)
     try:
-        with open(file=os.path.join(DOCS, r'macro/index.html'), mode='w', encoding='utf-8') as file:
+        with open(file=os.path.join(PATH.DOCS, r'macro/index.html'), mode='w', encoding='utf-8') as file:
             file.write(
                 Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
                     .get_template('macro-1.0.0.html') \
