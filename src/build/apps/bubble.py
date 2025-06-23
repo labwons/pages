@@ -39,7 +39,7 @@ class MarketBubble:
         baseline['size'] = self.normalize(baseline['marketCap'], 7, 100)
         baseline['name'] = baseline[['name', 'market']].apply(lambda r: f'{r["name"]}*' if r.market == 'KOSDAQ' else r['name'], axis=1)
         baseline['meta'] = baseline.name + '(' + baseline.index + ')<br>' \
-                           + '시가총액: ' + baseline['marketCap'].apply(krw2currency) + '원<br>' \
+                           + '시가총액: ' + baseline['marketCap'].apply(krw2currency, limit='억') + '원<br>' \
                            + '종가: ' + baseline.close.apply(lambda x: f"{x:,d}원")
         baseline['color'] = baseline['sectorCode'].apply(lambda code: self.rgb2hex(*BUBBLES.COLORS[code]))
 
