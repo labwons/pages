@@ -1,7 +1,9 @@
 try:
+    from ...common.env import DOMAIN
     from ...common.util import krw2currency
     from ..baseline.metadata import METADATA, MARKETMAP
 except ImportError:
+    from src.common.env import DOMAIN
     from src.common.util import krw2currency
     from src.build.baseline.metadata import METADATA, MARKETMAP
 from datetime import datetime
@@ -141,6 +143,9 @@ class MarketMap:
 
     @classmethod
     def largeCaps(cls) -> list:
+        if DOMAIN == "HKEFICO":
+            cls._log.append(f"     * skipped fetching krx350")
+            return []
         try:
             return get_index_portfolio_deposit_file('2203') + get_index_portfolio_deposit_file('1028')
         except Exception as reason:

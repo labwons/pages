@@ -1082,9 +1082,11 @@ if (SERVICE === "macro"){
  * STOCK OPERATION 
 ----------------------------------------------------------- */
 let setTechnicalOption;
+let setTechnicalChart;
 
 if (SERVICE === "stock"){
   const $techOpt = $('.indicators');
+  var techMainIndicators = [];
   var techSupportIndicators = [];
 
   setTechnicalOption = function() {
@@ -1097,5 +1099,82 @@ if (SERVICE === "stock"){
     
   };
 
+  setTechnicalChart = function() {
+    // if (srcOhlcv.high[])
+    let layout = {
+      dragmode: __media__.isMobile ? false : 'pan',
+      margin:{
+        l:60, 
+        r:20, 
+        t:10, 
+        b:20
+      }, 
+      hovermode: 'x unified',
+      legend: {
+        bgcolor:'white',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'right',
+        x:1.0,
+        yanchor:'top',
+        y:1.0
+      },
+      xaxis:{
+        tickformat: "%Y/%m/%d",
+        showticklabels: true,
+        showline: true,
+        rangeselector: {
+          buttons: [
+            { step: 'all', label: 'All' },
+            { count: 6, label: '6M', step:'month', stepmode: 'backward'},
+            { count: 1, label: 'YTD', step:'year', stepmode: 'todate'},
+            { count: 1, label: '1Y', step: 'year', stepmode: 'backward' },
+            { count: 3, label: '3Y', step: 'year', stepmode: 'backward' },
+            { count: 5, label: '5Y', step: 'year', stepmode: 'backward' }        
+          ],
+          xanchor: 'left',
+          x: 0,
+          yanchor: 'top',
+          y:1.025
+        },
+      },
+      yaxis:{
+        showline: true,
+        showticklabels: true,
+        tickformat: ',d'
+      },
+    };
+    let option = {
+      showTips:false,
+      responsive:true,
+      displayModeBar:true,
+      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+      displaylogo:false
+    };
+    var data = [{
+      x: srcDate,
+      open: srcOhlcv.open,
+      high: srcOhlcv.high,
+      low: srcOhlcv.low,
+      close: srcOhlcv.close,
+      type: 'candlestick',
+      showlegend: false,
+      increasing: {
+        line: { color: '#C92A2A' },
+        fillcolor: '#C92A2A'
+      },
+      decreasing: {
+        line: { color: '#1861A8' },
+        fillcolor: '#1861A8'
+      }
+    }];
+    
+    Plotly.newPlot('plotly-technical', data, layout, option)
+  };
+
   setTechnicalOption();
+  setTechnicalChart();
 }
