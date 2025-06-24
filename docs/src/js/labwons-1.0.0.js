@@ -115,20 +115,20 @@ if (SERVICE === "marketmap"){
     Object.entries(srcTicker)
     .sort((a, b) => b[1].size - a[1].size)
     .forEach(([ticker, obj]) => {
-        if (
-            ticker.startsWith('N') ||
-            ticker.startsWith('W') ||
-            ( (currentMapViewer === 'woS') && (ticker === '005930') )
-        ){
-            return
-        }
-        $searchBar.append('<option value="' + ticker + '">' + obj.name + '</option>');
-      })
+      if (
+          ticker.startsWith('N') ||
+          ticker.startsWith('W') ||
+          ( (currentMapViewer === 'woS') && (ticker === '005930') )
+      ){
+          return
+      }
+      $searchBar.append('<option value="' + ticker + '">' + obj.name + '</option>');
+    });
 
-      $searchBar.select2({
-        placeholder: "\uc885\ubaa9\uba85\u0020\uac80\uc0c9",
-        allowClear: true
-      })
+    $searchBar.select2({
+      placeholder: "\uc885\ubaa9\uba85\u0020\uac80\uc0c9",
+      allowClear: true
+    });
   };
 
   setScaleBar = function(){
@@ -499,7 +499,7 @@ if (SERVICE === "bubble"){
       }
       $bubbleSearchBar.append('<option value="' + ticker + '">' + obj.name + '</option>');
     });
-    $bubbleSearchBar.select2({placeholder: "\uc885\ubaa9\uba85\u0020\uac80\uc0c9"}) // 종목명 검색
+    $bubbleSearchBar.select2({placeholder: "종목 찾기"});
   };
 
   setBubble = function(x, y, sector) {
@@ -1076,4 +1076,26 @@ if (SERVICE === "macro"){
   setYaxisOption();
   plotMacro();
 
+}
+
+/* -----------------------------------------------------------
+ * STOCK OPERATION 
+----------------------------------------------------------- */
+let setTechnicalOption;
+
+if (SERVICE === "stock"){
+  const $techOpt = $('.selection.indicators');
+  var techSupportIndicators = [];
+
+  setTechnicalOption = function() {
+    $techOpt.val(['volume']).trigger('change');
+    techSupportIndicators.push('volume');
+    $techOpt.select2({
+      maximumSelectionLength: 3,
+      minimumResultsForSearch: Infinity
+    });
+    
+  };
+
+  setTechnicalOption();
 }

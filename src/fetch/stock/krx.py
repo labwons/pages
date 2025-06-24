@@ -3,9 +3,9 @@ from pandas import concat, Series, DataFrame
 from pykrx.stock import get_market_ohlcv_by_date, get_market_cap_by_date
 
 
-class krx:
+class PyKrx:
     """
-    Fetch source data from krx (through <package; pykrx>)
+    Fetch source data from PyKrx (through <package; pyPyKrx>)
 
     @ohlcv
         constraint  : common
@@ -125,9 +125,9 @@ if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
-    krx = krx(
+    pyKrx = PyKrx(
         "005930"
         # "069500"
     )
-    print(krx.ohlcv)
-    print(krx.quarterlyMarketCap)
+    print(PyKrx.ohlcv)
+    print(PyKrx.quarterlyMarketCap)

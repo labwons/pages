@@ -83,7 +83,7 @@
     <section class="section">
       <div class="container container-leaderboard">
         <div class="ad ad-leaderboard">
-          <div class="ad-in-leaderboard">
+          <div class="ad-in-leaderboard">{% if not local %}
             <ins class="adsbygoogle"
                  style="display:inline-block;width:728px;height:90px"
                  data-ad-client="ca-pub-7507574593260609"
@@ -91,7 +91,7 @@
             </ins>
             <script>
               (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+            </script>{% endif %}
           </div>
         </div>
       </div>
@@ -132,7 +132,7 @@
         </div>
       </div>
     </section>
-
+    {% if service != "stock" %}
     <section class="section section-flow">
       <div class="container container-service margin-bottom-60px">
         <div class="ad ad-content">
@@ -152,7 +152,7 @@
           </div>
         </div>
       </div>
-    </section>
+    </section>{% endif %}
 
     {% block content_addon %}{% endblock %}
 

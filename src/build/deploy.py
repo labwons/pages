@@ -18,7 +18,7 @@ if __name__ == "__main__":
         from .apps.marketmap import MarketMap
         from .apps.bubble import MarketBubble
         from .apps.macro import Macro
-        from .apps.stocks import Stocks
+        from .apps.stock import Stock
         from .apps.sitemap import rss, sitemap
         from .util import navigate, minify, eMail, clearPath
     except ImportError:
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         from src.build.apps.marketmap import MarketMap
         from src.build.apps.bubble import MarketBubble
         from src.build.apps.macro import Macro
-        from src.build.apps.stocks import Stocks
+        from src.build.apps.stock import Stock
         from src.build.apps.sitemap import rss, sitemap
         from src.build.util import navigate, minify, eMail, clearPath
     from jinja2 import Environment, FileSystemLoader
@@ -51,7 +51,8 @@ if __name__ == "__main__":
         # IF YOU WANT TO USE DIFFERENT PATH FOR LOCAL HOST TESTING, BELOW {ROOT} VARIABLE ARE
         # TO BE CHANGED.
         from shutil import copytree
-        clearPath(PATH.STUB)
+        if os.path.isdir(PATH.STUB):
+            clearPath(PATH.STUB)
         copytree(DOCS, PATH.STUB, dirs_exist_ok=True)
         PATH.DOCS = PATH.STUB
         GITHUB.CONFIG.RESET()
@@ -195,6 +196,7 @@ if __name__ == "__main__":
                 Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
                     .get_template('marketmap-1.0.0.html') \
                     .render({
+                    "service": "marketmap",
                     "local": ENV == "local",
                     "title": "LAB￦ONS: \uc2dc\uc7a5\uc9c0\ub3c4",
                     "nav": SYSTEM_NAV,
@@ -218,6 +220,7 @@ if __name__ == "__main__":
                 Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
                     .get_template('bubble-1.0.0.html') \
                     .render({
+                    "service": "bubble",
                     "local": ENV == "local",
                     "title": "LAB￦ONS: \uc885\ubaa9\ubd84\ud3ec",
                     "nav": SYSTEM_NAV,
@@ -233,29 +236,74 @@ if __name__ == "__main__":
         context += [f'- [FAILED] DEPLOY BUBBLES', f'  : {error}', '']
 
     # ---------------------------------------------------------------------------------------
+    # UPDATE STOCK PRICE
+    # ---------------------------------------------------------------------------------------
+    stocks = dDict()
+    if (not DOMAIN == "HKEFICO") and GITHUB.CONFIG.STOCKS:
+        from pandas import concat
+
+        tickersMap = marketMap.stat.loc[["minTicker", "maxTicker"]].values.flatten().tolist()
+        tickers = tickersMap
+
+        _context, _objs = [], {}
+        for ticker in tickers:
+            try:
+                stocks[ticker] = stock = Stock(ticker, marketData)
+                _objs[ticker] = stock.ohlcv
+            except Exception as reason:
+                _context += [f'  ... FAIlED TO FETCH PRICE: {ticker} / {reason}']
+        if _objs:
+            concat(_objs, axis=1).to_parquet(FILE.PRICE, engine='pyarrow')
+
+        if _context:
+            context += [f'- [FAILED] UPDATE STOCK PRICEL ', '\n'.join(_context), '']
+        else:
+            context += [f'- [SUCCESS] UPDATE STOCK PRICEL ', '']
+    else:
+        context += [f"- [PASSED] UPDATE STOCK PRICEL: ", ""]
+
+    # ---------------------------------------------------------------------------------------
     # DEPLOY STOCKS
     # ---------------------------------------------------------------------------------------
+    # if (not DOMAIN == "HKEFICO") and GITHUB.CONFIG.STOCKS:
     # PATH.STOCKS = os.path.join(PATH.DOCS, r'stocks')
     # os.makedirs(PATH.STOCKS, exist_ok=True)
     # clearPath(PATH.STOCKS)
     #
-    # fromMap = marketMap.stat.loc[["minTicker", "maxTicker"]].values.flatten().tolist()[:1]
     #
-    # stocks = Stocks(marketData, *fromMap)
-    # for stock in stocks:
-    #     os.makedirs(os.path.join(PATH.STOCKS, rf'{stock.name}'), exist_ok=True)
-    #     with open(file=os.path.join(PATH.STOCKS, rf'{stock.name}/index.html'), mode='w', encoding='utf-8') as file:
+    #
+    # tickers = tickersMap
+    #
+    # for ticker in tickers[:1]:
+    #     os.makedirs(os.path.join(PATH.STOCKS, rf'{ticker}'), exist_ok=True)
+    #     with open(file=os.path.join(PATH.STOCKS, rf'{ticker}/index.html'), mode='w', encoding='utf-8') as file:
+    #         # stock = Stock(ticker, marketData)
+    #         # file.write(
+    #         #     Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
+    #         #         .get_template('stock-1.0.0.html') \
+    #         #         .render({
+    #         #         "local": ENV == "local",
+    #         #         "title": f"LAB￦ONS: {stock.N['name']}",
+    #         #         "nav": SYSTEM_NAV,
+    #         #         "ohlcv": stock.jsonOhlcv,
+    #         #         "sma": stock.jsonMa,
+    #         #         "bollinger": stock.jsonBollinger
+    #         #     })
+    #         # )
+    #
     #         file.write(
     #             Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
     #                 .get_template('stock-1.0.0.html') \
     #                 .render({
+    #                 "service": "stock",
     #                 "local": ENV == "local",
-    #                 "title": f"LAB￦ONS: {stock['name']}",
+    #                 "title": f"LAB￦ONS: Tester",
     #                 "nav": SYSTEM_NAV,
+    #                 "ohlcv": '"ohlcv"',
+    #                 "sma": '"sma"',
+    #                 "bollinger": '"bollinger"'
     #             })
     #         )
-
-
 
     # ---------------------------------------------------------------------------------------
     # DEPLOY MACRO
@@ -267,6 +315,7 @@ if __name__ == "__main__":
                 Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
                     .get_template('macro-1.0.0.html') \
                     .render({
+                    "service": "macro",
                     "local": ENV == "local",
                     "title": "LAB￦ONS: \uacbd\uc81c\u0020\uc9c0\ud45c",
                     "nav": SYSTEM_NAV,

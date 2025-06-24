@@ -16,6 +16,10 @@ if any([key.lower().startswith('colab') for key in os.environ]):
 if any([key.lower().startswith('github') for key in os.environ]):
     ENV = 'github_action'
 
+DOMAIN = ""
+if "USERDOMAIN" in os.environ:
+    DOMAIN = os.environ["USERDOMAIN"]
+
 # ROOT DIRECTORY
 ROOT = "https://raw.githubusercontent.com/labwons/pages/main/"
 if not ENV == 'google_colab':
@@ -37,7 +41,7 @@ FILE.BASELINE           = os.path.join(ROOT, r'src/fetch/market/parquet/baseline
 FILE.MACRO_BASELINE     = os.path.join(ROOT, r'src/fetch/macro/parquet/baseline.parquet')
 FILE.ECOS               = os.path.join(ROOT, r'src/fetch/macro/parquet/ecos.parquet')
 FILE.FRED               = os.path.join(ROOT, r'src/fetch/macro/parquet/fred.parquet')
-FILE.MACRO              = os.path.join(ROOT, r'src/fetch/macro/json/macro.json')
+FILE.PRICE              = os.path.join(ROOT, r'src/fetch/stock/parquet/price.parquet')
 
 # RESOURCE DEPLOY DELIVERABLES
 HTML = dDict()
@@ -61,8 +65,9 @@ GITHUB.CONFIG = dDict(
     AFTERMARKET = False,
     STATEMENT = False,
     SECTOR = False,
-    ECOS = True,
-    FRED = True
+    ECOS = False,
+    FRED = False,
+    STOCK = True,
 )
 def __RESET__():
     for key, val in GITHUB.CONFIG:
@@ -83,3 +88,6 @@ if __name__ == "__main__":
     print(GITHUB.CONFIG)
     GITHUB.CONFIG.ECOS = GITHUB.CONFIG.STATEMENT = True
     print(GITHUB.CONFIG)
+
+    for key, value in os.environ.items():
+        print(key, value)
