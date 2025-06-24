@@ -102,7 +102,24 @@
         max-width: none;
       }
     }
+    
+    .service-app {
+      flex: 1 0 auto;
+      height: 75vh;
+      display: flex;
+      align-items: stretch;
+      position: relative;
+    }
 
+    @media (max-width: 767px) {
+      .service-app {
+        height: 55vh;
+      } 
+    }
+
+    .service-app .plot {
+      flex: 1 0 auto;
+    }
 
   .service-footer {
       flex: 0 1 auto;
