@@ -92,7 +92,9 @@ class PyKrx:
         if not trade_stop.empty:
             ohlcv.loc[trade_stop.index, ['시가', '고가', '저가']] = trade_stop.종가
         ohlcv.index.name = 'date'
-        return ohlcv.rename(columns=dict(시가='open', 고가='high', 저가='low', 종가='close', 거래량='volume'))
+        return ohlcv.rename(columns=dict(시가='open', 고가='high', 저가='low', 종가='close', 거래량='volume'))[[
+            'open', 'high', 'low', 'close', 'volume'
+        ]]
 
     @property
     def quarterlyMarketCap(self) -> Series:

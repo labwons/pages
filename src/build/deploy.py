@@ -12,13 +12,14 @@ if __name__ == "__main__":
         from ..fetch.market.sector import SectorComposition
         from ..fetch.macro.ecos import Ecos
         from ..fetch.macro.fred import Fred
+        from ..fetch.stock.krx import PyKrx
         from .baseline.metadata import ECOSMETA, FREDMETA
         from .baseline.market import MarketBaseline
         from .baseline.macro import MacroBaseline
         from .apps.marketmap import MarketMap
         from .apps.bubble import MarketBubble
         from .apps.macro import Macro
-        from .apps.stock import Stock
+        from .apps.stocks import Stocks
         from .apps.sitemap import rss, sitemap
         from .util import navigate, minify, eMail, clearPath
     except ImportError:
@@ -28,13 +29,14 @@ if __name__ == "__main__":
         from src.fetch.market.sector import SectorComposition
         from src.fetch.macro.ecos import Ecos
         from src.fetch.macro.fred import Fred
+        from src.fetch.stock.krx import PyKrx
         from src.build.baseline.metadata import ECOSMETA, FREDMETA
         from src.build.baseline.market import MarketBaseline
         from src.build.baseline.macro import MacroBaseline
         from src.build.apps.marketmap import MarketMap
         from src.build.apps.bubble import MarketBubble
         from src.build.apps.macro import Macro
-        from src.build.apps.stock import Stock
+        from src.build.apps.stocks import Stocks
         from src.build.apps.sitemap import rss, sitemap
         from src.build.util import navigate, minify, eMail, clearPath
     from jinja2 import Environment, FileSystemLoader
@@ -77,7 +79,7 @@ if __name__ == "__main__":
         if now.hour >= 20:
             GITHUB.CONFIG.ECOS = GITHUB.CONFIG.FRED = GITHUB.CONFIG.STATEMENT = True
         else:
-            GITHUB.CONFIG.AFTERMARKET = True
+            GITHUB.CONFIG.AFTERMARKET = GITHUB.CONFIG.STOCKPRICE = True
 
     if GITHUB.EVENT == "workflow_dispatch":
         # CLEAN-UP DEPLOYMENT
@@ -238,7 +240,6 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE STOCK PRICE
     # ---------------------------------------------------------------------------------------
-    stocks = dDict()
     if (not DOMAIN == "HKEFICO") and GITHUB.CONFIG.STOCKPRICE:
         from pandas import concat
 
@@ -247,63 +248,50 @@ if __name__ == "__main__":
 
         _context, _objs = [], {}
         for ticker in tickers:
+            if not ticker:
+                continue
             try:
-                stocks[ticker] = stock = Stock(ticker, marketData)
-                _objs[ticker] = stock.ohlcv
+                _objs[ticker] = PyKrx(ticker).ohlcv
             except Exception as reason:
-                _context += [f'  ... FAIlED TO FETCH PRICE: {ticker} / {reason}']
+                _context += [f'  >> FAIlED TO FETCH PRICE: {ticker} / {reason}']
         if _objs:
             concat(_objs, axis=1).to_parquet(FILE.PRICE, engine='pyarrow')
 
         if _context:
-            context += [f'- [FAILED] UPDATE STOCK PRICEL ', '\n'.join(_context), '']
+            context += [f'- [FAILED] UPDATE STOCK PRICE ', '\n'.join(_context), '']
         else:
-            context += [f'- [SUCCESS] UPDATE STOCK PRICEL ', '']
+            context += [f'- [SUCCESS] UPDATE STOCK PRICE ', '']
     else:
-        context += [f"- [PASSED] UPDATE STOCK PRICEL: ", ""]
+        context += [f"- [PASSED] UPDATE STOCK PRICE: ", ""]
 
     # ---------------------------------------------------------------------------------------
     # DEPLOY STOCKS
     # ---------------------------------------------------------------------------------------
-    # if (not DOMAIN == "HKEFICO") and GITHUB.CONFIG.STOCKS:
-    # PATH.STOCKS = os.path.join(PATH.DOCS, r'stocks')
-    # os.makedirs(PATH.STOCKS, exist_ok=True)
-    # clearPath(PATH.STOCKS)
-    #
-    #
-    #
-    # tickers = tickersMap
-    #
-    # for ticker in tickers[:1]:
-    #     os.makedirs(os.path.join(PATH.STOCKS, rf'{ticker}'), exist_ok=True)
-    #     with open(file=os.path.join(PATH.STOCKS, rf'{ticker}/index.html'), mode='w', encoding='utf-8') as file:
-    #         # stock = Stock(ticker, marketData)
-    #         # file.write(
-    #         #     Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
-    #         #         .get_template('stock-1.0.0.html') \
-    #         #         .render({
-    #         #         "local": ENV == "local",
-    #         #         "title": f"LAB￦ONS: {stock.N['name']}",
-    #         #         "nav": SYSTEM_NAV,
-    #         #         "ohlcv": stock.jsonOhlcv,
-    #         #         "sma": stock.jsonMa,
-    #         #         "bollinger": stock.jsonBollinger
-    #         #     })
-    #         # )
-    #
-    #         file.write(
-    #             Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
-    #                 .get_template('stock-1.0.0.html') \
-    #                 .render({
-    #                 "service": "stock",
-    #                 "local": ENV == "local",
-    #                 "title": f"LAB￦ONS: Tester",
-    #                 "nav": SYSTEM_NAV,
-    #                 "ohlcv": '"ohlcv"',
-    #                 "sma": '"sma"',
-    #                 "bollinger": '"bollinger"'
-    #             })
-    #         )
+    PATH.STOCKS = os.path.join(PATH.DOCS, r'stocks')
+    os.makedirs(PATH.STOCKS, exist_ok=True)
+    clearPath(PATH.STOCKS)
+
+    stocks = Stocks()
+    for ticker, stock in stocks:
+        os.makedirs(os.path.join(PATH.STOCKS, rf'{ticker}'), exist_ok=True)
+        with open(file=os.path.join(PATH.STOCKS, rf'{ticker}/index.html'), mode='w', encoding='utf-8') as file:
+            file.write(
+                Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
+                    .get_template('stock-1.0.0.html') \
+                    .render({
+                    "service": "stock",
+                    "local": ENV == "local",
+                    "title": f"LAB￦ONS: {stock.name}",
+                    "nav": SYSTEM_NAV,
+                    "ticker": ticker,
+                    "name": stock.name,
+                    "date": stock.date,
+                    "ohlcv": stock.ohlcv,
+                    "sma": stock.sma,
+                    "bollinger": stock.bollinger
+                })
+            )
+    context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK ', '']
 
     # ---------------------------------------------------------------------------------------
     # DEPLOY MACRO

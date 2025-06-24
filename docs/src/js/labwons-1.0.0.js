@@ -1084,7 +1084,7 @@ if (SERVICE === "macro"){
 let setTechnicalOption;
 
 if (SERVICE === "stock"){
-  const $techOpt = $('.selection.indicators');
+  const $techOpt = $('.indicators');
   var techSupportIndicators = [];
 
   setTechnicalOption = function() {
