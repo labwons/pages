@@ -239,7 +239,7 @@ if __name__ == "__main__":
     # UPDATE STOCK PRICE
     # ---------------------------------------------------------------------------------------
     stocks = dDict()
-    if (not DOMAIN == "HKEFICO") and GITHUB.CONFIG.STOCKS:
+    if (not DOMAIN == "HKEFICO") and GITHUB.CONFIG.STOCKPRICE:
         from pandas import concat
 
         tickersMap = marketMap.stat.loc[["minTicker", "maxTicker"]].values.flatten().tolist()
