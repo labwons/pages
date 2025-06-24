@@ -1,16 +1,21 @@
 try:
     from ...common.env import FILE, dDict
+    from ...fetch.stock.krx import PyKrx
 except ImportError:
     from src.common.env import FILE, dDict
-from pandas import DataFrame, Series
-from pandas import read_parquet
+    from src.fetch.stock.krx import PyKrx
 from json import dumps
+from pandas import DataFrame, Series
+from pandas import concat, read_parquet
+from time import perf_counter
+from typing import List
 
 
 # from ta import
 
 class Stocks:
 
+    _log: List[str] = []
     def __init__(self):
         self.basis = basis = read_parquet(FILE.BASELINE, engine='pyarrow')
         self.price = price = read_parquet(FILE.PRICE, engine='pyarrow')
@@ -35,6 +40,34 @@ class Stocks:
     def __iter__(self):
         for ticker, attr in self.__mem__:
             yield ticker, attr
+
+    @property
+    def log(self) -> str:
+        return "\n".join(self._log)
+
+    @log.setter
+    def log(self, log: str):
+        self._log.append(log)
+
+    def update(self, *tickers):
+        self._log = [f'  >> RUN [CACHING STOCK PRICE]: ']
+        stime = perf_counter()
+        objs = {}
+        for ticker in tickers:
+            if not ticker:
+                continue
+            try:
+                objs[ticker] = PyKrx(ticker).ohlcv
+            except Exception as reason:
+                self.log = f'     ...Failed TO FETCH PRICE: {ticker} / {reason}'
+
+        if objs:
+            self.price = concat(objs, axis=1)
+        self._log[0] += f'{len(tickers):,d} items @{self.price.index.astype(str).values[-1]}'.replace("-", "/")
+        self.log = f'  >> END: {perf_counter() - stime:.2f}s'
+        return
+
+
 
     @classmethod
     def convertOhlcv(cls, ohlcv:DataFrame) -> str:

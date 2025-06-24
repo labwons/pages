@@ -240,27 +240,15 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE STOCK PRICE
     # ---------------------------------------------------------------------------------------
+    stocks = Stocks()
     if (not DOMAIN == "HKEFICO") and GITHUB.CONFIG.STOCKPRICE:
-        from pandas import concat
-
         tickersMap = marketMap.stat.loc[["minTicker", "maxTicker"]].values.flatten().tolist()
         tickers = tickersMap
 
-        _context, _objs = [], {}
-        for ticker in tickers:
-            if not ticker:
-                continue
-            try:
-                _objs[ticker] = PyKrx(ticker).ohlcv
-            except Exception as reason:
-                _context += [f'  >> FAIlED TO FETCH PRICE: {ticker} / {reason}']
-        if _objs:
-            concat(_objs, axis=1).to_parquet(FILE.PRICE, engine='pyarrow')
+        stocks.update(*tickers)
+        stocks.price.to_parquet(FILE.PRICE, engine='pyarrow')
 
-        if _context:
-            context += [f'- [FAILED] UPDATE STOCK PRICE ', '\n'.join(_context), '']
-        else:
-            context += [f'- [SUCCESS] UPDATE STOCK PRICE ', '']
+        context += [f'- [{"FAILED" if "Failed" in stocks.log else "SUCCESS"}] UPDATE STOCK PRICE ', stocks.log, '']
     else:
         context += [f"- [PASSED] UPDATE STOCK PRICE: ", ""]
 
@@ -271,7 +259,6 @@ if __name__ == "__main__":
     os.makedirs(PATH.STOCKS, exist_ok=True)
     clearPath(PATH.STOCKS)
 
-    stocks = Stocks()
     for ticker, stock in stocks:
         os.makedirs(os.path.join(PATH.STOCKS, rf'{ticker}'), exist_ok=True)
         with open(file=os.path.join(PATH.STOCKS, rf'{ticker}/index.html'), mode='w', encoding='utf-8') as file:
