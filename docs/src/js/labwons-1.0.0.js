@@ -848,6 +848,7 @@ if (SERVICE === "macro"){
 
   plotMacro = function() {
     let layout = {
+      clickmode:'event',
       dragmode: __media__.isMobile ? false : 'pan',
       margin:{
         l:20, 
@@ -1044,19 +1045,6 @@ if (SERVICE === "macro"){
   $y2.on('select2:unselect', function(e){
     y2_selection = y2_selection.filter(item => item != e.params.data.id);
     plotMacro();
-  });
-
-  $('#plotly').on('plotly_relayout', function(e){
-    let lastXRange = null;
-    if(e['xaxis.range[0]'] && e['xaxis.range[1]']) {
-      lastXRange = [e['xaxis.range[0]'], e['xaxis.range[1]']];
-    }
-
-    if(e['xaxis.autorange'] === true && lastXRange) {
-      Plotly.relayout('plotly', {
-        'xaxis.range': lastXRange
-      });
-    }
   });
 
   $(document)
