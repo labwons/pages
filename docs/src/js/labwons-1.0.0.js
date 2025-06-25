@@ -847,13 +847,43 @@ if (SERVICE === "macro"){
   };
 
   plotMacro = function() {
+    $('#plotly').empty();
+    var series = [];
+    var yaxis = [{}];
+    var width = [2]
+    var y1data = Object.fromEntries(y1_selection.map(key => [key, srcIndicator[key]]));
+    for (const [key, _data] of Object.entries(y1data)) {
+      series.push({
+        name:srcIndicatorOpt[key].name,
+        data:_data.date.map((dt, i) => ({x:dt, y:_data.data[i]}))
+      });
+    };
+
+    var y2min = 0;
+    var y2max = 0;
+    var y2data = Object.fromEntries(y2_selection.map(key => [key, srcIndicator[key]]));
+    for (const [key, _data] of Object.entries(y2data)) {
+      series.push({
+        name:srcIndicatorOpt[key].name,
+        data:_data.date.map((dt, i) => ({x:dt, y:_data.data[i]})),
+        yAxisIndex: 1
+      });
+      y2min = Math.min(...[y2min, Math.min(..._data.data)]);
+      y2max = Math.max(...[y2max, Math.max(..._data.data)]);
+    };
+
+    if (y2data.length) {
+      yaxis.push({opposite: true, min:y2min, max:y2max});
+      width.push(2);
+    }
+
     const options = {
       chart: {
         type: 'line',
-        height: 400,
+        height: '100%',
         zoom: {
-          enabled: true,
-          type: 'x', // x축 방향만 줌
+          enabled: !(__media__.isMobile || __media__.isTablet),
+          type: 'x',
           autoScaleYaxis: true
         },
         toolbar: {
@@ -867,51 +897,26 @@ if (SERVICE === "macro"){
         }
       },
       stroke: {
-        width: [2, 2],
-        curve: 'smooth'
+        width: width,
+        // curve: 'smooth'
       },
-      series: [
-        {
-          name: 'Temperature (°C)',
-          data: [
-            [Date.UTC(2023, 0, 1), 5],
-            [Date.UTC(2023, 0, 2), 6],
-            [Date.UTC(2023, 0, 3), 4],
-            [Date.UTC(2023, 0, 4), 8]
-          ]
-        },
-        {
-          name: 'Humidity (%)',
-          data: [
-            [Date.UTC(2023, 0, 1), 60],
-            [Date.UTC(2023, 0, 2), 65],
-            [Date.UTC(2023, 0, 3), 58],
-            [Date.UTC(2023, 0, 4), 62]
-          ],
-          yAxisIndex: 1
-        }
-      ],
+      series: series,
       xaxis: {
         type: 'datetime'
       },
-      yaxis: [
-        {
-          title: {
-            text: 'Temperature (°C)'
-          }
-        },
-        {
-          opposite: true,
-          title: {
-            text: 'Humidity (%)'
-          }
-        }
-      ],
+      yaxis: yaxis,
       tooltip: {
         shared: true,
+        style: {
+          fontSize: '12px',
+          fontFamily: __fonts__
+        },
         x: {
           format: 'yyyy-MM-dd'
-        }
+        },
+        marker: {
+          show: false,
+      },
       },
       legend: {
         position: 'top'
