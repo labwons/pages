@@ -24,7 +24,13 @@
   <meta property="og:type" content="website">
 {% endblock %}
 
-{% block script %}<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>{% endblock %}
+{% block dependencies %}
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/src/js/jquery-3.6.1.min.js"></script>
+  <script src="/src/js/select2.min.js"></script>
+  <script src="/src/js/purecounter-1.0.5.min.js"></script>
+  <script src="/src/js/apexcharts.min.js"></script>
+{% endblock %}
 
 {% block style %}
   <style>
