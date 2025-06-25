@@ -846,226 +846,226 @@ if (SERVICE === "macro"){
     });
   };
 
+  // plotMacro = function() {
+  //   $('#plotly').empty();
+  //   var series = [];
+  //   var yaxis = [{title:''}];
+  //   var width = [2]
+  //   var y1data = Object.fromEntries(y1_selection.map(key => [key, srcIndicator[key]]));
+  //   for (const [key, _data] of Object.entries(y1data)) {
+  //     series.push({
+  //       name:srcIndicatorOpt[key].name,
+  //       data:_data.date.map((dt, i) => ({x:dt, y:_data.data[i]}))
+  //     });
+  //   };
+
+  //   var y2min = 0;
+  //   var y2max = 0;
+  //   var y2data = Object.fromEntries(y2_selection.map(key => [key, srcIndicator[key]]));
+  //   for (const [key, _data] of Object.entries(y2data)) {
+  //     series.push({
+  //       name:srcIndicatorOpt[key].name,
+  //       data:_data.date.map((dt, i) => ({x:dt, y:_data.data[i]})),
+  //       yAxisIndex: 1
+  //     });
+  //     y2min = Math.min(...[y2min, Math.min(..._data.data)]);
+  //     y2max = Math.max(...[y2max, Math.max(..._data.data)]);
+  //   };
+
+  //   if (y2data.length) {
+  //     yaxis.push({title:'', opposite: true});
+  //     width.push(2);
+  //   }
+
+  //   const options = {
+  //     chart: {
+  //       type: 'line',
+  //       height: '100%',
+  //       zoom: {
+  //         enabled: !(__media__.isMobile || __media__.isTablet),
+  //         type: 'x',
+  //         autoScaleYaxis: true
+  //       },
+  //       toolbar: {
+  //         autoSelected: 'zoom',
+  //         tools: {
+  //           pan: true,
+  //           zoomin: true,
+  //           zoomout: true,
+  //           reset: true
+  //         }
+  //       }
+  //     },
+  //     stroke: {
+  //       width: width,
+  //       // curve: 'smooth'
+  //     },
+  //     series: series,
+  //     xaxis: {
+  //       type: 'datetime'
+  //     },
+  //     yaxis: yaxis,
+  //     tooltip: {
+  //       shared: true,
+  //       style: {
+  //         fontSize: '12px',
+  //         fontFamily: __fonts__
+  //       },
+  //       x: {
+  //         format: 'yyyy-MM-dd'
+  //       },
+  //       marker: {
+  //         show: false,
+  //     },
+  //     },
+  //     legend: {
+  //       position: 'top'
+  //     }
+  //   };
+
+  //   const chart = new ApexCharts(document.querySelector('#plotly'), options);
+  //   chart.render();
+  // };
+
   plotMacro = function() {
-    $('#plotly').empty();
-    var series = [];
-    var yaxis = [{}];
-    var width = [2]
-    var y1data = Object.fromEntries(y1_selection.map(key => [key, srcIndicator[key]]));
-    for (const [key, _data] of Object.entries(y1data)) {
-      series.push({
-        name:srcIndicatorOpt[key].name,
-        data:_data.date.map((dt, i) => ({x:dt, y:_data.data[i]}))
-      });
+    let layout = {
+      clickmode:'event',
+      dragmode: __media__.isMobile ? false : 'pan',
+      margin:{
+        l:20, 
+        r:20, 
+        t:10, 
+        b:20
+      }, 
+      hovermode: 'x unified',
+      legend: {
+        bgcolor:'white',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'right',
+        x:1.0,
+        yanchor:'top',
+        y:1.0
+      },
+      xaxis:{
+        tickformat: "%Y/%m/%d",
+        showticklabels: true,
+        showline: true,
+        rangeselector: {
+          buttons: [
+            { step: 'all', label: 'All' },
+            { count: 6, label: '6M', step:'month', stepmode: 'backward'},
+            { count: 1, label: 'YTD', step:'year', stepmode: 'todate'},
+            { count: 1, label: '1Y', step: 'year', stepmode: 'backward' },
+            { count: 3, label: '3Y', step: 'year', stepmode: 'backward' },
+            { count: 5, label: '5Y', step: 'year', stepmode: 'backward' }        
+          ],
+          xanchor: 'left',
+          x: 0,
+          yanchor: 'top',
+          y:1.025
+        },
+      },
+      yaxis:{
+        side: 'left',
+        showline: true,
+        zeroline:true,
+        zerolinecolor:'grey',
+        zerolinewidth: '1.5px',
+        showticklabels: true,
+        tickangle: -90,
+      },
+      yaxis2: {
+        overlaying:'y',
+        side:'right',
+        zeroline:false,
+        showline:true,
+        showgrid:false,
+        showticklabels: true,
+        tickangle: -90,
+      },
     };
-
-    var y2min = 0;
-    var y2max = 0;
-    var y2data = Object.fromEntries(y2_selection.map(key => [key, srcIndicator[key]]));
-    for (const [key, _data] of Object.entries(y2data)) {
-      series.push({
-        name:srcIndicatorOpt[key].name,
-        data:_data.date.map((dt, i) => ({x:dt, y:_data.data[i]})),
-        yAxisIndex: 1
-      });
-      y2min = Math.min(...[y2min, Math.min(..._data.data)]);
-      y2max = Math.max(...[y2max, Math.max(..._data.data)]);
-    };
-
-    if (y2data.length) {
-      yaxis.push({opposite: true, min:y2min, max:y2max});
-      width.push(2);
+    let option = {
+      showTips:false,
+      responsive:true,
+      displayModeBar:true,
+      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+      displaylogo:false
     }
 
-    const options = {
-      chart: {
-        type: 'line',
-        height: '100%',
-        zoom: {
-          enabled: !(__media__.isMobile || __media__.isTablet),
-          type: 'x',
-          autoScaleYaxis: true
-        },
-        toolbar: {
-          autoSelected: 'zoom',
-          tools: {
-            pan: true,
-            zoomin: true,
-            zoomout: true,
-            reset: true
-          }
-        }
-      },
-      stroke: {
-        width: width,
-        // curve: 'smooth'
-      },
-      series: series,
-      xaxis: {
-        type: 'datetime'
-      },
-      yaxis: yaxis,
-      tooltip: {
-        shared: true,
-        style: {
-          fontSize: '12px',
-          fontFamily: __fonts__
-        },
-        x: {
-          format: 'yyyy-MM-dd'
-        },
-        marker: {
-          show: false,
-      },
-      },
-      legend: {
-        position: 'top'
+    var data = [];
+    var y1data = Object.fromEntries(y1_selection.map(key => [key, srcIndicator[key]]));
+    var y2data = Object.fromEntries(y2_selection.map(key => [key, srcIndicator[key]]));
+    var fromdate = 0;
+    var enddate = 0;
+
+    for(var n = 0; n < y1_selection.length; n++){
+      fromdate = Math.max(...[fromdate, parseInt(y1data[y1_selection[n]].date[0].replaceAll('-', ''))]);
+      enddate = Math.max(...[enddate, parseInt(y1data[y1_selection[n]].date.at(-1).replaceAll('-', ''))]);
+    }
+    for(var n = 0; n < y2_selection.length; n++){
+      fromdate = Math.max(...[fromdate, parseInt(y2data[y2_selection[n]].date[0].replaceAll('-', ''))]);
+      enddate = Math.max(...[enddate, parseInt(y2data[y2_selection[n]].date.at(-1).replaceAll('-', ''))]);
+    }
+    fromdate = ('' + fromdate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+    enddate = ('' + enddate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+    layout.xaxis.range = [fromdate, enddate];
+
+    for (const [key, _data] of Object.entries(y1data)) {
+      let meta = srcIndicatorOpt[key];
+      let obj = {
+        x: _data.date,
+        y: _data.data,
+        type: 'scatter',
+        mode: 'lines',
+        name: meta.name,
+        showlegend: true,
+        hovertemplate: `${meta.name}${meta.hover}`,
+        yaxis: 'y1',
       }
+      if (`${key}meta` in srcIndicator) {
+        obj.meta = srcIndicator[`${key}meta`].data;
+      }
+      data.push(obj);
     };
 
-    const chart = new ApexCharts(document.querySelector('#plotly'), options);
-    chart.render();
+    for (const [key, _data] of Object.entries(y2data)) {
+      let meta = srcIndicatorOpt[key];
+      let obj = {
+        x: _data.date,
+        y: _data.data,
+        type: 'scatter',
+        mode: 'lines',
+        name: meta.name,
+        showlegend: true,
+        hovertemplate: `${meta.name}${meta.hover}`,
+        yaxis: 'y2',
+      }
+      if (`${key}meta` in srcIndicator) {
+        obj.meta = srcIndicator[`${key}meta`].data;
+      }
+      if (srcIndicatorOpt[key].unit === '%') {
+        layout.yaxis.zeroline = false;
+        layout.yaxis2.zeroline = true;
+        layout.yaxis2.zerolinecolor = 'grey';
+        layout.yaxis2.zerolinewidth = '1.5px';
+      }
+      data.push(obj);
+    };
+
+
+    Plotly.newPlot('plotly', data, layout, option)
+    .then(grid => {
+      $('a[data-title="Zoom"]').attr("data-title", "확대");
+      $('a[data-title="Pan"]').attr("data-title", "이동(패닝)");
+      $('a[data-title="Autoscale"]').attr("data-title", "자동 조정");
+      $('.modebar').prepend($('<div class="modebar-group"><a rel="tooltip" class="modebar-btn" data-title="스크롤 모드" data-toggle="false" data-gravity="n"><i class="bi bi-arrow-down-up"></i></a></div>'));
+    });
+    $('#plotly').focus();
   };
-
-  // plotMacro = function() {
-  //   let layout = {
-  //     clickmode:'event',
-  //     dragmode: __media__.isMobile ? false : 'pan',
-  //     margin:{
-  //       l:20, 
-  //       r:20, 
-  //       t:10, 
-  //       b:20
-  //     }, 
-  //     hovermode: 'x unified',
-  //     legend: {
-  //       bgcolor:'white',
-  //       borderwidth:0,
-  //       itemclick:'toggle',
-  //       itemdoubleclick:'toggleothers',
-  //       orientation:'h',
-  //       valign:'middle',
-  //       xanchor:'right',
-  //       x:1.0,
-  //       yanchor:'top',
-  //       y:1.0
-  //     },
-  //     xaxis:{
-  //       tickformat: "%Y/%m/%d",
-  //       showticklabels: true,
-  //       showline: true,
-  //       rangeselector: {
-  //         buttons: [
-  //           { step: 'all', label: 'All' },
-  //           { count: 6, label: '6M', step:'month', stepmode: 'backward'},
-  //           { count: 1, label: 'YTD', step:'year', stepmode: 'todate'},
-  //           { count: 1, label: '1Y', step: 'year', stepmode: 'backward' },
-  //           { count: 3, label: '3Y', step: 'year', stepmode: 'backward' },
-  //           { count: 5, label: '5Y', step: 'year', stepmode: 'backward' }        
-  //         ],
-  //         xanchor: 'left',
-  //         x: 0,
-  //         yanchor: 'top',
-  //         y:1.025
-  //       },
-  //     },
-  //     yaxis:{
-  //       side: 'left',
-  //       showline: true,
-  //       zeroline:true,
-  //       zerolinecolor:'grey',
-  //       zerolinewidth: '1.5px',
-  //       showticklabels: true,
-  //       tickangle: -90,
-  //     },
-  //     yaxis2: {
-  //       overlaying:'y',
-  //       side:'right',
-  //       zeroline:false,
-  //       showline:true,
-  //       showgrid:false,
-  //       showticklabels: true,
-  //       tickangle: -90,
-  //     },
-  //   };
-  //   let option = {
-  //     showTips:false,
-  //     responsive:true,
-  //     displayModeBar:true,
-  //     modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
-  //     displaylogo:false
-  //   }
-
-  //   var data = [];
-  //   var y1data = Object.fromEntries(y1_selection.map(key => [key, srcIndicator[key]]));
-  //   var y2data = Object.fromEntries(y2_selection.map(key => [key, srcIndicator[key]]));
-  //   var fromdate = 0;
-  //   var enddate = 0;
-
-  //   for(var n = 0; n < y1_selection.length; n++){
-  //     fromdate = Math.max(...[fromdate, parseInt(y1data[y1_selection[n]].date[0].replaceAll('-', ''))]);
-  //     enddate = Math.max(...[enddate, parseInt(y1data[y1_selection[n]].date.at(-1).replaceAll('-', ''))]);
-  //   }
-  //   for(var n = 0; n < y2_selection.length; n++){
-  //     fromdate = Math.max(...[fromdate, parseInt(y2data[y2_selection[n]].date[0].replaceAll('-', ''))]);
-  //     enddate = Math.max(...[enddate, parseInt(y2data[y2_selection[n]].date.at(-1).replaceAll('-', ''))]);
-  //   }
-  //   fromdate = ('' + fromdate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
-  //   enddate = ('' + enddate).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
-  //   layout.xaxis.range = [fromdate, enddate];
-
-  //   for (const [key, _data] of Object.entries(y1data)) {
-  //     let meta = srcIndicatorOpt[key];
-  //     let obj = {
-  //       x: _data.date,
-  //       y: _data.data,
-  //       type: 'scatter',
-  //       mode: 'lines',
-  //       name: meta.name,
-  //       showlegend: true,
-  //       hovertemplate: `${meta.name}${meta.hover}`,
-  //       yaxis: 'y1',
-  //     }
-  //     if (`${key}meta` in srcIndicator) {
-  //       obj.meta = srcIndicator[`${key}meta`].data;
-  //     }
-  //     data.push(obj);
-  //   };
-
-  //   for (const [key, _data] of Object.entries(y2data)) {
-  //     let meta = srcIndicatorOpt[key];
-  //     let obj = {
-  //       x: _data.date,
-  //       y: _data.data,
-  //       type: 'scatter',
-  //       mode: 'lines',
-  //       name: meta.name,
-  //       showlegend: true,
-  //       hovertemplate: `${meta.name}${meta.hover}`,
-  //       yaxis: 'y2',
-  //     }
-  //     if (`${key}meta` in srcIndicator) {
-  //       obj.meta = srcIndicator[`${key}meta`].data;
-  //     }
-  //     if (srcIndicatorOpt[key].unit === '%') {
-  //       layout.yaxis.zeroline = false;
-  //       layout.yaxis2.zeroline = true;
-  //       layout.yaxis2.zerolinecolor = 'grey';
-  //       layout.yaxis2.zerolinewidth = '1.5px';
-  //     }
-  //     data.push(obj);
-  //   };
-
-
-  //   Plotly.newPlot('plotly', data, layout, option)
-  //   .then(grid => {
-  //     $('a[data-title="Zoom"]').attr("data-title", "확대");
-  //     $('a[data-title="Pan"]').attr("data-title", "이동(패닝)");
-  //     $('a[data-title="Autoscale"]').attr("data-title", "자동 조정");
-  //     $('.modebar').prepend($('<div class="modebar-group"><a rel="tooltip" class="modebar-btn" data-title="스크롤 모드" data-toggle="false" data-gravity="n"><i class="bi bi-arrow-down-up"></i></a></div>'));
-  //   });
-  //   $('#plotly').focus();
-  // };
 
   $y1.on('select2:select', async function(e){
     if (y1_selection.length) {
