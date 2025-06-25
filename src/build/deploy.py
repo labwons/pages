@@ -199,7 +199,7 @@ if __name__ == "__main__":
                     .render({
                     "service": "marketmap",
                     "local": ENV == "local",
-                    "title": "Blank" if ENV == "local" else "LAB￦ONS: \uc2dc\uc7a5\uc9c0\ub3c4",
+                    "title": "404" if ENV == "local" else "LAB￦ONS: \uc2dc\uc7a5\uc9c0\ub3c4",
                     "nav": SYSTEM_NAV,
                     "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
                     "statusValue": marketMap.stat.to_dict(),
@@ -223,7 +223,7 @@ if __name__ == "__main__":
                     .render({
                     "service": "bubble",
                     "local": ENV == "local",
-                    "title": "Blank" if ENV == "local" else "LAB￦ONS: \uc885\ubaa9\ubd84\ud3ec",
+                    "title": "404" if ENV == "local" else "LAB￦ONS: \uc885\ubaa9\ubd84\ud3ec",
                     "nav": SYSTEM_NAV,
                     "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
                     "srcTickers": marketBubble.data.to_json(orient='index'),
@@ -267,7 +267,7 @@ if __name__ == "__main__":
                     .render({
                     "service": "stock",
                     "local": ENV == "local",
-                    "title": "Blank" if ENV == "local" else f"LAB￦ONS: {stock.name}",
+                    "title": "404" if ENV == "local" else f"LAB￦ONS: {stock.name}",
                     "nav": SYSTEM_NAV,
                     "ticker": ticker,
                     "name": stock.name,
@@ -291,7 +291,7 @@ if __name__ == "__main__":
                     .render({
                     "service": "macro",
                     "local": ENV == "local",
-                    "title": "Blank" if ENV == "local" else "LAB￦ONS: \uacbd\uc81c\u0020\uc9c0\ud45c",
+                    "title": "404" if ENV == "local" else "LAB￦ONS: \uacbd\uc81c\u0020\uc9c0\ud45c",
                     "nav": SYSTEM_NAV,
                     "tradingDate": f'{TRADING_DATE} (또는 최근 발표일) 기준',
                     "srcIndicator": dumps(macro.serialize()),
