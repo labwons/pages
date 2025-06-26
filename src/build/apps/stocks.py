@@ -23,6 +23,8 @@ class Stocks:
 
         __mem__ = dDict()
         for ticker in tickers:
+            if not ticker in basis.index:
+                continue
             general = basis.loc[ticker]
             ohlcv = price[ticker].dropna().astype(int)
             typical = (ohlcv.close + ohlcv.high + ohlcv.low) / 3
