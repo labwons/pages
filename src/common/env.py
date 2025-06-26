@@ -62,7 +62,7 @@ if ENV == "local":
 GITHUB = dDict()
 GITHUB.EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 GITHUB.CONFIG = dDict(
-    AFTERMARKET = False,
+    AFTERMARKET = True,
     STATEMENT = False,
     SECTOR = False,
     ECOS = False,
