@@ -951,6 +951,7 @@ if (SERVICE === "macro"){
         y:1.0
       },
       xaxis:{
+        autorange: false,
         tickformat: "%Y/%m/%d",
         showticklabels: true,
         showline: true,
