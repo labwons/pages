@@ -1211,7 +1211,7 @@ if (SERVICE === "stock"){
       },
       xaxis:{
         autorange: false,
-        range: [srcDate[0], srcDate[srcDate.length - 1]],
+        // range: [srcDate[0], srcDate[srcDate.length - 1]],
         tickformat: "%Y/%m/%d",
         showticklabels: true,
         showline: true,
