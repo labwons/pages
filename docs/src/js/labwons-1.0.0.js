@@ -1210,6 +1210,8 @@ if (SERVICE === "stock"){
         y:1.0
       },
       xaxis:{
+        autorange: false,
+        range: [srcDate[0], srcDate[srcDate.length - 1]],
         tickformat: "%Y/%m/%d",
         showticklabels: true,
         showline: true,
@@ -1259,7 +1261,7 @@ if (SERVICE === "stock"){
       }
     }];
     
-    Plotly.newPlot('plotly-technical', data, layout, option)
+    Plotly.newPlot('plotly', data, layout, option)
   };
 
   setTechnicalOption();
