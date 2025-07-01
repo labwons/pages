@@ -1,7 +1,7 @@
 try:
-    from ...common.struct import dDict
+    from ...common.dtype import dDict
 except ImportError:
-    from src.common.struct import dDict
+    from src.common.dtype import dDict
 from datetime import datetime
 
 

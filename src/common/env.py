@@ -1,7 +1,7 @@
 try:
-    from .struct import dDict
+    from .dtype import dDict
 except ImportError:
-    from src.common.struct import dDict
+    from src.common.dtype import dDict
 from datetime import datetime, timezone, timedelta
 import os
 
@@ -62,12 +62,12 @@ if ENV == "local":
 GITHUB = dDict()
 GITHUB.EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 GITHUB.CONFIG = dDict(
-    AFTERMARKET = True,
+    AFTERMARKET = False,
     STATEMENT = False,
     SECTOR = False,
     ECOS = False,
     FRED = False,
-    STOCKPRICE = True,
+    STOCKPRICE = False,
 )
 def __RESET__():
     for key, val in GITHUB.CONFIG:
