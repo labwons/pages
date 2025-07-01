@@ -511,6 +511,7 @@ if (SERVICE === "bubble"){
     var yObj = srcIndicatorOpt[y];
     var bubbleLayout = {
       dragmode: false,
+      doubleClick: false,
       margin:{
         l:20,
         r:0,
@@ -846,87 +847,6 @@ if (SERVICE === "macro"){
     });
   };
 
-  // plotMacro = function() {
-  //   $('#plotly').empty();
-  //   var series = [];
-  //   var yaxis = [{title:''}];
-  //   var width = [2]
-  //   var y1data = Object.fromEntries(y1_selection.map(key => [key, srcIndicator[key]]));
-  //   for (const [key, _data] of Object.entries(y1data)) {
-  //     series.push({
-  //       name:srcIndicatorOpt[key].name,
-  //       data:_data.date.map((dt, i) => ({x:dt, y:_data.data[i]}))
-  //     });
-  //   };
-
-  //   var y2min = 0;
-  //   var y2max = 0;
-  //   var y2data = Object.fromEntries(y2_selection.map(key => [key, srcIndicator[key]]));
-  //   for (const [key, _data] of Object.entries(y2data)) {
-  //     series.push({
-  //       name:srcIndicatorOpt[key].name,
-  //       data:_data.date.map((dt, i) => ({x:dt, y:_data.data[i]})),
-  //       yAxisIndex: 1
-  //     });
-  //     y2min = Math.min(...[y2min, Math.min(..._data.data)]);
-  //     y2max = Math.max(...[y2max, Math.max(..._data.data)]);
-  //   };
-
-  //   if (y2data.length) {
-  //     yaxis.push({title:'', opposite: true});
-  //     width.push(2);
-  //   }
-
-  //   const options = {
-  //     chart: {
-  //       type: 'line',
-  //       height: '100%',
-  //       zoom: {
-  //         enabled: !(__media__.isMobile || __media__.isTablet),
-  //         type: 'x',
-  //         autoScaleYaxis: true
-  //       },
-  //       toolbar: {
-  //         autoSelected: 'zoom',
-  //         tools: {
-  //           pan: true,
-  //           zoomin: true,
-  //           zoomout: true,
-  //           reset: true
-  //         }
-  //       }
-  //     },
-  //     stroke: {
-  //       width: width,
-  //       // curve: 'smooth'
-  //     },
-  //     series: series,
-  //     xaxis: {
-  //       type: 'datetime'
-  //     },
-  //     yaxis: yaxis,
-  //     tooltip: {
-  //       shared: true,
-  //       style: {
-  //         fontSize: '12px',
-  //         fontFamily: __fonts__
-  //       },
-  //       x: {
-  //         format: 'yyyy-MM-dd'
-  //       },
-  //       marker: {
-  //         show: false,
-  //     },
-  //     },
-  //     legend: {
-  //       position: 'top'
-  //     }
-  //   };
-
-  //   const chart = new ApexCharts(document.querySelector('#plotly'), options);
-  //   chart.render();
-  // };
-
   plotMacro = function() {
     let layout = {
       clickmode:'event',
@@ -938,6 +858,7 @@ if (SERVICE === "macro"){
         b:20
       }, 
       hovermode: 'x unified',
+      doubleClick: false,
       legend: {
         bgcolor:'white',
         borderwidth:0,
@@ -952,6 +873,7 @@ if (SERVICE === "macro"){
       },
       xaxis:{
         autorange: false,
+        fixedrange: true,
         tickformat: "%Y/%m/%d",
         showticklabels: true,
         showline: true,
@@ -1211,7 +1133,7 @@ if (SERVICE === "stock"){
       },
       xaxis:{
         autorange: false,
-        // range: [srcDate[0], srcDate[srcDate.length - 1]],
+        range: [srcDate[0], srcDate[srcDate.length - 1]],
         tickformat: "%Y/%m/%d",
         showticklabels: true,
         showline: true,
@@ -1229,6 +1151,10 @@ if (SERVICE === "stock"){
           yanchor: 'top',
           y:1.025
         },
+        rangeslider: {
+          visible: true,
+          thickness: 0.06
+        }
       },
       yaxis:{
         showline: true,

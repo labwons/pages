@@ -19,22 +19,29 @@ class Stocks:
     def __init__(self):
         self.basis = basis = read_parquet(FILE.BASELINE, engine='pyarrow')
         self.price = price = read_parquet(FILE.PRICE, engine='pyarrow')
+        self.astat = astat = read_parquet(FILE.ANNUAL_STATEMENT, engine='pyarrow')
+        # self.qstat = qstat = read_parquet(FILE.QUARTER_STATEMENT, engine='pyarrow')
         tickers = price.columns.get_level_values(0).unique()
 
         __mem__ = dDict()
         for ticker in tickers:
             if not ticker in basis.index:
+                self.log = f'     ...TICKER NOT FOUND IN BASELINE: {ticker}'
                 continue
             general = basis.loc[ticker]
             ohlcv = price[ticker].dropna().astype(int)
             typical = (ohlcv.close + ohlcv.high + ohlcv.low) / 3
+
+            annual = astat[ticker]
+            cap = PyKrx(ticker).getMarketCap()
 
             __mem__[ticker] = dDict(
                 name=general['name'],
                 date=ohlcv.index.astype(str).tolist(),
                 ohlcv=self.convertOhlcv(ohlcv),
                 sma=self.convertSma(typical),
-                bollinger=self.convertBollinger(typical)
+                bollinger=self.convertBollinger(typical),
+                sales_y=self.convertAnnualSales(annual, cap)
             )
         self.__mem__ = __mem__
         return
@@ -61,7 +68,7 @@ class Stocks:
             try:
                 objs[ticker] = PyKrx(ticker).ohlcv
             except Exception as reason:
-                self.log = f'     ...Failed TO FETCH PRICE: {ticker} / {reason}'
+                self.log = f'     ...FAILED TO FETCH PRICE: {ticker} / {reason}'
 
         if objs:
             self.price = concat(objs, axis=1)
@@ -111,8 +118,29 @@ class Stocks:
             obj[key] = round(obj[key], 1).tolist()
         return dumps(obj).replace(" ", "")
 
+    @classmethod
+    def convertAnnualSales(cls, statement:DataFrame, marketcap:DataFrame) -> str:
+        sales = statement[statement.columns.tolist()[:3] + ['영업이익률(%)']].dropna(how='all')
+        if len(sales.index) > 6:
+            sales = sales.iloc[:6]
+
+        settleMonth = sales.index[0].split("/")[-1]
+        if not marketcap.empty:
+            marketcap = marketcap[
+                marketcap.index.astype(str).str.contains(settleMonth) | \
+                (marketcap.index == marketcap.index[-1])
+            ]
+            marketcap.index = marketcap.index.strftime("%Y/%m")
+            marketcap = Series(index=marketcap.index, data=marketcap['시가총액'] / 1e8, dtype=int)
+            sales = concat([marketcap, sales], axis=1)
+        return dumps(sales.to_dict()).replace(" ", "")
+
 
 if __name__ == "__main__":
+    from pandas import set_option
+    set_option('display.expand_frame_repr', False)
+
+
     stocks = Stocks()
-    for t, stock in stocks:
-        print(t)
+    # for t, stock in stocks:
+    #     print(t)

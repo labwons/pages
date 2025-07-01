@@ -46,7 +46,7 @@ class PyKrx:
         self.freq = freq
         return
 
-    def _getMarketCap(self) -> DataFrame:
+    def getMarketCap(self) -> DataFrame:
         if not hasattr(self, "__cap"):
             cap = get_market_cap_by_date(
                 fromdate=(datetime.today() - timedelta(365 * 8)).strftime("%Y%m%d"),
@@ -98,7 +98,7 @@ class PyKrx:
 
     @property
     def quarterlyMarketCap(self) -> Series:
-        cap = self._getMarketCap()
+        cap = self.getMarketCap()
         cap = cap[
             cap.index.astype(str).str.contains('03') | \
             cap.index.astype(str).str.contains('06') | \
@@ -115,7 +115,7 @@ class PyKrx:
 
     @property
     def yearlyMarketCap(self) -> Series:
-        cap = self._getMarketCap()
+        cap = self.getMarketCap()
         cap = cap[cap.index.astype(str).str.contains('12') | (cap.index == cap.index[-1])]
         cap.index = cap.index.strftime("%Y/%m")
         cap.index.name = "year"
