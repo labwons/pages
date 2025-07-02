@@ -274,7 +274,8 @@ if __name__ == "__main__":
                     "date": stock.date,
                     "ohlcv": stock.ohlcv,
                     "sma": stock.sma,
-                    "bollinger": stock.bollinger
+                    "bollinger": stock.bollinger,
+                    "sales_y": stock.sales_y
                 })
             )
     context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK ', stocks.log, '']

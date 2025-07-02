@@ -18,7 +18,7 @@ class Macro:
         stime = perf_counter()
         self.log = f'  >> BUILD [MACRO]'
 
-        self.data = baseline.copy()
+        self.data = data = baseline.copy()
 
         # METADATA
         self.meta = {}
@@ -31,6 +31,29 @@ class Macro:
                     "group": meta.category,
                     "hover": meta.hover
                 }
+
+                if f'{key}YoY' in data:
+                    self.meta[f'{key}YoY'] = {
+                        "name": f'{label}(YoY)',
+                        "unit": '%',
+                        "group": meta.category,
+                        "hover": ': %{y:.2f}%<extra></extra>'
+                    }
+
+                if f'{key}MoM' in data:
+                    self.meta[f'{key}MoM'] = {
+                        "name": f'{label}(MoM)',
+                        "unit": '%',
+                        "group": meta.category,
+                        "hover": ': %{y:.2f}%<extra></extra>'
+                    }
+
+        # INTERNAL TESTING FOR METADATA COMPOSITE
+        # for key in data:
+        #     if key in self.meta or key.endswith('Text'):
+        #         continue
+        #     print(key)
+
 
         self.log = f'  >> BUILD END: {perf_counter() - stime:.2f}s'
         self._log[0] += f': {len(baseline.columns)} items'
@@ -107,8 +130,8 @@ if __name__ == "__main__":
     print(macro.log)
     # print(macro.serialize())
     # print(macro.meta)
-    print(macro.status)
-
-    for n, stat in enumerate(macro.status):
-        print(n + 1, stat)
+    # print(macro.status)
+    #
+    # for n, stat in enumerate(macro.status):
+    #     print(n + 1, stat)
 
