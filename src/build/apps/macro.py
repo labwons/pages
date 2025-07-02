@@ -47,6 +47,31 @@ class Macro:
                         "group": meta.category,
                         "hover": ': %{y:.2f}%<extra></extra>'
                     }
+                if key == '121Y015BECBLB01':
+                    self.meta['T10MT2'] = {
+                        "name": '장단기금리차(10Y-2Y)',
+                        "unit": '%',
+                        "group": meta.category,
+                        "hover": ': %{y:.2f}%<extra></extra>'
+                    }
+                    self.meta['HYSPREAD'] = {
+                        "name": '하이일드스프레드',
+                        "unit": '%',
+                        "group": meta.category,
+                        "hover": ': %{y:.2f}%<extra></extra>'
+                    }
+                    self.meta['LBDIFFN'] = {
+                        "name": '예대금리차(신규)',
+                        "unit": '%',
+                        "group": meta.category,
+                        "hover": ': %{y:.2f}%<extra></extra>'
+                    }
+                    self.meta['LBDIFFL'] = {
+                        "name": '예대금리차(잔액)',
+                        "unit": '%',
+                        "group": meta.category,
+                        "hover": ': %{y:.2f}%<extra></extra>'
+                    }
 
         # INTERNAL TESTING FOR METADATA COMPOSITE
         # for key in data:

@@ -65,7 +65,7 @@ GITHUB.CONFIG = dDict(
     AFTERMARKET = False,
     STATEMENT = False,
     SECTOR = False,
-    ECOS = False,
+    ECOS = True,
     FRED = False,
     STOCKPRICE = False,
 )
