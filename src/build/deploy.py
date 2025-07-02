@@ -277,7 +277,7 @@ if __name__ == "__main__":
                     "bollinger": stock.bollinger
                 })
             )
-    context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK ', '']
+    context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK ', stocks.log, '']
 
     # ---------------------------------------------------------------------------------------
     # DEPLOY MACRO
