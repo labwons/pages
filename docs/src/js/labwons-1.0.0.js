@@ -1092,6 +1092,7 @@ if (SERVICE === "macro"){
 ----------------------------------------------------------- */
 let setTechnicalOption;
 let setTechnicalChart;
+let setSalesChart;
 
 if (SERVICE === "stock"){
   const $techOpt = $('.indicators');
@@ -1133,7 +1134,10 @@ if (SERVICE === "stock"){
       },
       xaxis:{
         autorange: false,
-        range: [srcDate[0], srcDate[srcDate.length - 1]],
+        range: srcxRange,
+        rangebreaks: [
+          { bounds: ['sat', 'mon'] }
+        ],
         tickformat: "%Y/%m/%d",
         showticklabels: true,
         showline: true,
@@ -1189,6 +1193,123 @@ if (SERVICE === "stock"){
     
     Plotly.newPlot('plotly', data, layout, option)
   };
+
+  setSalesChart = function(period) {
+    let src = (period === 'sales-q') ? sales_q : sales_y;
+    const layout = {
+      margin:{
+        l:70, 
+        r:50, 
+        t:10, 
+        b:20
+      }, 
+      hovermode: 'x unified',
+      doubleClick: false,
+      legend: {
+        bgcolor:'white',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'right',
+        x:1.0,
+        yanchor:'top',
+        y:1.02
+      },
+      barmode: 'group',
+      yaxis: {
+        title: '[억원]',
+        tickformat: ',',
+        rangemode: 'tozero'
+      },
+      yaxis2: {
+        title: '영업이익률[%]',
+        overlaying: 'y',
+        side: 'right',
+        showgrid: false,
+        zeroline: false,
+      },
+    };
+    const option = {
+      showTips:false,
+      responsive:true,
+      displayModeBar:false,
+      displaylogo:false
+    };
+    
+    const revenue = {
+      x: src.index,
+      y: src.sales,
+      name: src.salesLabel,
+      text: src.salesText,
+      type: 'bar',
+      marker: { color: '#2ca02c', opacity:0.8 },
+      hovertemplate: `${src.salesLabel}: %{text}원<extra></extra>`
+    };
+
+    const opIncome = {
+      x: src.index,
+      y: src.profit,
+      name: src.profitLabel,
+      text: src.profitText,
+      type: 'bar',
+      marker: { color: '#ff7f0e', opacity:0.8 },
+      hovertemplate: `${src.profitLabel}: %{text}원<extra></extra>`
+    };
+
+    const netIncome = {
+      x: src.index,
+      y: src.netProfit,
+      name: src.netProfitLabel,
+      text: src.netProfitText,
+      type: 'bar',
+      marker: { color: '#d62728', opacity:0.8 },
+      hovertemplate: `${src.netProfitLabel}: %{text}원<extra></extra>`
+    };
+
+    const opMargin = {
+      x: src.index,
+      y: src.profitRate,
+      name: '영업이익률(%)',
+      yaxis: 'y2',
+      type: 'scatter',
+      mode: 'lines+markers',
+      line: { color: '#d62728', width: 3, opacity:0.9 },
+      marker: { size: 8, opacity:0.9 },
+      hovertemplate: '영업이익율(%): %{y}%<extra></extra>'
+    };
+
+    let data = [revenue, opIncome, netIncome, opMargin];
+    if ("marketcap" in src){
+      const cap = {
+        x: src.index,
+        y: src.marketcap,
+        name: src.marketcapLabel,
+        text: src.marketcapText,
+        type: 'bar',
+        marker: { color: '#1f77b4', opacity:0.8 },
+        hovertemplate: `${src.marketcapLabel}: %{text}원<extra></extra>`
+      };
+      data.unshift(cap);
+    }
+    Plotly.newPlot('plotly', data, layout, option)
+  };
+
+  $techOpt.on('select2:select', function(e){
+    let _val = e.params.data.id;
+    let _cls = e.params.data.element.dataset.class;
+    if (_cls === "standalone"){
+      $(this).val([_val]).trigger('change');
+      if ((_val === "sales-y") || (_val === "sales-q")){
+        setSalesChart(_val);
+      }
+    }
+    
+  });
+  $techOpt.on('select2:unselect', function(e){
+
+  });
 
   setTechnicalOption();
   setTechnicalChart();

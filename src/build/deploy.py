@@ -271,6 +271,7 @@ if __name__ == "__main__":
                     "nav": SYSTEM_NAV,
                     "ticker": ticker,
                     "name": stock.name,
+                    "xrange": stocks.xrange,
                     "date": stock.date,
                     "ohlcv": stock.ohlcv,
                     "sma": stock.sma,

@@ -137,10 +137,12 @@
 {% block data %}
   <script type="text/javascript">
     const SERVICE = "stock";
+    const srcxRange = {{ xrange }};
     const srcDate = {{ date }};
     const srcOhlcv = {{ ohlcv }};
     const srcSma = {{ sma }};
     const srcBollinger = {{ bollinger }};
+    const sales_y = {{ sales_y }};
   </script>
 {% endblock %}
 

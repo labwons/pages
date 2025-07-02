@@ -20,3 +20,12 @@ def krw2currency(krw: int, limit:str='') -> Union[str, float]:
         return f'{int(krw // 10000)}억 {int(krw % 10000)}만'
     return f'{int(krw // 10000)}만'
 
+def str2num(src: str) -> int or float:
+    if isinstance(src, float):
+        return src
+    src = "".join([char for char in src if char.isdigit() or char == "."])
+    if not src or src == ".":
+        return nan
+    if "." in src:
+        return float(src)
+    return int(src)
