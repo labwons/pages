@@ -155,7 +155,7 @@ class Stocks:
             obj['marketcap'] = sales['시가총액'].tolist()
             obj['marketcapLabel'] = '시가총액'
             obj['marketcapText'] = [krw2currency(v) for v in e_sales['시가총액']]
-            obj['marketcapText'][-1] += '(최근)'
+            obj['marketcapText'][-1] = f"{obj['marketcapText'][-1]}(최근)"
         return dumps(obj).replace("NaN", "null")
 
 
@@ -165,5 +165,6 @@ if __name__ == "__main__":
 
 
     stocks = Stocks()
-    # for t, stock in stocks:
-    #     print(t)
+    for t, stock in stocks:
+        print(t)
+        print(stock.sales_y)
