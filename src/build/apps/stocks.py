@@ -123,9 +123,13 @@ class Stocks:
     @classmethod
     def convertAnnualSales(cls, statement:DataFrame, marketcap:DataFrame) -> str:
         sales = statement[statement.columns.tolist()[:3] + ['영업이익률(%)']].dropna(how='all')
-        if len(sales.index) > 6:
-            sales = sales.iloc[:6]
         sales = sales.map(str2num)
+        if len(sales.index) > 5:
+            if "(" in sales.index[-1]:
+                sales = sales.iloc[:5]
+            else:
+                sales = sales.iloc[:4]
+
         columns = sales.columns
         settleMonth = sales.index[0].split("/")[-1]
         if not marketcap.empty:
@@ -136,15 +140,12 @@ class Stocks:
             marketcap.index = marketcap.index.strftime("%Y/%m")
             if "(" in sales.index[-1]:
                 marketcap = marketcap.rename(index={marketcap.index[-1]:sales.index[-1]})
-            marketcap = marketcap[marketcap.index.isin(sales.index)]
+                marketcap = marketcap[marketcap.index.isin(sales.index)]
+            else:
+                marketcap = marketcap[marketcap.index.isin(sales.index) | (marketcap.index == marketcap.index[-1])]
             marketcap = Series(index=marketcap.index, data=marketcap['시가총액'] / 1e8, dtype=int)
-            try:
-                sales = concat([marketcap, sales], axis=1)
-            except Exception:
-                print("오류")
-                print(sales)
-                print(marketcap)
-            sales = sales.iloc[-6:]
+            sales = concat([marketcap, sales], axis=1)
+
         e_sales = 1e8 * sales
         obj = {
             'index': sales.index.tolist(),
@@ -164,7 +165,7 @@ class Stocks:
             obj['marketcap'] = sales['시가총액'].tolist()
             obj['marketcapLabel'] = '시가총액'
             obj['marketcapText'] = [krw2currency(v) for v in e_sales['시가총액']]
-            obj['marketcapText'][-1] = f"{obj['marketcapText'][-1]}(최근)"
+            obj['marketcapText'][-1] = f"(현재){obj['marketcapText'][-1]}"
         return dumps(obj).replace("NaN", "null")
 
 

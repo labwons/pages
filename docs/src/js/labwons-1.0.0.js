@@ -1161,6 +1161,7 @@ if (SERVICE === "stock"){
         }
       },
       yaxis:{
+        autorange: true,
         showline: true,
         showticklabels: true,
         tickformat: ',d'
@@ -1203,8 +1204,9 @@ if (SERVICE === "stock"){
         t:10, 
         b:20
       }, 
-      hovermode: 'x unified',
+      dragmode: false,
       doubleClick: false,
+      hovermode: 'x unified',      
       legend: {
         bgcolor:'white',
         borderwidth:0,
@@ -1235,7 +1237,8 @@ if (SERVICE === "stock"){
       showTips:false,
       responsive:true,
       displayModeBar:false,
-      displaylogo:false
+      displaylogo:false,
+      scrollZoom: false
     };
     
     const revenue = {

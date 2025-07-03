@@ -46,7 +46,7 @@ class MarketMap:
         baseline['name'] = baseline[['name', 'market']].apply(lambda r: f'{r["name"]}*' if r.market == 'KOSDAQ' else r['name'], axis=1)
         baseline['ceiling'] = baseline['industryName']
         baseline['meta'] = baseline.name + '(' + baseline.index + ')<br>' \
-                     + '시가총액: ' + baseline['size'].apply(krw2currency) + '원<br>' \
+                     + '시가총액: ' + baseline['marketCap'].apply(krw2currency) + '원<br>' \
                      + '종가: ' + baseline.close.apply(lambda x: f"{x:,d}원")
 
         # IF INDUSTRY == SECTOR, INDUSTRY INFORMATION WILL BE DROPPED.
