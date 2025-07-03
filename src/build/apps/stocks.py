@@ -134,9 +134,16 @@ class Stocks:
                 (marketcap.index == marketcap.index[-1])
             ]
             marketcap.index = marketcap.index.strftime("%Y/%m")
-            marketcap = marketcap.rename(index={marketcap.index[-1]:sales.index[-1]})
+            if "(" in sales.index[-1]:
+                marketcap = marketcap.rename(index={marketcap.index[-1]:sales.index[-1]})
+            marketcap = marketcap[marketcap.index.isin(sales.index)]
             marketcap = Series(index=marketcap.index, data=marketcap['시가총액'] / 1e8, dtype=int)
-            sales = concat([marketcap, sales], axis=1)
+            try:
+                sales = concat([marketcap, sales], axis=1)
+            except Exception:
+                print("오류")
+                print(sales)
+                print(marketcap)
             sales = sales.iloc[-6:]
         e_sales = 1e8 * sales
         obj = {
