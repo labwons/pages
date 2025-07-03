@@ -66,7 +66,7 @@ GITHUB.CONFIG = dDict(
     STATEMENT = True,
     SECTOR = False,
     ECOS = False,
-    FRED = False,
+    FRED = True,
     STOCKPRICE = False,
 )
 def __RESET__():
