@@ -8,7 +8,7 @@ except ImportError:
     from src.fetch.stock.krx import PyKrx
 from json import dumps
 from pandas import DataFrame, Series, DateOffset
-from pandas import concat, read_parquet
+from pandas import concat, read_parquet, to_datetime
 from time import perf_counter
 from typing import List
 
@@ -139,7 +139,7 @@ class Stocks:
 
         columns = sales.columns
         if not marketcap.empty:
-            marketcap.index = marketcap.index.strftime("%Y/%m")
+            marketcap.index = to_datetime(marketcap.index).strftime("%Y/%m")
             marketcap = marketcap[marketcap.index.isin(sales.index) | (marketcap.index == marketcap.index[-1])]
             if "(" in sales.index[-1]:
                 marketcap = marketcap.rename(index={marketcap.index[-1]:sales.index[-1]})
