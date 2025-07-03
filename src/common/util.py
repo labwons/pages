@@ -29,6 +29,8 @@ def krw2currency(krw: int, limit:str='억') -> Union[str, float]:
 def str2num(src: str) -> int or float:
     if isinstance(src, float):
         return src
+    if src is None:
+        return nan
     src = "".join([char for char in src if char.isdigit() or char == "."])
     if not src or src == ".":
         return nan

@@ -1100,18 +1100,135 @@ if (SERVICE === "stock"){
   var techSupportIndicators = [];
 
   setTechnicalOption = function() {
-    $techOpt.val(['volume']).trigger('change');
-    techSupportIndicators.push('volume');
     $techOpt.select2({
       maximumSelectionLength: 3,
-      minimumResultsForSearch: Infinity
+      minimumResultsForSearch: Infinity,
     });
     
   };
 
   setTechnicalChart = function() {
-    // if (srcOhlcv.high[])
-    let layout = {
+    let xRangeN = srcXrange;
+    let data = [{
+      name: "",
+      x: srcDate,
+      open: srcOhlcv.open,
+      high: srcOhlcv.high,
+      low: srcOhlcv.low,
+      close: srcOhlcv.close,
+      type: 'candlestick',
+      showlegend: false,
+      increasing: {
+        line: { color: '#C92A2A' },
+        fillcolor: '#C92A2A'
+      },
+      decreasing: {
+        line: { color: '#1861A8' },
+        fillcolor: '#1861A8'
+      },
+      xaxis: 'x',
+      yaxis: 'y'
+    },{
+      name:"거래량",
+      x: srcDate,
+      y: srcOhlcv.volume,
+      type: 'bar',
+      showlegend: false,
+      marker: {color:'lightgrey'},
+      xaxis: 'x',
+      yaxis: 'y2'
+    }];
+    let yRange = [Math.min(...srcOhlcv.low.slice(xRangeN[0], xRangeN[1])), Math.max(...srcOhlcv.high.slice(xRangeN[0], xRangeN[1]))];
+
+    if (techMainIndicators.includes('bollingerx2')) {
+      data.push({
+        x:srcDate,
+        y:srcBollinger.upper,
+        type: 'scatter',
+        mode: 'lines',
+        showlegend: false,
+        line: {
+          color: 'grey',
+          dash:'dot'
+        },
+        hovertemplate: 'x2상단: %{y}원<extra></extra>'
+      });
+      data.push({
+        x:srcDate,
+        y:srcBollinger.lower,
+        type: 'scatter',
+        mode: 'lines',
+        showlegend: false,
+        line: {
+          color: 'grey',
+          dash:'dot'
+        },
+        hovertemplate: 'x2하단: %{y}원<extra></extra>'
+      });
+      data.push({
+        x:srcDate,
+        y:srcBollinger.middle,
+        type: 'scatter',
+        mode: 'lines',
+        showlegend: false,
+        line: {
+          color: 'brown',
+        },
+        hovertemplate: '중간: %{y}원<extra></extra>'
+      });
+      var yMin = Math.min(...srcBollinger.lower.slice(xRangeN[0], xRangeN[1]));
+      var yMax = Math.max(...srcBollinger.upper.slice(xRangeN[0], xRangeN[1]));
+      if (yMin < yRange[0]) {
+        yRange = [yMin, yRange[1]];
+      }
+      if (yMax > yRange[1]) {
+        yRange = [yRange[0], yMax];
+      }
+    }
+
+    if (techMainIndicators.includes('bollingerx1')) {
+      data.push({
+        x:srcDate,
+        y:srcBollinger.upperTrend,
+        type: 'scatter',
+        mode: 'lines',
+        showlegend: false,
+        line: {
+          color: 'green',
+          dash:'dash'
+        },
+        hovertemplate: 'x1상단: %{y}원<extra></extra>'
+      });
+      data.push({
+        x:srcDate,
+        y:srcBollinger.lowerTrend,
+        type: 'scatter',
+        mode: 'lines',
+        showlegend: false,
+        line: {
+          color: 'green',
+          dash:'dash'
+        },
+        hovertemplate: 'x1하단: %{y}원<extra></extra>'
+      });
+    }
+
+    if (techMainIndicators.includes('sma')) {
+      Object.entries(srcSma).forEach(([key, _data]) => {
+        var _name = key.replace("sma", "") + '일';
+        data.push({
+          name:_name,
+          x:srcDate,
+          y:_data,
+          type: 'scatter',
+          mode: 'lines',
+          showlegend: true,
+          hovertemplate: `${_name}: %{y}원<extra></extra>`
+        })
+      });
+    }
+
+    const layout = {
       dragmode: __media__.isMobile ? false : 'pan',
       margin:{
         l:60, 
@@ -1132,71 +1249,72 @@ if (SERVICE === "stock"){
         yanchor:'top',
         y:1.0
       },
+      grid: {
+        rows: 2,
+        columns: 1,
+        roworder: 'top to bottom',
+        rowheights: [0.9, 0.1]
+      },
       xaxis:{
         autorange: false,
-        range: srcxRange,
+        range: [srcDate[xRangeN[0]], srcDate[xRangeN[1]]],
         rangebreaks: [
           { bounds: ['sat', 'mon'] }
         ],
+        showline: false,
+        // domain: [0,1],
         tickformat: "%Y/%m/%d",
-        showticklabels: true,
-        showline: true,
-        rangeselector: {
-          buttons: [
-            { step: 'all', label: 'All' },
-            { count: 6, label: '6M', step:'month', stepmode: 'backward'},
-            { count: 1, label: 'YTD', step:'year', stepmode: 'todate'},
-            { count: 1, label: '1Y', step: 'year', stepmode: 'backward' },
-            { count: 3, label: '3Y', step: 'year', stepmode: 'backward' },
-            { count: 5, label: '5Y', step: 'year', stepmode: 'backward' }        
-          ],
-          xanchor: 'left',
-          x: 0,
-          yanchor: 'top',
-          y:1.025
-        },
+        showticklabels: false,
+        
+        // rangeselector: {
+        //   buttons: [
+        //     { step: 'all', label: 'All' },
+        //     { count: 6, label: '6M', step:'month', stepmode: 'backward'},
+        //     { count: 1, label: 'YTD', step:'year', stepmode: 'todate'},
+        //     { count: 1, label: '1Y', step: 'year', stepmode: 'backward' },
+        //     { count: 3, label: '3Y', step: 'year', stepmode: 'backward' },
+        //     { count: 5, label: '5Y', step: 'year', stepmode: 'backward' }        
+        //   ],
+        //   xanchor: 'left',
+        //   x: 0,
+        //   yanchor: 'top',
+        //   y:1.025
+        // },
         rangeslider: {
-          visible: true,
-          thickness: 0.06
+          visible: false,
+          // thickness: 0.06
         }
       },
+      xaxis2:{
+        tickformat: "%Y/%m/%d",
+        showticklabels: false,
+      },
       yaxis:{
-        autorange: true,
+        autorange: false,
+        range: [0.95 * yRange[0], 1.05 * yRange[1]],
         showline: true,
         showticklabels: true,
-        tickformat: ',d'
+        tickformat: ',d',
+        domain:[0.1, 1],
+        anchor: 'x',
       },
+      yaxis2: {
+        domain: [0, 0.1],
+        anchor: 'x',
+      }
     };
-    let option = {
+    const option = {
       showTips:false,
       responsive:true,
       displayModeBar:true,
       modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
       displaylogo:false
     };
-    var data = [{
-      x: srcDate,
-      open: srcOhlcv.open,
-      high: srcOhlcv.high,
-      low: srcOhlcv.low,
-      close: srcOhlcv.close,
-      type: 'candlestick',
-      showlegend: false,
-      increasing: {
-        line: { color: '#C92A2A' },
-        fillcolor: '#C92A2A'
-      },
-      decreasing: {
-        line: { color: '#1861A8' },
-        fillcolor: '#1861A8'
-      }
-    }];
-    
     Plotly.newPlot('plotly', data, layout, option)
   };
 
   setSalesChart = function(period) {
-    let src = (period === 'sales-q') ? sales_q : sales_y;
+    let src = (period === 'sales-q') ? srcSalesQ : srcSalesY;
     const layout = {
       margin:{
         l:70, 
@@ -1299,6 +1417,103 @@ if (SERVICE === "stock"){
     Plotly.newPlot('plotly', data, layout, option)
   };
 
+  setAssetChart = function() {
+    const layout = {
+      margin:{
+        l:70, 
+        r:50, 
+        t:10, 
+        b:20
+      }, 
+      dragmode: false,
+      doubleClick: false,
+      hovermode: 'x unified',      
+      legend: {
+        bgcolor:'white',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'right',
+        x:1.0,
+        yanchor:'top',
+        y:1.02
+      },
+      barmode: 'stack',
+      yaxis: {
+        autorange: false,
+        range:[0, 1.1 * Math.max(...srcAsset.asset)],
+        title: '[억원]',
+        tickformat: ',',
+        rangemode: 'tozero'
+      },
+      yaxis2: {
+        title: '부채율[%]',
+        overlaying: 'y',
+        side: 'right',
+        showgrid: false,
+        zeroline: false,
+      },
+    };
+    const option = {
+      showTips:false,
+      responsive:true,
+      displayModeBar:false,
+      displaylogo:false,
+      scrollZoom: false
+    };
+    
+    const asset = {
+      x: srcAsset.index,
+      y: srcAsset.asset,
+      name: "자산총액",
+      text: srcAsset.assetText,
+      textposition: 'top center',
+      texttemplate: '%{text}원',
+      showlegend: false,
+      mode: 'text',
+      type: 'scatter',
+      hovertemplate: '자산총액: %{text}원<extra></extra>'
+    };
+
+    const capital = {
+      x: srcAsset.index,
+      y: srcAsset.capital,
+      name: '자본총액',
+      text: srcAsset.capitalText,
+      type: 'bar',
+      marker: { color: '#2ca02c', opacity:0.8 },
+      hovertemplate: '자본총액: %{text}원<extra></extra>'
+    };
+
+    const debt = {
+      x: srcAsset.index,
+      y: srcAsset.debt,
+      name: '부채총액',
+      text: srcAsset.debtText,
+      type: 'bar',
+      marker: { color: '#d62728', opacity:0.8 },
+      hovertemplate: '부채총액: %{text}원<extra></extra>'
+    };
+
+    const debtRatio = {
+      x: srcAsset.index,
+      y: srcAsset.debtRatio,
+      name: '부채율(%)',
+      yaxis: 'y2',
+      type: 'scatter',
+      mode: 'lines+markers',
+      line: { color: '#d62728', width: 3, opacity:0.9 },
+      marker: { size: 8, opacity:0.9 },
+      hovertemplate: '부채율(%): %{y}%<extra></extra>'
+    };
+
+    let data = [asset, capital, debt, debtRatio];
+    Plotly.newPlot('plotly', data, layout, option)
+  };
+
+
   $techOpt.on('select2:select', function(e){
     let _val = e.params.data.id;
     let _cls = e.params.data.element.dataset.class;
@@ -1306,11 +1521,25 @@ if (SERVICE === "stock"){
       $(this).val([_val]).trigger('change');
       if ((_val === "sales-y") || (_val === "sales-q")){
         setSalesChart(_val);
+      } else if (_val === "asset") {
+        setAssetChart();
       }
+    } else if (_cls === "main") {
+      techMainIndicators.push(_val);
+      setTechnicalChart();
     }
     
   });
   $techOpt.on('select2:unselect', function(e){
+
+  });
+  $('#plotly').on('plotly_relayout', function(e){
+    if (e['xaxis.range[0]'] && e['xaxis.range[1]']) {
+      const x0 = e['xaxis.range[0]'];
+      const x1 = e['xaxis.range[1]'];
+      console.log(x0);
+      console.log(x1);
+    }
 
   });
 

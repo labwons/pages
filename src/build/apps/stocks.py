@@ -22,10 +22,9 @@ class Stocks:
         self.basis = basis = read_parquet(FILE.BASELINE, engine='pyarrow')
         self.price = price = read_parquet(FILE.PRICE, engine='pyarrow')
         self.astat = astat = read_parquet(FILE.ANNUAL_STATEMENT, engine='pyarrow')
-        # self.qstat = qstat = read_parquet(FILE.QUARTER_STATEMENT, engine='pyarrow')
+        self.qstat = qstat = read_parquet(FILE.QUARTER_STATEMENT, engine='pyarrow')
         tickers = price.columns.get_level_values(0).unique()
         xrange = [price.index[-1] - DateOffset(months=6), price.index[-1]]
-        self.xrange = [x.strftime("%Y-%m-%d") for x in xrange]
 
         __mem__ = dDict()
         for ticker in tickers:
@@ -37,15 +36,19 @@ class Stocks:
             typical = (ohlcv.close + ohlcv.high + ohlcv.low) / 3
 
             annual = astat[ticker]
+            quarter = qstat[ticker]
             cap = PyKrx(ticker).getMarketCap()
 
             __mem__[ticker] = dDict(
                 name=general['name'],
                 date=ohlcv.index.astype(str).tolist(),
+                xrange=[ohlcv.index.get_loc(xrange[0]), len(ohlcv) - 1],
                 ohlcv=self.convertOhlcv(ohlcv),
                 sma=self.convertSma(typical),
                 bollinger=self.convertBollinger(typical),
-                sales_y=self.convertAnnualSales(annual, cap)
+                sales_y=self.convertSales(annual, cap),
+                sales_q=self.convertSales(quarter, cap),
+                asset=self.convertAsset(annual, quarter)
             )
         self.__mem__ = __mem__
         return
@@ -121,28 +124,26 @@ class Stocks:
         return dumps(obj).replace(" ", "").replace("NaN", "null")
 
     @classmethod
-    def convertAnnualSales(cls, statement:DataFrame, marketcap:DataFrame) -> str:
+    def convertSales(cls, statement:DataFrame, marketcap:DataFrame) -> str:
         sales = statement[statement.columns.tolist()[:3] + ['영업이익률(%)']].dropna(how='all')
         sales = sales.map(str2num)
-        if len(sales.index) > 5:
-            if "(" in sales.index[-1]:
-                sales = sales.iloc[:5]
-            else:
-                sales = sales.iloc[:4]
+        sales = sales.sort_index()
+        for n, date in enumerate(sales.index):
+            if "(" in date:
+                sales = sales.iloc[:n + 1]
+                if len(sales) > 5:
+                    sales = sales.iloc[-5:]
+        if not "(" in sales.index[-1]:
+            if len(sales) > 4:
+                sales = sales.iloc[-4:]
 
         columns = sales.columns
-        settleMonth = sales.index[0].split("/")[-1]
         if not marketcap.empty:
-            marketcap = marketcap[
-                marketcap.index.astype(str).str.contains(settleMonth) | \
-                (marketcap.index == marketcap.index[-1])
-            ]
             marketcap.index = marketcap.index.strftime("%Y/%m")
+            marketcap = marketcap[marketcap.index.isin(sales.index) | (marketcap.index == marketcap.index[-1])]
             if "(" in sales.index[-1]:
                 marketcap = marketcap.rename(index={marketcap.index[-1]:sales.index[-1]})
-                marketcap = marketcap[marketcap.index.isin(sales.index)]
-            else:
-                marketcap = marketcap[marketcap.index.isin(sales.index) | (marketcap.index == marketcap.index[-1])]
+
             marketcap = Series(index=marketcap.index, data=marketcap['시가총액'] / 1e8, dtype=int)
             sales = concat([marketcap, sales], axis=1)
 
@@ -168,6 +169,33 @@ class Stocks:
             obj['marketcapText'][-1] = f"(현재){obj['marketcapText'][-1]}"
         return dumps(obj).replace("NaN", "null")
 
+    @classmethod
+    def convertAsset(cls, a:DataFrame, q:DataFrame):
+        cols = ['자산총계(억원)', '부채총계(억원)', '자본총계(억원)', '부채비율(%)']
+        def _asset(_df_:DataFrame) -> DataFrame:
+            _df_ = _df_[cols]
+            _df_.columns = [col.replace("(억원)", "") for col in _df_]
+            return _df_.dropna(how='all')
+
+        a_asset = _asset(a)
+        a_asset = a_asset[~a_asset.index.str.endswith("(E)")]
+        q_asset = _asset(q)
+        if q_asset.index[-1] == a_asset.index[-1]:
+            asset = a_asset
+        else:
+            asset = concat([a_asset, q_asset.iloc[[-1]]], axis=0)
+        asset = asset.iloc[-5:].map(str2num)
+        obj = {
+            "index": asset.index.tolist(),
+            "asset": asset["자산총계"].tolist(),
+            "assetText": [krw2currency(1e8 * v) for v in asset["자산총계"]],
+            "capital": asset["자본총계"].tolist(),
+            "capitalText": [krw2currency(1e8 * v) for v in asset["자본총계"]],
+            "debt": asset["부채총계"].tolist(),
+            "debtText": [krw2currency(1e8 * v) for v in asset["부채총계"]],
+            "debtRatio": asset['부채비율(%)'].tolist()
+        }
+        return dumps(obj).replace("NaN", "null")
 
 if __name__ == "__main__":
     from pandas import set_option

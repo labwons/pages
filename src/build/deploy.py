@@ -271,12 +271,14 @@ if __name__ == "__main__":
                     "nav": SYSTEM_NAV,
                     "ticker": ticker,
                     "name": stock.name,
-                    "xrange": stocks.xrange,
+                    "xrange": stock.xrange,
                     "date": stock.date,
                     "ohlcv": stock.ohlcv,
                     "sma": stock.sma,
                     "bollinger": stock.bollinger,
-                    "sales_y": stock.sales_y
+                    "sales_y": stock.sales_y,
+                    "sales_q": stock.sales_q,
+                    "asset": stock.asset
                 })
             )
     context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK ', stocks.log, '']
