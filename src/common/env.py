@@ -84,11 +84,11 @@ if __name__ == "__main__":
     # print(FILE.BASELINE)
     # print(FILE.GROUP)
     # print(FILE.ANNUAL_STATEMENT)
-    print(GITHUB.CONFIG)
-    GITHUB.CONFIG.RESET()
-    print(GITHUB.CONFIG)
-    GITHUB.CONFIG.ECOS = GITHUB.CONFIG.STATEMENT = True
-    print(GITHUB.CONFIG)
+    # print(GITHUB.CONFIG)
+    # GITHUB.CONFIG.RESET()
+    # print(GITHUB.CONFIG)
+    # GITHUB.CONFIG.ECOS = GITHUB.CONFIG.STATEMENT = True
+    # print(GITHUB.CONFIG)
 
     for key, value in os.environ.items():
         print(key, value)
