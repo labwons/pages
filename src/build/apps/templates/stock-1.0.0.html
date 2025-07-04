@@ -159,11 +159,13 @@
               <select name="indicators" class="stock-select indicators" multiple="multiple">
                 <option></option>
                 <optgroup label="주 지표">
+                  <option value="ohlcv" data-class="main" selected>주가</option>
                   <option value="sma" data-class="main">이동평균선</option>
                   <option value="bollingerx2" data-class="main">볼린저밴드x2</option>
                   <option value="bollingerx1" data-class="main">볼린저밴드x1</option>
                 </optgroup>
                 <optgroup label="보조 지표">
+                  <option value="volume" data-class="support">거래량</option>
                   <option value="macd" data-class="support">MACD</option>
                   <option value="rsi" data-class="support">RSI</option>
                 </optgroup>

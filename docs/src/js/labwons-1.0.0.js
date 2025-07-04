@@ -44,6 +44,22 @@ const __media__ = {
 }
 const __fonts__ = 'NanumGothic, Nanum Gothic, Open Sans, sans-serif';
 
+function __mergeJson__(target, source) {
+  for (const key in source) {
+    if (
+      source[key] &&
+      typeof source[key] === 'object' &&
+      !Array.isArray(source[key])
+    ) {
+      if (!target[key]) target[key] = {};
+      __mergeJson__(target[key], source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  }
+  return target;
+}
+
 /* -----------------------------------------------------------
  * MARKET MAP OPERATION 
 ----------------------------------------------------------- */
@@ -193,6 +209,7 @@ if (SERVICE === "marketmap"){
       hovertemplate: '%{meta}<br>' + srcIndicatorOpt[key].label + ': %{text}<extra></extra>',
       opacity:0.9
     };
+
     var tickers = [];
     Object.entries(srcTicker).forEach(([ticker, obj]) => {
       if (
@@ -205,11 +222,15 @@ if (SERVICE === "marketmap"){
         }
       }
     });
+    tickers.forEach(obj => {
+      obj[key] = parseFloat(obj[key].replace(srcIndicatorOpt[key].unit, ""));
+    });
+    
     tickers.sort((a, b) => a[key] - b[key]).forEach(item => {
       data.x.push(Math.abs(item[key]));
       data.y.push(item.name);
       data.marker.color.push(item[`${key}Color`]);
-      data.text.push(item[key] + srcIndicatorOpt[key].unit);
+      data.text.push(`${item[key]}${srcIndicatorOpt[key].unit}`);
       data.meta.push(item.meta);
     });
     data.x = data.x.map(item => item + 0.3333 * Math.max(...data.x));
@@ -1093,22 +1114,30 @@ if (SERVICE === "macro"){
 let setTechnicalOption;
 let setTechnicalChart;
 let setSalesChart;
+let setAssetChart;
+let calcXrange;
+let calcYrange;
 
 if (SERVICE === "stock"){
   const $techOpt = $('.indicators');
-  var techMainIndicators = [];
-  var techSupportIndicators = [];
+  var chartSelected = {
+    techMain:['ohlcv'],
+    techSupp:[],
+    standalone:[],
+  };
 
   setTechnicalOption = function() {
     $techOpt.select2({
       maximumSelectionLength: 3,
       minimumResultsForSearch: Infinity,
     });
-    
   };
 
   setTechnicalChart = function() {
-    let xRangeN = srcXrange;
+    if(!chartSelected.techMain.length){
+      $('#plotly').empty();
+      return
+    }
     let data = [{
       name: "",
       x: srcDate,
@@ -1128,19 +1157,9 @@ if (SERVICE === "stock"){
       },
       xaxis: 'x',
       yaxis: 'y'
-    },{
-      name:"거래량",
-      x: srcDate,
-      y: srcOhlcv.volume,
-      type: 'bar',
-      showlegend: false,
-      marker: {color:'lightgrey'},
-      xaxis: 'x',
-      yaxis: 'y2'
     }];
-    let yRange = [Math.min(...srcOhlcv.low.slice(xRangeN[0], xRangeN[1])), Math.max(...srcOhlcv.high.slice(xRangeN[0], xRangeN[1]))];
 
-    if (techMainIndicators.includes('bollingerx2')) {
+    if (chartSelected.techMain.includes('bollingerx2')) {
       data.push({
         x:srcDate,
         y:srcBollinger.upper,
@@ -1151,7 +1170,9 @@ if (SERVICE === "stock"){
           color: 'grey',
           dash:'dot'
         },
-        hovertemplate: 'x2상단: %{y}원<extra></extra>'
+        hovertemplate: 'x2상단: %{y}원<extra></extra>',
+        xaxis: 'x',
+        yaxis: 'y'
       });
       data.push({
         x:srcDate,
@@ -1163,9 +1184,12 @@ if (SERVICE === "stock"){
           color: 'grey',
           dash:'dot'
         },
-        hovertemplate: 'x2하단: %{y}원<extra></extra>'
+        hovertemplate: 'x2하단: %{y}원<extra></extra>',
+        xaxis: 'x',
+        yaxis: 'y'
       });
       data.push({
+        name: '중간선',
         x:srcDate,
         y:srcBollinger.middle,
         type: 'scatter',
@@ -1174,19 +1198,13 @@ if (SERVICE === "stock"){
         line: {
           color: 'brown',
         },
-        hovertemplate: '중간: %{y}원<extra></extra>'
+        hovertemplate: '중간: %{y}원<extra></extra>',
+        xaxis: 'x',
+        yaxis: 'y'
       });
-      var yMin = Math.min(...srcBollinger.lower.slice(xRangeN[0], xRangeN[1]));
-      var yMax = Math.max(...srcBollinger.upper.slice(xRangeN[0], xRangeN[1]));
-      if (yMin < yRange[0]) {
-        yRange = [yMin, yRange[1]];
-      }
-      if (yMax > yRange[1]) {
-        yRange = [yRange[0], yMax];
-      }
     }
 
-    if (techMainIndicators.includes('bollingerx1')) {
+    if (chartSelected.techMain.includes('bollingerx1')) {
       data.push({
         x:srcDate,
         y:srcBollinger.upperTrend,
@@ -1197,7 +1215,9 @@ if (SERVICE === "stock"){
           color: 'green',
           dash:'dash'
         },
-        hovertemplate: 'x1상단: %{y}원<extra></extra>'
+        hovertemplate: 'x1상단: %{y}원<extra></extra>',
+        xaxis: 'x',
+        yaxis: 'y'
       });
       data.push({
         x:srcDate,
@@ -1209,11 +1229,33 @@ if (SERVICE === "stock"){
           color: 'green',
           dash:'dash'
         },
-        hovertemplate: 'x1하단: %{y}원<extra></extra>'
+        hovertemplate: 'x1하단: %{y}원<extra></extra>',
+        xaxis: 'x',
+        yaxis: 'y'
       });
+      var _ismiddle=false;
+      for (var _n=0; _n<data.length; _n++){
+        if (data[_n].name === '중간선') {_ismiddle = true;}
+      }
+      if (!_ismiddle){
+        data.push({
+          name: '중간선',
+          x:srcDate,
+          y:srcBollinger.middle,
+          type: 'scatter',
+          mode: 'lines',
+          showlegend: false,
+          line: {
+            color: 'brown',
+          },
+          hovertemplate: '중간: %{y}원<extra></extra>',
+          xaxis: 'x',
+          yaxis: 'y'
+        })
+      }
     }
 
-    if (techMainIndicators.includes('sma')) {
+    if (chartSelected.techMain.includes('sma')) {
       Object.entries(srcSma).forEach(([key, _data]) => {
         var _name = key.replace("sma", "") + '일';
         data.push({
@@ -1222,13 +1264,75 @@ if (SERVICE === "stock"){
           y:_data,
           type: 'scatter',
           mode: 'lines',
+          line: {
+            dash:'dash',
+            width: 1,
+          },
           showlegend: true,
-          hovertemplate: `${_name}: %{y}원<extra></extra>`
+          hovertemplate: `${_name}: %{y}원<extra></extra>`,
+          xaxis: 'x',
+          yaxis: 'y'
         })
       });
     }
 
-    const layout = {
+    if (chartSelected.techSupp.includes('volume')) {
+      data.push({
+        name:"거래량",
+        x: srcDate,
+        y: srcOhlcv.volume,
+        type: 'bar',
+        showlegend: false,
+        marker: {color:'lightgrey'},
+        xaxis: 'x',
+        yaxis: 'y2'
+      });
+    }
+    
+    let yaxes = {
+      yaxis:{
+        autorange: false,
+        range: [0, 1],
+        showline: true,
+        showticklabels: true,
+        tickformat: ',d',
+        // domain:[0.1, 1],
+        anchor: 'x',
+      }
+    };
+    let xRangeN = srcXrange;    
+
+    for (var _n=0; _n<data.length; _n++){
+      let _trace = data[_n];
+      let _yaxis = yaxes.yaxis;
+      if (_trace.yaxis === 'y2'){
+        if (!('yaxis2' in yaxes)) {
+          yaxes['yaxis2'] = {
+            autorange: false,
+            range: [0, 1],
+            domain: [0, 0.1],
+            anchor: 'x',
+            showline:true,
+          };
+          yaxis.yaxis['domain'] = [0.1, 1];
+        }
+        _yaxis = yaxis.yaxis2;
+      }
+      
+      let _array = [_yaxis.range[0], _yaxis.range[1]];
+      if (_trace.type === "candlestick") {
+        _array = [..._array, ..._trace.low.slice(xRangeN[0], xRangeN[1]), ..._trace.high.slice(xRangeN[0], xRangeN[1])];
+      } else {
+        _array = [..._array, ..._trace.y.slice(xRangeN[0], xRangeN[1])];
+      }
+      _yaxis.range = [Math.min(..._array), Math.max(..._array)];
+    }
+
+    Object.entries(yaxes).forEach(([axis, config]) => {
+      config.range = [0.92 * config.range[0], 1.08 * config.range[1]];
+    })
+    
+    let layout = {
       dragmode: __media__.isMobile ? false : 'pan',
       margin:{
         l:60, 
@@ -1262,47 +1366,14 @@ if (SERVICE === "stock"){
           { bounds: ['sat', 'mon'] }
         ],
         showline: false,
-        // domain: [0,1],
         tickformat: "%Y/%m/%d",
-        showticklabels: false,
-        
-        // rangeselector: {
-        //   buttons: [
-        //     { step: 'all', label: 'All' },
-        //     { count: 6, label: '6M', step:'month', stepmode: 'backward'},
-        //     { count: 1, label: 'YTD', step:'year', stepmode: 'todate'},
-        //     { count: 1, label: '1Y', step: 'year', stepmode: 'backward' },
-        //     { count: 3, label: '3Y', step: 'year', stepmode: 'backward' },
-        //     { count: 5, label: '5Y', step: 'year', stepmode: 'backward' }        
-        //   ],
-        //   xanchor: 'left',
-        //   x: 0,
-        //   yanchor: 'top',
-        //   y:1.025
-        // },
         rangeslider: {
           visible: false,
-          // thickness: 0.06
         }
       },
-      xaxis2:{
-        tickformat: "%Y/%m/%d",
-        showticklabels: false,
-      },
-      yaxis:{
-        autorange: false,
-        range: [0.95 * yRange[0], 1.05 * yRange[1]],
-        showline: true,
-        showticklabels: true,
-        tickformat: ',d',
-        domain:[0.1, 1],
-        anchor: 'x',
-      },
-      yaxis2: {
-        domain: [0, 0.1],
-        anchor: 'x',
-      }
     };
+    layout = __mergeJson__({...layout}, yaxes);
+
     const option = {
       showTips:false,
       responsive:true,
@@ -1408,6 +1479,7 @@ if (SERVICE === "stock"){
         y: src.marketcap,
         name: src.marketcapLabel,
         text: src.marketcapText,
+        visible: (period === 'sales-q') ? 'legendonly' : true,
         type: 'bar',
         marker: { color: '#1f77b4', opacity:0.8 },
         hovertemplate: `${src.marketcapLabel}: %{text}원<extra></extra>`
@@ -1524,15 +1596,41 @@ if (SERVICE === "stock"){
       } else if (_val === "asset") {
         setAssetChart();
       }
+      chartSelected.standalone.push(_val);
+      chartSelected.techMain = [];
+      chartSelected.techSupp = [];
     } else if (_cls === "main") {
-      techMainIndicators.push(_val);
+      chartSelected.standalone = [];
+      chartSelected.techMain.push(_val);
       setTechnicalChart();
     }
-    
+    $(this).blur();
   });
-  $techOpt.on('select2:unselect', function(e){
 
+  $techOpt.on('select2:unselect', function(e){
+    let _val = e.params.data.id;
+    $('#plotly').empty();
+    if (chartSelected.standalone.includes(_val)) {
+      chartSelected.standalone = [];
+      return;
+    }
+    if (chartSelected.techMain.includes(_val)){
+      chartSelected.techMain = chartSelected.techMain.filter(item => item !== _val);
+    }
+    if (chartSelected.techSupp.includes(_val)) {
+      chartSelected.techSupp = chartSelected.techSupp.filter(item => item !== _val);
+    }
+    setTechnicalChart();
+    $(this).blur();
   });
+
+  $techOpt.on('select2:select select2:unselect', function (e) {
+    $(this).select2('close');
+    setTimeout(() => {
+      $('#plotly').focus();
+    }, 50);
+});
+
   $('#plotly').on('plotly_relayout', function(e){
     if (e['xaxis.range[0]'] && e['xaxis.range[1]']) {
       const x0 = e['xaxis.range[0]'];
