@@ -39,6 +39,7 @@ if __name__ == "__main__":
         from src.build.apps.stocks import Stocks
         from src.build.apps.sitemap import rss, sitemap
         from src.build.util import navigate, minify, eMail, clearPath
+    from pandas import read_parquet
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
     import os
@@ -166,25 +167,26 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # BUILD BASELINE: THIS PROCESS IS MANDATORY
     # ---------------------------------------------------------------------------------------
-    if ENV == "local":
-        from pandas import read_parquet
-        marketData = read_parquet(FILE.BASELINE, engine='pyarrow')
-        TRADING_DATE = "LOCAL"
-        context += [f"- [PASSED] BUILD MARKET BASELINE:", "  >> READ ON LOCAL ENV.", ""]
-
-        macroData = read_parquet(FILE.MACRO_BASELINE, engine='pyarrow')
-        context += [f"- [PASSED] BUILD MACRO BASELINE:", "  >> READ ON LOCAL ENV.", ""]
-    else:
+    if not ENV == "local":
         baseline = MarketBaseline()
         marketData = baseline.data
         marketData.to_parquet(FILE.BASELINE, engine='pyarrow')
         TRADING_DATE = baseline.tradingDate
         context += [f"- [SUCCESS] BUILD MARKET BASELINE: ", baseline.log, ""]
+    else:
+        marketData = read_parquet(FILE.BASELINE, engine='pyarrow')
+        TRADING_DATE = "LOCAL"
+        context += [f"- [PASSED] BUILD MARKET BASELINE:", "  >> READ ON LOCAL ENV.", ""]
 
+
+    if GITHUB.CONFIG.AFTERMARKET or (GITHUB.CONFIG.ECOS and GITHUB.CONFIG.FRED):
         macro = MacroBaseline()
         macroData = macro.data
         macroData.to_parquet(FILE.MACRO_BASELINE, engine='pyarrow')
         context += [f"- [SUCCESS] BUILD MACRO BASELINE: ", macro.log, ""]
+    else:
+        macroData = read_parquet(FILE.MACRO_BASELINE, engine='pyarrow')
+        context += [f"- [PASSED] BUILD MACRO BASELINE: ", ""]
 
 
     # ---------------------------------------------------------------------------------------
@@ -276,12 +278,14 @@ if __name__ == "__main__":
                     "ohlcv": stock.ohlcv,
                     "sma": stock.sma,
                     "bollinger": stock.bollinger,
+                    "trend": stock.trend,
+                    "macd": stock.macd,
                     "sales_y": stock.sales_y,
                     "sales_q": stock.sales_q,
                     "asset": stock.asset
                 })
             )
-    context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK ', stocks.log, '']
+    context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK: ', stocks.log, '']
 
     # ---------------------------------------------------------------------------------------
     # DEPLOY MACRO

@@ -6,14 +6,16 @@ except ImportError:
     from src.common.env import FILE, dDict
     from src.common.util import krw2currency, str2num
     from src.fetch.stock.krx import PyKrx
+from datetime import timedelta
 from json import dumps
 from pandas import DataFrame, Series, DateOffset
 from pandas import concat, read_parquet, to_datetime
+from scipy.stats import linregress
+from ta.trend import MACD
+from ta.momentum import RSIIndicator
 from time import perf_counter
 from typing import List
 
-
-# from ta import
 
 class Stocks:
 
@@ -46,6 +48,8 @@ class Stocks:
                 ohlcv=self.convertOhlcv(ohlcv),
                 sma=self.convertSma(typical),
                 bollinger=self.convertBollinger(typical),
+                trend=self.convertTrend(typical),
+                macd=self.convertMacd(typical),
                 sales_y=self.convertSales(annual, cap),
                 sales_q=self.convertSales(quarter, cap),
                 asset=self.convertAsset(annual, quarter)
@@ -121,6 +125,47 @@ class Stocks:
         }
         for key in obj:
             obj[key] = round(obj[key], 1).tolist()
+        return dumps(obj).replace(" ", "").replace("NaN", "null")
+
+    @classmethod
+    def convertTrend(cls, typical:Series) -> str:
+        def _regression(subdata: Series, newName: str = '') -> Series:
+            newName = newName if newName else subdata.name
+            subdata.index.name = 'date'
+            subdata = subdata.reset_index(level=0)
+            xrange = (subdata['date'].diff()).dt.days.fillna(1).astype(int).cumsum()
+
+            slope, intercept, _, _, _ = linregress(x=xrange, y=subdata[subdata.columns[-1]])
+            fitted = slope * xrange + intercept
+            fitted.name = newName
+            return concat(objs=[subdata, fitted], axis=1).set_index(keys='date')[fitted.name]
+
+        objs = [_regression(typical, '10년')]
+        for yy in [5, 2, 1, 0.5, 0.25]:
+            col = f"{yy}년" if isinstance(yy, int) else f"{int(yy * 12)}개월"
+            date = typical.index[-1] - timedelta(int(yy * 365))
+            if typical.index[0] > date:
+                objs.append(Series(name=col, index=typical.index))
+            else:
+                objs.append(_regression(typical[typical.index >= date], col))
+        merge = concat(objs, axis=1)
+        obj = {}
+        for col in merge:
+            series = merge[col].dropna()
+            obj[col] = {
+                'x': 'srcDate' if col == "10년" else  series.index.strftime("%Y-%m-%d").tolist(),
+                'y': round(series, 1).tolist()
+            }
+        return dumps(obj).replace(" ", "").replace("NaN", "null").replace('"srcDate"', 'srcDate')
+
+    @classmethod
+    def convertMacd(cls, typical):
+        macd = MACD(close=typical)
+        obj ={
+            'macd': macd.macd().tolist(),
+            'signal': macd.macd_signal().tolist(),
+            'diff': macd.macd_diff().tolist()
+        }
         return dumps(obj).replace(" ", "").replace("NaN", "null")
 
     @classmethod
@@ -205,4 +250,4 @@ if __name__ == "__main__":
     stocks = Stocks()
     for t, stock in stocks:
         print(t)
-        print(stock.sales_y)
+        print(stock.trend)

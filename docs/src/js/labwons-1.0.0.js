@@ -1284,8 +1284,31 @@ if (SERVICE === "stock"){
         type: 'bar',
         showlegend: false,
         marker: {color:'lightgrey'},
-        xaxis: 'x',
+        xaxis: 'x2',
         yaxis: 'y2'
+      });
+    }
+
+    if (chartSelected.techMain.includes('trend')) {
+      Object.entries(srcTrend).forEach(([key, _data]) => {
+        var _name = `${key} 추세`;
+        data.push({
+          name:_name,
+          x:_data.x,
+          y:_data.y,
+          type: 'scatter',
+          mode: 'lines',
+          line: {
+            color:'black',
+            dash:'dashdot',
+            width: 1,
+          },
+          showlegend: true,
+          visible: (key === '6개월') ? true: 'legendonly',
+          hovertemplate: `${_name}: %{y}원<extra></extra>`,
+          xaxis: 'x',
+          yaxis: 'y'
+        })
       });
     }
     
@@ -1314,9 +1337,9 @@ if (SERVICE === "stock"){
             anchor: 'x',
             showline:true,
           };
-          yaxis.yaxis['domain'] = [0.1, 1];
+          yaxes.yaxis['domain'] = [0.1, 1];
         }
-        _yaxis = yaxis.yaxis2;
+        _yaxis = yaxes['yaxis2'];
       }
       
       let _array = [_yaxis.range[0], _yaxis.range[1]];
@@ -1348,16 +1371,10 @@ if (SERVICE === "stock"){
         itemdoubleclick:'toggleothers',
         orientation:'h',
         valign:'middle',
-        xanchor:'right',
+        xanchor:'left',
         x:1.0,
         yanchor:'top',
         y:1.0
-      },
-      grid: {
-        rows: 2,
-        columns: 1,
-        roworder: 'top to bottom',
-        rowheights: [0.9, 0.1]
       },
       xaxis:{
         autorange: false,
@@ -1366,11 +1383,18 @@ if (SERVICE === "stock"){
           { bounds: ['sat', 'mon'] }
         ],
         showline: false,
-        tickformat: "%Y/%m/%d",
+        showticklabels: !('yaxis2' in yaxes),
         rangeslider: {
           visible: false,
-        }
+        },
+        hoverformat: '%Y/%m/%d'
       },
+      xaxis2: {
+        matches: 'x',
+        anchor: 'y2',
+        showticklabels: !('yaxis3' in yaxes),
+        tickformat: "%Y/%m/%d",
+      }
     };
     layout = __mergeJson__({...layout}, yaxes);
 
@@ -1397,24 +1421,31 @@ if (SERVICE === "stock"){
       doubleClick: false,
       hovermode: 'x unified',      
       legend: {
+        font: {
+          size: __media__.isMobile ? 9 : 12,
+          color: 'black',
+          family: __fonts__
+        },
         bgcolor:'white',
         borderwidth:0,
         itemclick:'toggle',
         itemdoubleclick:'toggleothers',
         orientation:'h',
         valign:'middle',
-        xanchor:'right',
+        xanchor:'left',
         x:1.0,
         yanchor:'top',
         y:1.02
       },
       barmode: 'group',
       yaxis: {
+        autorange: false,
         title: '[억원]',
         tickformat: ',',
         rangemode: 'tozero'
       },
       yaxis2: {
+        autorange: false,
         title: '영업이익률[%]',
         overlaying: 'y',
         side: 'right',
@@ -1423,6 +1454,8 @@ if (SERVICE === "stock"){
       },
     };
     const option = {
+      doubleClick: false,
+      doubleTap: false,
       showTips:false,
       responsive:true,
       displayModeBar:false,
@@ -1498,16 +1531,20 @@ if (SERVICE === "stock"){
         b:20
       }, 
       dragmode: false,
-      doubleClick: false,
       hovermode: 'x unified',      
       legend: {
+        font: {
+          size: __media__.isMobile ? 9 : 12,
+          color: 'black',
+          family: __fonts__
+        },
         bgcolor:'white',
         borderwidth:0,
         itemclick:'toggle',
         itemdoubleclick:'toggleothers',
         orientation:'h',
         valign:'middle',
-        xanchor:'right',
+        xanchor:'left',
         x:1.0,
         yanchor:'top',
         y:1.02
@@ -1529,6 +1566,8 @@ if (SERVICE === "stock"){
       },
     };
     const option = {
+      doubleClick: false,
+      doubleTap: false,
       showTips:false,
       responsive:true,
       displayModeBar:false,
@@ -1599,12 +1638,19 @@ if (SERVICE === "stock"){
       chartSelected.standalone.push(_val);
       chartSelected.techMain = [];
       chartSelected.techSupp = [];
-    } else if (_cls === "main") {
-      chartSelected.standalone = [];
+      $(this).blur();
+      return
+    } 
+
+    chartSelected.standalone = [];
+    if (_cls === "main") {
       chartSelected.techMain.push(_val);
-      setTechnicalChart();
+    } else if (_cls == "support") {
+      chartSelected.techSupp.push(_val);
     }
+    setTechnicalChart();
     $(this).blur();
+    
   });
 
   $techOpt.on('select2:unselect', function(e){
