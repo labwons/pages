@@ -26,7 +26,11 @@ class Stocks:
         self.astat = astat = read_parquet(FILE.ANNUAL_STATEMENT, engine='pyarrow')
         self.qstat = qstat = read_parquet(FILE.QUARTER_STATEMENT, engine='pyarrow')
         tickers = price.columns.get_level_values(0).unique()
-        xrange = [price.index[-1] - DateOffset(months=6), price.index[-1]]
+
+        xrange = [
+            price[price.index >= (price.index[-1] - DateOffset(months=6))].index[0],
+            to_datetime(price.index[-1])
+        ]
 
         __mem__ = dDict()
         for ticker in tickers:
@@ -36,7 +40,6 @@ class Stocks:
             general = basis.loc[ticker]
             ohlcv = price[ticker].dropna().astype(int)
             typical = (ohlcv.close + ohlcv.high + ohlcv.low) / 3
-
             annual = astat[ticker]
             quarter = qstat[ticker]
             cap = PyKrx(ticker).getMarketCap()

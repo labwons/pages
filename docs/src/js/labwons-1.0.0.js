@@ -1128,7 +1128,7 @@ if (SERVICE === "stock"){
 
   setTechnicalOption = function() {
     $techOpt.select2({
-      maximumSelectionLength: 3,
+      maximumSelectionLength: 5,
       minimumResultsForSearch: Infinity,
     });
   };
@@ -1276,19 +1276,6 @@ if (SERVICE === "stock"){
       });
     }
 
-    if (chartSelected.techSupp.includes('volume')) {
-      data.push({
-        name:"거래량",
-        x: srcDate,
-        y: srcOhlcv.volume,
-        type: 'bar',
-        showlegend: false,
-        marker: {color:'lightgrey'},
-        xaxis: 'x2',
-        yaxis: 'y2'
-      });
-    }
-
     if (chartSelected.techMain.includes('trend')) {
       Object.entries(srcTrend).forEach(([key, _data]) => {
         var _name = `${key} 추세`;
@@ -1311,50 +1298,43 @@ if (SERVICE === "stock"){
         })
       });
     }
-    
-    let yaxes = {
-      yaxis:{
-        autorange: false,
-        range: [0, 1],
-        showline: true,
-        showticklabels: true,
-        tickformat: ',d',
-        // domain:[0.1, 1],
-        anchor: 'x',
-      }
-    };
-    let xRangeN = srcXrange;    
 
-    for (var _n=0; _n<data.length; _n++){
-      let _trace = data[_n];
-      let _yaxis = yaxes.yaxis;
-      if (_trace.yaxis === 'y2'){
-        if (!('yaxis2' in yaxes)) {
-          yaxes['yaxis2'] = {
-            autorange: false,
-            range: [0, 1],
-            domain: [0, 0.1],
-            anchor: 'x',
-            showline:true,
-          };
-          yaxes.yaxis['domain'] = [0.1, 1];
-        }
-        _yaxis = yaxes['yaxis2'];
-      }
-      
-      let _array = [_yaxis.range[0], _yaxis.range[1]];
-      if (_trace.type === "candlestick") {
-        _array = [..._array, ..._trace.low.slice(xRangeN[0], xRangeN[1]), ..._trace.high.slice(xRangeN[0], xRangeN[1])];
-      } else {
-        _array = [..._array, ..._trace.y.slice(xRangeN[0], xRangeN[1])];
-      }
-      _yaxis.range = [Math.min(..._array), Math.max(..._array)];
+    if (chartSelected.techSupp.includes('volume')) {
+      data.push({
+        name:"거래량",
+        x: srcDate,
+        y: srcOhlcv.volume,
+        type: 'bar',
+        showlegend: false,
+        marker: {color:'lightgrey'},
+        xaxis: 'x2',
+        yaxis: 'y2'
+      });
     }
 
-    Object.entries(yaxes).forEach(([axis, config]) => {
-      config.range = [0.92 * config.range[0], 1.08 * config.range[1]];
-    })
+    if (chartSelected.techSupp.includes('macd')) {
+      data.push({
+        name:"MACD",
+        x: srcDate,
+        y: srcMacd.macd,
+        type: 'scatter',
+        showlegend: false,
+        type: 'scatter',
+        mode: 'lines',
+        line: {
+          color:'black',
+          dash:'dashdot',
+          width: 1,
+        },
+        hovertemplate: 'MACD: %{y}원<extra></extra>',
+        xaxis: data.at(-1).xaxis === 'x2' ? 'x3' : 'x2',
+        yaxis: data.at(-1).xaxis === 'y2' ? 'y3' : 'y2'
+      });
+    }
     
+    let xRangeN = srcXrange;
+
+      
     let layout = {
       dragmode: __media__.isMobile ? false : 'pan',
       margin:{
@@ -1378,25 +1358,60 @@ if (SERVICE === "stock"){
       },
       xaxis:{
         autorange: false,
-        range: [srcDate[xRangeN[0]], srcDate[xRangeN[1]]],
-        rangebreaks: [
-          { bounds: ['sat', 'mon'] }
-        ],
-        showline: false,
-        showticklabels: !('yaxis2' in yaxes),
+        range: [xRangeN[0], xRangeN[1]],
+        type:'category',
+        showline: chartSelected.techSupp.length ? false : true,
+        showticklabels: chartSelected.techSupp.length ? false : true,
         rangeslider: {
           visible: false,
         },
-        hoverformat: '%Y/%m/%d'
+        hoverformat: '%Y/%m/%d',
+        tickformat: "%Y/%m/%d",        
+        nticks: 6,
+        anchor: 'y',
+      },
+      yaxis:{
+        autorange: false,
+        fixedrange: true,
+        range: [0, 1],
+        showline: true,
+        showticklabels: true,
+        tickformat: ',d',
+        domain:[0, 1],
+        anchor: 'x',
       },
       xaxis2: {
+        type:'category',
         matches: 'x',
-        anchor: 'y2',
-        showticklabels: !('yaxis3' in yaxes),
+        showline: chartSelected.techSupp.length > 1 ? false : true,
+        showticklabels: chartSelected.techSupp.length > 1 ? false : true,
         tickformat: "%Y/%m/%d",
+        nticks: 6,
+        anchor: 'y2',
+      },
+      yaxis2:{
+        autorange: false,
+        range: [0, 1],
+        domain:[0, 1],
+        anchor: 'x2'
       }
     };
-    layout = __mergeJson__({...layout}, yaxes);
+
+    let _yrange1 = layout.yaxis.range;
+    let _yrange2 = layout.yaxis2.range;
+    
+    for ( var n = 0; n < data.length; n++){
+      let _trace = data[n];
+      if (_trace.yaxis === 'y'){
+        if (_trace.type === "candlestick") {
+          _yrange1 = [..._yrange1, ..._trace.low.slice(xRangeN[0], xRangeN[1]), ..._trace.high.slice(xRangeN[0], xRangeN[1])];
+        } else {
+          _yrange1 = [..._yrange1, ..._trace.y.slice(xRangeN[0], xRangeN[1])];
+        }
+      }
+    }
+    layout.yaxis.range = [0.92 * Math.min(..._yrange1), 1.08 * Math.max(..._yrange1)]; 
+
 
     const option = {
       showTips:false,
