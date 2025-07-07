@@ -1113,6 +1113,7 @@ if (SERVICE === "macro"){
 ----------------------------------------------------------- */
 let setTechnicalOption;
 let setTechnicalChart;
+let setDeviationChart;
 let setSalesChart;
 let setAssetChart;
 let calcXrange;
@@ -1183,7 +1184,7 @@ if (SERVICE === "stock"){
       
     let layout = {
       autosize: true,
-      dragmode: __media__.isMobile ? false : 'pan',
+      dragmode: 'pan',
       margin:{
         l:60, 
         r:20, 
@@ -1212,14 +1213,16 @@ if (SERVICE === "stock"){
         autorange: false,
         range: [xRangeN[0], xRangeN[1]],
         type:'category',
+        categorygap: 0.1,
         showline: true,
         showticklabels: true,
         rangeslider: {
           visible: false,
         },
         hoverformat: '%Y/%m/%d',
-        tickformat: "%Y/%m/%d",        
-        nticks: 6,
+        tickformat: "%Y/%m/%d",     
+        tickangle:0,   
+        nticks: __media__.isMobile ? 4 : 6,
         anchor: 'y',
       },
       yaxis:{
@@ -1426,8 +1429,8 @@ if (SERVICE === "stock"){
           width: 1,
         },
         hovertemplate: 'MACD: %{y}<extra></extra>',
-        xaxis: `x${chartSelected.techSupp.length + 1}`,
-        yaxis: `y${chartSelected.techSupp.length + 1}`
+        xaxis: `x${chartSelected.techSupp.length + 2}`,
+        yaxis: `y${chartSelected.techSupp.length + 2}`
       });
       data.push({
         name:"Signal",
@@ -1442,8 +1445,8 @@ if (SERVICE === "stock"){
           width: 1,
         },
         hovertemplate: 'Signal: %{y}<extra></extra>',
-        xaxis: `x${chartSelected.techSupp.length + 1}`,
-        yaxis: `y${chartSelected.techSupp.length + 1}`
+        xaxis: `x${chartSelected.techSupp.length + 2}`,
+        yaxis: `y${chartSelected.techSupp.length + 2}`
       });
       data.push({
         name:"Diff",
@@ -1453,8 +1456,8 @@ if (SERVICE === "stock"){
         showlegend: false,
         marker: {color:srcMacd.diff.map(v => v < 0 ? '#1861A8':'#C92A2A' )},
         hovertemplate: 'Signal: %{y}<extra></extra>',
-        xaxis: `x${chartSelected.techSupp.length + 1}`,
-        yaxis: `y${chartSelected.techSupp.length + 1}`
+        xaxis: `x${chartSelected.techSupp.length + 2}`,
+        yaxis: `y${chartSelected.techSupp.length + 2}`
       });
     }
 
@@ -1472,8 +1475,8 @@ if (SERVICE === "stock"){
           width: 1,
         },
         hovertemplate: 'RSI: %{y}%<extra></extra>',
-        xaxis: `x${chartSelected.techSupp.length + 1}`,
-        yaxis: `y${chartSelected.techSupp.length + 1}`
+        xaxis: `x${chartSelected.techSupp.length + 2}`,
+        yaxis: `y${chartSelected.techSupp.length + 2}`
       });
     }
     
@@ -1482,11 +1485,13 @@ if (SERVICE === "stock"){
       for (var n=1; n<=chartSelected.techSupp.length; n++){
         layout[`xaxis${n+1}`] = {
           type:'category',
+          categorygap: 0.1,
           matches: 'x',
           showline: true,
           showticklabels: n === chartSelected.techSupp.length,
           tickformat: "%Y/%m/%d",
-          nticks: 6,
+          tickangle:0,
+          nticks: __media__.isMobile ? 4 : 6,
           anchor: `y${n+1}`,
         };
         layout[`yaxis${n+1}`] = {
@@ -1533,7 +1538,60 @@ if (SERVICE === "stock"){
     Plotly.newPlot('plotly', data, layout, option)
   };
 
+  setDeviationChart = function() {
+    let layout = {
+      margin:{
+        l:40, 
+        r:40, 
+        t:10, 
+        b:20
+      }, 
+      grid: { 
+        rows: __media__.isMobile ? 3:2, 
+        columns: __media__.isMobile ? 2:3, 
+        pattern: 'independent',
+        rowgap: 0.0,
+        columngap: 0.05
+      },
+      dragmode: false,
+      doubleClick: false,
+    }
+    const option = {
+      showTips:false,
+      responsive:true,
+      displayModeBar:true,
+      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+      displaylogo:false
+    };
 
+    var data = [];
+    Object.entries(srcDeviation).forEach(([label, obj], n) => {
+      if (obj.isempty){
+        return
+      }
+      data.push({
+        type:'bar',
+        name:label,
+        x:obj.date,
+        y:obj.data,
+        showlegend:false,
+        visible:true,
+        marker: {color:obj.data.map(v => v < 0 ? '#1861A8':'#C92A2A' )},
+        xaxis:`x${n === 0 ? '' : n + 1}`,
+        yaxis:`y${n === 0 ? '' : n + 1}`,
+      })
+      layout[`xaxis${n === 0 ? '' : n + 1}`] = {
+        tickfont: {
+          size: __media__.isMobile ? 9 : 12
+        },
+        tickformat:'%Y/%m/%d',
+        tickangle:0,
+        nticks: 4,
+      }
+    });
+
+    Plotly.newPlot('plotly', data, layout, option)
+  };
 
   setSalesChart = function(period) {
     let src = (period === 'sales-q') ? srcSalesQ : srcSalesY;
@@ -1566,13 +1624,13 @@ if (SERVICE === "stock"){
       },
       barmode: 'group',
       yaxis: {
-        autorange: false,
+        autorange: true,
         title: '[억원]',
         tickformat: ',',
         rangemode: 'tozero'
       },
       yaxis2: {
-        autorange: false,
+        autorange: true,
         title: '영업이익률[%]',
         overlaying: 'y',
         side: 'right',
@@ -1761,7 +1819,10 @@ if (SERVICE === "stock"){
         setSalesChart(_val);
       } else if (_val === "asset") {
         setAssetChart();
+      } else if (_val === "deviation") {
+        setDeviationChart();
       }
+
       chartSelected.standalone.push(_val);
       chartSelected.techMain = [];
       chartSelected.techSupp = [];

@@ -453,12 +453,12 @@ PARTS
   justify-content: space-between;
   gap: 4px;
 }
-/* 
+
 @media (max-width: 767px) {
   .content-main {
-    min-height: 85dvh;
+    margin-top: 20px;
   }
-} */
+}
 
 .content-table {
   max-height: 100px;

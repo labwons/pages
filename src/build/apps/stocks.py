@@ -290,15 +290,20 @@ class Stocks:
         for col in df.columns[1:]:
             align = df[[df.columns[0], col]].dropna(how='all')
             if align.empty:
+                objs[col] = align
                 continue
             avg = (abs(align[df.columns[0]] - align[col]).sum() / len(align))
             objs[col] = (align[df.columns[0]] - align[col]) / avg
         dev = concat(objs=objs, axis=1)
         obj = {}
         for col in dev:
+            data = dev[col].dropna()
+            if data.empty:
+                obj[col] = {'empty': 'true'}
             obj[col] = {
-                'date': dev[col].index.strftime("%Y-%m-%d").tolist(),
-                'data': dev[col].tolist()
+                'date': data.index.strftime("%Y-%m-%d").tolist(),
+                'data': data.tolist(),
+                'empty': 'false'
             }
         return dumps(obj).replace("NaN", "null")
 
