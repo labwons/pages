@@ -10,23 +10,59 @@ from datetime import timedelta
 from json import dumps
 from pandas import DataFrame, Series, DateOffset
 from pandas import concat, read_parquet, to_datetime
+from requests.exceptions import ConnectionError
 from scipy.stats import linregress
 from ta.trend import MACD
-from ta.momentum import RSIIndicator
+from ta.momentum import RSIIndicator, StochasticOscillator
 from time import perf_counter
 from typing import List
+
+
+class UpdateStockPrice(DataFrame):
+    _log: List[str] = []
+    def __init__(self, *tickers):
+        super().__init__()
+
+        self.log = f'  >> RUN [CACHING STOCK PRICE]: '
+        stime = perf_counter()
+        objs = {}
+        for ticker in tickers:
+            if not ticker:
+                continue
+            try:
+                objs[ticker] = PyKrx(ticker).ohlcv
+            except Exception as reason:
+                self.log = f'     ...FAILED TO FETCH PRICE: {ticker} / {reason}'
+
+
+        if objs:
+            super().__init__(concat(objs, axis=1))
+
+        self._log[0] += f'{len(self):,d} items @{self.index.astype(str).values[-1]}'.replace("-", "/")
+        self.log = f'  >> END: {perf_counter() - stime:.2f}s'
+        return
+
+    @property
+    def log(self) -> str:
+        return "\n".join(self._log)
+
+    @log.setter
+    def log(self, log: str):
+        self._log.append(log)
 
 
 class Stocks:
 
     _log: List[str] = []
     def __init__(self):
+        stime = perf_counter()
+        self.log = f'  >> BUILD [STOCK]: '
         self.basis = basis = read_parquet(FILE.BASELINE, engine='pyarrow')
         self.price = price = read_parquet(FILE.PRICE, engine='pyarrow')
         self.astat = astat = read_parquet(FILE.ANNUAL_STATEMENT, engine='pyarrow')
         self.qstat = qstat = read_parquet(FILE.QUARTER_STATEMENT, engine='pyarrow')
-        tickers = price.columns.get_level_values(0).unique()
 
+        tickers = price.columns.get_level_values(0).unique()
         xrange = [
             price[price.index >= (price.index[-1] - DateOffset(months=6))].index[0],
             to_datetime(price.index[-1])
@@ -40,9 +76,13 @@ class Stocks:
             general = basis.loc[ticker]
             ohlcv = price[ticker].dropna().astype(int)
             typical = (ohlcv.close + ohlcv.high + ohlcv.low) / 3
+            trend = self.calcTrend(typical)
             annual = astat[ticker]
             quarter = qstat[ticker]
-            cap = PyKrx(ticker).getMarketCap()
+            try:
+                cap = PyKrx(ticker).getMarketCap()
+            except ConnectionError:
+                cap = DataFrame()
 
             __mem__[ticker] = dDict(
                 name=general['name'],
@@ -51,13 +91,18 @@ class Stocks:
                 ohlcv=self.convertOhlcv(ohlcv),
                 sma=self.convertSma(typical),
                 bollinger=self.convertBollinger(typical),
-                trend=self.convertTrend(typical),
+                trend=self.convertTrend(trend),
                 macd=self.convertMacd(typical),
+                rsi=self.convertRsi(typical),
                 sales_y=self.convertSales(annual, cap),
                 sales_q=self.convertSales(quarter, cap),
                 asset=self.convertAsset(annual, quarter)
             )
+            __mem__[ticker].deviation = self.convertDeviation(typical, trend)
         self.__mem__ = __mem__
+
+        self._log[0] += f'{len(tickers):,d} items @{price.index.astype(str).values[-1]}'.replace("-", "/")
+        self.log = f'  >> BUILD END: {perf_counter() - stime:.2f}s'
         return
 
     def __iter__(self):
@@ -72,23 +117,28 @@ class Stocks:
     def log(self, log: str):
         self._log.append(log)
 
-    def update(self, *tickers):
-        self._log = [f'  >> RUN [CACHING STOCK PRICE]: ']
-        stime = perf_counter()
-        objs = {}
-        for ticker in tickers:
-            if not ticker:
-                continue
-            try:
-                objs[ticker] = PyKrx(ticker).ohlcv
-            except Exception as reason:
-                self.log = f'     ...FAILED TO FETCH PRICE: {ticker} / {reason}'
+    @classmethod
+    def calcTrend(cls, typical:Series) -> DataFrame:
+        def _regression(subdata: Series, newName: str = '') -> Series:
+            newName = newName if newName else subdata.name
+            subdata.index.name = 'date'
+            subdata = subdata.reset_index(level=0)
+            xrange = (subdata['date'].diff()).dt.days.fillna(1).astype(int).cumsum()
 
-        if objs:
-            self.price = concat(objs, axis=1)
-        self._log[0] += f'{len(tickers):,d} items @{self.price.index.astype(str).values[-1]}'.replace("-", "/")
-        self.log = f'  >> END: {perf_counter() - stime:.2f}s'
-        return
+            slope, intercept, _, _, _ = linregress(x=xrange, y=subdata[subdata.columns[-1]])
+            fitted = slope * xrange + intercept
+            fitted.name = newName
+            return concat(objs=[subdata, fitted], axis=1).set_index(keys='date')[fitted.name]
+
+        objs = [_regression(typical, '10년')]
+        for yy in [5, 2, 1, 0.5, 0.25]:
+            col = f"{yy}년" if isinstance(yy, int) else f"{int(yy * 12)}개월"
+            date = typical.index[-1] - timedelta(int(yy * 365))
+            if typical.index[0] > date:
+                objs.append(Series(name=col, index=typical.index))
+            else:
+                objs.append(_regression(typical[typical.index >= date], col))
+        return concat(objs, axis=1)
 
     @classmethod
     def convertOhlcv(cls, ohlcv:DataFrame) -> str:
@@ -124,37 +174,17 @@ class Stocks:
             'middle': typical.rolling(20).mean(),
             'lower': typical.rolling(20).mean() - 2 * typical.rolling(20).std(),
             'lowerTrend': typical.rolling(20).mean() - 1 * typical.rolling(20).std(),
-            'width': 100 * 4 * typical.rolling(20).std() / typical.rolling(20).mean()
+            # 'width': 100 * 4 * typical.rolling(20).std() / typical.rolling(20).mean()
         }
         for key in obj:
             obj[key] = round(obj[key], 1).tolist()
         return dumps(obj).replace(" ", "").replace("NaN", "null")
 
     @classmethod
-    def convertTrend(cls, typical:Series) -> str:
-        def _regression(subdata: Series, newName: str = '') -> Series:
-            newName = newName if newName else subdata.name
-            subdata.index.name = 'date'
-            subdata = subdata.reset_index(level=0)
-            xrange = (subdata['date'].diff()).dt.days.fillna(1).astype(int).cumsum()
-
-            slope, intercept, _, _, _ = linregress(x=xrange, y=subdata[subdata.columns[-1]])
-            fitted = slope * xrange + intercept
-            fitted.name = newName
-            return concat(objs=[subdata, fitted], axis=1).set_index(keys='date')[fitted.name]
-
-        objs = [_regression(typical, '10년')]
-        for yy in [5, 2, 1, 0.5, 0.25]:
-            col = f"{yy}년" if isinstance(yy, int) else f"{int(yy * 12)}개월"
-            date = typical.index[-1] - timedelta(int(yy * 365))
-            if typical.index[0] > date:
-                objs.append(Series(name=col, index=typical.index))
-            else:
-                objs.append(_regression(typical[typical.index >= date], col))
-        merge = concat(objs, axis=1)
+    def convertTrend(cls, trend:DataFrame) -> str:
         obj = {}
-        for col in merge:
-            series = merge[col].dropna()
+        for col in trend:
+            series = trend[col].dropna()
             obj[col] = {
                 'x': 'srcDate' if col == "10년" else  series.index.strftime("%Y-%m-%d").tolist(),
                 'y': round(series, 1).tolist()
@@ -162,12 +192,20 @@ class Stocks:
         return dumps(obj).replace(" ", "").replace("NaN", "null").replace('"srcDate"', 'srcDate')
 
     @classmethod
-    def convertMacd(cls, typical):
+    def convertMacd(cls, typical:Series):
         macd = MACD(close=typical)
         obj ={
             'macd': macd.macd().tolist(),
             'signal': macd.macd_signal().tolist(),
             'diff': macd.macd_diff().tolist()
+        }
+        return dumps(obj).replace(" ", "").replace("NaN", "null")
+
+    @classmethod
+    def convertRsi(cls, typical:Series):
+        rsi = RSIIndicator(close=typical)
+        obj = {
+            'rsi': rsi.rsi().tolist()
         }
         return dumps(obj).replace(" ", "").replace("NaN", "null")
 
@@ -245,12 +283,32 @@ class Stocks:
         }
         return dumps(obj).replace("NaN", "null")
 
+    @classmethod
+    def convertDeviation(cls, typical:Series, trend:DataFrame):
+        df = concat([typical, trend], axis=1)
+        objs = {}
+        for col in df.columns[1:]:
+            align = df[[df.columns[0], col]].dropna(how='all')
+            if align.empty:
+                continue
+            avg = (abs(align[df.columns[0]] - align[col]).sum() / len(align))
+            objs[col] = (align[df.columns[0]] - align[col]) / avg
+        dev = concat(objs=objs, axis=1)
+        obj = {}
+        for col in dev:
+            obj[col] = {
+                'date': dev[col].index.strftime("%Y-%m-%d").tolist(),
+                'data': dev[col].tolist()
+            }
+        return dumps(obj).replace("NaN", "null")
+
+
 if __name__ == "__main__":
     from pandas import set_option
     set_option('display.expand_frame_repr', False)
 
 
     stocks = Stocks()
-    for t, stock in stocks:
-        print(t)
-        print(stock.trend)
+    # for t, stock in stocks:
+    #     print(t)
+    #     print(stock.trend)

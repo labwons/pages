@@ -19,7 +19,7 @@ if __name__ == "__main__":
         from .apps.marketmap import MarketMap
         from .apps.bubble import MarketBubble
         from .apps.macro import Macro
-        from .apps.stocks import Stocks
+        from .apps.stocks import UpdateStockPrice, Stocks
         from .apps.sitemap import rss, sitemap
         from .util import navigate, minify, eMail, clearPath
     except ImportError:
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         from src.build.apps.marketmap import MarketMap
         from src.build.apps.bubble import MarketBubble
         from src.build.apps.macro import Macro
-        from src.build.apps.stocks import Stocks
+        from src.build.apps.stocks import UpdateStockPrice, Stocks
         from src.build.apps.sitemap import rss, sitemap
         from src.build.util import navigate, minify, eMail, clearPath
     from pandas import read_parquet
@@ -165,7 +165,7 @@ if __name__ == "__main__":
         context += [f"- [PASSED] UPDATE AFTER MARKET: ", ""]
 
     # ---------------------------------------------------------------------------------------
-    # BUILD BASELINE: THIS PROCESS IS MANDATORY
+    # BUILD MARKET BASELINE: THIS PROCESS IS MANDATORY
     # ---------------------------------------------------------------------------------------
     if not ENV == "local":
         baseline = MarketBaseline()
@@ -177,17 +177,6 @@ if __name__ == "__main__":
         marketData = read_parquet(FILE.BASELINE, engine='pyarrow')
         TRADING_DATE = "LOCAL"
         context += [f"- [PASSED] BUILD MARKET BASELINE:", "  >> READ ON LOCAL ENV.", ""]
-
-
-    if GITHUB.CONFIG.AFTERMARKET or (GITHUB.CONFIG.ECOS and GITHUB.CONFIG.FRED):
-        macro = MacroBaseline()
-        macroData = macro.data
-        macroData.to_parquet(FILE.MACRO_BASELINE, engine='pyarrow')
-        context += [f"- [SUCCESS] BUILD MACRO BASELINE: ", macro.log, ""]
-    else:
-        macroData = read_parquet(FILE.MACRO_BASELINE, engine='pyarrow')
-        context += [f"- [PASSED] BUILD MACRO BASELINE: ", ""]
-
 
     # ---------------------------------------------------------------------------------------
     # DEPLOY MARKET MAP
@@ -241,21 +230,21 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # UPDATE STOCK PRICE
     # ---------------------------------------------------------------------------------------
-    stocks = Stocks()
     if (not DOMAIN == "HKEFICO") and GITHUB.CONFIG.STOCKPRICE:
         tickersMap = marketMap.stat.loc[["minTicker", "maxTicker"]].values.flatten().tolist()
         tickers = tickersMap
 
-        stocks.update(*tickers)
-        stocks.price.to_parquet(FILE.PRICE, engine='pyarrow')
+        stocPrice = UpdateStockPrice(*tickers)
+        stocPrice.to_parquet(FILE.PRICE, engine='pyarrow')
 
-        context += [f'- [{"FAILED" if "Failed" in stocks.log else "SUCCESS"}] UPDATE STOCK PRICE ', stocks.log, '']
+        context += [f'- [{"FAILED" if "Failed" in stocPrice.log else "SUCCESS"}] UPDATE STOCK PRICE ', stocPrice.log, '']
     else:
         context += [f"- [PASSED] UPDATE STOCK PRICE: ", ""]
 
     # ---------------------------------------------------------------------------------------
     # DEPLOY STOCKS
     # ---------------------------------------------------------------------------------------
+    stocks = Stocks()
     PATH.STOCKS = os.path.join(PATH.DOCS, r'stocks')
     os.makedirs(PATH.STOCKS, exist_ok=True)
     clearPath(PATH.STOCKS)
@@ -280,12 +269,26 @@ if __name__ == "__main__":
                     "bollinger": stock.bollinger,
                     "trend": stock.trend,
                     "macd": stock.macd,
+                    "rsi": stock.rsi,
                     "sales_y": stock.sales_y,
                     "sales_q": stock.sales_q,
-                    "asset": stock.asset
+                    "asset": stock.asset,
+                    "deviation": stock.deviation
                 })
             )
     context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK: ', stocks.log, '']
+
+    # ---------------------------------------------------------------------------------------
+    # BUILD MACRO BASELINE: THIS PROCESS IS MANDATORY
+    # ---------------------------------------------------------------------------------------
+    if GITHUB.CONFIG.AFTERMARKET or (GITHUB.CONFIG.ECOS and GITHUB.CONFIG.FRED):
+        macro = MacroBaseline()
+        macroData = macro.data
+        macroData.to_parquet(FILE.MACRO_BASELINE, engine='pyarrow')
+        context += [f"- [SUCCESS] BUILD MACRO BASELINE: ", macro.log, ""]
+    else:
+        macroData = read_parquet(FILE.MACRO_BASELINE, engine='pyarrow')
+        context += [f"- [PASSED] BUILD MACRO BASELINE: ", ""]
 
     # ---------------------------------------------------------------------------------------
     # DEPLOY MACRO

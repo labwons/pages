@@ -1133,11 +1133,107 @@ if (SERVICE === "stock"){
     });
   };
 
+  calcYrange = function(data, layout) {
+    data.forEach(trace => {
+      var n = '';
+      if (trace.yaxis === 'y2') {
+        n = 2;
+      } else if (trace.yaxis === 'y3') {
+        n = 3;
+      } else if (trace.yaxis === 'y4') {
+        n = 4;
+      }
+
+      var _range = layout[`yaxis${n}`].range;
+      if (trace.type === "candlestick") {
+        var _r = [..._range, ...trace.low.slice(xRangeN[0], xRangeN[1]), ...trace.high.slice(xRangeN[0], xRangeN[1])];
+      } else {
+        var _r = [..._range, ...trace.y.slice(xRangeN[0], xRangeN[1])];
+      }
+
+      layout[`yaxis${n}`].range = [Math.min(..._r), Math.max(..._r)];
+    });
+
+    Object.entries(layout).forEach(([key, obj]) => {
+      if (key.startsWith('yaxis')){
+        if (obj.range[0] < 0){
+          obj.range = [1.1 * obj.range[0], 1.1 * obj.range[1]];
+        } else {
+          obj.range = [0.9 * obj.range[0], 1.1 * obj.range[1]];
+        }
+      }
+    });
+  }
+
   setTechnicalChart = function() {
+    /* THIS FUNCTION IS TO PLOT PRICE AND RELATED INDICATORS */
+
     if(!chartSelected.techMain.length){
       $('#plotly').empty();
       return
     }
+
+    const option = {
+      showTips:false,
+      responsive:true,
+      displayModeBar:true,
+      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+      displaylogo:false
+    };
+      
+    let layout = {
+      autosize: true,
+      dragmode: __media__.isMobile ? false : 'pan',
+      margin:{
+        l:60, 
+        r:20, 
+        t:10, 
+        b:20
+      }, 
+      hovermode: 'x unified',
+      legend: {
+        font: {
+          size: __media__.isMobile ? 9 : 12,
+          color: 'black',
+          family: __fonts__
+        },
+        bgcolor:'white',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'left',
+        x:0.0,
+        yanchor:'top',
+        y:1.0
+      },
+      xaxis:{
+        autorange: false,
+        range: [xRangeN[0], xRangeN[1]],
+        type:'category',
+        showline: true,
+        showticklabels: true,
+        rangeslider: {
+          visible: false,
+        },
+        hoverformat: '%Y/%m/%d',
+        tickformat: "%Y/%m/%d",        
+        nticks: 6,
+        anchor: 'y',
+      },
+      yaxis:{
+        autorange: false,
+        fixedrange: true,
+        range: [srcOhlcv.low[xRangeN[0]], srcOhlcv.high[xRangeN[1]]],
+        showline: true,
+        showticklabels: true,
+        tickformat: ',d',
+        domain:[0, 1],
+        anchor: 'x',
+      },
+    };
+
     let data = [{
       name: "",
       x: srcDate,
@@ -1161,6 +1257,7 @@ if (SERVICE === "stock"){
 
     if (chartSelected.techMain.includes('bollingerx2')) {
       data.push({
+        name:'상단선',
         x:srcDate,
         y:srcBollinger.upper,
         type: 'scatter',
@@ -1175,6 +1272,7 @@ if (SERVICE === "stock"){
         yaxis: 'y'
       });
       data.push({
+        name:'하단선',
         x:srcDate,
         y:srcBollinger.lower,
         type: 'scatter',
@@ -1206,6 +1304,7 @@ if (SERVICE === "stock"){
 
     if (chartSelected.techMain.includes('bollingerx1')) {
       data.push({
+        name:'상단선x1',
         x:srcDate,
         y:srcBollinger.upperTrend,
         type: 'scatter',
@@ -1220,6 +1319,7 @@ if (SERVICE === "stock"){
         yaxis: 'y'
       });
       data.push({
+        name:'하단선x1',
         x:srcDate,
         y:srcBollinger.lowerTrend,
         type: 'scatter',
@@ -1317,111 +1417,123 @@ if (SERVICE === "stock"){
         name:"MACD",
         x: srcDate,
         y: srcMacd.macd,
-        type: 'scatter',
         showlegend: false,
         type: 'scatter',
         mode: 'lines',
         line: {
-          color:'black',
-          dash:'dashdot',
+          color:'royalblue',
+          dash:'solid',
           width: 1,
         },
-        hovertemplate: 'MACD: %{y}원<extra></extra>',
-        xaxis: data.at(-1).xaxis === 'x2' ? 'x3' : 'x2',
-        yaxis: data.at(-1).xaxis === 'y2' ? 'y3' : 'y2'
+        hovertemplate: 'MACD: %{y}<extra></extra>',
+        xaxis: `x${chartSelected.techSupp.length + 1}`,
+        yaxis: `y${chartSelected.techSupp.length + 1}`
+      });
+      data.push({
+        name:"Signal",
+        x: srcDate,
+        y: srcMacd.signal,
+        showlegend: false,
+        type: 'scatter',
+        mode: 'lines',
+        line: {
+          color:'red',
+          dash:'dash',
+          width: 1,
+        },
+        hovertemplate: 'Signal: %{y}<extra></extra>',
+        xaxis: `x${chartSelected.techSupp.length + 1}`,
+        yaxis: `y${chartSelected.techSupp.length + 1}`
+      });
+      data.push({
+        name:"Diff",
+        x: srcDate,
+        y: srcMacd.diff,
+        type: 'bar',
+        showlegend: false,
+        marker: {color:srcMacd.diff.map(v => v < 0 ? '#1861A8':'#C92A2A' )},
+        hovertemplate: 'Signal: %{y}<extra></extra>',
+        xaxis: `x${chartSelected.techSupp.length + 1}`,
+        yaxis: `y${chartSelected.techSupp.length + 1}`
+      });
+    }
+
+    if (chartSelected.techSupp.includes('rsi')) {
+      data.push({
+        name:"RSI",
+        x: srcDate,
+        y: srcRsi.rsi,
+        showlegend: false,
+        type: 'scatter',
+        mode: 'lines',
+        line: {
+          color:'royalblue',
+          dash:'solid',
+          width: 1,
+        },
+        hovertemplate: 'RSI: %{y}%<extra></extra>',
+        xaxis: `x${chartSelected.techSupp.length + 1}`,
+        yaxis: `y${chartSelected.techSupp.length + 1}`
       });
     }
     
-    let xRangeN = srcXrange;
-
-      
-    let layout = {
-      dragmode: __media__.isMobile ? false : 'pan',
-      margin:{
-        l:60, 
-        r:20, 
-        t:10, 
-        b:20
-      }, 
-      hovermode: 'x unified',
-      legend: {
-        bgcolor:'white',
-        borderwidth:0,
-        itemclick:'toggle',
-        itemdoubleclick:'toggleothers',
-        orientation:'h',
-        valign:'middle',
-        xanchor:'left',
-        x:1.0,
-        yanchor:'top',
-        y:1.0
-      },
-      xaxis:{
-        autorange: false,
-        range: [xRangeN[0], xRangeN[1]],
-        type:'category',
-        showline: chartSelected.techSupp.length ? false : true,
-        showticklabels: chartSelected.techSupp.length ? false : true,
-        rangeslider: {
-          visible: false,
-        },
-        hoverformat: '%Y/%m/%d',
-        tickformat: "%Y/%m/%d",        
-        nticks: 6,
-        anchor: 'y',
-      },
-      yaxis:{
-        autorange: false,
-        fixedrange: true,
-        range: [0, 1],
-        showline: true,
-        showticklabels: true,
-        tickformat: ',d',
-        domain:[0, 1],
-        anchor: 'x',
-      },
-      xaxis2: {
-        type:'category',
-        matches: 'x',
-        showline: chartSelected.techSupp.length > 1 ? false : true,
-        showticklabels: chartSelected.techSupp.length > 1 ? false : true,
-        tickformat: "%Y/%m/%d",
-        nticks: 6,
-        anchor: 'y2',
-      },
-      yaxis2:{
-        autorange: false,
-        range: [0, 1],
-        domain:[0, 1],
-        anchor: 'x2'
-      }
-    };
-
-    let _yrange1 = layout.yaxis.range;
-    let _yrange2 = layout.yaxis2.range;
-    
-    for ( var n = 0; n < data.length; n++){
-      let _trace = data[n];
-      if (_trace.yaxis === 'y'){
-        if (_trace.type === "candlestick") {
-          _yrange1 = [..._yrange1, ..._trace.low.slice(xRangeN[0], xRangeN[1]), ..._trace.high.slice(xRangeN[0], xRangeN[1])];
-        } else {
-          _yrange1 = [..._yrange1, ..._trace.y.slice(xRangeN[0], xRangeN[1])];
+    if (chartSelected.techSupp.length) {
+      layout.xaxis.showticklabels = false;
+      for (var n=1; n<=chartSelected.techSupp.length; n++){
+        layout[`xaxis${n+1}`] = {
+          type:'category',
+          matches: 'x',
+          showline: true,
+          showticklabels: n === chartSelected.techSupp.length,
+          tickformat: "%Y/%m/%d",
+          nticks: 6,
+          anchor: `y${n+1}`,
+        };
+        layout[`yaxis${n+1}`] = {
+          autorange: false,
+          range: [0, 1],
+          anchor: `x${n+1}`,
         }
       }
+
+      if (chartSelected.techSupp.length === 1) {
+        if (chartSelected.techSupp.includes('volume')) {
+          layout.yaxis.domain = [0.12, 1];
+          layout.yaxis2.domain = [0, 0.1];
+        } else {
+          layout.yaxis.domain = [0.27, 1];
+          layout.yaxis2.domain = [0, 0.25];
+        }
+      } else if (chartSelected.techSupp.length === 2) {
+        if (chartSelected.techSupp.includes('volume')) {
+          layout.yaxis.domain = [0.39, 1];
+          layout.yaxis2.domain = [0.27, 0.37];
+          layout.yaxis3.domain = [0, 0.25];
+        } else {
+          layout.yaxis.domain = [0.44, 1];
+          layout.yaxis2.domain = [0.22, 0.42];
+          layout.yaxis3.domain = [0, 0.2];
+        }
+      } else if (chartSelected.techSupp.length === 2) {
+        if (chartSelected.techSupp.includes('volume')) {
+          layout.yaxis.domain = [0.43, 1];
+          layout.yaxis2.domain = [0.32, 0.42];
+          layout.yaxis3.domain = [0.16, 0.31];
+          layout.yaxis4.domain = [0, 0.15];
+        } else {
+          layout.yaxis.domain = [0.51, 1];
+          layout.yaxis2.domain = [0.34, 0.5];
+          layout.yaxis3.domain = [0.17, 0.33];
+          layout.yaxis4.domain = [0, 0.16];
+        }
+      }    
     }
-    layout.yaxis.range = [0.92 * Math.min(..._yrange1), 1.08 * Math.max(..._yrange1)]; 
 
-
-    const option = {
-      showTips:false,
-      responsive:true,
-      displayModeBar:true,
-      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
-      displaylogo:false
-    };
+    calcYrange(data, layout);
     Plotly.newPlot('plotly', data, layout, option)
   };
+
+
 
   setSalesChart = function(period) {
     let src = (period === 'sales-q') ? srcSalesQ : srcSalesY;
@@ -1448,7 +1560,7 @@ if (SERVICE === "stock"){
         orientation:'h',
         valign:'middle',
         xanchor:'left',
-        x:1.0,
+        x:0.0,
         yanchor:'top',
         y:1.02
       },
@@ -1560,7 +1672,7 @@ if (SERVICE === "stock"){
         orientation:'h',
         valign:'middle',
         xanchor:'left',
-        x:1.0,
+        x:0.0,
         yanchor:'top',
         y:1.02
       },
