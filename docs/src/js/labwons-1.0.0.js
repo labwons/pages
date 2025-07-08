@@ -552,6 +552,7 @@ if (SERVICE === "bubble"){
       },
     };
     var bubbleOption = {
+      doubleClick: false,
       showTips:false,
       responsive:true,
       displayModeBar:true,
