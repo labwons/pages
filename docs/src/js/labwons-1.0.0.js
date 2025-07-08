@@ -1121,6 +1121,14 @@ let calcYrange;
 
 if (SERVICE === "stock"){
   const $techOpt = $('.indicators');
+  const defaultLayout = {
+    font: {
+      size: __media__.isMobile ? 9 : 12,
+      color: 'black',
+      family: __fonts__
+    }
+  };
+
   var chartSelected = {
     techMain:['ohlcv'],
     techSupp:[],
@@ -1134,7 +1142,7 @@ if (SERVICE === "stock"){
     });
   };
 
-  calcYrange = function(data, layout) {
+  calcYrange = function(data, layout, relayout=false) {
     data.forEach(trace => {
       var n = '';
       if (trace.yaxis === 'y2') {
@@ -1145,11 +1153,13 @@ if (SERVICE === "stock"){
         n = 4;
       }
 
-      var _range = layout[`yaxis${n}`].range;
+      // var _range = layout[`yaxis${n}`].range;
       if (trace.type === "candlestick") {
-        var _r = [..._range, ...trace.low.slice(xRangeN[0], xRangeN[1]), ...trace.high.slice(xRangeN[0], xRangeN[1])];
+        // var _r = [..._range, ...trace.low.slice(xRangeN[0], xRangeN[1]), ...trace.high.slice(xRangeN[0], xRangeN[1])];
+        var _r = [...trace.low.slice(xRangeN[0], xRangeN[1]), ...trace.high.slice(xRangeN[0], xRangeN[1])];
       } else {
-        var _r = [..._range, ...trace.y.slice(xRangeN[0], xRangeN[1])];
+        // var _r = [..._range, ...trace.y.slice(xRangeN[0], xRangeN[1])];
+        var _r = [...trace.y.slice(xRangeN[0], xRangeN[1])];
       }
 
       layout[`yaxis${n}`].range = [Math.min(..._r), Math.max(..._r)];
@@ -1158,9 +1168,12 @@ if (SERVICE === "stock"){
     Object.entries(layout).forEach(([key, obj]) => {
       if (key.startsWith('yaxis')){
         if (obj.range[0] < 0){
-          obj.range = [1.1 * obj.range[0], 1.1 * obj.range[1]];
+          obj.range = [1.1 * obj.range[0], 1.05 * obj.range[1]];
         } else {
-          obj.range = [0.9 * obj.range[0], 1.1 * obj.range[1]];
+          obj.range = [0.9 * obj.range[0], 1.05 * obj.range[1]];
+        }
+        if (relayout){
+          Plotly.relayout("plotly", {[`${key}.range`]: obj.range });
         }
       }
     });
@@ -1193,11 +1206,7 @@ if (SERVICE === "stock"){
       }, 
       hovermode: 'x unified',
       legend: {
-        font: {
-          size: __media__.isMobile ? 9 : 12,
-          color: 'black',
-          family: __fonts__
-        },
+        font: defaultLayout.font,
         bgcolor:'white',
         borderwidth:0,
         itemclick:'toggle',
@@ -1220,6 +1229,7 @@ if (SERVICE === "stock"){
           visible: false,
         },
         hoverformat: '%Y/%m/%d',
+        tickfont: defaultLayout.font,
         tickformat: "%Y/%m/%d",     
         tickangle:0,   
         nticks: __media__.isMobile ? 4 : 6,
@@ -1232,6 +1242,7 @@ if (SERVICE === "stock"){
         showline: true,
         showticklabels: true,
         tickformat: ',d',
+        tickfont: defaultLayout.font,
         domain:[0, 1],
         anchor: 'x',
       },
@@ -1489,6 +1500,7 @@ if (SERVICE === "stock"){
           matches: 'x',
           showline: true,
           showticklabels: n === chartSelected.techSupp.length,
+          tickfont: defaultLayout.font,
           tickformat: "%Y/%m/%d",
           tickangle:0,
           nticks: __media__.isMobile ? 4 : 6,
@@ -1498,6 +1510,7 @@ if (SERVICE === "stock"){
           autorange: false,
           range: [0, 1],
           anchor: `x${n+1}`,
+          tickfont: defaultLayout.font,
         }
       }
 
@@ -1550,8 +1563,6 @@ if (SERVICE === "stock"){
         rows: __media__.isMobile ? 3:2, 
         columns: __media__.isMobile ? 2:3, 
         pattern: 'independent',
-        rowgap: 0.0,
-        columngap: 0.05
       },
       dragmode: false,
       doubleClick: false,
@@ -1581,12 +1592,13 @@ if (SERVICE === "stock"){
         yaxis:`y${n === 0 ? '' : n + 1}`,
       })
       layout[`xaxis${n === 0 ? '' : n + 1}`] = {
-        tickfont: {
-          size: __media__.isMobile ? 9 : 12
-        },
+        tickfont: defaultLayout.font,
         tickformat:'%Y/%m/%d',
         tickangle:0,
         nticks: 4,
+      }
+      layout[`yaxis${n === 0 ? '' : n + 1}`] = {
+        tickfont: defaultLayout.font,
       }
     });
 
@@ -1606,11 +1618,7 @@ if (SERVICE === "stock"){
       doubleClick: false,
       hovermode: 'x unified',      
       legend: {
-        font: {
-          size: __media__.isMobile ? 9 : 12,
-          color: 'black',
-          family: __fonts__
-        },
+        font: defaultLayout.font,
         bgcolor:'white',
         borderwidth:0,
         itemclick:'toggle',
@@ -1623,10 +1631,15 @@ if (SERVICE === "stock"){
         y:1.02
       },
       barmode: 'group',
+      xaxis: {
+        tickangle: 0,
+        tickfont: defaultLayout.font,
+      },
       yaxis: {
         autorange: true,
         title: '[억원]',
         tickformat: ',',
+        tickfont: defaultLayout.font,
         rangemode: 'tozero'
       },
       yaxis2: {
@@ -1634,6 +1647,7 @@ if (SERVICE === "stock"){
         title: '영업이익률[%]',
         overlaying: 'y',
         side: 'right',
+        tickfont: defaultLayout.font,
         showgrid: false,
         zeroline: false,
       },
@@ -1707,6 +1721,7 @@ if (SERVICE === "stock"){
     Plotly.newPlot('plotly', data, layout, option)
   };
 
+
   setAssetChart = function() {
     const layout = {
       margin:{
@@ -1718,11 +1733,7 @@ if (SERVICE === "stock"){
       dragmode: false,
       hovermode: 'x unified',      
       legend: {
-        font: {
-          size: __media__.isMobile ? 9 : 12,
-          color: 'black',
-          family: __fonts__
-        },
+        font: defaultLayout.font,
         bgcolor:'white',
         borderwidth:0,
         itemclick:'toggle',
@@ -1735,11 +1746,16 @@ if (SERVICE === "stock"){
         y:1.02
       },
       barmode: 'stack',
+      xaxis: {
+        tickfont: defaultLayout.font,
+        tickangle: 0,
+      },
       yaxis: {
         autorange: false,
         range:[0, 1.1 * Math.max(...srcAsset.asset)],
         title: '[억원]',
         tickformat: ',',
+        tickfont: defaultLayout.font,
         rangemode: 'tozero'
       },
       yaxis2: {
@@ -1748,6 +1764,7 @@ if (SERVICE === "stock"){
         side: 'right',
         showgrid: false,
         zeroline: false,
+        tickfont: defaultLayout.font,
       },
     };
     const option = {
@@ -1863,14 +1880,25 @@ if (SERVICE === "stock"){
     setTimeout(() => {
       $('#plotly').focus();
     }, 50);
-});
+  });
 
-  $('#plotly').on('plotly_relayout', function(e){
-    if (e['xaxis.range[0]'] && e['xaxis.range[1]']) {
-      const x0 = e['xaxis.range[0]'];
-      const x1 = e['xaxis.range[1]'];
-      console.log(x0);
-      console.log(x1);
+  $('#plotly').on('plotly_relayout', function(e, ed){
+    if (chartSelected.standalone.length) {
+      return
+    }
+    
+    if (ed['xaxis.range[0]'] && ed['xaxis.range[1]']) {
+      // let x0 = ;
+      // let x1 = ;
+      xRangeN = [
+        Math.round(Math.max(...[0, ed['xaxis.range[0]']])), 
+        Math.round(Math.min(...[ed['xaxis.range[1]'], srcDate.length - 1]))
+      ];
+      // console.log(xRangeN);
+      // console.log(e.currentTarget.data);
+      // console.log(e.currentTarget.layout);
+      calcYrange(e.currentTarget.data, e.currentTarget.layout, true);
+      // console.log(x0, x1, srcDate[x0], srcDate[x1]);
     }
 
   });
