@@ -1143,40 +1143,24 @@ if (SERVICE === "stock"){
     });
   };
 
-  calcYrange = function(data, layout, relayout=false) {
+  calcYrange = function(data, layout) {
+    var yrange = {'y': [], 'y2': [], 'y3': [], 'y4': []};
+    var yname = {'y': '', 'y2': 2, 'y3': 3, 'y4': 4};
     data.forEach(trace => {
-      var n = '';
-      if (trace.yaxis === 'y2') {
-        n = 2;
-      } else if (trace.yaxis === 'y3') {
-        n = 3;
-      } else if (trace.yaxis === 'y4') {
-        n = 4;
-      }
-
-      // var _range = layout[`yaxis${n}`].range;
+      var n = yname[trace.yaxis];
+      var r = yrange[trace.yaxis];
       if (trace.type === "candlestick") {
-        // var _r = [..._range, ...trace.low.slice(xRangeN[0], xRangeN[1]), ...trace.high.slice(xRangeN[0], xRangeN[1])];
-        var _r = [...trace.low.slice(xRangeN[0], xRangeN[1]), ...trace.high.slice(xRangeN[0], xRangeN[1])];
+        r = [...r, ...trace.low.slice(xRangeN[0], xRangeN[1]), ...trace.high.slice(xRangeN[0], xRangeN[1])];
       } else {
-        // var _r = [..._range, ...trace.y.slice(xRangeN[0], xRangeN[1])];
-        var _r = [...trace.y.slice(xRangeN[0], xRangeN[1])];
+        r = [...r, ...trace.y.slice(xRangeN[0], xRangeN[1])];
       }
-
-      layout[`yaxis${n}`].range = [Math.min(..._r), Math.max(..._r)];
-    });
-
-    Object.entries(layout).forEach(([key, obj]) => {
-      if (key.startsWith('yaxis')){
-        if (obj.range[0] < 0){
-          obj.range = [1.1 * obj.range[0], 1.05 * obj.range[1]];
-        } else {
-          obj.range = [0.9 * obj.range[0], 1.05 * obj.range[1]];
-        }
-        if (relayout){
-          Plotly.relayout("plotly", {[`${key}.range`]: obj.range });
-        }
+      var rng = [Math.min(...r), Math.max(...r)];
+      if (rng[0] < 0){
+        rng = [1.05 * rng[0], 1.05 * rng[1]];
+      } else {
+        rng = [0.95 * rng[0], 1.05 * rng[1]];
       }
+      layout[`yaxis${n}`].range = rng;
     });
   }
 
@@ -1193,7 +1177,8 @@ if (SERVICE === "stock"){
       responsive:true,
       displayModeBar:true,
       modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
-      displaylogo:false
+      displaylogo:false,
+      doubleClick: false
     };
       
     let layout = {
@@ -1549,7 +1534,7 @@ if (SERVICE === "stock"){
     }
 
     calcYrange(data, layout);
-    Plotly.newPlot('plotly', data, layout, option)
+    Plotly.newPlot('plotly', data, layout, option);
   };
 
   setDeviationChart = function() {
@@ -1565,14 +1550,13 @@ if (SERVICE === "stock"){
         columns: __media__.isMobile ? 2:3, 
         pattern: 'independent',
       },
-      dragmode: false,
-      doubleClick: false,
+      dragmode: 'zoom',
+      hovermode: 'x unified'
     }
     const option = {
       showTips:false,
       responsive:true,
-      displayModeBar:true,
-      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+      displayModeBar:false,
       displaylogo:false
     };
 
@@ -1581,6 +1565,7 @@ if (SERVICE === "stock"){
       if (obj.isempty){
         return
       }
+      
       data.push({
         type:'bar',
         name:label,
@@ -1591,15 +1576,30 @@ if (SERVICE === "stock"){
         marker: {color:obj.data.map(v => v < 0 ? '#1861A8':'#C92A2A' )},
         xaxis:`x${n === 0 ? '' : n + 1}`,
         yaxis:`y${n === 0 ? '' : n + 1}`,
+        hovertemplate: `%{y:.2f}%<extra>${label}</extra>`
       })
       layout[`xaxis${n === 0 ? '' : n + 1}`] = {
+        anchor: `y${n === 0 ? '' : n + 1}`,
         tickfont: defaultLayout.font,
         tickformat:'%Y/%m/%d',
         tickangle:0,
-        nticks: 4,
+        nticks: __media__.isMobile? 3 : 4,
       }
       layout[`yaxis${n === 0 ? '' : n + 1}`] = {
+        anchor: `x${n === 0 ? '' : n + 1}`,
         tickfont: defaultLayout.font,
+        fixedrange:true,
+        domain: n < 3 ? [0.52, 1] : [0, 0.48]
+      }
+      if (__media__.isMobile) {
+        if (n <= 1) {
+          layout[`yaxis${n === 0 ? '' : n + 1}`].domain = [0.66, 1.0];
+        } else if (n <= 3){
+          layout[`yaxis${n === 0 ? '' : n + 1}`].domain = [0.33, 0.64];
+        } else {
+          layout[`yaxis${n === 0 ? '' : n + 1}`].domain = [0, 0.31];
+        }
+        
       }
     });
 
@@ -1889,17 +1889,18 @@ if (SERVICE === "stock"){
     }
     
     if (ed['xaxis.range[0]'] && ed['xaxis.range[1]']) {
-      // let x0 = ;
-      // let x1 = ;
       xRangeN = [
         Math.round(Math.max(...[0, ed['xaxis.range[0]']])), 
         Math.round(Math.min(...[ed['xaxis.range[1]'], srcDate.length - 1]))
       ];
-      // console.log(xRangeN);
-      // console.log(e.currentTarget.data);
-      // console.log(e.currentTarget.layout);
-      calcYrange(e.currentTarget.data, e.currentTarget.layout, true);
-      // console.log(x0, x1, srcDate[x0], srcDate[x1]);
+
+      calcYrange(e.currentTarget.data, e.currentTarget.layout);
+      Object.entries(e.currentTarget.layout).forEach(([key, obj]) => {
+        if (key.startsWith('yaxis')) {
+          Plotly.relayout("plotly", {[`${key}.range`]: obj.range });
+        }
+      });
+      
     }
 
   });

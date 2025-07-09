@@ -244,44 +244,47 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # DEPLOY STOCKS
     # ---------------------------------------------------------------------------------------
-    stocks = Stocks()
-    PATH.STOCKS = os.path.join(PATH.DOCS, r'stocks')
-    os.makedirs(PATH.STOCKS, exist_ok=True)
-    clearPath(PATH.STOCKS)
+    if GITHUB.CONFIG.STOCKPRICE:
+        stocks = Stocks()
+        PATH.STOCKS = os.path.join(PATH.DOCS, r'stocks')
+        os.makedirs(PATH.STOCKS, exist_ok=True)
+        clearPath(PATH.STOCKS)
 
-    for ticker, stock in stocks:
-        os.makedirs(os.path.join(PATH.STOCKS, rf'{ticker}'), exist_ok=True)
-        with open(file=os.path.join(PATH.STOCKS, rf'{ticker}/index.html'), mode='w', encoding='utf-8') as file:
-            file.write(
-                Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
-                    .get_template('stock-1.0.0.html') \
-                    .render({
-                    "service": "stock",
-                    "local": ENV == "local",
-                    "title": "404" if ENV == "local" else f"LAB￦ONS: {stock.name}",
-                    "nav": SYSTEM_NAV,
-                    "ticker": ticker,
-                    "name": stock.name,
-                    "xrange": stock.xrange,
-                    "date": stock.date,
-                    "ohlcv": stock.ohlcv,
-                    "sma": stock.sma,
-                    "bollinger": stock.bollinger,
-                    "trend": stock.trend,
-                    "macd": stock.macd,
-                    "rsi": stock.rsi,
-                    "sales_y": stock.sales_y,
-                    "sales_q": stock.sales_q,
-                    "asset": stock.asset,
-                    "deviation": stock.deviation
-                })
-            )
-    context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK: ', stocks.log, '']
+        for ticker, stock in stocks:
+            os.makedirs(os.path.join(PATH.STOCKS, rf'{ticker}'), exist_ok=True)
+            with open(file=os.path.join(PATH.STOCKS, rf'{ticker}/index.html'), mode='w', encoding='utf-8') as file:
+                file.write(
+                    Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
+                        .get_template('stock-1.0.0.html') \
+                        .render({
+                        "service": "stock",
+                        "local": ENV == "local",
+                        "title": "404" if ENV == "local" else f"LAB￦ONS: {stock.name}",
+                        "nav": SYSTEM_NAV,
+                        "ticker": ticker,
+                        "name": stock.name,
+                        "xrange": stock.xrange,
+                        "date": stock.date,
+                        "ohlcv": stock.ohlcv,
+                        "sma": stock.sma,
+                        "bollinger": stock.bollinger,
+                        "trend": stock.trend,
+                        "macd": stock.macd,
+                        "rsi": stock.rsi,
+                        "sales_y": stock.sales_y,
+                        "sales_q": stock.sales_q,
+                        "asset": stock.asset,
+                        "deviation": stock.deviation
+                    })
+                )
+        context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK: ', stocks.log, '']
+    else:
+        context += [f'- [PASSED] DEPLOY INDIVIDUAL STOCK: ', '']
 
     # ---------------------------------------------------------------------------------------
     # BUILD MACRO BASELINE: THIS PROCESS IS MANDATORY
     # ---------------------------------------------------------------------------------------
-    if GITHUB.CONFIG.AFTERMARKET or (GITHUB.CONFIG.ECOS and GITHUB.CONFIG.FRED):
+    if GITHUB.CONFIG.ECOS and GITHUB.CONFIG.FRED:
         macro = MacroBaseline()
         macroData = macro.data
         macroData.to_parquet(FILE.MACRO_BASELINE, engine='pyarrow')
