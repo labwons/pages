@@ -1148,17 +1148,17 @@ if (SERVICE === "stock"){
     var yname = {'y': '', 'y2': 2, 'y3': 3, 'y4': 4};
     data.forEach(trace => {
       var n = yname[trace.yaxis];
-      var r = yrange[trace.yaxis];
       if (trace.type === "candlestick") {
-        r = [...r, ...trace.low.slice(xRangeN[0], xRangeN[1]), ...trace.high.slice(xRangeN[0], xRangeN[1])];
+        yrange[trace.yaxis] = [...yrange[trace.yaxis], ...trace.low.slice(xRangeN[0], xRangeN[1]), ...trace.high.slice(xRangeN[0], xRangeN[1])];
       } else {
-        r = [...r, ...trace.y.slice(xRangeN[0], xRangeN[1])];
+        yrange[trace.yaxis] = [...yrange[trace.yaxis], ...trace.y.slice(xRangeN[0], xRangeN[1])];
       }
-      var rng = [Math.min(...r), Math.max(...r)];
+      
+      var rng = [Math.min(...yrange[trace.yaxis]), Math.max(...yrange[trace.yaxis])];
       if (rng[0] < 0){
-        rng = [1.05 * rng[0], 1.05 * rng[1]];
+        rng = [1.1 * rng[0], 1.1 * rng[1]];
       } else {
-        rng = [0.95 * rng[0], 1.05 * rng[1]];
+        rng = [0.9 * rng[0], 1.1 * rng[1]];
       }
       layout[`yaxis${n}`].range = rng;
     });
@@ -1584,20 +1584,22 @@ if (SERVICE === "stock"){
         tickformat:'%Y/%m/%d',
         tickangle:0,
         nticks: __media__.isMobile? 3 : 4,
+        showline: true,
       }
       layout[`yaxis${n === 0 ? '' : n + 1}`] = {
         anchor: `x${n === 0 ? '' : n + 1}`,
         tickfont: defaultLayout.font,
         fixedrange:true,
-        domain: n < 3 ? [0.52, 1] : [0, 0.48]
+        domain: n < 3 ? [0.52, 1] : [0, 0.48],
+        showline: true,
       }
       if (__media__.isMobile) {
         if (n <= 1) {
-          layout[`yaxis${n === 0 ? '' : n + 1}`].domain = [0.66, 1.0];
+          layout[`yaxis${n === 0 ? '' : n + 1}`].domain = [0.7, 1.0];
         } else if (n <= 3){
-          layout[`yaxis${n === 0 ? '' : n + 1}`].domain = [0.33, 0.64];
+          layout[`yaxis${n === 0 ? '' : n + 1}`].domain = [0.35, 0.65];
         } else {
-          layout[`yaxis${n === 0 ? '' : n + 1}`].domain = [0, 0.31];
+          layout[`yaxis${n === 0 ? '' : n + 1}`].domain = [0, 0.30];
         }
         
       }
