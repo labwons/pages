@@ -274,7 +274,8 @@ if __name__ == "__main__":
                         "sales_y": stock.sales_y,
                         "sales_q": stock.sales_q,
                         "asset": stock.asset,
-                        "deviation": stock.deviation
+                        "deviation": stock.deviation,
+                        "per": stock.pers
                     })
                 )
         context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK: ', stocks.log, '']

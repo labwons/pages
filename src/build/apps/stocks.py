@@ -9,7 +9,7 @@ except ImportError:
 from datetime import timedelta
 from json import dumps
 from pandas import DataFrame, Series, DateOffset
-from pandas import concat, read_parquet, to_datetime
+from pandas import concat, read_parquet, to_datetime, isna
 from requests.exceptions import ConnectionError
 from scipy.stats import linregress
 from ta.trend import MACD
@@ -96,7 +96,8 @@ class Stocks:
                 rsi=self.convertRsi(typical),
                 sales_y=self.convertSales(annual, cap),
                 sales_q=self.convertSales(quarter, cap),
-                asset=self.convertAsset(annual, quarter)
+                asset=self.convertAsset(annual, quarter),
+                pers=self.convertPer(general)
             )
             __mem__[ticker].deviation = self.convertDeviation(typical, trend)
         self.__mem__ = __mem__
@@ -256,7 +257,7 @@ class Stocks:
         return dumps(obj).replace("NaN", "null")
 
     @classmethod
-    def convertAsset(cls, a:DataFrame, q:DataFrame):
+    def convertAsset(cls, a:DataFrame, q:DataFrame) -> str:
         cols = ['자산총계(억원)', '부채총계(억원)', '자본총계(억원)', '부채비율(%)']
         def _asset(_df_:DataFrame) -> DataFrame:
             _df_ = _df_[cols]
@@ -284,7 +285,7 @@ class Stocks:
         return dumps(obj).replace("NaN", "null")
 
     @classmethod
-    def convertDeviation(cls, typical:Series, trend:DataFrame):
+    def convertDeviation(cls, typical:Series, trend:DataFrame) -> str:
         df = concat([typical, trend], axis=1)
         objs = {}
         for col in df.columns[1:]:
@@ -305,6 +306,60 @@ class Stocks:
                 'data': data.tolist(),
                 'empty': 'false'
             }
+        return dumps(obj).replace("NaN", "null")
+
+    def convertPer(self, baseline:Series) -> str:
+        y = []
+        text = []
+        meta = []
+
+        if isna(baseline["fiscalPE"]):
+            y.append(0)
+            text.append("적자" if baseline["fiscalEps"] <= 0 else "미제공")
+        else:
+            y.append(float(baseline["fiscalPE"]))
+            text.append(f'{float(baseline["fiscalPE"])}')
+        meta.append(f'직전회계연도({baseline["fiscalDate"]}) EPS 대비 종가')
+
+        if isna(baseline["trailingPE"]):
+            y.append(0)
+            text.append("적자" if baseline["trailingEps"] <= 0 else "미제공")
+        else:
+            y.append(round(baseline["trailingPE"], 2))
+            text.append(f'{round(baseline["trailingPE"], 2)}')
+        meta.append(f'4분기연속EPS합산 대비 현재가(종가)')
+
+        if isna(baseline["estimatedPE"]):
+            y.append(0)
+            if baseline["estimatedEps"] <= 0:
+                text.append("적자")
+                meta.append(f'추정회계연도({baseline["estimatedDate"].replace("(E)", "")}) EPS 대비 현재가(종가)')
+            else:
+                text.append("미제공")
+                meta.append(f'증권사 추정치 미제공')
+        else:
+            y.append(round(baseline["estimatedPE"], 2))
+            text.append(f'{round(baseline["estimatedPE"], 2)}')
+            meta.append(f'추정회계연도({baseline["estimatedDate"].replace("(E)", "")}) EPS 대비 현재가(종가)')
+
+        if isna(baseline["weightedAverageEps"]):
+            y.append(0)
+            text.append("적자" if baseline["weightedAverageEps"] <= 0 else "미제공")
+        else:
+            y.append(float(round(baseline["close"] / baseline["weightedAverageEps"], 2)))
+            text.append(f'{float(round(baseline["close"] / baseline["weightedAverageEps"], 2))}')
+        meta.append(f'{int(baseline["numberOfAnnualStatement"])}개 회계연도의 EPS 가중 평균 대비 현재가(종가)')
+
+        y.append(round(self.basis[self.basis["industryCode"] == baseline["industryCode"]]["trailingPE"].mean(), 2))
+        text.append(f'{y[-1]}')
+        meta.append(f'{baseline["industryName"]} 업종 4분기연속 PE에 대한 평균')
+
+        obj = {
+            "x": ["직전회계연도PE", "4분기연속PE", "추정PE", "가중평균PE", "업종평균PE"],
+            "y": y,
+            "text": text,
+            "meta": meta
+        }
         return dumps(obj).replace("NaN", "null")
 
 

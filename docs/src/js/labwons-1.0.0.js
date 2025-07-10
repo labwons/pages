@@ -1117,6 +1117,7 @@ let setTechnicalChart;
 let setDeviationChart;
 let setSalesChart;
 let setAssetChart;
+let setPerChart;
 let calcXrange;
 let calcYrange;
 
@@ -1172,172 +1173,121 @@ if (SERVICE === "stock"){
       return
     }
 
-    const option = {
-      showTips:false,
-      responsive:true,
-      displayModeBar:true,
-      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
-      displaylogo:false,
-      doubleClick: false
-    };
-      
-    let layout = {
-      autosize: true,
-      dragmode: 'pan',
-      margin:{
-        l:__media__.isMobile ? 30:60, 
-        r:20, 
-        t:10, 
-        b:20
-      }, 
-      hovermode: 'x unified',
-      legend: {
-        font: defaultLayout.font,
-        bgcolor:'white',
-        borderwidth:0,
-        itemclick:'toggle',
-        itemdoubleclick:'toggleothers',
-        orientation:'h',
-        valign:'middle',
-        xanchor:'left',
-        x:0.0,
-        yanchor:'top',
-        y:1.0
-      },
-      xaxis:{
-        autorange: false,
-        range: [xRangeN[0], xRangeN[1]],
-        type:'category',
-        categorygap: __media__.isMobile ? 0.2 : 0.1,
-        showline: true,
-        showticklabels: true,
-        rangeslider: {
-          visible: false,
+    if (!__media__.isMobile) {
+      const option = {
+        showTips:false,
+        responsive:true,
+        displayModeBar:true,
+        modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+        displaylogo:false,
+        doubleClick: false
+      };
+        
+      let layout = {
+        autosize: true,
+        dragmode: 'pan',
+        margin:{
+          l:__media__.isMobile ? 30:60, 
+          r:20, 
+          t:10, 
+          b:20
+        }, 
+        hovermode: 'x unified',
+        legend: {
+          font: defaultLayout.font,
+          bgcolor:'white',
+          borderwidth:0,
+          itemclick:'toggle',
+          itemdoubleclick:'toggleothers',
+          orientation:'h',
+          valign:'middle',
+          xanchor:'left',
+          x:0.0,
+          yanchor:'top',
+          y:1.0
         },
-        hoverformat: '%Y/%m/%d',
-        tickfont: defaultLayout.font,
-        tickformat: "%Y/%m/%d",     
-        tickangle:0,   
-        nticks: __media__.isMobile ? 4 : 6,
-        anchor: 'y',
-      },
-      yaxis:{
-        autorange: false,
-        fixedrange: true,
-        range: [srcOhlcv.low[xRangeN[0]], srcOhlcv.high[xRangeN[1]]],
-        showline: true,
-        showticklabels: true,
-        tickformat: ',d',
-        tickfont: defaultLayout.font,
-        domain:[0, 1],
-        anchor: 'x',
-      },
-    };
+        xaxis:{
+          autorange: false,
+          range: [xRangeN[0], xRangeN[1]],
+          type:'category',
+          categorygap: __media__.isMobile ? 0.2 : 0.1,
+          showline: true,
+          showticklabels: true,
+          rangeslider: {
+            visible: false,
+          },
+          hoverformat: '%Y/%m/%d',
+          tickfont: defaultLayout.font,
+          tickformat: "%Y/%m/%d",     
+          tickangle:0,   
+          nticks: __media__.isMobile ? 4 : 6,
+          anchor: 'y',
+        },
+        yaxis:{
+          autorange: false,
+          fixedrange: true,
+          range: [srcOhlcv.low[xRangeN[0]], srcOhlcv.high[xRangeN[1]]],
+          showline: true,
+          showticklabels: true,
+          tickformat: ',d',
+          tickfont: defaultLayout.font,
+          domain:[0, 1],
+          anchor: 'x',
+        },
+      };
 
-    let data = [{
-      name: "",
-      x: srcDate,
-      open: srcOhlcv.open,
-      high: srcOhlcv.high,
-      low: srcOhlcv.low,
-      close: srcOhlcv.close,
-      type: 'candlestick',
-      showlegend: false,
-      increasing: {
-        line: { color: '#C92A2A' },
-        fillcolor: '#C92A2A'
-      },
-      decreasing: {
-        line: { color: '#1861A8' },
-        fillcolor: '#1861A8'
-      },
-      xaxis: 'x',
-      yaxis: 'y'
-    }];
+      let data = [{
+        name: "",
+        x: srcDate,
+        open: srcOhlcv.open,
+        high: srcOhlcv.high,
+        low: srcOhlcv.low,
+        close: srcOhlcv.close,
+        type: 'candlestick',
+        showlegend: false,
+        increasing: {
+          line: { color: '#C92A2A' },
+          fillcolor: '#C92A2A'
+        },
+        decreasing: {
+          line: { color: '#1861A8' },
+          fillcolor: '#1861A8'
+        },
+        xaxis: 'x',
+        yaxis: 'y'
+      }];
 
-    if (chartSelected.techMain.includes('bollingerx2')) {
-      data.push({
-        name:'상단선',
-        x:srcDate,
-        y:srcBollinger.upper,
-        type: 'scatter',
-        mode: 'lines',
-        showlegend: false,
-        line: {
-          color: 'grey',
-          dash:'dot'
-        },
-        hovertemplate: 'x2상단: %{y}원<extra></extra>',
-        xaxis: 'x',
-        yaxis: 'y'
-      });
-      data.push({
-        name:'하단선',
-        x:srcDate,
-        y:srcBollinger.lower,
-        type: 'scatter',
-        mode: 'lines',
-        showlegend: false,
-        line: {
-          color: 'grey',
-          dash:'dot'
-        },
-        hovertemplate: 'x2하단: %{y}원<extra></extra>',
-        xaxis: 'x',
-        yaxis: 'y'
-      });
-      data.push({
-        name: '중간선',
-        x:srcDate,
-        y:srcBollinger.middle,
-        type: 'scatter',
-        mode: 'lines',
-        showlegend: false,
-        line: {
-          color: 'brown',
-        },
-        hovertemplate: '중간: %{y}원<extra></extra>',
-        xaxis: 'x',
-        yaxis: 'y'
-      });
-    }
-
-    if (chartSelected.techMain.includes('bollingerx1')) {
-      data.push({
-        name:'상단선x1',
-        x:srcDate,
-        y:srcBollinger.upperTrend,
-        type: 'scatter',
-        mode: 'lines',
-        showlegend: false,
-        line: {
-          color: 'green',
-          dash:'dash'
-        },
-        hovertemplate: 'x1상단: %{y}원<extra></extra>',
-        xaxis: 'x',
-        yaxis: 'y'
-      });
-      data.push({
-        name:'하단선x1',
-        x:srcDate,
-        y:srcBollinger.lowerTrend,
-        type: 'scatter',
-        mode: 'lines',
-        showlegend: false,
-        line: {
-          color: 'green',
-          dash:'dash'
-        },
-        hovertemplate: 'x1하단: %{y}원<extra></extra>',
-        xaxis: 'x',
-        yaxis: 'y'
-      });
-      var _ismiddle=false;
-      for (var _n=0; _n<data.length; _n++){
-        if (data[_n].name === '중간선') {_ismiddle = true;}
-      }
-      if (!_ismiddle){
+      if (chartSelected.techMain.includes('bollingerx2')) {
+        data.push({
+          name:'상단선',
+          x:srcDate,
+          y:srcBollinger.upper,
+          type: 'scatter',
+          mode: 'lines',
+          showlegend: false,
+          line: {
+            color: 'grey',
+            dash:'dot'
+          },
+          hovertemplate: 'x2상단: %{y}원<extra></extra>',
+          xaxis: 'x',
+          yaxis: 'y'
+        });
+        data.push({
+          name:'하단선',
+          x:srcDate,
+          y:srcBollinger.lower,
+          type: 'scatter',
+          mode: 'lines',
+          showlegend: false,
+          line: {
+            color: 'grey',
+            dash:'dot'
+          },
+          hovertemplate: 'x2하단: %{y}원<extra></extra>',
+          xaxis: 'x',
+          yaxis: 'y'
+        });
         data.push({
           name: '중간선',
           x:srcDate,
@@ -1351,190 +1301,243 @@ if (SERVICE === "stock"){
           hovertemplate: '중간: %{y}원<extra></extra>',
           xaxis: 'x',
           yaxis: 'y'
-        })
+        });
       }
-    }
 
-    if (chartSelected.techMain.includes('sma')) {
-      Object.entries(srcSma).forEach(([key, _data]) => {
-        var _name = key.replace("sma", "") + '일';
+      if (chartSelected.techMain.includes('bollingerx1')) {
         data.push({
-          name:_name,
+          name:'상단선x1',
           x:srcDate,
-          y:_data,
+          y:srcBollinger.upperTrend,
+          type: 'scatter',
+          mode: 'lines',
+          showlegend: false,
+          line: {
+            color: 'green',
+            dash:'dash'
+          },
+          hovertemplate: 'x1상단: %{y}원<extra></extra>',
+          xaxis: 'x',
+          yaxis: 'y'
+        });
+        data.push({
+          name:'하단선x1',
+          x:srcDate,
+          y:srcBollinger.lowerTrend,
+          type: 'scatter',
+          mode: 'lines',
+          showlegend: false,
+          line: {
+            color: 'green',
+            dash:'dash'
+          },
+          hovertemplate: 'x1하단: %{y}원<extra></extra>',
+          xaxis: 'x',
+          yaxis: 'y'
+        });
+        var _ismiddle=false;
+        for (var _n=0; _n<data.length; _n++){
+          if (data[_n].name === '중간선') {_ismiddle = true;}
+        }
+        if (!_ismiddle){
+          data.push({
+            name: '중간선',
+            x:srcDate,
+            y:srcBollinger.middle,
+            type: 'scatter',
+            mode: 'lines',
+            showlegend: false,
+            line: {
+              color: 'brown',
+            },
+            hovertemplate: '중간: %{y}원<extra></extra>',
+            xaxis: 'x',
+            yaxis: 'y'
+          })
+        }
+      }
+
+      if (chartSelected.techMain.includes('sma')) {
+        Object.entries(srcSma).forEach(([key, _data]) => {
+          var _name = key.replace("sma", "") + '일';
+          data.push({
+            name:_name,
+            x:srcDate,
+            y:_data,
+            type: 'scatter',
+            mode: 'lines',
+            line: {
+              dash:'dash',
+              width: 1,
+            },
+            showlegend: true,
+            hovertemplate: `${_name}: %{y}원<extra></extra>`,
+            xaxis: 'x',
+            yaxis: 'y'
+          })
+        });
+      }
+
+      if (chartSelected.techMain.includes('trend')) {
+        Object.entries(srcTrend).forEach(([key, _data]) => {
+          var _name = `${key} 추세`;
+          data.push({
+            name:_name,
+            x:_data.x,
+            y:_data.y,
+            type: 'scatter',
+            mode: 'lines',
+            line: {
+              color:'black',
+              dash:'dashdot',
+              width: 1,
+            },
+            showlegend: true,
+            visible: (key === '6개월') ? true: 'legendonly',
+            hovertemplate: `${_name}: %{y}원<extra></extra>`,
+            xaxis: 'x',
+            yaxis: 'y'
+          })
+        });
+      }
+
+      if (chartSelected.techSupp.includes('volume')) {
+        data.push({
+          name:"거래량",
+          x: srcDate,
+          y: srcOhlcv.volume,
+          type: 'bar',
+          showlegend: false,
+          marker: {color:'lightgrey'},
+          xaxis: 'x2',
+          yaxis: 'y2'
+        });
+      }
+
+      if (chartSelected.techSupp.includes('macd')) {
+        data.push({
+          name:"MACD",
+          x: srcDate,
+          y: srcMacd.macd,
+          showlegend: false,
           type: 'scatter',
           mode: 'lines',
           line: {
+            color:'royalblue',
+            dash:'solid',
+            width: 1,
+          },
+          hovertemplate: 'MACD: %{y}<extra></extra>',
+          xaxis: `x${chartSelected.techSupp.length + 2}`,
+          yaxis: `y${chartSelected.techSupp.length + 2}`
+        });
+        data.push({
+          name:"Signal",
+          x: srcDate,
+          y: srcMacd.signal,
+          showlegend: false,
+          type: 'scatter',
+          mode: 'lines',
+          line: {
+            color:'red',
             dash:'dash',
             width: 1,
           },
-          showlegend: true,
-          hovertemplate: `${_name}: %{y}원<extra></extra>`,
-          xaxis: 'x',
-          yaxis: 'y'
-        })
-      });
-    }
-
-    if (chartSelected.techMain.includes('trend')) {
-      Object.entries(srcTrend).forEach(([key, _data]) => {
-        var _name = `${key} 추세`;
+          hovertemplate: 'Signal: %{y}<extra></extra>',
+          xaxis: `x${chartSelected.techSupp.length + 2}`,
+          yaxis: `y${chartSelected.techSupp.length + 2}`
+        });
         data.push({
-          name:_name,
-          x:_data.x,
-          y:_data.y,
+          name:"Diff",
+          x: srcDate,
+          y: srcMacd.diff,
+          type: 'bar',
+          showlegend: false,
+          marker: {color:srcMacd.diff.map(v => v < 0 ? '#1861A8':'#C92A2A' )},
+          hovertemplate: 'Signal: %{y}<extra></extra>',
+          xaxis: `x${chartSelected.techSupp.length + 2}`,
+          yaxis: `y${chartSelected.techSupp.length + 2}`
+        });
+      }
+
+      if (chartSelected.techSupp.includes('rsi')) {
+        data.push({
+          name:"RSI",
+          x: srcDate,
+          y: srcRsi.rsi,
+          showlegend: false,
           type: 'scatter',
           mode: 'lines',
           line: {
-            color:'black',
-            dash:'dashdot',
+            color:'royalblue',
+            dash:'solid',
             width: 1,
           },
-          showlegend: true,
-          visible: (key === '6개월') ? true: 'legendonly',
-          hovertemplate: `${_name}: %{y}원<extra></extra>`,
-          xaxis: 'x',
-          yaxis: 'y'
-        })
-      });
-    }
-
-    if (chartSelected.techSupp.includes('volume')) {
-      data.push({
-        name:"거래량",
-        x: srcDate,
-        y: srcOhlcv.volume,
-        type: 'bar',
-        showlegend: false,
-        marker: {color:'lightgrey'},
-        xaxis: 'x2',
-        yaxis: 'y2'
-      });
-    }
-
-    if (chartSelected.techSupp.includes('macd')) {
-      data.push({
-        name:"MACD",
-        x: srcDate,
-        y: srcMacd.macd,
-        showlegend: false,
-        type: 'scatter',
-        mode: 'lines',
-        line: {
-          color:'royalblue',
-          dash:'solid',
-          width: 1,
-        },
-        hovertemplate: 'MACD: %{y}<extra></extra>',
-        xaxis: `x${chartSelected.techSupp.length + 2}`,
-        yaxis: `y${chartSelected.techSupp.length + 2}`
-      });
-      data.push({
-        name:"Signal",
-        x: srcDate,
-        y: srcMacd.signal,
-        showlegend: false,
-        type: 'scatter',
-        mode: 'lines',
-        line: {
-          color:'red',
-          dash:'dash',
-          width: 1,
-        },
-        hovertemplate: 'Signal: %{y}<extra></extra>',
-        xaxis: `x${chartSelected.techSupp.length + 2}`,
-        yaxis: `y${chartSelected.techSupp.length + 2}`
-      });
-      data.push({
-        name:"Diff",
-        x: srcDate,
-        y: srcMacd.diff,
-        type: 'bar',
-        showlegend: false,
-        marker: {color:srcMacd.diff.map(v => v < 0 ? '#1861A8':'#C92A2A' )},
-        hovertemplate: 'Signal: %{y}<extra></extra>',
-        xaxis: `x${chartSelected.techSupp.length + 2}`,
-        yaxis: `y${chartSelected.techSupp.length + 2}`
-      });
-    }
-
-    if (chartSelected.techSupp.includes('rsi')) {
-      data.push({
-        name:"RSI",
-        x: srcDate,
-        y: srcRsi.rsi,
-        showlegend: false,
-        type: 'scatter',
-        mode: 'lines',
-        line: {
-          color:'royalblue',
-          dash:'solid',
-          width: 1,
-        },
-        hovertemplate: 'RSI: %{y}%<extra></extra>',
-        xaxis: `x${chartSelected.techSupp.length + 2}`,
-        yaxis: `y${chartSelected.techSupp.length + 2}`
-      });
-    }
-    
-    if (chartSelected.techSupp.length) {
-      layout.xaxis.showticklabels = false;
-      for (var n=1; n<=chartSelected.techSupp.length; n++){
-        layout[`xaxis${n+1}`] = {
-          type:'category',
-          categorygap: 0.1,
-          matches: 'x',
-          showline: true,
-          showticklabels: n === chartSelected.techSupp.length,
-          tickfont: defaultLayout.font,
-          tickformat: "%Y/%m/%d",
-          tickangle:0,
-          nticks: __media__.isMobile ? 4 : 6,
-          anchor: `y${n+1}`,
-        };
-        layout[`yaxis${n+1}`] = {
-          autorange: false,
-          range: [0, 1],
-          anchor: `x${n+1}`,
-          tickfont: defaultLayout.font,
+          hovertemplate: 'RSI: %{y}%<extra></extra>',
+          xaxis: `x${chartSelected.techSupp.length + 2}`,
+          yaxis: `y${chartSelected.techSupp.length + 2}`
+        });
+      }
+      
+      if (chartSelected.techSupp.length) {
+        layout.xaxis.showticklabels = false;
+        for (var n=1; n<=chartSelected.techSupp.length; n++){
+          layout[`xaxis${n+1}`] = {
+            type:'category',
+            categorygap: 0.1,
+            matches: 'x',
+            showline: true,
+            showticklabels: n === chartSelected.techSupp.length,
+            tickfont: defaultLayout.font,
+            tickformat: "%Y/%m/%d",
+            tickangle:0,
+            nticks: __media__.isMobile ? 4 : 6,
+            anchor: `y${n+1}`,
+          };
+          layout[`yaxis${n+1}`] = {
+            autorange: false,
+            range: [0, 1],
+            anchor: `x${n+1}`,
+            tickfont: defaultLayout.font,
+          }
         }
+
+        if (chartSelected.techSupp.length === 1) {
+          if (chartSelected.techSupp.includes('volume')) {
+            layout.yaxis.domain = [0.12, 1];
+            layout.yaxis2.domain = [0, 0.1];
+          } else {
+            layout.yaxis.domain = [0.27, 1];
+            layout.yaxis2.domain = [0, 0.25];
+          }
+        } else if (chartSelected.techSupp.length === 2) {
+          if (chartSelected.techSupp.includes('volume')) {
+            layout.yaxis.domain = [0.39, 1];
+            layout.yaxis2.domain = [0.27, 0.37];
+            layout.yaxis3.domain = [0, 0.25];
+          } else {
+            layout.yaxis.domain = [0.44, 1];
+            layout.yaxis2.domain = [0.22, 0.42];
+            layout.yaxis3.domain = [0, 0.2];
+          }
+        } else if (chartSelected.techSupp.length === 2) {
+          if (chartSelected.techSupp.includes('volume')) {
+            layout.yaxis.domain = [0.43, 1];
+            layout.yaxis2.domain = [0.32, 0.42];
+            layout.yaxis3.domain = [0.16, 0.31];
+            layout.yaxis4.domain = [0, 0.15];
+          } else {
+            layout.yaxis.domain = [0.51, 1];
+            layout.yaxis2.domain = [0.34, 0.5];
+            layout.yaxis3.domain = [0.17, 0.33];
+            layout.yaxis4.domain = [0, 0.16];
+          }
+        }    
       }
 
-      if (chartSelected.techSupp.length === 1) {
-        if (chartSelected.techSupp.includes('volume')) {
-          layout.yaxis.domain = [0.12, 1];
-          layout.yaxis2.domain = [0, 0.1];
-        } else {
-          layout.yaxis.domain = [0.27, 1];
-          layout.yaxis2.domain = [0, 0.25];
-        }
-      } else if (chartSelected.techSupp.length === 2) {
-        if (chartSelected.techSupp.includes('volume')) {
-          layout.yaxis.domain = [0.39, 1];
-          layout.yaxis2.domain = [0.27, 0.37];
-          layout.yaxis3.domain = [0, 0.25];
-        } else {
-          layout.yaxis.domain = [0.44, 1];
-          layout.yaxis2.domain = [0.22, 0.42];
-          layout.yaxis3.domain = [0, 0.2];
-        }
-      } else if (chartSelected.techSupp.length === 2) {
-        if (chartSelected.techSupp.includes('volume')) {
-          layout.yaxis.domain = [0.43, 1];
-          layout.yaxis2.domain = [0.32, 0.42];
-          layout.yaxis3.domain = [0.16, 0.31];
-          layout.yaxis4.domain = [0, 0.15];
-        } else {
-          layout.yaxis.domain = [0.51, 1];
-          layout.yaxis2.domain = [0.34, 0.5];
-          layout.yaxis3.domain = [0.17, 0.33];
-          layout.yaxis4.domain = [0, 0.16];
-        }
-      }    
+      calcYrange(data, layout);
+      Plotly.newPlot('plotly', data, layout, option);
     }
-
-    calcYrange(data, layout);
-    Plotly.newPlot('plotly', data, layout, option);
   };
 
   setDeviationChart = function() {
@@ -1829,6 +1832,71 @@ if (SERVICE === "stock"){
     Plotly.newPlot('plotly', data, layout, option)
   };
 
+  setPerChart = function() {
+    const layout = {
+      margin:{
+        l:__media__.isMobile ? 10:30, 
+        r:__media__.isMobile ? 10:30, 
+        t:10, 
+        b:20
+      }, 
+      dragmode: false,
+      hovermode: 'x unified',      
+      legend: {
+        font: defaultLayout.font,
+        bgcolor:'white',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'left',
+        x:0.0,
+        yanchor:'top',
+        y:1.02
+      },
+
+      xaxis: {
+        tickfont: defaultLayout.font,
+        tickangle: 0,
+      },
+      yaxis: {
+        autorange: false,
+        range:[0, 1.1 * Math.max(...srcPe.y)],
+        title: '',
+        tickformat: ',',
+        tickfont: defaultLayout.font,
+        rangemode: 'tozero'
+      },
+    };
+    const option = {
+      doubleClick: false,
+      doubleTap: false,
+      showTips:false,
+      responsive:true,
+      displayModeBar:false,
+      displaylogo:false,
+      scrollZoom: false
+    };
+    
+    const pe = {
+      x: srcPe.x,
+      y: srcPe.y,
+      name: '',
+      text: srcPe.text,
+      textposition: 'outside',
+      texttemplate: '%{text}',
+      textfont: defaultLayout.font,
+      meta: srcPe.meta,
+      showlegend: false,
+      type: 'bar',
+      marker: { color:'skyblue', opacity:0.8 },
+      hovertemplate: '%{meta}<extra></extra>'
+    };
+
+    Plotly.newPlot('plotly', [pe], layout, option)
+  };
+
 
   $techOpt.on('select2:select', function(e){
     let _val = e.params.data.id;
@@ -1841,12 +1909,15 @@ if (SERVICE === "stock"){
         setAssetChart();
       } else if (_val === "deviation") {
         setDeviationChart();
+      } else if (_val === "pers") {
+        setPerChart();
       }
 
       chartSelected.standalone.push(_val);
       chartSelected.techMain = [];
       chartSelected.techSupp = [];
       $(this).blur();
+      $('.notice').focus();
       return
     } 
 
@@ -1880,12 +1951,6 @@ if (SERVICE === "stock"){
     $('.notice').focus();
   });
 
-  $techOpt.on('select2:select select2:unselect', function (e) {
-    $(this).select2('close');
-    setTimeout(() => {
-      $('#plotly').focus();
-    }, 50);
-  });
 
   $('#plotly').on('plotly_relayout', function(e, ed){
     if (chartSelected.standalone.length) {
@@ -1910,5 +1975,5 @@ if (SERVICE === "stock"){
   });
 
   setTechnicalOption();
-  // setTechnicalChart();
+  setTechnicalChart();
 }
