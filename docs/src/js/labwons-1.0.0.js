@@ -1138,6 +1138,10 @@ if (SERVICE === "stock"){
   };
 
   setTechnicalOption = function() {
+    if (__media__.isMobile){
+      $('optgroup[label="보조 지표"]').remove();
+      $('option[data-class="main"]').not('[value="ohlcv"]').remove();
+    }
     $techOpt.select2({
       maximumSelectionLength: 5,
       minimumResultsForSearch: Infinity,

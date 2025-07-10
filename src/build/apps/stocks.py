@@ -34,11 +34,10 @@ class UpdateStockPrice(DataFrame):
             except Exception as reason:
                 self.log = f'     ...FAILED TO FETCH PRICE: {ticker} / {reason}'
 
-
         if objs:
             super().__init__(concat(objs, axis=1))
 
-        self._log[0] += f'{len(self):,d} items @{self.index.astype(str).values[-1]}'.replace("-", "/")
+        self._log[0] += f'{len(self.columns):,d} items @{self.index.astype(str).values[-1]}'.replace("-", "/")
         self.log = f'  >> END: {perf_counter() - stime:.2f}s'
         return
 
