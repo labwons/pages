@@ -402,21 +402,21 @@ if (SERVICE === "marketmap"){
     setTimeout(function(){
         eventClickTreemap(ticker.name);
     }, 1000);
-  })
+  });
 
   $searchBar.on('select2:clear', function(e){
     setMap(currentOption);
-  })
+  });
 
   $('#plotly').dblclick(function(){
     if (getCurrentServiceState() === 'map') {
       setMap(currentOption);
     }
-  })
+  });  
 
   $('.service-status-value').on('click', function() {
     window.open(`/stocks/${$(this).attr('data-ticker')}/`, '_blank');
-  })
+  });
 
   new Swiper('.swiper', {
     loop: true,
@@ -1153,7 +1153,7 @@ if (SERVICE === "stock"){
       } else {
         yrange[trace.yaxis] = [...yrange[trace.yaxis], ...trace.y.slice(xRangeN[0], xRangeN[1])];
       }
-      
+
       var rng = [Math.min(...yrange[trace.yaxis]), Math.max(...yrange[trace.yaxis])];
       if (rng[0] < 0){
         rng = [1.1 * rng[0], 1.1 * rng[1]];
@@ -1185,7 +1185,7 @@ if (SERVICE === "stock"){
       autosize: true,
       dragmode: 'pan',
       margin:{
-        l:60, 
+        l:__media__.isMobile ? 30:60, 
         r:20, 
         t:10, 
         b:20
@@ -1208,7 +1208,7 @@ if (SERVICE === "stock"){
         autorange: false,
         range: [xRangeN[0], xRangeN[1]],
         type:'category',
-        categorygap: 0.1,
+        categorygap: __media__.isMobile ? 0.2 : 0.1,
         showline: true,
         showticklabels: true,
         rangeslider: {
@@ -1540,8 +1540,8 @@ if (SERVICE === "stock"){
   setDeviationChart = function() {
     let layout = {
       margin:{
-        l:40, 
-        r:40, 
+        l:__media__.isMobile ? 20:40, 
+        l:__media__.isMobile ? 20:40, 
         t:10, 
         b:20
       }, 
@@ -1612,8 +1612,8 @@ if (SERVICE === "stock"){
     let src = (period === 'sales-q') ? srcSalesQ : srcSalesY;
     const layout = {
       margin:{
-        l:70, 
-        r:50, 
+        l:__media__.isMobile ? 50:70, 
+        r:__media__.isMobile ? 30:50, 
         t:10, 
         b:20
       }, 
@@ -1728,8 +1728,8 @@ if (SERVICE === "stock"){
   setAssetChart = function() {
     const layout = {
       margin:{
-        l:70, 
-        r:50, 
+        l:__media__.isMobile ? 50:70, 
+        r:__media__.isMobile ? 30:50, 
         t:10, 
         b:20
       }, 
@@ -1858,6 +1858,7 @@ if (SERVICE === "stock"){
     }
     setTechnicalChart();
     $(this).blur();
+    $('.notice').focus();
     
   });
 
@@ -1876,6 +1877,7 @@ if (SERVICE === "stock"){
     }
     setTechnicalChart();
     $(this).blur();
+    $('.notice').focus();
   });
 
   $techOpt.on('select2:select select2:unselect', function (e) {
@@ -1908,5 +1910,5 @@ if (SERVICE === "stock"){
   });
 
   setTechnicalOption();
-  setTechnicalChart();
+  // setTechnicalChart();
 }

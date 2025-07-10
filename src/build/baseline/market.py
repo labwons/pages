@@ -160,6 +160,13 @@ class MarketBaseline:
                 obj['estimatedEpsState'] = eg[1]
 
             obj['revenueType'] = _revenueKey.replace("(억원)", "")
+            obj['numberOfAnnualStatement'] = len(statement)
+            obj['averageEps'] = statement['EPS(원)'].mean()
+            if len(statement) <= 1:
+                obj['weightedAverageEps'] = obj['averageEps']
+            else:
+                weight = list(range(0, len(statement), 1))
+                obj['weightedAverageEps'] = sum(eps * w for eps, w in zip(statement['EPS(원)'], weight)) / sum(weight)
             obj.name = ticker
             objs.append(obj)
         merge = concat(objs=objs, axis=1).T
@@ -335,7 +342,7 @@ if __name__ == "__main__":
     baseline = MarketBaseline()
     print(baseline.log)
     baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
-    baseline.data.to_clipboard()
+    # baseline.data.to_clipboard()
     # print(baseline.data)
     # print(baseline.data.columns)
 

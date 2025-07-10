@@ -952,6 +952,33 @@ METADATA = dDict(
         limit=False,
         # Adder
     ),
+    numberOfAnnualStatement=dDict(
+        label='재무개수(연)',
+        unit='',
+        dtype=int,
+        digit=0,
+        origin='',
+        limit=False,
+        # Adder
+    ),
+    averageEps=dDict(
+        label='평균EPS',
+        unit='원',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        # Adder
+    ),
+    weightedAverageEps=dDict(
+        label='가중평균EPS',
+        unit='원',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        # Adder
+    ),
 )
 METADATA.RENAME = dDict(**{item.origin: key for key, item in METADATA if item.origin})
 
