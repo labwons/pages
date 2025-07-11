@@ -132,6 +132,15 @@ METADATA = dDict(
         limit=False,
         # Adder
     ),
+    capGroup=dDict(
+        label='추종 지수 분류',
+        unit='',
+        dtype=str,
+        digit=0,
+        origin='',
+        limit=False,
+        # Adder
+    ),
     fiftyTwoWeekHigh=dDict(
         label='52주최고가',
         unit='원',

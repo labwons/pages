@@ -24,14 +24,9 @@ class MarketMap:
 
         resource = baseline.copy()
 
-        # DEFINE TARGET TICKERS:
-        # IF NETWORK IS NORMAL, TARGET TICKERS WILL BE KOSPI200, KOSDAQ150 TICKERS.
-        # IF NETWORK FAILS, TOP 350 TICKERS WILL BE SELECTED.
-        tickers = self.largeCaps()
-
         # TYPE CASTING BEFORE FACTORIZE MAP DATA.
         baseline = baseline.copy()
-        baseline = baseline[baseline.index.isin(tickers)] if tickers else baseline.head(350)
+        baseline = baseline[baseline["capGroup"] == "largeCap"]
         for col, meta in METADATA:
             if col == "RENAME":
                 continue
@@ -140,17 +135,6 @@ class MarketMap:
     @classmethod
     def rgb2hex(cls, r, g, b) -> str:
         return f'#{hex(int(r))[2:]}{hex(int(g))[2:]}{hex(int(b))[2:]}'
-
-    @classmethod
-    def largeCaps(cls) -> list:
-        if DOMAIN == "HKEFICO":
-            cls._log.append(f"     * skipped fetching krx350")
-            return []
-        try:
-            return get_index_portfolio_deposit_file('2203') + get_index_portfolio_deposit_file('1028')
-        except Exception as reason:
-            cls._log.append(f"     * skipped fetching krx350: {reason}")
-            return []
 
     @classmethod
     def grouping(cls, frm:DataFrame, key:str, *exclude:str) -> DataFrame:

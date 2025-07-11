@@ -86,7 +86,7 @@ class AfterMarket:
         try:
             index = get_index_portfolio_deposit_file('2203') + get_index_portfolio_deposit_file('1028')
             largeCap = Series(index=index, data=['largeCap'] * len(index), name='capGroup')
-            self.log = f'     ... "Success" fetching largecaps'
+            self.log = f'     ... Success fetching largecaps'
         except Exception as reason:
             largeCap = Series()
             self.log = f'     ... FAILED fetching large caps: {reason}'
