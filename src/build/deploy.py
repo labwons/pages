@@ -287,7 +287,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # BUILD MACRO BASELINE: THIS PROCESS IS MANDATORY
     # ---------------------------------------------------------------------------------------
-    if GITHUB.CONFIG.ECOS and GITHUB.CONFIG.FRED:
+    if (GITHUB.CONFIG.ECOS and GITHUB.CONFIG.FRED) or GITHUB.CONFIG.AFTERMARKET:
         macro = MacroBaseline()
         macroData = macro.data
         macroData.to_parquet(FILE.MACRO_BASELINE, engine='pyarrow')
