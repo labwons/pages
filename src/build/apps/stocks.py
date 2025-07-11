@@ -88,7 +88,7 @@ class Stocks:
 
             fng = fnguide(ticker)
             try:
-                multipleBand = fng.multipleBand
+                multipleBand = fng.multipleBand["PER"]
             except (JSONDecodeError, Exception):
                 multipleBand = DataFrame()
 
