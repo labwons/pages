@@ -85,7 +85,7 @@ class AfterMarket:
 
         try:
             index = get_index_portfolio_deposit_file('2203') + get_index_portfolio_deposit_file('1028')
-            largeCap = Series(index=index, data=['largeCap'] * len(index))
+            largeCap = Series(index=index, data=['largeCap'] * len(index), name='capGroup')
             self.log = f'     ... "Success" fetching largecaps'
         except Exception as reason:
             largeCap = Series()
@@ -100,7 +100,9 @@ class AfterMarket:
         c_market_cap = merged['시가총액'] >= merged['시가총액'].median()
 
         merged = merged[c_active_ipo & c_no_konex & c_active_trade & c_market_cap]
-        merged = merged.join(marketType, how='left').join(largeCap, how='left')
+        merged = merged.join(marketType, how='left')
+        if not largeCap.empty:
+            merged = merged.join(largeCap, how='left')
         merged.index.name = 'ticker'
 
         try:
