@@ -1547,8 +1547,16 @@ if (SERVICE === "stock"){
         width: $chart.width(),
         height: $chart.height(),
         layout: {
-          background: {color: '#ffffff'},
+          background: {color: '#fff'},
           textColor: '#000',
+        },
+        rightPriceScale: {
+          mode: LightweightCharts.PriceScaleMode.Normal,
+          autoScale: true,
+          entireTextOnly: true,
+        },
+        localization: {
+          priceFormatter: price => Math.round(price).toString() // 정수로 표시
         },
         grid: {
           vertLines: { color: '#eee' },
@@ -1559,13 +1567,13 @@ if (SERVICE === "stock"){
           secondsVisible: false,
         }
       });
-      const candleSeries = chart.addSeries({
-        type: 'Candlestick',
-        // upColor: '#26a69a',
-        // downColor: '#ef5350',
-        // borderVisible: false,
-        // wickUpColor: '#26a69a',
-        // wickDownColor: '#ef5350',
+      const candleSeries = chart.addCandlestickSeries({
+        upColor: '#C92A2A',
+        downColor: '#1861A8',
+        borderUpColor: '#C92A2A',
+        borderDownColor: '#1861A8',
+        wickUpColor: '#C92A2A',
+        wickDownColor: '#1861A8',
       });
       let dataset = [];
       for (var n=0; n<srcDate.length; n++){
