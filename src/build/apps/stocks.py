@@ -92,6 +92,11 @@ class Stocks:
             except (JSONDecodeError, Exception):
                 multipleBand = DataFrame()
 
+            try:
+                foreignExhaustRate = fng.foreignExhaustRate
+            except (JSONDecodeError, Exception):
+                foreignExhaustRate = DataFrame()
+
             __mem__[ticker] = dDict(
                 name=general['name'],
                 date=ohlcv.index.astype(str).tolist(),
@@ -107,7 +112,8 @@ class Stocks:
                 sales_q=self.convertSales(quarter, cap),
                 asset=self.convertAsset(annual, quarter),
                 pers=self.convertPer(general),
-                perBand=self.convertPerBand(multipleBand)
+                perBand=self.convertPerBand(multipleBand),
+                foreignRate=self.convertForeignRate(foreignExhaustRate)
             )
         self.__mem__ = __mem__
 
@@ -205,9 +211,9 @@ class Stocks:
     def convertMacd(cls, typical:Series):
         macd = MACD(close=typical)
         obj ={
-            'macd': macd.macd().tolist(),
-            'signal': macd.macd_signal().tolist(),
-            'diff': macd.macd_diff().tolist()
+            'macd': round(macd.macd(), 1).tolist(),
+            'signal': round(macd.macd_signal(), 1).tolist(),
+            'diff': round(macd.macd_diff(), 1).tolist()
         }
         return dumps(obj).replace(" ", "").replace("NaN", "null")
 
@@ -215,7 +221,7 @@ class Stocks:
     def convertRsi(cls, typical:Series):
         rsi = RSIIndicator(close=typical)
         obj = {
-            'rsi': rsi.rsi().tolist()
+            'rsi': round(rsi.rsi(), 1).tolist()
         }
         return dumps(obj).replace(" ", "").replace("NaN", "null")
 
@@ -312,7 +318,7 @@ class Stocks:
                 obj[col] = {'empty': 'true'}
             obj[col] = {
                 'date': data.index.strftime("%Y-%m-%d").tolist(),
-                'data': data.tolist(),
+                'data': round(data, 2).tolist(),
                 'empty': 'false'
             }
         return dumps(obj).replace("NaN", "null")
@@ -325,6 +331,19 @@ class Stocks:
         perBand = perBand.dropna(how='all', axis=0)
         obj = {'x': perBand.index.strftime("%Y-%m-%d").tolist()}
         obj.update({col: perBand[col].tolist() for col in perBand})
+        return dumps(obj).replace("NaN", "null")
+
+    @classmethod
+    def convertForeignRate(cls, foreignRate:DataFrame) -> str:
+        if foreignRate.empty:
+            return "null"
+        obj = {}
+        for col in foreignRate:
+            date, name = col
+            if not date in obj:
+                obj[date] = {}
+            obj[date]['x'] = foreignRate[col].dropna().index.strftime("%Y-%m-%d").tolist()
+            obj[date][name] = foreignRate[col].dropna().tolist()
         return dumps(obj).replace("NaN", "null")
 
     def convertPer(self, baseline:Series) -> str:

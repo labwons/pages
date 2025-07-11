@@ -276,7 +276,8 @@ if __name__ == "__main__":
                         "asset": stock.asset,
                         "deviation": stock.deviation,
                         "per": stock.pers,
-                        "perBand": stock.perBand
+                        "perBand": stock.perBand,
+                        "foreignRate": stock.foreignRate
                     })
                 )
         context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK: ', stocks.log, '']
