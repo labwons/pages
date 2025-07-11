@@ -80,7 +80,7 @@ if __name__ == "__main__":
         if now.hour >= 20:
             GITHUB.CONFIG.ECOS = GITHUB.CONFIG.FRED = GITHUB.CONFIG.STATEMENT = True
         else:
-            GITHUB.CONFIG.AFTERMARKET = GITHUB.CONFIG.STOCKPRICE = True
+            GITHUB.CONFIG.AFTERMARKET = GITHUB.CONFIG.STOCKPRICE = GITHUB.CONFIG.STOCKDEPLOY = True
 
     if GITHUB.EVENT == "workflow_dispatch":
         # CLEAN-UP DEPLOYMENT

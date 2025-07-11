@@ -1118,6 +1118,7 @@ let setDeviationChart;
 let setSalesChart;
 let setAssetChart;
 let setPerChart;
+let setPerBandChart;
 let calcXrange;
 let calcYrange;
 
@@ -1502,6 +1503,7 @@ if (SERVICE === "stock"){
             autorange: false,
             range: [0, 1],
             anchor: `x${n+1}`,
+            showticklabels: chartSelected.techSupp.includes('volume') ? false : true,
             tickfont: defaultLayout.font,
           }
         }
@@ -1588,7 +1590,7 @@ if (SERVICE === "stock"){
     let layout = {
       margin:{
         l:__media__.isMobile ? 20:40, 
-        l:__media__.isMobile ? 20:40, 
+        r:10, 
         t:10, 
         b:20
       }, 
@@ -1899,7 +1901,6 @@ if (SERVICE === "stock"){
         yanchor:'top',
         y:1.02
       },
-
       xaxis: {
         tickfont: defaultLayout.font,
         tickangle: 0,
@@ -1939,6 +1940,57 @@ if (SERVICE === "stock"){
     };
 
     Plotly.newPlot('plotly', [pe], layout, option)
+  };
+
+  setPerBandChart = function() {
+    const layout = {
+      margin:{
+        l:__media__.isMobile ? 10:30, 
+        r:__media__.isMobile ? 10:30, 
+        t:10, 
+        b:20
+      }, 
+      dragmode: false,
+      hovermode: 'x unified',      
+      legend: {
+        font: defaultLayout.font,
+        bgcolor:'white',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'left',
+        x:0.0,
+        yanchor:'top',
+        y:1.02
+      },
+      xaxis: {
+        tickfont: defaultLayout.font,
+        tickangle: 0,
+      },
+      yaxis: {
+        autorange: true,
+        title: '',
+        tickformat: ',',
+        tickfont: defaultLayout.font,
+      },
+    };
+    const option = {
+      doubleClick: false,
+      doubleTap: false,
+      showTips:false,
+      responsive:true,
+      displayModeBar:false,
+      displaylogo:false,
+      scrollZoom: false
+    };
+    let data = [];
+    Object.entries(srcPerBand).forEach(([col, obj]) => {
+      console.log(col);
+    });
+
+    Plotly.newPlot('plotly', data, layout, option);
   };
 
 
