@@ -62,12 +62,12 @@ if ENV == "local":
 GITHUB = dDict()
 GITHUB.EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 GITHUB.CONFIG = dDict(
-    AFTERMARKET = False,
+    AFTERMARKET = True,
     STATEMENT = False,
     SECTOR = False,
     ECOS = False,
     FRED = False,
-    STOCKPRICE = True,
+    STOCKPRICE = False,
 )
 def __RESET__():
     for key, val in GITHUB.CONFIG:
@@ -79,16 +79,16 @@ GITHUB.CONFIG.RESET = __RESET__
 
 if __name__ == "__main__":
 
-    # print(CLOCK())
-    # print(ENV)
-    # print(FILE.BASELINE)
-    # print(FILE.GROUP)
-    # print(FILE.ANNUAL_STATEMENT)
-    # print(GITHUB.CONFIG)
-    # GITHUB.CONFIG.RESET()
-    # print(GITHUB.CONFIG)
-    # GITHUB.CONFIG.ECOS = GITHUB.CONFIG.STATEMENT = True
-    # print(GITHUB.CONFIG)
+    print(CLOCK())
+    print(ENV)
+    print(FILE.BASELINE)
+    print(FILE.GROUP)
+    print(FILE.ANNUAL_STATEMENT)
+    print(GITHUB.CONFIG)
+    GITHUB.CONFIG.RESET()
+    print(GITHUB.CONFIG)
+    GITHUB.CONFIG.ECOS = GITHUB.CONFIG.STATEMENT = True
+    print(GITHUB.CONFIG)
 
     for key, value in os.environ.items():
         print(key, value)

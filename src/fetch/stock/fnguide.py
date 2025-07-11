@@ -1,12 +1,10 @@
+try:
+    from ..util import web, str2num, cutString, multiframes
+except ImportError:
+    from src.fetch.util import web, str2num, cutString, multiframes
 from numpy import nan
 from pandas import concat, DataFrame, Series, to_datetime
-__dependencies__ = ['web', 'str2num', 'cutString', 'multiframes']
-for _dependency_ in __dependencies__:
-    if _dependency_ not in globals():
-        try:
-            from ..util import _dependency_
-        except ImportError:
-            from src.fetch.util import _dependency_
+
 
 class _url:
     """

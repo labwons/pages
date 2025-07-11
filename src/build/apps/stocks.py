@@ -2,18 +2,21 @@ try:
     from ...common.env import FILE, dDict
     from ...common.util import krw2currency, str2num
     from ...fetch.stock.krx import PyKrx
+    from ...fetch.stock.fnguide import fnguide
 except ImportError:
     from src.common.env import FILE, dDict
     from src.common.util import krw2currency, str2num
     from src.fetch.stock.krx import PyKrx
+    from src.fetch.stock.fnguide import fnguide
 from datetime import timedelta
 from json import dumps
+from json.decoder import JSONDecodeError
 from pandas import DataFrame, Series, DateOffset
 from pandas import concat, read_parquet, to_datetime, isna
 from requests.exceptions import ConnectionError
 from scipy.stats import linregress
 from ta.trend import MACD
-from ta.momentum import RSIIndicator, StochasticOscillator
+from ta.momentum import RSIIndicator
 from time import perf_counter
 from typing import List
 
@@ -80,8 +83,14 @@ class Stocks:
             quarter = qstat[ticker]
             try:
                 cap = PyKrx(ticker).getMarketCap()
-            except ConnectionError:
+            except (ConnectionError, Exception):
                 cap = DataFrame()
+
+            fng = fnguide(ticker)
+            try:
+                multipleBand = fng.multipleBand
+            except (JSONDecodeError, Exception):
+                multipleBand = DataFrame()
 
             __mem__[ticker] = dDict(
                 name=general['name'],
@@ -93,12 +102,13 @@ class Stocks:
                 trend=self.convertTrend(trend),
                 macd=self.convertMacd(typical),
                 rsi=self.convertRsi(typical),
+                deviation=self.convertDeviation(typical, trend),
                 sales_y=self.convertSales(annual, cap),
                 sales_q=self.convertSales(quarter, cap),
                 asset=self.convertAsset(annual, quarter),
-                pers=self.convertPer(general)
+                pers=self.convertPer(general),
+                perBand=self.convertPerBand(multipleBand)
             )
-            __mem__[ticker].deviation = self.convertDeviation(typical, trend)
         self.__mem__ = __mem__
 
         self._log[0] += f'{len(tickers):,d} items @{price.index.astype(str).values[-1]}'.replace("-", "/")
@@ -307,6 +317,16 @@ class Stocks:
             }
         return dumps(obj).replace("NaN", "null")
 
+    @classmethod
+    def convertPerBand(cls, perBand:DataFrame) -> str:
+        if perBand.empty:
+            return "null"
+
+        perBand = perBand.dropna(how='all', axis=0)
+        obj = {'x': perBand.index.strftime("%Y-%m-%d").tolist()}
+        obj.update({col: perBand[col].tolist() for col in perBand})
+        return dumps(obj).replace("NaN", "null")
+
     def convertPer(self, baseline:Series) -> str:
         y = []
         text = []
@@ -367,7 +387,10 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
 
-    stocks = Stocks()
+    # stocks = Stocks()
     # for t, stock in stocks:
     #     print(t)
     #     print(stock.trend)
+
+    fng = fnguide("005930")
+    print(fng.multipleBand)

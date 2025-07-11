@@ -9,11 +9,12 @@ from pandas import (
 )
 from pykrx.stock import (
     get_exhaustion_rates_of_foreign_investment,
-    get_nearest_business_day_in_a_week,
+    get_index_portfolio_deposit_file,
     get_market_cap_by_ticker,
     get_market_fundamental,
     get_market_ohlcv_by_date,
-    get_market_ticker_list
+    get_market_ticker_list,
+    get_nearest_business_day_in_a_week,
 )
 from requests import get
 from time import perf_counter
@@ -82,6 +83,14 @@ class AfterMarket:
             marketType = DataFrame()
             self.log = f'     ... FAILED fetching market type: {reason}'
 
+        try:
+            index = get_index_portfolio_deposit_file('2203') + get_index_portfolio_deposit_file('1028')
+            largeCap = Series(index=index, data=['largeCap'] * len(index))
+            self.log = f'     ... "Success" fetching largecaps'
+        except Exception as reason:
+            largeCap = Series()
+            self.log = f'     ... FAILED fetching large caps: {reason}'
+
         merged = concat([marketCap, multiples, foreignRate], axis=1)
         merged = merged.loc[:, ~merged.columns.duplicated(keep='first')]
 
@@ -91,7 +100,7 @@ class AfterMarket:
         c_market_cap = merged['시가총액'] >= merged['시가총액'].median()
 
         merged = merged[c_active_ipo & c_no_konex & c_active_trade & c_market_cap]
-        merged = merged.join(marketType, how='left')
+        merged = merged.join(marketType, how='left').join(largeCap, how='left')
         merged.index.name = 'ticker'
 
         try:
