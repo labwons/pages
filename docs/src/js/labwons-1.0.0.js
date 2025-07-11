@@ -1541,6 +1541,38 @@ if (SERVICE === "stock"){
 
       calcYrange(data, layout);
       Plotly.newPlot('plotly', data, layout, option);
+    } else {
+      const $chart = $('#plotly');
+      const chart = LightweightCharts.createChart($chart[0], {
+        width: $chart.width(),
+        height: $chart.height(),
+        layout: {
+          background: {color: '#ffffff'},
+          textColor: '#000',
+        },
+        grid: {
+          vertLines: { color: '#eee' },
+          horzLines: { color: '#eee' },
+        },
+        timeScale: {
+          timeVisible: true,
+          secondsVisible: false,
+        }
+      });
+      const candleSeries = chart.addSeries({
+        type: 'Candlestick',
+        // upColor: '#26a69a',
+        // downColor: '#ef5350',
+        // borderVisible: false,
+        // wickUpColor: '#26a69a',
+        // wickDownColor: '#ef5350',
+      });
+      let dataset = [];
+      for (var n=0; n<srcDate.length; n++){
+        dataset.push({time:srcDate[n], open:srcOhlcv.open[n], high:srcOhlcv.high[n], low:srcOhlcv.low[n], close:srcOhlcv.close[n]});
+      }
+      candleSeries.setData(dataset);
+
     }
   };
 
