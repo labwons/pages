@@ -61,6 +61,9 @@ class Stocks:
         self.log = f'  >> BUILD [STOCK]: '
         self.basis = basis = read_parquet(FILE.BASELINE, engine='pyarrow')
         self.price = price = read_parquet(FILE.PRICE, engine='pyarrow')
+        self.mcap = mcap = read_parquet(FILE.MARKET_CAP, engine='pyarrow')
+        self.band = band = read_parquet(FILE.PER_BAND, engine='pyarrow')
+        self.foreignRage = foreignRate = read_parquet(FILE.FOREIGN_RATE, engine='pyarrow')
         self.astat = astat = read_parquet(FILE.ANNUAL_STATEMENT, engine='pyarrow')
         self.qstat = qstat = read_parquet(FILE.QUARTER_STATEMENT, engine='pyarrow')
 
@@ -81,21 +84,9 @@ class Stocks:
             trend = self.calcTrend(typical)
             annual = astat[ticker]
             quarter = qstat[ticker]
-            try:
-                cap = PyKrx(ticker).getMarketCap()
-            except (ConnectionError, Exception):
-                cap = DataFrame()
-
-            fng = fnguide(ticker)
-            try:
-                multipleBand = fng.multipleBand["PER"]
-            except (JSONDecodeError, Exception):
-                multipleBand = DataFrame()
-
-            try:
-                foreignExhaustRate = fng.foreignExhaustRate
-            except (JSONDecodeError, Exception):
-                foreignExhaustRate = DataFrame()
+            cap = mcap[ticker]
+            multipleBand = band[ticker]
+            foreignExhaustRate = foreignRate[ticker]
 
             __mem__[ticker] = dDict(
                 name=general['name'],

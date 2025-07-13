@@ -1555,10 +1555,11 @@ if (SERVICE === "stock"){
         rightPriceScale: {
           mode: LightweightCharts.PriceScaleMode.Normal,
           autoScale: true,
+          autoScaleOnScroll: true,
           entireTextOnly: true,
         },
         localization: {
-          priceFormatter: price => Math.round(price).toString() // 정수로 표시
+          priceFormatter: price => Math.round(price).toString()
         },
         grid: {
           vertLines: { color: '#eee' },

@@ -12,7 +12,7 @@ if __name__ == "__main__":
         from ..fetch.market.sector import SectorComposition
         from ..fetch.macro.ecos import Ecos
         from ..fetch.macro.fred import Fred
-        from ..fetch.stock.krx import PyKrx
+        from ..fetch.stock.wrapper import CacheStock
         from .baseline.metadata import ECOSMETA, FREDMETA
         from .baseline.market import MarketBaseline
         from .baseline.macro import MacroBaseline
@@ -29,7 +29,7 @@ if __name__ == "__main__":
         from src.fetch.market.sector import SectorComposition
         from src.fetch.macro.ecos import Ecos
         from src.fetch.macro.fred import Fred
-        from src.fetch.stock.krx import PyKrx
+        from src.fetch.stock.wrapper import CacheStock
         from src.build.baseline.metadata import ECOSMETA, FREDMETA
         from src.build.baseline.market import MarketBaseline
         from src.build.baseline.macro import MacroBaseline
@@ -234,10 +234,15 @@ if __name__ == "__main__":
         tickersMap = marketMap.stat.loc[["minTicker", "maxTicker"]].values.flatten().tolist()
         tickers = tickersMap
 
-        stocPrice = UpdateStockPrice(*tickers)
-        stocPrice.to_parquet(FILE.PRICE, engine='pyarrow')
+        cache = CacheStock(*tickers)
+        cache.ohlcv.to_parquet(FILE.PRICE, engine='pyarrow')
+        cache.marketCap.to_parquet(FILE.PRICE, engine='pyarrow')
+        cache.perBand.to_parquet(FILE.PRICE, engine='pyarrow')
+        cache.foreignRate.to_parquet(FILE.PRICE, engine='pyarrow')
+        # stocPrice = UpdateStockPrice(*tickers)
+        # stocPrice.to_parquet(FILE.PRICE, engine='pyarrow')
 
-        context += [f'- [{"FAILED" if "Failed" in stocPrice.log else "SUCCESS"}] UPDATE STOCK PRICE ', stocPrice.log, '']
+        context += [f'- [{"FAILED" if "Failed" in cache.log else "SUCCESS"}] UPDATE STOCK PRICE ', cache.log, '']
     else:
         context += [f"- [PASSED] UPDATE STOCK PRICE: ", ""]
 

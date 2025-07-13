@@ -42,6 +42,9 @@ FILE.MACRO_BASELINE     = os.path.join(ROOT, r'src/fetch/macro/parquet/baseline.
 FILE.ECOS               = os.path.join(ROOT, r'src/fetch/macro/parquet/ecos.parquet')
 FILE.FRED               = os.path.join(ROOT, r'src/fetch/macro/parquet/fred.parquet')
 FILE.PRICE              = os.path.join(ROOT, r'src/fetch/stock/parquet/price.parquet')
+FILE.MARKET_CAP         = os.path.join(ROOT, r'src/fetch/stock/parquet/marketcap.parquet')
+FILE.FOREIGN_RATE       = os.path.join(ROOT, r'src/fetch/stock/parquet/foreignrate.parquet')
+FILE.PER_BAND           = os.path.join(ROOT, r'src/fetch/stock/parquet/perband.parquet')
 
 # RESOURCE DEPLOY DELIVERABLES
 HTML = dDict()
@@ -62,12 +65,12 @@ if ENV == "local":
 GITHUB = dDict()
 GITHUB.EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 GITHUB.CONFIG = dDict(
-    AFTERMARKET = True,
+    AFTERMARKET = False,
     STATEMENT = False,
     SECTOR = False,
     ECOS = False,
     FRED = False,
-    STOCKPRICE = False,
+    STOCKPRICE = True,
     STOCKDEPLOY = False,
 )
 def __RESET__():
