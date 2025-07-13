@@ -236,9 +236,9 @@ if __name__ == "__main__":
 
         cache = CacheStock(*tickers)
         cache.ohlcv.to_parquet(FILE.PRICE, engine='pyarrow')
-        cache.marketCap.to_parquet(FILE.PRICE, engine='pyarrow')
-        cache.perBand.to_parquet(FILE.PRICE, engine='pyarrow')
-        cache.foreignRate.to_parquet(FILE.PRICE, engine='pyarrow')
+        cache.marketCap.to_parquet(FILE.MARKET_CAP, engine='pyarrow')
+        cache.perBand.to_parquet(FILE.PER_BAND, engine='pyarrow')
+        cache.foreignRate.to_parquet(FILE.FOREIGN_RATE, engine='pyarrow')
         # stocPrice = UpdateStockPrice(*tickers)
         # stocPrice.to_parquet(FILE.PRICE, engine='pyarrow')
 

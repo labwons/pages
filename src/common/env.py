@@ -83,14 +83,14 @@ GITHUB.CONFIG.RESET = __RESET__
 
 if __name__ == "__main__":
 
-    # print(CLOCK())
-    # print(ENV)
-    # print(FILE.BASELINE)
-    # print(FILE.GROUP)
-    # print(FILE.ANNUAL_STATEMENT)
-    # print(GITHUB.CONFIG)
-    # GITHUB.CONFIG.RESET()
-    # print(GITHUB.CONFIG)
+    print(CLOCK())
+    print(ENV)
+    print(FILE.BASELINE)
+    print(FILE.GROUP)
+    print(FILE.ANNUAL_STATEMENT)
+    print(GITHUB.CONFIG)
+    GITHUB.CONFIG.RESET()
+    print(GITHUB.CONFIG)
     GITHUB.CONFIG.ECOS = GITHUB.CONFIG.STATEMENT = True
     print(GITHUB.CONFIG)
 
