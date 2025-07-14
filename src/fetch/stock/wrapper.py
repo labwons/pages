@@ -4,8 +4,7 @@ try:
 except ImportError:
     from src.fetch.stock.krx import PyKrx
     from src.fetch.stock.fnguide import fnguide
-from numpy import isnan
-from pandas import concat, isna, isnull
+from pandas import concat, isna
 from time import perf_counter
 from typing import List
 
@@ -22,7 +21,7 @@ class CacheStock:
         perBand = {}
         foreignRate = {}
         for ticker in tickers:
-            if (ticker is None) or isna(ticker) or isnan(ticker) or isnull(ticker):
+            if (ticker is None) or isna(ticker):
                 continue
             krx = PyKrx(ticker)
             fng = fnguide(ticker)

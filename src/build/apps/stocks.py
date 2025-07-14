@@ -21,37 +21,6 @@ from time import perf_counter
 from typing import List
 
 
-class UpdateStockPrice(DataFrame):
-    _log: List[str] = []
-    def __init__(self, *tickers):
-        super().__init__()
-
-        self.log = f'  >> RUN [CACHING STOCK PRICE]: '
-        stime = perf_counter()
-        objs = {}
-        for ticker in tickers:
-            if not ticker:
-                continue
-            try:
-                objs[ticker] = PyKrx(ticker).ohlcv
-            except Exception as reason:
-                self.log = f'     ...FAILED TO FETCH PRICE: {ticker} / {reason}'
-
-        if objs:
-            super().__init__(concat(objs, axis=1))
-
-        self._log[0] += f'{len(self.columns):,d} items @{self.index.astype(str).values[-1]}'.replace("-", "/")
-        self.log = f'  >> END: {perf_counter() - stime:.2f}s'
-        return
-
-    @property
-    def log(self) -> str:
-        return "\n".join(self._log)
-
-    @log.setter
-    def log(self, log: str):
-        self._log.append(log)
-
 
 class Stocks:
 
