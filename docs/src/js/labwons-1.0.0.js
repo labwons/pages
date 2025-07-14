@@ -1013,7 +1013,6 @@ if (SERVICE === "macro"){
       $('a[data-title="Autoscale"]').attr("data-title", "자동 조정");
       $('.modebar').prepend($('<div class="modebar-group"><a rel="tooltip" class="modebar-btn" data-title="스크롤 모드" data-toggle="false" data-gravity="n"><i class="bi bi-arrow-down-up"></i></a></div>'));
     });
-    $('#plotly').focus();
   };
 
   $y1.on('select2:select', async function(e){
@@ -1041,10 +1040,12 @@ if (SERVICE === "macro"){
     }
     y1_selection.push(e.params.data.id);
     plotMacro();
+    $('.notice')[0].click();
   });
   $y1.on('select2:unselect', function(e){
     y1_selection = y1_selection.filter(item => item != e.params.data.id);
     plotMacro();
+    $('.notice')[0].click();
   });
   $y2.on('select2:select', async function(e){
     if (y2_selection.length) {
@@ -1071,10 +1072,12 @@ if (SERVICE === "macro"){
     }
     y2_selection.push(e.params.data.id);
     plotMacro();
+    $('.notice')[0].click();
   });
   $y2.on('select2:unselect', function(e){
     y2_selection = y2_selection.filter(item => item != e.params.data.id);
     plotMacro();
+    $('.notice')[0].click();
   });
 
   $(document)
@@ -1578,7 +1581,19 @@ if (SERVICE === "stock"){
           entireTextOnly: true,
         },
         localization: {
-          priceFormatter: price => Math.round(price).toString()
+          priceFormatter: price => Math.round(price).toString(),
+          timeFormatter: businessDay => {
+            if (typeof businessDay === 'string') {
+              return businessDay;
+            }
+            if (typeof businessDay === 'object' && businessDay !== null) {
+              const y = businessDay.year;
+              const m = String(businessDay.month).padStart(2, '0');
+              const d = String(businessDay.day).padStart(2, '0');
+              return `${y}-${m}-${d}`;
+            }
+            return '';
+          },
         },
         grid: {
           vertLines: { color: '#eee' },

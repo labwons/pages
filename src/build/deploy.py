@@ -235,7 +235,7 @@ if __name__ == "__main__":
     if (not DOMAIN == "HKEFICO") and GITHUB.CONFIG.STOCKPRICE:
         tickersMap = marketMap.stat.loc[["minTicker", "maxTicker"]].values.flatten().tolist()
         tickersBub = marketBubble.todaySpecials
-        tickers = tickersMap + tickersBub
+        tickers = list(set(tickersMap + tickersBub))
 
         cache = CacheStock(*tickers)
         cache.ohlcv.to_parquet(FILE.PRICE, engine='pyarrow')
