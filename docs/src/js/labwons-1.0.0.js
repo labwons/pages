@@ -1584,6 +1584,13 @@ if (SERVICE === "stock"){
       }
       candleSeries.setData(dataset);
 
+      Object.entries(srcSma).forEach(([key, obj]) => {
+        const sma = chart.addLineSeries();
+        sma.setData(srcDate.map((date, n) => ({
+          time:date, value:obj[n]
+        })));
+      });
+      
     }
   };
 
