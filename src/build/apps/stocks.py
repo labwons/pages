@@ -85,8 +85,8 @@ class Stocks:
             annual = astat[ticker]
             quarter = qstat[ticker]
             cap = mcap[ticker]
-            multipleBand = band[ticker]
-            foreignExhaustRate = foreignRate[ticker]
+            multipleBand = band[ticker] if ticker in band else DataFrame()
+            foreignExhaustRate = foreignRate[ticker] if ticker in foreignRate else DataFrame()
 
             __mem__[ticker] = dDict(
                 name=general['name'],
