@@ -217,7 +217,7 @@ class Stocks:
         return dumps(obj).replace(" ", "").replace("NaN", "null")
 
     @classmethod
-    def convertSales(cls, statement:DataFrame, marketcap:Series) -> str:
+    def convertSales(cls, statement:DataFrame, marketcap:DataFrame) -> str:
         sales = statement[statement.columns.tolist()[:3] + ['영업이익률(%)']].dropna(how='all')
         sales = sales.map(str2num)
         sales = sales.sort_index()
@@ -236,7 +236,8 @@ class Stocks:
             marketcap = marketcap[marketcap.index.isin(sales.index) | (marketcap.index == marketcap.index[-1])]
             if "(" in sales.index[-1]:
                 marketcap = marketcap.rename(index={marketcap.index[-1]:sales.index[-1]})
-            marketcap = (marketcap / 1e8).astype(int)
+
+            marketcap = Series(index=marketcap.index, data=marketcap['시가총액'] / 1e8, dtype=int)
             sales = concat([marketcap, sales], axis=1)
 
         e_sales = 1e8 * sales
