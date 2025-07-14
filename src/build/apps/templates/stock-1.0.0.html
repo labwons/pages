@@ -138,13 +138,20 @@
       }
     }
 
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+      background-color: var(--nav-color) !important; 
+    }
+
     @media (max-width: 767px) {
       .select2-container,
       .select2-container .select2-selection--single,
       .select2-container .select2-selection--multiple,
       .select2-container .select2-results__option {
-        font-size: 9px !important;
+        font-size: 11px !important;
+        font-family: var(--font-family) !important;
+        color: #999 !important;
       }
+
     }
   </style>
 {% endblock %}
@@ -192,15 +199,15 @@
                 <optgroup label="주요 재무">
                   <option value="sales-y" data-class="standalone">매출과 이익(년)</option>
                   <option value="sales-q" data-class="standalone">매출과 이익(분기)</option>
-                  <option value="profitest" data-class="standalone">추정 이익</option>
                   <option value="asset" data-class="standalone">자산과 부채</option>
+                  <option value="growth" data-class="standalone">성장률</option>
                 </optgroup>
                 <optgroup label="배수">
                   <option value="pers" data-class="standalone">PER</option>
                   <option value="perband" data-class="standalone">PER밴드</option>
                 </optgroup>
                 <optgroup label="기타 지표">
-                  <option value="benchmark" data-class="standalone">수익률비교</option>
+                  <!-- <option value="benchmark" data-class="standalone">수익률비교</option> -->
                   <option value="foreigners" data-class="standalone">외인 비율</option>
                   <option value="deviation" data-class="standalone">추세 이격</option>
                 </optgroup>

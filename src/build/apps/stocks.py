@@ -71,7 +71,7 @@ class Stocks:
                 sales_y=self.convertSales(annual, cap),
                 sales_q=self.convertSales(quarter, cap),
                 asset=self.convertAsset(annual, quarter),
-                pers=self.convertPer(general),
+                per=self.convertPer(general),
                 perBand=self.convertPerBand(multipleBand),
                 foreignRate=self.convertForeignRate(foreignExhaustRate)
             )

@@ -816,6 +816,10 @@ if (SERVICE === "bubble"){
     }
   });
 
+  $('.to-stock').on('click', function() {
+    window.open(`/stocks/${$(this).attr('data-ticker')}/`, '_blank');
+  });
+
   $ySlider.css('height', `${$('.slider-vertical').height() - 35}px`);
   $('.y-slider-bottom').css('top', `${$('.slider-vertical').height() - 35 - cssVY / 2}px`);
   if (!__media__.hasCursor) {
@@ -1173,7 +1177,9 @@ if (SERVICE === "stock"){
   }
 
   setTechnicalChart = function() {
-    /* THIS FUNCTION IS TO PLOT PRICE AND RELATED INDICATORS */    
+    /* THIS FUNCTION IS TO PLOT PRICE AND RELATED INDICATORS */
+    $('#plotly').empty();
+    
     if (!__media__.isMobile) {
       const option = {
         showTips:false,
@@ -1637,13 +1643,13 @@ if (SERVICE === "stock"){
 
       if (chartSelected.techMain.includes('bollingerx1')) {
         const b1upper = chart.addLineSeries({
-          color: 'green',
+          color: 'brown',
           lineWidth: 1.2,
           lineStyle: LightweightCharts.LineStyle.Dashed,
           lastValueVisible: false,
         });
         const b1lower = chart.addLineSeries({
-          color: 'green',
+          color: 'brown',
           lineWidth: 1.2,
           lineStyle: LightweightCharts.LineStyle.Dashed,
           lastValueVisible: false,
@@ -1727,6 +1733,7 @@ if (SERVICE === "stock"){
       })
       layout[`xaxis${n === 0 ? '' : n + 1}`] = {
         anchor: `y${n === 0 ? '' : n + 1}`,
+        fixedrange: true,
         tickfont: defaultLayout.font,
         tickformat:'%Y/%m/%d',
         tickangle:0,
@@ -2041,6 +2048,7 @@ if (SERVICE === "stock"){
   };
 
   setPerBandChart = function() {
+    $('#plotly').empty();
     if (!__media__.isMobile) {
       const layout = {
         margin:{
@@ -2140,10 +2148,14 @@ if (SERVICE === "stock"){
         lineWidth:1.2,
         lastValueVisible:true,
       });
-      price.setData(srcPerBand.x.map((date, n) => ({time:date, value:srcPerBand['종가'][n]})));
+      price.setData(
+        srcPerBand.x
+        .map((date, n) => ({time:date, value:srcPerBand['종가'][n]}))
+        .filter(d => d.value !== null && d.value !== undefined)
+      );
       
       Object.entries(srcPerBand).forEach(([col, obj]) => {
-        if (col === 'x'){
+        if ((col === 'x') || (col === '종가')){
           return
         }
         const band = chart.addLineSeries({
@@ -2160,6 +2172,7 @@ if (SERVICE === "stock"){
   };
 
   setForienRateChart = function() {
+    $('#plotly').empty();
     const layout = {
       margin:{
         l:__media__.isMobile ? 30:50, 
@@ -2189,12 +2202,10 @@ if (SERVICE === "stock"){
       },
       yaxis: {
         autorange: true,
-        title: '[원]',
         tickformat: ',',
         tickfont: defaultLayout.font,
       },
       yaxis2: {
-      title: '[%]',
       overlaying: 'y',
       side: 'right',
       tickfont: defaultLayout.font,
@@ -2213,7 +2224,7 @@ if (SERVICE === "stock"){
     let data = [];
     Object.entries(srcForeignRate).forEach(([col, obj]) => {
       data.push({
-        name:col,
+        name:'종가',
         x:obj.x,
         y:obj['종가'],
         visible:col === '3M' ? true: 'legendonly',
@@ -2226,9 +2237,10 @@ if (SERVICE === "stock"){
           dash: 'solid'
         },
         yaxis: 'y1',
+        hovertemplate: '종가: {y:,d}원<extra></extra>'
       });
       data.push({
-        name:col,
+        name:'비중',
         x:obj.x,
         y:obj['비중'],
         visible:col === '3M' ? true: 'legendonly',
@@ -2241,6 +2253,7 @@ if (SERVICE === "stock"){
           dash: 'solid'
         },
         yaxis: 'y2',
+        hovertemplate: '비중: {y:.2f}%<extra></extra>'
       });
     });
 
@@ -2249,7 +2262,6 @@ if (SERVICE === "stock"){
 
 
   $techOpt.on('select2:select', function(e){
-    $('#plotly').empty();
     let _val = e.params.data.id;
     let _cls = e.params.data.element.dataset.class;
     if (_cls === "standalone"){
@@ -2272,7 +2284,7 @@ if (SERVICE === "stock"){
       chartSelected.techMain = [];
       chartSelected.techSupp = [];
       $(this).blur();
-      $('.notice').focus();
+      $('.notice')[0].click();
       return
     } 
 
@@ -2284,7 +2296,7 @@ if (SERVICE === "stock"){
     }
     setTechnicalChart();
     $(this).blur();
-    $('.notice').focus();
+    $('.notice')[0].click();
     
   });
 
@@ -2303,7 +2315,7 @@ if (SERVICE === "stock"){
     }
     setTechnicalChart();
     $(this).blur();
-    $('.notice').focus();
+    $('.notice')[0].click();
   });
 
 

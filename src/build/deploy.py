@@ -220,6 +220,8 @@ if __name__ == "__main__":
                     "srcTickers": marketBubble.data.to_json(orient='index'),
                     "srcSectors": marketBubble.sectors.to_json(orient='index'),
                     "srcIndicatorOpt": dumps(marketBubble.meta),
+                    "labels": marketBubble.todaySpecialLabel(),
+                    "specials": marketBubble.todaySpecial()
                 })
             )
 
@@ -232,15 +234,14 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     if (not DOMAIN == "HKEFICO") and GITHUB.CONFIG.STOCKPRICE:
         tickersMap = marketMap.stat.loc[["minTicker", "maxTicker"]].values.flatten().tolist()
-        tickers = tickersMap
+        tickersBub = marketBubble.todaySpecials
+        tickers = tickersMap + tickersBub
 
         cache = CacheStock(*tickers)
         cache.ohlcv.to_parquet(FILE.PRICE, engine='pyarrow')
         cache.marketCap.to_parquet(FILE.MARKET_CAP, engine='pyarrow')
         cache.perBand.to_parquet(FILE.PER_BAND, engine='pyarrow')
         cache.foreignRate.to_parquet(FILE.FOREIGN_RATE, engine='pyarrow')
-        # stocPrice = UpdateStockPrice(*tickers)
-        # stocPrice.to_parquet(FILE.PRICE, engine='pyarrow')
 
         context += [f'- [{"FAILED" if "Failed" in cache.log else "SUCCESS"}] UPDATE STOCK PRICE ', cache.log, '']
     else:
@@ -256,34 +257,20 @@ if __name__ == "__main__":
         clearPath(PATH.STOCKS)
 
         for ticker, stock in stocks:
+            render = {
+                "service": "stock",
+                "local": ENV == "local",
+                "title": "404" if ENV == "local" else f"LAB￦ONS: {stock.name}",
+                "nav": SYSTEM_NAV,
+                "ticker": ticker,
+            }
+            render.update(stock)
             os.makedirs(os.path.join(PATH.STOCKS, rf'{ticker}'), exist_ok=True)
             with open(file=os.path.join(PATH.STOCKS, rf'{ticker}/index.html'), mode='w', encoding='utf-8') as file:
                 file.write(
                     Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
                         .get_template('stock-1.0.0.html') \
-                        .render({
-                        "service": "stock",
-                        "local": ENV == "local",
-                        "title": "404" if ENV == "local" else f"LAB￦ONS: {stock.name}",
-                        "nav": SYSTEM_NAV,
-                        "ticker": ticker,
-                        "name": stock.name,
-                        "xrange": stock.xrange,
-                        "date": stock.date,
-                        "ohlcv": stock.ohlcv,
-                        "sma": stock.sma,
-                        "bollinger": stock.bollinger,
-                        "trend": stock.trend,
-                        "macd": stock.macd,
-                        "rsi": stock.rsi,
-                        "sales_y": stock.sales_y,
-                        "sales_q": stock.sales_q,
-                        "asset": stock.asset,
-                        "deviation": stock.deviation,
-                        "per": stock.pers,
-                        "perBand": stock.perBand,
-                        "foreignRate": stock.foreignRate
-                    })
+                        .render(render)
                 )
         context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK: ', stocks.log, '']
     else:

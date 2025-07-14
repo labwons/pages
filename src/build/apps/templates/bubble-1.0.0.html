@@ -367,6 +367,10 @@
       font-weight: 700;
     }
 
+    .to-stock {
+      cursor:pointer;
+    }
+
   </style>
 {% endblock %}
 
@@ -426,4 +430,29 @@
           <!-- END MARKET BUBBLE -->
 {% endblock %}
 
-{% block content_addon %}{% endblock %}
+{% block content_addon %}
+    <section class="section section-flow">
+      <div class="container container-title">
+        <h2 class="main-title">오늘의 발견</h2>
+        <p class="sub-title">{{ tradingDate }}</p>
+      </div>
+
+      <div class="container container-content" style="max-height: 600px; overflow: auto !important;">
+        <table>
+          <thead>
+            <tr>{% for key in labels %}
+              <th>{{ key }}</th>{% endfor %}
+            </tr>
+          </thead>
+          <tbody>{% for special in specials %}
+            <tr>{% for sd in special[1:] %}
+              {% if loop.index0 == 0 %}
+              <td class="to-stock" data-ticker="{{ special[0] }}">{{ sd }}</td>
+              {% else %}
+              <td>{{ sd }}</td>{% endif %}{% endfor %}
+            </tr>{% endfor %}            
+          </tbody>
+        </table>        
+      </div>
+    </section>
+{% endblock %}
