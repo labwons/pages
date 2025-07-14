@@ -2306,7 +2306,10 @@ if (SERVICE === "stock"){
       return
     } 
 
-    chartSelected.standalone = [];
+    if (chartSelected.standalone.length) {
+      $(this).val([_val]).trigger('change');
+      chartSelected.standalone = [];
+    }
     if (_cls === "main") {
       chartSelected.techMain.push(_val);
     } else if (_cls == "support") {
