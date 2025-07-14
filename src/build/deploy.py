@@ -19,7 +19,7 @@ if __name__ == "__main__":
         from .apps.marketmap import MarketMap
         from .apps.bubble import MarketBubble
         from .apps.macro import Macro
-        from .apps.stocks import UpdateStockPrice, Stocks
+        from .apps.stocks import Stocks
         from .apps.sitemap import rss, sitemap
         from .util import navigate, minify, eMail, clearPath
     except ImportError:
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         from src.build.apps.marketmap import MarketMap
         from src.build.apps.bubble import MarketBubble
         from src.build.apps.macro import Macro
-        from src.build.apps.stocks import UpdateStockPrice, Stocks
+        from src.build.apps.stocks import Stocks
         from src.build.apps.sitemap import rss, sitemap
         from src.build.util import navigate, minify, eMail, clearPath
     from pandas import read_parquet
