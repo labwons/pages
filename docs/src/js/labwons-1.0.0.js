@@ -1173,9 +1173,7 @@ if (SERVICE === "stock"){
   }
 
   setTechnicalChart = function() {
-    /* THIS FUNCTION IS TO PLOT PRICE AND RELATED INDICATORS */
-    $('#plotly').empty();
-    
+    /* THIS FUNCTION IS TO PLOT PRICE AND RELATED INDICATORS */    
     if (!__media__.isMobile) {
       const option = {
         showTips:false,
@@ -1639,13 +1637,13 @@ if (SERVICE === "stock"){
 
       if (chartSelected.techMain.includes('bollingerx1')) {
         const b1upper = chart.addLineSeries({
-          color: 'brown',
+          color: 'green',
           lineWidth: 1.2,
           lineStyle: LightweightCharts.LineStyle.Dashed,
           lastValueVisible: false,
         });
         const b1lower = chart.addLineSeries({
-          color: 'brown',
+          color: 'green',
           lineWidth: 1.2,
           lineStyle: LightweightCharts.LineStyle.Dashed,
           lastValueVisible: false,
@@ -2043,7 +2041,6 @@ if (SERVICE === "stock"){
   };
 
   setPerBandChart = function() {
-    $('#plotly').empty();
     if (!__media__.isMobile) {
       const layout = {
         margin:{
@@ -2163,7 +2160,6 @@ if (SERVICE === "stock"){
   };
 
   setForienRateChart = function() {
-    $('#plotly').empty();
     const layout = {
       margin:{
         l:__media__.isMobile ? 30:50, 
@@ -2253,6 +2249,7 @@ if (SERVICE === "stock"){
 
 
   $techOpt.on('select2:select', function(e){
+    $('#plotly').empty();
     let _val = e.params.data.id;
     let _cls = e.params.data.element.dataset.class;
     if (_cls === "standalone"){
