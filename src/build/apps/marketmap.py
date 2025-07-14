@@ -17,7 +17,17 @@ from typing import List
 class MarketMap:
 
     _log: List[str] = []
-
+    specials = [
+        "name",
+        "return1Day",
+        "return1Week",
+        "return1Month",
+        "return3Month",
+        "return6Month",
+        "return1Year",
+        "pctFiftyTwoWeekHigh",
+        "pctFiftyTwoWeekLow"
+    ]
     def __init__(self, baseline:DataFrame):
         stime = perf_counter()
         self.log = f'  >> BUILD [MARKET MAP]'
@@ -208,7 +218,7 @@ class MarketMap:
         objs = {}
         cols = ["min", "max", "minT", "maxT", "minC", "maxC", "minI", "maxI", "label", "minTicker", "maxTicker"]
         for key, meta in MARKETMAP:
-            if key == 'COLORS':
+            if key == 'COLORS' or not key in cls.specials:
                 continue
             data = frm[key]
             _min = frm[frm[key] == data.min()]

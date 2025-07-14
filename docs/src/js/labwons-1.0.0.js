@@ -223,7 +223,9 @@ if (SERVICE === "marketmap"){
       }
     });
     tickers.forEach(obj => {
-      obj[key] = parseFloat(obj[key].replace(srcIndicatorOpt[key].unit, ""));
+      if (typeof obj[key] === 'string'){
+        obj[key] = parseFloat(obj[key].replace(srcIndicatorOpt[key].unit, ""));
+      }      
     });
     
     tickers.sort((a, b) => a[key] - b[key]).forEach(item => {
