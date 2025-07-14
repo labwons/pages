@@ -1811,14 +1811,20 @@ if (SERVICE === "stock"){
       },
       yaxis: {
         autorange: true,
-        title: '[억원]',
+        title: {
+          text: '[억원]',
+          font: defaultLayout.font
+        },
         tickformat: ',',
         tickfont: defaultLayout.font,
         rangemode: 'tozero'
       },
       yaxis2: {
         autorange: true,
-        title: '영업이익률[%]',
+        title: {
+          text: '영업이익률[%]',
+          font: defaultLayout.font
+        },
         overlaying: 'y',
         side: 'right',
         tickfont: defaultLayout.font,
@@ -1927,13 +1933,19 @@ if (SERVICE === "stock"){
       yaxis: {
         autorange: false,
         range:[0, 1.1 * Math.max(...srcAsset.asset)],
-        title: '[억원]',
+        title: {
+          text: '[억원]',
+          font: defaultLayout.font
+        },
         tickformat: ',',
         tickfont: defaultLayout.font,
         rangemode: 'tozero'
       },
       yaxis2: {
-        title: '부채율[%]',
+        title: {
+          text: '부채율[%]',
+          font: defaultLayout.font
+        },
         overlaying: 'y',
         side: 'right',
         showgrid: false,
@@ -1958,10 +1970,12 @@ if (SERVICE === "stock"){
       text: srcAsset.assetText,
       textposition: 'top center',
       texttemplate: '%{text}원',
+      textfont: defaultLayout.font,
       showlegend: false,
       mode: 'text',
       type: 'scatter',
-      hovertemplate: '자산총액: %{text}원<extra></extra>'
+      // hovertemplate: '자산총액: %{text}원<extra></extra>'
+      hoverinfo:"skip"
     };
 
     const capital = {
@@ -1969,9 +1983,11 @@ if (SERVICE === "stock"){
       y: srcAsset.capital,
       name: '자본총액',
       text: srcAsset.capitalText,
+      textfont: defaultLayout.font,
+      meta: srcAsset.assetText,
       type: 'bar',
       marker: { color: '#2ca02c', opacity:0.8 },
-      hovertemplate: '자본총액: %{text}원<extra></extra>'
+      hovertemplate: '자본총액: %{text}원<br>자산총액: %{meta}원<extra></extra>'
     };
 
     const debt = {
@@ -1979,6 +1995,7 @@ if (SERVICE === "stock"){
       y: srcAsset.debt,
       name: '부채총액',
       text: srcAsset.debtText,
+      textfont: defaultLayout.font,
       type: 'bar',
       marker: { color: '#d62728', opacity:0.8 },
       hovertemplate: '부채총액: %{text}원<extra></extra>'
@@ -2030,7 +2047,9 @@ if (SERVICE === "stock"){
       yaxis: {
         autorange: false,
         range:[0, 1.1 * Math.max(...srcPe.y)],
-        title: '',
+        title: {
+          font: defaultLayout.font
+        },
         tickformat: ',',
         tickfont: defaultLayout.font,
         rangemode: 'tozero'
@@ -2095,7 +2114,9 @@ if (SERVICE === "stock"){
         },
         yaxis: {
           autorange: true,
-          title: '',
+          title: {
+            font: defaultLayout.font
+          },
           tickformat: ',',
           tickfont: defaultLayout.font,
         },
@@ -2218,15 +2239,21 @@ if (SERVICE === "stock"){
         tickformat: '%Y-%m-%d',
       },
       yaxis: {
+        title: {
+          font: defaultLayout.font
+        },
         autorange: true,
         tickformat: ',',
         tickfont: defaultLayout.font,
       },
       yaxis2: {
-      overlaying: 'y',
-      side: 'right',
-      tickfont: defaultLayout.font,
-    },
+        title: {
+          font: defaultLayout.font
+        },
+        overlaying: 'y',
+        side: 'right',
+        tickfont: defaultLayout.font,
+      },
     };
     const option = {
       doubleClick: false,
@@ -2241,7 +2268,7 @@ if (SERVICE === "stock"){
     let data = [];
     Object.entries(srcForeignRate).forEach(([col, obj]) => {
       data.push({
-        name:'종가',
+        name:col,
         x:obj.x,
         y:obj['종가'],
         visible:col === '3M' ? true: 'legendonly',
