@@ -757,6 +757,10 @@ class fnguide:
             data = DataFrame(json['CHART']).rename(columns=head)[head.values()]
             data["날짜"] = to_datetime(data["날짜"])
             data = data.set_index(keys='날짜')
+            if "0.00X" in data:
+                # data = data.T.drop_duplicates().T
+                data = data.drop(columns=['0.00X'])
+            data = data.dropna(how='all', axis=1)
             for col in data:
                 data[col] = data[col].apply(str2num)
             return data
@@ -863,49 +867,49 @@ class fnguide:
         return data.T.astype(float)
 
 
-if __name__ == "__main__":
-    from pandas import set_option
-    set_option('display.expand_frame_repr', False)
+# if __name__ == "__main__":
+#     from pandas import set_option
+#     set_option('display.expand_frame_repr', False)
 
-    fn = fnguide(
-        "005930"
-        # "069500"
-    )
-    print(fn.abstract)
-    print(fn.abstract.Y)
-    print(fn.abstract.Q)
-    print(fn.benchmarkMultiples)
-    print(fn.businessSummary)
-    print(fn.cashFlow)
-    print(fn.consensusOutstanding)
-    print(fn.consensusPrice)
-    print(fn.consensusProfit)
-    print(fn.consensusProfit.Y)
-    print(fn.consensusProfit.Q)
-    print(fn.consensusThisFiscalYear)
-    print(fn.consensusNextFiscalYear)
-    print(fn.expenses)
-    print(fn.expenses.Y)
-    print(fn.expenses.Q)
-    print(fn.financialStatement)
-    print(fn.financialStatement.Y)
-    print(fn.financialStatement.Q)
-    print(fn.foreignExhaustRate)
-    print(fn.growthRate)
-    print(fn.growthRate.Y)
-    print(fn.growthRate.Q)
-    print(fn.incomeStatement)
-    print(fn.incomeStatement.Y)
-    print(fn.incomeStatement.Q)
-    print(fn.marketShares)
-    print(fn.multipleBand)
-    print(fn.multiplesOutstanding)
-    print(fn.products)
-    print(fn.profitRate)
-    print(fn.shareHolders)
-    print(fn.shareInstitutes)
-    print(fn.shortBalance)
-    print(fn.shortSell)
-    print(fn.snapShot)
-    print(fn.stabilityRate)
+#     fn = fnguide(
+#         "005930"
+#         # "069500"
+#     )
+#     print(fn.abstract)
+#     print(fn.abstract.Y)
+#     print(fn.abstract.Q)
+#     print(fn.benchmarkMultiples)
+#     print(fn.businessSummary)
+#     print(fn.cashFlow)
+#     print(fn.consensusOutstanding)
+#     print(fn.consensusPrice)
+#     print(fn.consensusProfit)
+#     print(fn.consensusProfit.Y)
+#     print(fn.consensusProfit.Q)
+#     print(fn.consensusThisFiscalYear)
+#     print(fn.consensusNextFiscalYear)
+#     print(fn.expenses)
+#     print(fn.expenses.Y)
+#     print(fn.expenses.Q)
+#     print(fn.financialStatement)
+#     print(fn.financialStatement.Y)
+#     print(fn.financialStatement.Q)
+#     print(fn.foreignExhaustRate)
+#     print(fn.growthRate)
+#     print(fn.growthRate.Y)
+#     print(fn.growthRate.Q)
+#     print(fn.incomeStatement)
+#     print(fn.incomeStatement.Y)
+#     print(fn.incomeStatement.Q)
+#     print(fn.marketShares)
+#     print(fn.multipleBand)
+#     print(fn.multiplesOutstanding)
+#     print(fn.products)
+#     print(fn.profitRate)
+#     print(fn.shareHolders)
+#     print(fn.shareInstitutes)
+#     print(fn.shortBalance)
+#     print(fn.shortSell)
+#     print(fn.snapShot)
+#     print(fn.stabilityRate)
 
