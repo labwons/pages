@@ -1119,6 +1119,7 @@ let setSalesChart;
 let setAssetChart;
 let setPerChart;
 let setPerBandChart;
+let setForienRateChart;
 let calcXrange;
 let calcYrange;
 
@@ -1141,7 +1142,7 @@ if (SERVICE === "stock"){
   setTechnicalOption = function() {
     if (__media__.isMobile){
       $('optgroup[label="보조 지표"]').remove();
-      $('option[data-class="main"]').not('[value="ohlcv"]').remove();
+      // $('option[data-class="main"]').not('[value="ohlcv"]').remove();
     }
     $techOpt.select2({
       maximumSelectionLength: 5,
@@ -1166,18 +1167,15 @@ if (SERVICE === "stock"){
       } else {
         rng = [0.9 * rng[0], 1.1 * rng[1]];
       }
-      layout[`yaxis${n}`].range = rng;
+      
+      layout[`yaxis${n}`]['range'] = rng;
     });
   }
 
   setTechnicalChart = function() {
     /* THIS FUNCTION IS TO PLOT PRICE AND RELATED INDICATORS */
-
-    if(!chartSelected.techMain.length){
-      $('#plotly').empty();
-      return
-    }
-
+    $('#plotly').empty();
+    
     if (!__media__.isMobile) {
       const option = {
         showTips:false,
@@ -1420,6 +1418,11 @@ if (SERVICE === "stock"){
       }
 
       if (chartSelected.techSupp.includes('macd')) {
+        var axisN = 2;
+        if (chartSelected.techSupp.includes('volume')) {
+          axisN = 3;
+        }
+
         data.push({
           name:"MACD",
           x: srcDate,
@@ -1433,8 +1436,8 @@ if (SERVICE === "stock"){
             width: 1,
           },
           hovertemplate: 'MACD: %{y}<extra></extra>',
-          xaxis: `x${chartSelected.techSupp.length + 2}`,
-          yaxis: `y${chartSelected.techSupp.length + 2}`
+          xaxis: `x${axisN}`,
+          yaxis: `y${axisN}`
         });
         data.push({
           name:"Signal",
@@ -1449,8 +1452,8 @@ if (SERVICE === "stock"){
             width: 1,
           },
           hovertemplate: 'Signal: %{y}<extra></extra>',
-          xaxis: `x${chartSelected.techSupp.length + 2}`,
-          yaxis: `y${chartSelected.techSupp.length + 2}`
+          xaxis: `x${axisN}`,
+          yaxis: `y${axisN}`
         });
         data.push({
           name:"Diff",
@@ -1460,12 +1463,24 @@ if (SERVICE === "stock"){
           showlegend: false,
           marker: {color:srcMacd.diff.map(v => v < 0 ? '#1861A8':'#C92A2A' )},
           hovertemplate: 'Signal: %{y}<extra></extra>',
-          xaxis: `x${chartSelected.techSupp.length + 2}`,
-          yaxis: `y${chartSelected.techSupp.length + 2}`
+          xaxis: `x${axisN}`,
+          yaxis: `y${axisN}`
         });
       }
 
       if (chartSelected.techSupp.includes('rsi')) {
+        var axisN = 2;
+        if (chartSelected.techSupp.includes('volume')) {
+          axisN = 3;
+          if (chartSelected.techSupp.includes('macd')) {
+            axisN = 4;
+          }
+        } else {
+          if (chartSelected.techSupp.includes('macd')) {
+            axisN = 3;
+          }
+        }
+        
         data.push({
           name:"RSI",
           x: srcDate,
@@ -1479,8 +1494,8 @@ if (SERVICE === "stock"){
             width: 1,
           },
           hovertemplate: 'RSI: %{y}%<extra></extra>',
-          xaxis: `x${chartSelected.techSupp.length + 2}`,
-          yaxis: `y${chartSelected.techSupp.length + 2}`
+          xaxis: `x${axisN}`,
+          yaxis: `y${axisN}`
         });
       }
       
@@ -1503,7 +1518,7 @@ if (SERVICE === "stock"){
             autorange: false,
             range: [0, 1],
             anchor: `x${n+1}`,
-            showticklabels: chartSelected.techSupp.includes('volume') ? false : true,
+            showticklabels: ((n==1) && chartSelected.techSupp.includes('volume')) ? false : true,
             tickfont: defaultLayout.font,
           }
         }
@@ -1526,7 +1541,7 @@ if (SERVICE === "stock"){
             layout.yaxis2.domain = [0.22, 0.42];
             layout.yaxis3.domain = [0, 0.2];
           }
-        } else if (chartSelected.techSupp.length === 2) {
+        } else if (chartSelected.techSupp.length === 3) {
           if (chartSelected.techSupp.includes('volume')) {
             layout.yaxis.domain = [0.43, 1];
             layout.yaxis2.domain = [0.32, 0.42];
@@ -1578,18 +1593,95 @@ if (SERVICE === "stock"){
         wickUpColor: '#C92A2A',
         wickDownColor: '#1861A8',
       });
-      let dataset = [];
-      for (var n=0; n<srcDate.length; n++){
-        dataset.push({time:srcDate[n], open:srcOhlcv.open[n], high:srcOhlcv.high[n], low:srcOhlcv.low[n], close:srcOhlcv.close[n]});
-      }
-      candleSeries.setData(dataset);
+      candleSeries.setData(srcDate.map((date, n) => ({time:date, open:srcOhlcv.open[n], high:srcOhlcv.high[n], low:srcOhlcv.low[n], close:srcOhlcv.close[n]})));
 
-      Object.entries(srcSma).forEach(([key, obj]) => {
-        const sma = chart.addLineSeries();
-        sma.setData(srcDate.map((date, n) => ({
-          time:date, value:obj[n]
-        })));
-      });
+      if (chartSelected.techMain.includes('sma')) {
+        Object.entries(srcSma).forEach(([key, obj]) => {
+          const sma = chart.addLineSeries({
+            color: {
+              'sma5': '#FF6B6B',
+              'sma20': '#FFD43B',
+              'sma60': '#4DABF7',
+              'sma120': '#69DB7C',
+              'sma200': '#845EF7'}[key],
+            lineWidth: 1.0,
+            lastValueVisible: false,
+          });
+          sma.setData(srcDate.map((date, n) => ({time:date, value:obj[n]})));
+        });
+      }
+
+      if (chartSelected.techMain.includes('bollingerx2')) {
+        const b2upper = chart.addLineSeries({
+          color: 'brown',
+          lineWidth: 1.2,
+          lineStyle: LightweightCharts.LineStyle.Dashed,
+          lastValueVisible: false,
+        });
+        const b2lower = chart.addLineSeries({
+          color: 'brown',
+          lineWidth: 1.2,
+          lineStyle: LightweightCharts.LineStyle.Dashed,
+          lastValueVisible: false,
+        });
+        b2upper.setData(srcDate.map((date, n) => ({time:date, value:srcBollinger.upper[n]})));
+        b2lower.setData(srcDate.map((date, n) => ({time:date, value:srcBollinger.lower[n]})));
+
+        if (!chartSelected.techMain.includes('bollingerx1')) {
+          const bmiddle = chart.addLineSeries({
+            color: 'black',
+            lineWidth: 1.0,
+            lastValueVisible: false,
+          });
+          bmiddle.setData(srcDate.map((date, n) => ({time:date, value:srcBollinger.middle[n]})));
+        }
+      }
+
+      if (chartSelected.techMain.includes('bollingerx1')) {
+        const b1upper = chart.addLineSeries({
+          color: 'brown',
+          lineWidth: 1.2,
+          lineStyle: LightweightCharts.LineStyle.Dashed,
+          lastValueVisible: false,
+        });
+        const b1lower = chart.addLineSeries({
+          color: 'brown',
+          lineWidth: 1.2,
+          lineStyle: LightweightCharts.LineStyle.Dashed,
+          lastValueVisible: false,
+        });
+        b1upper.setData(srcDate.map((date, n) => ({time:date, value:srcBollinger.upperTrend[n]})));
+        b1lower.setData(srcDate.map((date, n) => ({time:date, value:srcBollinger.lowerTrend[n]})));
+
+        if (!chartSelected.techMain.includes('bollingerx2')) {
+          const bmiddle = chart.addLineSeries({
+            color: 'black',
+            lineWidth: 1.0,
+            lastValueVisible: false,
+          });
+          bmiddle.setData(srcDate.map((date, n) => ({time:date, value:srcBollinger.middle[n]})));
+        }
+      }
+
+      if (chartSelected.techMain.includes('trend')) {
+          const trend = chart.addLineSeries({
+            color: 'black',
+            lineWidth: 1.0,
+            lineStyle: LightweightCharts.LineStyle.Dashed,
+            lastValueVisible: false,
+          });
+          trend.setData(srcTrend['6개월'].x.map((x, n) => ({time:x, value:srcTrend['6개월'].y[n]})));
+        // Object.entries(srcTrend).forEach(([key, obj]) => {
+        //   const trend = chart.addLineSeries({
+        //     color: 'black',
+        //     lineWidth: 1.0,
+        //     lineStyle: LightweightCharts.LineStyle.Dashed,
+        //     lastValueVisible: false,
+        //   });
+        //   trend.setData(obj.x.map((x, n) => ({time:x, value:obj.y[n]})));
+        // });
+      }
+
       
     }
   };
@@ -1951,9 +2043,130 @@ if (SERVICE === "stock"){
   };
 
   setPerBandChart = function() {
+    $('#plotly').empty();
+    if (!__media__.isMobile) {
+      const layout = {
+        margin:{
+          l:__media__.isMobile ? 10:30, 
+          r:__media__.isMobile ? 10:30, 
+          t:10, 
+          b:20
+        }, 
+        dragmode: false,
+        hovermode: 'x unified',      
+        legend: {
+          font: defaultLayout.font,
+          bgcolor:'white',
+          borderwidth:0,
+          itemclick:'toggle',
+          itemdoubleclick:'toggleothers',
+          orientation:'h',
+          valign:'middle',
+          xanchor:'left',
+          x:0.0,
+          yanchor:'top',
+          y:1.02
+        },
+        xaxis: {
+          tickfont: defaultLayout.font,
+          tickangle: 0,
+        },
+        yaxis: {
+          autorange: true,
+          title: '',
+          tickformat: ',',
+          tickfont: defaultLayout.font,
+        },
+      };
+      const option = {
+        doubleClick: false,
+        doubleTap: false,
+        showTips:false,
+        responsive:true,
+        displayModeBar:false,
+        displaylogo:false,
+        scrollZoom: false
+      };
+      let data = [];
+      Object.entries(srcPerBand).forEach(([col, obj]) => {
+        if (col === 'x'){
+          return
+        }
+        data.push({
+          name:col,
+          x:srcPerBand.x,
+          y:obj,
+          visible:true,
+          showlegend:false,
+          type:'scatter',
+          mode: 'lines',
+          line:{
+            dash: col === "종가" ? 'solid': 'dash'
+          }
+        });
+        if (col === "종가"){
+          data.at(-1).line['color'] = 'black';
+        }
+      });
+
+      Plotly.newPlot('plotly', data, layout, option);
+    } else {
+      const $chart = $('#plotly');
+      const chart = LightweightCharts.createChart($chart[0], {
+        width: $chart.width(),
+        height: $chart.height(),
+        layout: {
+          background: {color: '#fff'},
+          textColor: '#000',
+        },
+        rightPriceScale: {
+          mode: LightweightCharts.PriceScaleMode.Normal,
+          autoScale: true,
+          autoScaleOnScroll: true,
+          entireTextOnly: true,
+        },
+        localization: {
+          priceFormatter: price => Math.round(price).toString()
+        },
+        grid: {
+          vertLines: { color: '#eee' },
+          horzLines: { color: '#eee' },
+        },
+        timeScale: {
+          timeVisible: true,
+          secondsVisible: false,
+        }
+      });
+
+      const price = chart.addLineSeries({
+        color:'black',
+        lineWidth:1.2,
+        lastValueVisible:true,
+      });
+      price.setData(srcPerBand.x.map((date, n) => ({time:date, value:srcPerBand['종가'][n]})));
+      
+      Object.entries(srcPerBand).forEach(([col, obj]) => {
+        if (col === 'x'){
+          return
+        }
+        const band = chart.addLineSeries({
+          lineWidth:0.8,
+          lineStyle: LightweightCharts.LineStyle.Dashed,
+          lastValueVisible:false,
+          priceLineVisible: false,
+        })
+        band.setData(srcPerBand.x.map((date, n) => ({time:date, value:srcPerBand[col][n]})));
+      });
+
+    }
+    
+  };
+
+  setForienRateChart = function() {
+    $('#plotly').empty();
     const layout = {
       margin:{
-        l:__media__.isMobile ? 10:30, 
+        l:__media__.isMobile ? 30:50, 
         r:__media__.isMobile ? 10:30, 
         t:10, 
         b:20
@@ -1976,13 +2189,20 @@ if (SERVICE === "stock"){
       xaxis: {
         tickfont: defaultLayout.font,
         tickangle: 0,
+        tickformat: '%Y-%m-%d',
       },
       yaxis: {
         autorange: true,
-        title: '',
+        title: '[원]',
         tickformat: ',',
         tickfont: defaultLayout.font,
       },
+      yaxis2: {
+      title: '[%]',
+      overlaying: 'y',
+      side: 'right',
+      tickfont: defaultLayout.font,
+    },
     };
     const option = {
       doubleClick: false,
@@ -1993,9 +2213,39 @@ if (SERVICE === "stock"){
       displaylogo:false,
       scrollZoom: false
     };
+    
     let data = [];
-    Object.entries(srcPerBand).forEach(([col, obj]) => {
-      console.log(col);
+    Object.entries(srcForeignRate).forEach(([col, obj]) => {
+      data.push({
+        name:col,
+        x:obj.x,
+        y:obj['종가'],
+        visible:col === '3M' ? true: 'legendonly',
+        legendgroup: col,
+        showlegend:true,
+        type:'scatter',
+        mode: 'lines',
+        line:{
+          color:'black',
+          dash: 'solid'
+        },
+        yaxis: 'y1',
+      });
+      data.push({
+        name:col,
+        x:obj.x,
+        y:obj['비중'],
+        visible:col === '3M' ? true: 'legendonly',
+        legendgroup: col,
+        showlegend:false,
+        type:'scatter',
+        mode: 'lines',
+        line:{
+          color:'royalblue',
+          dash: 'solid'
+        },
+        yaxis: 'y2',
+      });
     });
 
     Plotly.newPlot('plotly', data, layout, option);
@@ -2015,9 +2265,13 @@ if (SERVICE === "stock"){
         setDeviationChart();
       } else if (_val === "pers") {
         setPerChart();
+      } else if (_val === "perband") {
+        setPerBandChart();
+      } else if (_val === "foreigners") {
+        setForienRateChart();
       }
 
-      chartSelected.standalone.push(_val);
+      chartSelected.standalone = [_val];
       chartSelected.techMain = [];
       chartSelected.techSupp = [];
       $(this).blur();

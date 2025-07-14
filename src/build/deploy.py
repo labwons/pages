@@ -249,7 +249,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # DEPLOY STOCKS
     # ---------------------------------------------------------------------------------------
-    if GITHUB.CONFIG.STOCKDEPLOY or GITHUB.CONFIG.STOCKPRICE:
+    if GITHUB.CONFIG.STOCKDEPLOY or GITHUB.CONFIG.STOCKPRICE or (DOMAIN == "HKEFICO"):
         stocks = Stocks()
         PATH.STOCKS = os.path.join(PATH.DOCS, r'stocks')
         os.makedirs(PATH.STOCKS, exist_ok=True)

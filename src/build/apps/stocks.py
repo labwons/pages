@@ -288,7 +288,7 @@ class Stocks:
         if perBand.empty:
             return "null"
 
-        perBand = perBand.dropna(how='all', axis=0)
+        # perBand = perBand.dropna(how='all', axis=0)
         obj = {'x': perBand.index.strftime("%Y-%m-%d").tolist()}
         obj.update({col: perBand[col].tolist() for col in perBand})
         return dumps(obj).replace("NaN", "null")
