@@ -1042,12 +1042,12 @@ if (SERVICE === "macro"){
     }
     y1_selection.push(e.params.data.id);
     plotMacro();
-    $('.notice')[0].click();
+    $('.notice').click();
   });
   $y1.on('select2:unselect', function(e){
     y1_selection = y1_selection.filter(item => item != e.params.data.id);
     plotMacro();
-    $('.notice')[0].click();
+    $('.notice').click();
   });
   $y2.on('select2:select', async function(e){
     if (y2_selection.length) {
@@ -1074,12 +1074,12 @@ if (SERVICE === "macro"){
     }
     y2_selection.push(e.params.data.id);
     plotMacro();
-    $('.notice')[0].click();
+    $('.notice').click();
   });
   $y2.on('select2:unselect', function(e){
     y2_selection = y2_selection.filter(item => item != e.params.data.id);
     plotMacro();
-    $('.notice')[0].click();
+    $('.notice').click();
   });
 
   $(document)
@@ -2279,6 +2279,7 @@ if (SERVICE === "stock"){
 
 
   $techOpt.on('select2:select', function(e){
+    $('#plotly').empty();
     let _val = e.params.data.id;
     let _cls = e.params.data.element.dataset.class;
     if (_cls === "standalone"){
@@ -2301,7 +2302,7 @@ if (SERVICE === "stock"){
       chartSelected.techMain = [];
       chartSelected.techSupp = [];
       $(this).blur();
-      $('.notice')[0].click();
+      $('.notice').click();
       return
     } 
 
@@ -2313,7 +2314,7 @@ if (SERVICE === "stock"){
     }
     setTechnicalChart();
     $(this).blur();
-    $('.notice')[0].click();
+    $('.notice').click();
     
   });
 
@@ -2332,7 +2333,7 @@ if (SERVICE === "stock"){
     }
     setTechnicalChart();
     $(this).blur();
-    $('.notice')[0].click();
+    $('.notice').click();
   });
 
 

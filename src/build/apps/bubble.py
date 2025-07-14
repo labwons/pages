@@ -133,7 +133,10 @@ class MarketBubble:
             (data['estimatedPE'] <= data['estimatedPE'].mean()) & \
             (data['trailingPE'] <= data['trailingPE'].mean())
         ]
-        return filtered.index.tolist()
+        specials = filtered.index.tolist()
+        if len(specials) > 20:
+            specials = specials[:20]
+        return specials
 
     def todaySpecial(self) -> list:
         filtered = self.data.loc[self.todaySpecials][self.specials]
