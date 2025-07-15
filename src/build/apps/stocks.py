@@ -1,12 +1,10 @@
 try:
     from ...common.env import FILE, dDict
     from ...common.util import krw2currency, str2num
-    from ...fetch.stock.krx import PyKrx
     from ...fetch.stock.fnguide import fnguide
 except ImportError:
     from src.common.env import FILE, dDict
     from src.common.util import krw2currency, str2num
-    from src.fetch.stock.krx import PyKrx
     from src.fetch.stock.fnguide import fnguide
 from datetime import timedelta
 from json import dumps
@@ -45,6 +43,12 @@ class Stocks:
             if not ticker in basis.index:
                 self.log = f'     ...TICKER NOT FOUND IN BASELINE: {ticker}'
                 continue
+            fng = fnguide(ticker)
+            try:
+                product = self.convertProduct(fng.products)
+            except Exception as reason:
+                product = 'null'
+                self.log = f'     ...PRODUCT FOR: {ticker} NOT FOUND: {reason}'
             general = basis.loc[ticker]
             ohlcv = price[ticker].dropna().astype(int)
             typical = (ohlcv.close + ohlcv.high + ohlcv.low) / 3
@@ -72,7 +76,8 @@ class Stocks:
                 per=self.convertPer(general),
                 pbr=self.convertPbr(annual, general),
                 perBand=self.convertPerBand(multipleBand, general),
-                foreignRate=self.convertForeignRate(foreignExhaustRate, general)
+                foreignRate=self.convertForeignRate(foreignExhaustRate, general),
+                product=product
             )
         self.__mem__ = __mem__
 
@@ -343,6 +348,24 @@ class Stocks:
             'bps': yy['BPS(원)'].tolist()
         }
         return dumps(obj).replace("NaN", "null")
+
+    @classmethod
+    def convertProduct(cls, product: DataFrame) -> str:
+        product = product.iloc[-1]
+        etc = product[product.index.str.contains("기타")]
+        if len(etc) == 1 and etc.sum() < 0:
+            product.drop(labels=etc.index, inplace=True)
+            product = product + (etc.sum() / len(product))
+            product = round(product, 2)
+            diff = round((100 - product.sum()), 2)
+            if diff > 0:
+                product.iloc[0] += diff
+            else:
+                product.iloc[0] -= diff
+        if (len(etc) > 1) or (product.sum() != 100):
+            return "null"
+        obj = {'label': product.index.tolist(), 'value': product.values.tolist()}
+        return dumps(obj).replace(" ", "").replace("NaN", "null")
 
     def convertPer(self, baseline:Series) -> str:
         y = []
