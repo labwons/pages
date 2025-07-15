@@ -336,17 +336,16 @@ if __name__ == "__main__":
 
     set_option('display.expand_frame_repr', False)
 
-    from src.common.env import FILE
 
 
     baseline = MarketBaseline()
     print(baseline.log)
-    baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
+    # baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
     # baseline.data.to_clipboard()
     # print(baseline.data)
     # print(baseline.data.columns)
 
-    # df = read_parquet(FILE.AFTER_MARKET, engine='pyarrow')
-    # df.to_clipboard()
+    df = read_parquet(FILE.AFTER_MARKET, engine='pyarrow')
+    df.to_clipboard()
     # print(df.columns)
     # Baseline.gaussian(df, 'turnoverRatio')

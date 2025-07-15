@@ -1,7 +1,8 @@
 {% extends "layout-1.0.0.html" %}
 {% set NOTICE = "모든 투자의 책임은 당사자에게 있습니다. 
-본 자료는 법적 효력이 없으며 열람 시점에 따라 정보가 상이할 수 있습니다.                 
-" %}
+본 자료는 법적 효력이 없으며 열람 시점에 따라 정보가 상이할 수 있습니다.
+모바일 환경에서는 일부 기능이 제한되거나 사용이 불편할 수 있습니다. 
+태블릿PC, 노트북 또는 데스크톱PC에 특화되어있습니다." %}
 {% set faq = [
   {'q': '사용법을 모르겠어요.', 
    'a': '영상을 통해 사용법을 확인하세요. (영상 준비 중)'},
@@ -85,35 +86,42 @@
       background-color: #fff !important;
     }
 
-    .selection,
-    .select2-container--default,
-    .select2-container--focus {
+    .selection {
       font-family: var(--font-family) !important;
-      font-size: 14px !important;
+      font-size: 13px !important;
     }
 
     .select2-container,
     .select2-container .select2-selection--single,
     .select2-container .select2-selection--multiple,
-    .select2-container .select2-results__option {
+    .select2-container .select2-results__option,
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
       font-family: var(--font-family) !important;
+      font-size: 13px !important;
+      color: var(--nav-color) !important;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
       color: #fff !important;
     }
 
     .select2-container--default.select2-container--focus .select2-selection--multiple {
       border: 1px solid #aaa !important;
     }
-    
+
     .select2-container--default .select2-selection--multiple .select2-selection__choice {
+      font-size: 13px !important;
       background-color: var(--nav-color) !important; 
-      border: 1px solid var(--nav-color) !important
+      border: 1px solid var(--nav-color) !important;
+      color: #fff !important;
     }
 
     @media (max-width: 767px) {
       .select2-container,
       .select2-container .select2-selection--single,
       .select2-container .select2-selection--multiple,
-      .select2-container .select2-results__option {
+      .select2-container .select2-results__option,
+      .select2-container--default .select2-selection--multiple .select2-selection__choice,
+      .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
         font-size: 11px !important;
       }
     }

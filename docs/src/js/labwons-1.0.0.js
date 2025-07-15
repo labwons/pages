@@ -1126,6 +1126,7 @@ let setTechnicalChart;
 let setDeviationChart;
 let setSalesChart;
 let setAssetChart;
+let setGrowthChart;
 let setPerChart;
 let setPerBandChart;
 let setForienRateChart;
@@ -2022,7 +2023,71 @@ if (SERVICE === "stock"){
     };
 
     let data = [asset, capital, debt, debtRatio];
-    Plotly.newPlot('plotly', data, layout, option)
+    Plotly.newPlot('plotly', data, layout, option);
+  };
+
+  setGrowthChart = function() {
+    const layout = {
+      margin:{
+        l:__media__.isMobile ? 30:50, 
+        r:10, 
+        t:10, 
+        b:20
+      }, 
+      dragmode: false,
+      hovermode: 'x unified',      
+      legend: {
+        font: defaultLayout.font,
+        bgcolor:'white',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'left',
+        x:0.0,
+        yanchor:'top',
+        y:1.02
+      },
+      xaxis: {
+        tickfont: defaultLayout.font,
+        tickangle: 0,
+      },
+      yaxis: {
+        autorange: true,
+        title: {
+          text: '[%]',
+          font: defaultLayout.font
+        },
+        tickformat: ',',
+        tickfont: defaultLayout.font,
+      },
+    };
+    const option = {
+      doubleClick: false,
+      doubleTap: false,
+      showTips:false,
+      responsive:true,
+      displayModeBar:false,
+      displaylogo:false,
+      scrollZoom: false
+    };
+    
+    const revenue = {
+      x: srcGrowth.date,
+      y: srcGrowth.revenue,
+      name: `${srcSalesY.salesLabel}성장률`,
+      textposition: 'top center',
+      texttemplate: '%{y:.2f}%',
+      textfont: defaultLayout.font,
+      showlegend: false,
+      mode: 'lines+markers+text',
+      type: 'scatter',
+      hovertemplate: `${srcSalesY.salesLabel}성장률: %{y:.2f}%<extra></extra>`
+    };
+
+    let data = [revenue];
+    Plotly.newPlot('plotly', data, layout, option);
   };
 
   setPerChart = function() {
@@ -2345,6 +2410,8 @@ if (SERVICE === "stock"){
         setPerBandChart();
       } else if (_val === "foreigners") {
         setForienRateChart();
+      } else if (_val === "growth") {
+        setGrowthChart();
       }
 
       chartSelected.standalone = [_val];

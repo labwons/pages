@@ -60,6 +60,15 @@ METADATA = dDict(
         limit=False,
         # Adder
     ),
+    recentBPS=dDict(
+        label='BPS',
+        unit='원',
+        dtype=int,
+        digit=0,
+        origin='BPS',
+        limit=False,
+        # Adder
+    ),
     dividendYield=dDict(
         label='배당수익률',
         unit='%',

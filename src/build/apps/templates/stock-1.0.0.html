@@ -143,25 +143,38 @@
     .select2-container,
     .select2-container .select2-selection--single,
     .select2-container .select2-selection--multiple,
-    .select2-container .select2-results__option {
+    .select2-container .select2-results__option,
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
       font-family: var(--font-family) !important;
+      font-size: 13px !important;
+      color: var(--nav-color) !important;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
       color: #fff !important;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+      color: var(--nav-color) !important;
     }
 
     .select2-container--default.select2-container--focus .select2-selection--multiple {
       border: 1px solid #aaa !important;
     }
-
+    
     .select2-container--default .select2-selection--multiple .select2-selection__choice {
+      font-size: 13px !important;
       background-color: var(--nav-color) !important; 
-      border: 1px solid var(--nav-color) !important
+      border: 1px solid var(--nav-color) !important;
+      color: #fff !important;
+      padding-left: 24px !important;
     }
 
     @media (max-width: 767px) {
       .select2-container,
       .select2-container .select2-selection--single,
       .select2-container .select2-selection--multiple,
-      .select2-container .select2-results__option {
+      .select2-container .select2-results__option,
+      .select2-container--default .select2-selection--multiple .select2-selection__choice,
+      .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
         font-size: 11px !important;
       }
     }
@@ -198,7 +211,7 @@
               <select name="indicators" class="stock-select indicators" multiple="multiple">
                 <option></option>
                 <optgroup label="주 지표">
-                  <option value="ohlcv" data-class="main" selected>주가: {{ name }}</option>
+                  <option value="ohlcv" data-class="main" selected>{{ name }}({{ ticker }})</option>
                   <option value="sma" data-class="main">이동평균선</option>
                   <option value="bollingerx2" data-class="main">볼린저밴드x2</option>
                   <option value="bollingerx1" data-class="main">볼린저밴드x1</option>

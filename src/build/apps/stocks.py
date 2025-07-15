@@ -10,10 +10,8 @@ except ImportError:
     from src.fetch.stock.fnguide import fnguide
 from datetime import timedelta
 from json import dumps
-from json.decoder import JSONDecodeError
 from pandas import DataFrame, Series, DateOffset
 from pandas import concat, read_parquet, to_datetime, isna
-from requests.exceptions import ConnectionError
 from scipy.stats import linregress
 from ta.trend import MACD
 from ta.momentum import RSIIndicator
@@ -41,6 +39,14 @@ class Stocks:
             price[price.index >= (price.index[-1] - DateOffset(months=6))].index[0],
             to_datetime(price.index[-1])
         ]
+        # ticker = '005930'
+        # if ticker == '005930':
+        #     # print(astat[ticker].columns.tolist())
+        #     # pb = astat[ticker][['PBR(배)', 'BPS(원)']]
+        #     # print(pb)
+        #     ss = basis.loc[ticker]
+        #     print(ss["priceToBook"])
+        #     return
 
         __mem__ = dDict()
         for ticker in tickers:
