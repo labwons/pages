@@ -71,9 +71,14 @@ class Stocks:
                 sales_y=self.convertSales(annual, cap),
                 sales_q=self.convertSales(quarter, cap),
                 asset=self.convertAsset(annual, quarter),
+                growth=self.convertGrowth(annual),
                 per=self.convertPer(general),
                 perBand=self.convertPerBand(multipleBand),
-                foreignRate=self.convertForeignRate(foreignExhaustRate)
+                foreignRate=self.convertForeignRate(
+                    foreignExhaustRate,
+                    ohlcv.index[-1].strftime("%Y-%m-%d"),
+                    int(ohlcv.close[-1])
+                )
             )
         self.__mem__ = __mem__
 
@@ -260,6 +265,23 @@ class Stocks:
         return dumps(obj).replace("NaN", "null")
 
     @classmethod
+    def convertGrowth(cls, a:DataFrame) -> str:
+        yy = a.copy()
+        yy = yy[yy.columns[:2].tolist() + ['EPS(원)']]
+        yy = yy.dropna(how='all', axis=0).map(str2num)
+        est = yy[yy.index.str.endswith('(E)')]
+        yy = yy.drop(index=est.index)
+        yy = concat([yy, est.iloc[[0]]], axis=0)
+        yy = round(100 * yy.pct_change().dropna(how='all', axis=0), 2)
+        obj = {
+            "date": yy.index.tolist(),
+            "revenue": yy[yy.columns[0]].tolist(),
+            "profit": yy[yy.columns[1]].tolist(),
+            "eps": yy[yy.columns[2]].tolist(),
+        }
+        return dumps(obj).replace("NaN", "null")
+
+    @classmethod
     def convertDeviation(cls, typical:Series, trend:DataFrame) -> str:
         df = concat([typical, trend], axis=1)
         objs = {}
@@ -290,11 +312,11 @@ class Stocks:
 
         # perBand = perBand.dropna(how='all', axis=0)
         obj = {'x': perBand.index.strftime("%Y-%m-%d").tolist()}
-        obj.update({col: perBand[col].tolist() for col in perBand})
+        obj.update({col: perBand[col].tolist() for col in perBand if not "종가" in col})
         return dumps(obj).replace("NaN", "null")
 
     @classmethod
-    def convertForeignRate(cls, foreignRate:DataFrame) -> str:
+    def convertForeignRate(cls, foreignRate:DataFrame, lastDate:str, close:int) -> str:
         if foreignRate.empty:
             return "null"
         obj = {}
@@ -304,6 +326,10 @@ class Stocks:
                 obj[date] = {}
             obj[date]['x'] = foreignRate[col].dropna().index.strftime("%Y-%m-%d").tolist()
             obj[date][name] = foreignRate[col].dropna().tolist()
+            if not lastDate in obj[date]['x']:
+                obj[date]['x'].append(lastDate)
+                if "종가" in name:
+                    obj[date][name].append(close)
         return dumps(obj).replace("NaN", "null")
 
     def convertPer(self, baseline:Series) -> str:
@@ -366,10 +392,7 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
 
-    # stocks = Stocks()
-    # for t, stock in stocks:
-    #     print(t)
-    #     print(stock.trend)
+    stocks = Stocks()
+    for ticker, stock in stocks:
+        print(stock.foreignRate)
 
-    fng = fnguide("005930")
-    print(fng.multipleBand)

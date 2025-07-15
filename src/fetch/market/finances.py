@@ -25,6 +25,8 @@ class FinancialStatement:
                 continue
             numbers = self.numbers(xml, name=ticker)
             bd = self.statementType(xml)
+            if ticker in ['021320']:
+                bd = "separate"
 
             annual[ticker] = a = self.statement(xml, bd, 'annual')
             quarter[ticker] = q = self.statement(xml, bd, 'quarter')
@@ -103,9 +105,11 @@ class FinancialStatement:
 
     @classmethod
     def statementType(cls, xml:Element) -> str:
-        s = cls._statement(xml, 'financial_highlight_ifrs_B/financial_highlight_annual')
-        c = cls._statement(xml, 'financial_highlight_ifrs_D/financial_highlight_annual')
-        if s.count().sum() > c.count().sum():
+        sy = cls._statement(xml, 'financial_highlight_ifrs_B/financial_highlight_annual')
+        cy = cls._statement(xml, 'financial_highlight_ifrs_D/financial_highlight_annual')
+        sq = cls._statement(xml, 'financial_highlight_ifrs_B/financial_highlight_quarter')
+        cq = cls._statement(xml, 'financial_highlight_ifrs_D/financial_highlight_quarter')
+        if (sy.count().sum() > cy.count().sum()) or (sq.count().sum() > cq.count().sum()):
             return 'separate'
         else:
             return 'consolidated'
