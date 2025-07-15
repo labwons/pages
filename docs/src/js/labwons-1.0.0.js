@@ -2271,6 +2271,7 @@ if (SERVICE === "stock"){
         title: {
           font: defaultLayout.font
         },
+        showgrid: false,
         overlaying: 'y',
         side: 'right',
         tickfont: defaultLayout.font,
@@ -2302,7 +2303,7 @@ if (SERVICE === "stock"){
           dash: 'solid'
         },
         yaxis: 'y1',
-        hovertemplate: '종가: {y:,d}원<extra></extra>'
+        hovertemplate: '종가: %{y:,d}원<extra></extra>'
       });
       data.push({
         name:'비중',
@@ -2318,7 +2319,7 @@ if (SERVICE === "stock"){
           dash: 'solid'
         },
         yaxis: 'y2',
-        hovertemplate: '비중: {y:.2f}%<extra></extra>'
+        hovertemplate: '비중: %{y:.2f}%<extra></extra>'
       });
     });
 
