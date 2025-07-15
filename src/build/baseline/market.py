@@ -185,6 +185,7 @@ class MarketBaseline:
             statement = statementQ[ticker].loc[qq[ticker].split(",")]
             statement = statement.dropna(how='all', axis=0)
             statement = statement.map(typeCast)
+            statement = statement.drop(columns=['BPS(원)', 'DPS(원)'])
             estimated = statement[statement.index.str.contains('\\(E\\)')].copy()
             provision = statement[statement.index.str.contains('\\(P\\)')].copy()
             statement = statement[~statement.index.isin(estimated.index)]
