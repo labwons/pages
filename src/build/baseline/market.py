@@ -106,6 +106,7 @@ class MarketBaseline:
             statement = statementA[ticker].loc[yy[ticker].split(",")]
             statement = statement.dropna(how='all', axis=0)
             statement = statement.map(typeCast)
+            statement = statement.drop(columns=['BPS(원)', 'DPS(원)'])
             estimated = statement[statement.index.str.contains('\\(E\\)')].copy()
             provision = statement[statement.index.str.contains('\\(P\\)')].copy()
             statement = statement[~statement.index.isin(estimated.index)]
@@ -169,6 +170,7 @@ class MarketBaseline:
                 obj['weightedAverageEps'] = sum(eps * w for eps, w in zip(statement['EPS(원)'], weight)) / sum(weight)
             obj.name = ticker
             objs.append(obj)
+
         merge = concat(objs=objs, axis=1).T
         merge = merge.rename(columns={p: c for p, c in METADATA.RENAME if p in merge.columns})
         return merge
@@ -340,12 +342,12 @@ if __name__ == "__main__":
 
     baseline = MarketBaseline()
     print(baseline.log)
-    # baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
+    baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
     # baseline.data.to_clipboard()
     # print(baseline.data)
     # print(baseline.data.columns)
 
-    df = read_parquet(FILE.AFTER_MARKET, engine='pyarrow')
-    df.to_clipboard()
+    # df = read_parquet(FILE.AFTER_MARKET, engine='pyarrow')
+    # df.to_clipboard()
     # print(df.columns)
     # Baseline.gaussian(df, 'turnoverRatio')
