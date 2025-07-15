@@ -271,7 +271,8 @@ class Stocks:
         yy = yy.dropna(how='all', axis=0).map(str2num)
         est = yy[yy.index.str.endswith('(E)')]
         yy = yy.drop(index=est.index)
-        yy = concat([yy, est.iloc[[0]]], axis=0)
+        if not est.empty:
+            yy = concat([yy, est.iloc[[0]]], axis=0)
         yy = round(100 * yy.pct_change().dropna(how='all', axis=0), 2)
         obj = {
             "date": yy.index.tolist(),
