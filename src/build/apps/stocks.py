@@ -39,14 +39,6 @@ class Stocks:
             price[price.index >= (price.index[-1] - DateOffset(months=6))].index[0],
             to_datetime(price.index[-1])
         ]
-        # ticker = '005930'
-        # if ticker == '005930':
-        #     # print(astat[ticker].columns.tolist())
-        #     # pb = astat[ticker][['PBR(배)', 'BPS(원)']]
-        #     # print(pb)
-        #     ss = basis.loc[ticker]
-        #     print(ss["priceToBook"])
-        #     return
 
         __mem__ = dDict()
         for ticker in tickers:
@@ -57,14 +49,11 @@ class Stocks:
             ohlcv = price[ticker].dropna().astype(int)
             typical = (ohlcv.close + ohlcv.high + ohlcv.low) / 3
             trend = self.calcTrend(typical)
-            annual = astat[ticker]
-            quarter = qstat[ticker]
+            annual = astat[ticker].map(str2num)
+            quarter = qstat[ticker].map(str2num)
             cap = mcap[ticker]
             multipleBand = band[ticker] if ticker in band else DataFrame()
             foreignExhaustRate = foreignRate[ticker] if ticker in foreignRate else DataFrame()
-            lastDate = ohlcv.index[-1].strftime("%Y-%m-%d")
-            lastPrice = int(ohlcv.close[-1])
-
             __mem__[ticker] = dDict(
                 name=general['name'],
                 date=ohlcv.index.astype(str).tolist(),
@@ -81,8 +70,9 @@ class Stocks:
                 asset=self.convertAsset(annual, quarter),
                 growth=self.convertGrowth(annual),
                 per=self.convertPer(general),
-                perBand=self.convertPerBand(multipleBand, lastDate, lastPrice),
-                foreignRate=self.convertForeignRate(foreignExhaustRate, lastDate, lastPrice)
+                pbr=self.convertPbr(annual, general),
+                perBand=self.convertPerBand(multipleBand, general),
+                foreignRate=self.convertForeignRate(foreignExhaustRate, general)
             )
         self.__mem__ = __mem__
 
@@ -197,7 +187,6 @@ class Stocks:
     @classmethod
     def convertSales(cls, statement:DataFrame, marketcap:DataFrame) -> str:
         sales = statement[statement.columns.tolist()[:3] + ['영업이익률(%)']].dropna(how='all')
-        sales = sales.map(str2num)
         sales = sales.sort_index()
         for n, date in enumerate(sales.index):
             if "(" in date:
@@ -255,7 +244,7 @@ class Stocks:
             asset = a_asset
         else:
             asset = concat([a_asset, q_asset.iloc[[-1]]], axis=0)
-        asset = asset.iloc[-5:].map(str2num)
+        asset = asset.iloc[-5:]
         obj = {
             "index": asset.index.tolist(),
             "asset": asset["자산총계"].tolist(),
@@ -272,7 +261,7 @@ class Stocks:
     def convertGrowth(cls, a:DataFrame) -> str:
         yy = a.copy()
         yy = yy[yy.columns[:2].tolist() + ['EPS(원)']]
-        yy = yy.dropna(how='all', axis=0).map(str2num)
+        yy = yy.dropna(how='all', axis=0)
         est = yy[yy.index.str.endswith('(E)')]
         yy = yy.drop(index=est.index)
         if not est.empty:
@@ -311,19 +300,19 @@ class Stocks:
         return dumps(obj).replace("NaN", "null")
 
     @classmethod
-    def convertPerBand(cls, perBand:DataFrame, lastDate:str, close:int) -> str:
+    def convertPerBand(cls, perBand:DataFrame, general:Series) -> str:
         if perBand.empty:
             return "null"
 
         perBand.index = perBand.index.strftime("%Y-%m-%d")
-        perBand.loc[lastDate] = [close] + [None] * (len(perBand.columns) - 1)
+        perBand.loc[str(general["date"])] = [int(general["close"])] + [None] * (len(perBand.columns) - 1)
         perBand = perBand.sort_index()
         obj = {'x': perBand.index.tolist()}
         obj.update({col: perBand[col].dropna().tolist() for col in perBand})
         return dumps(obj).replace("NaN", "null")
 
     @classmethod
-    def convertForeignRate(cls, foreignRate:DataFrame, lastDate:str, close:int) -> str:
+    def convertForeignRate(cls, foreignRate:DataFrame, general:Series) -> str:
         if foreignRate.empty:
             return "null"
         obj = {}
@@ -333,10 +322,26 @@ class Stocks:
                 obj[date] = {}
             obj[date]['x'] = foreignRate[col].dropna().index.strftime("%Y-%m-%d").tolist()
             obj[date][name] = foreignRate[col].dropna().tolist()
-            if not lastDate in obj[date]['x']:
-                obj[date]['x'].append(lastDate)
+            if not str(general["date"]) in obj[date]['x']:
+                obj[date]['x'].append(str(general["date"]))
                 if "종가" in name:
-                    obj[date][name].append(close)
+                    obj[date][name].append(int(general["close"]))
+        return dumps(obj).replace("NaN", "null")
+
+    @classmethod
+    def convertPbr(cls, yy:DataFrame, general:Series) -> str:
+        yy = yy.dropna(how='all', axis=0)[['PBR(배)', 'BPS(원)']]
+        est = yy[yy.index.str.endswith('(E)')]
+        yy = yy.drop(index=est.index)
+        yy.loc[f'{general["date"][:4]}/(현재)'] = [general["close"]/general["recentBPS"], general["recentBPS"]]
+        yy = yy.iloc[-4:]
+        if not est.empty:
+            yy.loc[est.index.values[0]] = [general["close"]/est.iloc[0]['BPS(원)'], est.iloc[0]['BPS(원)']]
+        obj = {
+            'x': yy.index.tolist(),
+            'pbr': yy['PBR(배)'].tolist(),
+            'bps': yy['BPS(원)'].tolist()
+        }
         return dumps(obj).replace("NaN", "null")
 
     def convertPer(self, baseline:Series) -> str:
@@ -400,6 +405,6 @@ if __name__ == "__main__":
 
 
     stocks = Stocks()
-    for ticker, stock in stocks:
-        print(stock.perBand)
+    # for ticker, stock in stocks:
+    #     print(stock.perBand)
 

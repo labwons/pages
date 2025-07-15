@@ -22,13 +22,14 @@ class MarketBaseline:
         stime = perf_counter()
         self.log = f'  >> RUN [BUILD BASELINE]'
 
-        number = read_parquet(FILE.AFTER_MARKET, dtype_backend="pyarrow")
+        number = read_parquet(FILE.AFTER_MARKET, engine="pyarrow")
         n_date = datetime.strptime(str(number.pop('date').values[-1]), "%Y%m%d%H:%M")
         self.log = f'     READ AFTER MARKET NUMBERS: {str(n_date).replace("-", "/")}'
         number = self.number(number)
+        number['date'] = n_date.strftime("%Y-%m-%d")
         # print(number)
 
-        overview = read_parquet(FILE.STATEMENT_OVERVIEW, dtype_backend="pyarrow")
+        overview = read_parquet(FILE.STATEMENT_OVERVIEW, engine="pyarrow")
         overview_date = overview.pop('date').value_counts(dropna=False)
         statement_yy = overview.pop('reportYears')
         statement_qq = overview.pop('reportQuarters')
@@ -41,17 +42,17 @@ class MarketBaseline:
         overview = self.overview(overview)
         # print(overview)
 
-        statementA = read_parquet(FILE.ANNUAL_STATEMENT)
+        statementA = read_parquet(FILE.ANNUAL_STATEMENT, engine="pyarrow")
         self.log = f'     READ ANNUAL STATEMENT'
         statementA = self.statementA(statementA, statement_yy)
         # # print(statementA)
 
-        statementQ = read_parquet(FILE.QUARTER_STATEMENT)
+        statementQ = read_parquet(FILE.QUARTER_STATEMENT, engine="pyarrow")
         self.log = f'     READ QUARTER STATEMENT'
         statementQ = self.statementQ(statementQ, statement_qq)
         # print(statementQ)
 
-        sector = read_parquet(FILE.SECTOR_COMPOSITION)
+        sector = read_parquet(FILE.SECTOR_COMPOSITION, engine="pyarrow")
         s_date = datetime.strptime(str(sector.pop('date').values[-1]), "%Y%m%d").strftime("%Y/%m/%d")
         self.log = f'     READ SECTOR COMPOSITION: {s_date}'
         sector = self.sector(sector)

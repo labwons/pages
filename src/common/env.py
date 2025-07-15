@@ -65,13 +65,13 @@ if ENV == "local":
 GITHUB = dDict()
 GITHUB.EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 GITHUB.CONFIG = dDict(
-    AFTERMARKET = False,
-    STATEMENT = True,
+    AFTERMARKET = True,
+    STATEMENT = False,
     SECTOR = False,
     ECOS = False,
     FRED = False,
-    STOCKPRICE = False,
-    STOCKDEPLOY = False,
+    STOCKPRICE = True,
+    STOCKDEPLOY = True,
 )
 def __RESET__():
     for key, val in GITHUB.CONFIG:

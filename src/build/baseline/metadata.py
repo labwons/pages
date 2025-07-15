@@ -168,6 +168,15 @@ METADATA = dDict(
         limit=False,
         # Adder
     ),
+    date=dDict(
+        label='최근거래일',
+        unit='',
+        dtype=str,
+        digit=0,
+        origin='',
+        limit=False,
+        # Adder
+    ),
     beta=dDict(
         label='베타',
         unit='',
