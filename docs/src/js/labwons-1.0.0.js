@@ -1127,6 +1127,7 @@ let setDeviationChart;
 let setSalesChart;
 let setAssetChart;
 let setGrowthChart;
+let setPbrChart;
 let setPerChart;
 let setPerBandChart;
 let setForienRateChart;
@@ -2080,21 +2081,142 @@ if (SERVICE === "stock"){
       textposition: 'top center',
       texttemplate: '%{y:.2f}%',
       textfont: defaultLayout.font,
-      showlegend: false,
+      showlegend: true,
       mode: 'lines+markers+text',
       type: 'scatter',
       hovertemplate: `${srcSalesY.salesLabel}성장률: %{y:.2f}%<extra></extra>`
     };
 
-    let data = [revenue];
+    const profit = {
+      x: srcGrowth.date,
+      y: srcGrowth.profit,
+      name: '영업이익성장률',
+      textposition: 'top center',
+      texttemplate: '%{y:.2f}%',
+      textfont: defaultLayout.font,
+      showlegend: true,
+      mode: 'lines+markers+text',
+      type: 'scatter',
+      hovertemplate: '영업이익성장률: %{y:.2f}%<extra></extra>'
+    };
+
+    const eps = {
+      x: srcGrowth.date,
+      y: srcGrowth.eps,
+      name: 'EPS성장률',
+      textposition: 'top center',
+      texttemplate: '%{y:.2f}%',
+      textfont: defaultLayout.font,
+      showlegend: true,
+      mode: 'lines+markers+text',
+      type: 'scatter',
+      hovertemplate: 'EPS성장률: %{y:.2f}%<extra></extra>'
+    };
+
+    let data = [revenue, profit, eps];
     Plotly.newPlot('plotly', data, layout, option);
+  };
+
+  setPbrChart = function() {
+    const layout = {
+      margin:{
+        l:__media__.isMobile ? 30:50, 
+        r:__media__.isMobile ? 40:60, 
+        t:10, 
+        b:20
+      }, 
+      dragmode: false,
+      hovermode: 'x unified',      
+      legend: {
+        font: defaultLayout.font,
+        bgcolor:'white',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'left',
+        x:0.0,
+        yanchor:'top',
+        y:1.02
+      },
+      xaxis: {
+        tickfont: defaultLayout.font,
+        tickangle: 0,
+      },
+      yaxis: {
+        autorange: false,
+        range:[0, 1.2 * Math.max(...srcPb.pbr)],
+        title: {
+          text: 'PBR[-]',
+          font: defaultLayout.font
+        },
+        tickfont: defaultLayout.font,
+        rangemode: 'tozero'
+      },
+      yaxis2: {
+        title: {
+          text: 'BPS[원]',
+          font: defaultLayout.font
+        },
+        autorange: false,
+        range:[0, 1.2 * Math.max(...srcPb.bps)],
+        overlaying: 'y',
+        side: 'right',
+        showgrid: false,
+        zeroline: false,
+        showticklabels: true,
+        tickformat: ',',
+        tickfont: defaultLayout.font,
+        rangemode: 'tozero'
+      },
+    };
+    const option = {
+      doubleClick: false,
+      doubleTap: false,
+      showTips:false,
+      responsive:true,
+      displayModeBar:false,
+      displaylogo:false,
+      scrollZoom: false
+    };
+    
+    const pbr = {
+      x: srcPb.x,
+      y: srcPb.pbr,
+      name: 'PBR',
+      textposition: 'inside',
+      texttemplate: '%{y:.2f}',
+      textfont: defaultLayout.font,
+      showlegend: true,
+      type: 'bar',
+      yaxis: 'y1',
+      marker: { color:'skyblue', opacity:0.8 },
+      hovertemplate: 'PBR: %{y:.2f}<extra></extra>'
+    };
+
+    const bps = {
+      x: srcPb.x,
+      y: srcPb.bps,
+      name: 'BPS(원)',
+      yaxis: 'y2',
+      textposition: 'top center',
+      texttemplate: '%{y:,d}원',
+      textfont: defaultLayout.font,
+      showlegend: true,
+      mode: 'lines+markers+text',
+      type: 'scatter',
+      hovertemplate: 'BPS: %{y:,d}원<extra></extra>'
+    };
+
+    Plotly.newPlot('plotly', [bps, pbr], layout, option)
   };
 
   setPerChart = function() {
     const layout = {
       margin:{
-        l:__media__.isMobile ? 10:30, 
-        r:__media__.isMobile ? 10:30, 
+        l:__media__.isMobile ? 20:30, 
+        r:20, 
         t:10, 
         b:20
       }, 
@@ -2404,6 +2526,8 @@ if (SERVICE === "stock"){
         setAssetChart();
       } else if (_val === "deviation") {
         setDeviationChart();
+      } else if (_val === "pbrs") {
+        setPbrChart();
       } else if (_val === "pers") {
         setPerChart();
       } else if (_val === "perband") {
