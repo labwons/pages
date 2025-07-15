@@ -56,6 +56,8 @@ class Stocks:
             cap = mcap[ticker]
             multipleBand = band[ticker] if ticker in band else DataFrame()
             foreignExhaustRate = foreignRate[ticker] if ticker in foreignRate else DataFrame()
+            lastDate = ohlcv.index[-1].strftime("%Y-%m-%d")
+            lastPrice = int(ohlcv.close[-1])
 
             __mem__[ticker] = dDict(
                 name=general['name'],
@@ -73,12 +75,8 @@ class Stocks:
                 asset=self.convertAsset(annual, quarter),
                 growth=self.convertGrowth(annual),
                 per=self.convertPer(general),
-                perBand=self.convertPerBand(multipleBand),
-                foreignRate=self.convertForeignRate(
-                    foreignExhaustRate,
-                    ohlcv.index[-1].strftime("%Y-%m-%d"),
-                    int(ohlcv.close[-1])
-                )
+                perBand=self.convertPerBand(multipleBand, lastDate, lastPrice),
+                foreignRate=self.convertForeignRate(foreignExhaustRate, lastDate, lastPrice)
             )
         self.__mem__ = __mem__
 
@@ -307,13 +305,15 @@ class Stocks:
         return dumps(obj).replace("NaN", "null")
 
     @classmethod
-    def convertPerBand(cls, perBand:DataFrame) -> str:
+    def convertPerBand(cls, perBand:DataFrame, lastDate:str, close:int) -> str:
         if perBand.empty:
             return "null"
 
-        # perBand = perBand.dropna(how='all', axis=0)
-        obj = {'x': perBand.index.strftime("%Y-%m-%d").tolist()}
-        obj.update({col: perBand[col].tolist() for col in perBand if not "종가" in col})
+        perBand.index = perBand.index.strftime("%Y-%m-%d")
+        perBand.loc[lastDate] = [close] + [None] * (len(perBand.columns) - 1)
+        perBand = perBand.sort_index()
+        obj = {'x': perBand.index.tolist()}
+        obj.update({col: perBand[col].dropna().tolist() for col in perBand})
         return dumps(obj).replace("NaN", "null")
 
     @classmethod
@@ -395,5 +395,5 @@ if __name__ == "__main__":
 
     stocks = Stocks()
     for ticker, stock in stocks:
-        print(stock.foreignRate)
+        print(stock.perBand)
 

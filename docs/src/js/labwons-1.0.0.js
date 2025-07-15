@@ -1582,6 +1582,11 @@ if (SERVICE === "stock"){
           autoScaleOnScroll: true,
           entireTextOnly: true,
         },
+        handleScale: {
+          axisPressedMouseMove: false,
+          mouseWheel: true,
+          pinch: true
+        },
         localization: {
           priceFormatter: price => Math.round(price).toString(),
           timeFormatter: businessDay => {
@@ -1932,7 +1937,7 @@ if (SERVICE === "stock"){
       },
       yaxis: {
         autorange: false,
-        range:[0, 1.1 * Math.max(...srcAsset.asset)],
+        range:[0, 1.2 * Math.max(...srcAsset.asset)],
         title: {
           text: '[억원]',
           font: defaultLayout.font
@@ -1946,6 +1951,8 @@ if (SERVICE === "stock"){
           text: '부채율[%]',
           font: defaultLayout.font
         },
+        autorange: false,
+        range:[0.8 * Math.min(...srcAsset.debtRatio), 1.2 * Math.max(...srcAsset.debtRatio)],
         overlaying: 'y',
         side: 'right',
         showgrid: false,
@@ -1972,10 +1979,12 @@ if (SERVICE === "stock"){
       texttemplate: '%{text}원',
       textfont: defaultLayout.font,
       showlegend: false,
-      mode: 'text',
+      mode: 'markers+text',
       type: 'scatter',
-      // hovertemplate: '자산총액: %{text}원<extra></extra>'
-      hoverinfo:"skip"
+      marker: {
+        opacity:0.0
+      },
+      hovertemplate: '자산총액: %{text}원<extra></extra>'
     };
 
     const capital = {
@@ -1984,10 +1993,9 @@ if (SERVICE === "stock"){
       name: '자본총액',
       text: srcAsset.capitalText,
       textfont: defaultLayout.font,
-      meta: srcAsset.assetText,
       type: 'bar',
       marker: { color: '#2ca02c', opacity:0.8 },
-      hovertemplate: '자본총액: %{text}원<br>자산총액: %{meta}원<extra></extra>'
+      hovertemplate: '자본총액: %{text}원<extra></extra>'
     };
 
     const debt = {
@@ -2088,8 +2096,8 @@ if (SERVICE === "stock"){
     if (!__media__.isMobile) {
       const layout = {
         margin:{
-          l:__media__.isMobile ? 10:30, 
-          r:__media__.isMobile ? 10:30, 
+          l:__media__.isMobile ? 30:50, 
+          r:10, 
           t:10, 
           b:20
         }, 
@@ -2111,6 +2119,7 @@ if (SERVICE === "stock"){
         xaxis: {
           tickfont: defaultLayout.font,
           tickangle: 0,
+          hoverformat: '%Y-%m-%d'
         },
         yaxis: {
           autorange: true,
@@ -2145,10 +2154,12 @@ if (SERVICE === "stock"){
           mode: 'lines',
           line:{
             dash: col === "종가" ? 'solid': 'dash'
-          }
+          },
+          hovertemplate: '%{y:.1f}원<extra></extra>'
         });
         if (col === "종가"){
           data.at(-1).line['color'] = 'black';
+          data.at(-1).hovertemplate = '%{y:,d}원<extra></extra>';
         }
       });
 
@@ -2167,6 +2178,11 @@ if (SERVICE === "stock"){
           autoScale: true,
           autoScaleOnScroll: true,
           entireTextOnly: true,
+        },
+        handleScale: {
+          axisPressedMouseMove: false,
+          mouseWheel: true,
+          pinch: true
         },
         localization: {
           priceFormatter: price => Math.round(price).toString()
@@ -2204,6 +2220,11 @@ if (SERVICE === "stock"){
         })
         band.setData(srcPerBand.x.map((date, n) => ({time:date, value:srcPerBand[col][n]})));
       });
+
+      chart.timeScale().setVisibleRange({
+        from: srcPerBand.x[0],
+        to: srcPerBand.x.at(-1)
+      })
 
     }
     
