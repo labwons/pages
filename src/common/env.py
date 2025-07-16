@@ -68,10 +68,10 @@ GITHUB.CONFIG = dDict(
     AFTERMARKET = False,
     STATEMENT = False,
     SECTOR = False,
-    ECOS = False,
-    FRED = False,
+    ECOS = True,
+    FRED = True,
     STOCKPRICE = True,
-    STOCKDEPLOY = True,
+    STOCKDEPLOY = False,
 )
 def __RESET__():
     for key, val in GITHUB.CONFIG:

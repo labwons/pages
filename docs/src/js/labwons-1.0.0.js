@@ -552,13 +552,27 @@ if (SERVICE === "bubble"){
         zerolinecolor:"lightgrey",
         gridcolor:"lightgrey",
       },
+      images: [{
+        source: "/src/img/logo-footer.png",
+        xref: "paper",
+        yref: "paper",
+        x: 0.95,
+        y: 0.02,
+        sizex: 0.1,
+        sizey: 0.1,
+        xanchor: "right",
+        yanchor: "bottom",
+        opacity: 0.3,
+        layer: "above"
+      }]    
     };
     var bubbleOption = {
       doubleClick: false,
       showTips:false,
       responsive:true,
       displayModeBar:true,
-      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+      // modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+      modeBarButtonsToRemove: ["select2d", "lasso2d", "resetScale", "toImage"],
       displaylogo:false,   
     };
 
