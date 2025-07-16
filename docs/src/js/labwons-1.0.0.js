@@ -1127,6 +1127,7 @@ let setDeviationChart;
 let setSalesChart;
 let setAssetChart;
 let setGrowthChart;
+let setProductChart;
 let setPbrChart;
 let setPerChart;
 let setPerBandChart;
@@ -2117,6 +2118,42 @@ if (SERVICE === "stock"){
     Plotly.newPlot('plotly', data, layout, option);
   };
 
+  setProductChart = function() {
+    const layout = {
+      dragmode: false,    
+      legend: {
+        font: defaultLayout.font,
+        bgcolor:'white',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'v',
+        valign:'middle',
+        xanchor:'left',
+        x:0.0,
+        yanchor:'top',
+        y:1.02
+      },
+    }
+    const option = {
+      doubleClick: false,
+      doubleTap: false,
+      showTips:false,
+      responsive:true,
+      displayModeBar:false,
+      displaylogo:false,
+      scrollZoom: false
+    };
+    const data = [{
+      type: 'pie',
+      labels: srcProduct.label,
+      values: srcProduct.value,
+      textinfo: 'label+percent',
+      insidetextorientation: 'radial',
+    }];
+    Plotly.newPlot('plotly', data, layout, option);
+  };
+
   setPbrChart = function() {
     const layout = {
       margin:{
@@ -2536,6 +2573,8 @@ if (SERVICE === "stock"){
         setForienRateChart();
       } else if (_val === "growth") {
         setGrowthChart();
+      } else if (_val === "product") {
+        setProductChart();
       }
 
       chartSelected.standalone = [_val];

@@ -352,6 +352,7 @@ class Stocks:
     @classmethod
     def convertProduct(cls, product: DataFrame) -> str:
         product = product.iloc[-1]
+        product = product[product != 0]
         etc = product[product.index.str.contains("기타")]
         if len(etc) == 1 and etc.sum() < 0:
             product.drop(labels=etc.index, inplace=True)
