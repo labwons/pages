@@ -2157,6 +2157,12 @@ if (SERVICE === "stock"){
 
   setProductChart = function() {
     const layout = {
+      margin: {
+        t:10,
+        r:10,
+        l:10,
+        b:10
+      },
       dragmode: false,    
       legend: {
         font: defaultLayout.font,
