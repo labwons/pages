@@ -888,7 +888,7 @@ if (SERVICE === "macro"){
       hovermode: 'x unified',
       doubleClick: false,
       legend: {
-        bgcolor:'white',
+        bgcolor:'rgba(0,0,0,0)',
         borderwidth:0,
         itemclick:'toggle',
         itemdoubleclick:'toggleothers',
@@ -943,7 +943,8 @@ if (SERVICE === "macro"){
       showTips:false,
       responsive:true,
       displayModeBar:true,
-      modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+      // modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+      modeBarButtonsToRemove: ["select2d", "lasso2d", "resetScale", "toImage"],
       displaylogo:false
     }
 
@@ -1193,7 +1194,8 @@ if (SERVICE === "stock"){
         showTips:false,
         responsive:true,
         displayModeBar:true,
-        modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+        // modeBarButtonsToRemove: ["select2d", "lasso2d", "zoomin", "zoomout", "resetScale", "toImage"],
+        modeBarButtonsToRemove: ["select2d", "lasso2d", "resetScale", "toImage"],
         displaylogo:false,
         doubleClick: false
       };
@@ -1210,7 +1212,7 @@ if (SERVICE === "stock"){
         hovermode: 'x unified',
         legend: {
           font: defaultLayout.font,
-          bgcolor:'white',
+          bgcolor:'rgba(0,0,0,0)',
           borderwidth:0,
           itemclick:'toggle',
           itemdoubleclick:'toggleothers',
@@ -1801,7 +1803,7 @@ if (SERVICE === "stock"){
       hovermode: 'x unified',      
       legend: {
         font: defaultLayout.font,
-        bgcolor:'white',
+        bgcolor:'rgba(0,0,0,0)',
         borderwidth:0,
         itemclick:'toggle',
         itemdoubleclick:'toggleothers',
@@ -1887,8 +1889,8 @@ if (SERVICE === "stock"){
       yaxis: 'y2',
       type: 'scatter',
       mode: 'lines+markers',
-      line: { color: '#d62728', width: 3, opacity:0.9 },
-      marker: { size: 8, opacity:0.9 },
+      line: { color: '#d62728', width: 3 },
+      marker: { size: 8, opacity:0.7 },
       hovertemplate: '영업이익율(%): %{y}%<extra></extra>'
     };
 
@@ -1922,7 +1924,7 @@ if (SERVICE === "stock"){
       hovermode: 'x unified',      
       legend: {
         font: defaultLayout.font,
-        bgcolor:'white',
+        bgcolor:'rgba(0,0,0,0)',
         borderwidth:0,
         itemclick:'toggle',
         itemdoubleclick:'toggleothers',
@@ -2019,8 +2021,8 @@ if (SERVICE === "stock"){
       yaxis: 'y2',
       type: 'scatter',
       mode: 'lines+markers',
-      line: { color: '#d62728', width: 3, opacity:0.9 },
-      marker: { size: 8, opacity:0.9 },
+      line: { color: '#d62728', width: 3},
+      marker: { size: 8, opacity:0.7 },
       hovertemplate: '부채율(%): %{y}%<extra></extra>'
     };
 
@@ -2040,7 +2042,7 @@ if (SERVICE === "stock"){
       hovermode: 'x unified',      
       legend: {
         font: defaultLayout.font,
-        bgcolor:'white',
+        bgcolor:'rgba(0,0,0,0)',
         borderwidth:0,
         itemclick:'toggle',
         itemdoubleclick:'toggleothers',
@@ -2123,7 +2125,7 @@ if (SERVICE === "stock"){
       dragmode: false,    
       legend: {
         font: defaultLayout.font,
-        bgcolor:'white',
+        bgcolor:'rgba(0,0,0,0)',
         borderwidth:0,
         itemclick:'toggle',
         itemdoubleclick:'toggleothers',
@@ -2150,6 +2152,9 @@ if (SERVICE === "stock"){
       values: srcProduct.value,
       textinfo: 'label+percent',
       insidetextorientation: 'radial',
+      marker: {
+        opacity: 0.8
+      }
     }];
     Plotly.newPlot('plotly', data, layout, option);
   };
@@ -2166,7 +2171,7 @@ if (SERVICE === "stock"){
       hovermode: 'x unified',      
       legend: {
         font: defaultLayout.font,
-        bgcolor:'white',
+        bgcolor:'rgba(0,0,0,0)',
         borderwidth:0,
         itemclick:'toggle',
         itemdoubleclick:'toggleothers',
@@ -2243,6 +2248,7 @@ if (SERVICE === "stock"){
       showlegend: true,
       mode: 'lines+markers+text',
       type: 'scatter',
+      marker: {opacity: 0.7},
       hovertemplate: 'BPS: %{y:,d}원<extra></extra>'
     };
 
@@ -2261,7 +2267,7 @@ if (SERVICE === "stock"){
       hovermode: 'x unified',      
       legend: {
         font: defaultLayout.font,
-        bgcolor:'white',
+        bgcolor:'rgba(0,0,0,0)',
         borderwidth:0,
         itemclick:'toggle',
         itemdoubleclick:'toggleothers',
@@ -2329,7 +2335,7 @@ if (SERVICE === "stock"){
         hovermode: 'x unified',      
         legend: {
           font: defaultLayout.font,
-          bgcolor:'white',
+          bgcolor:'rgba(0,0,0,0)',
           borderwidth:0,
           itemclick:'toggle',
           itemdoubleclick:'toggleothers',
@@ -2467,7 +2473,7 @@ if (SERVICE === "stock"){
       hovermode: 'x unified',      
       legend: {
         font: defaultLayout.font,
-        bgcolor:'white',
+        bgcolor:'rgba(0,0,0,0)',
         borderwidth:0,
         itemclick:'toggle',
         itemdoubleclick:'toggleothers',
