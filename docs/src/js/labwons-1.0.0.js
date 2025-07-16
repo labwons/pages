@@ -526,7 +526,7 @@ if (SERVICE === "bubble"){
       }
       $bubbleSearchBar.append('<option value="' + ticker + '">' + obj.name + '</option>');
     });
-    $bubbleSearchBar.select2({placeholder: "종목 찾기"});
+    $bubbleSearchBar.select2({placeholder: "종목 찾기", allowClear: true});
   };
 
   setBubble = function(x, y, sector) {
@@ -556,7 +556,7 @@ if (SERVICE === "bubble"){
         source: "/src/img/logo-footer.png",
         xref: "paper",
         yref: "paper",
-        x: 0.95,
+        x: 0.97,
         y: 0.02,
         sizex: 0.1,
         sizey: 0.1,
@@ -801,13 +801,19 @@ if (SERVICE === "bubble"){
   $bubbleSearchBar.on('select2:select', function(e){
     let _ticker = srcTickers[e.params.data.id];
     const update = {
-      annotation: [{
+      annotations: [{
         x:_ticker[currentX],
         y:_ticker[currentY],
-        xref:'x', yref:'y'
+        xref:'x', yref:'y',
+        text: '',
+        showarrow: true,
       }]
     };
-    console.log(_ticker, _x, _y);
+    Plotly.relayout('plotly', update);
+  });
+
+  $bubbleSearchBar.on('select2:clear', function(e){
+    Plotly.relayout('plotly', {annotations:[]});
   });
 
   $(document)

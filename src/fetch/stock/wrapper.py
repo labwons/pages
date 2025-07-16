@@ -26,6 +26,8 @@ class CacheStock:
         perBand = {}
         foreignRate = {}
         for ticker in tickers:
+            if ticker is None or isna(ticker):
+                continue
             krx = PyKrx(ticker)
             fng = fnguide(ticker)
 
