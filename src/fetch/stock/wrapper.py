@@ -12,17 +12,20 @@ from typing import List
 class CacheStock:
 
     _log: List[str] = []
-    def __init__(self, *tickers:str):
+    def __init__(self, *tickers:str, user:List=None):
         self.log = f'  >> RUN [CACHING STOCK DATA]: '
         stime = perf_counter()
+
+        tickers = list(tickers)
+        for _ticker in user:
+            if not _ticker in tickers:
+                tickers.append(_ticker)
 
         ohlcv = {}
         marketCap = {}
         perBand = {}
         foreignRate = {}
         for ticker in tickers:
-            if (ticker is None) or isna(ticker):
-                continue
             krx = PyKrx(ticker)
             fng = fnguide(ticker)
 
@@ -32,7 +35,7 @@ class CacheStock:
                 self.log = f'     ...FAILED TO FETCH OHLCV: {ticker} / {reason}'
 
             try:
-                marketCap[ticker] = krx.getMarketCap()
+                marketCap[ticker] = krx.getMarketCap()["시가총액"]
             except Exception as reason:
                 self.log = f'     ...FAILED TO FETCH MARKET CAP: {ticker} / {reason}'
 

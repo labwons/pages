@@ -237,7 +237,7 @@ if __name__ == "__main__":
         tickersBub = marketBubble.todaySpecials
         tickers = list(set(tickersMap + tickersBub))
 
-        cache = CacheStock(*tickers)
+        cache = CacheStock(*tickers, user=TICKERS)
         cache.ohlcv.to_parquet(FILE.PRICE, engine='pyarrow')
         cache.marketCap.to_parquet(FILE.MARKET_CAP, engine='pyarrow')
         cache.perBand.to_parquet(FILE.PER_BAND, engine='pyarrow')
@@ -273,6 +273,12 @@ if __name__ == "__main__":
                         .render(render)
                 )
         context += [f'- [SUCCESS] DEPLOY INDIVIDUAL STOCK: ', stocks.log, '']
+        if TICKERS:
+            context += [f'- [USER TICKERS]: ']
+            for ticker in TICKERS:
+                name = marketData.loc[ticker]['name'] if ticker in marketData.index else 'Unknown'
+                context += [f'  {ticker} / {name}']
+            context += ['']
     else:
         context += [f'- [PASSED] DEPLOY INDIVIDUAL STOCK: ', '']
 

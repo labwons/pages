@@ -1157,6 +1157,9 @@ if (SERVICE === "stock"){
       $('optgroup[label="보조 지표"]').remove();
       // $('option[data-class="main"]').not('[value="ohlcv"]').remove();
     }
+    if (srcProduct === null) {
+      $('option[value="product"]').remove();
+    }
     $techOpt.select2({
       maximumSelectionLength: 5,
       minimumResultsForSearch: Infinity,
@@ -2129,7 +2132,7 @@ if (SERVICE === "stock"){
         borderwidth:0,
         itemclick:'toggle',
         itemdoubleclick:'toggleothers',
-        orientation:'v',
+        orientation:'h',
         valign:'middle',
         xanchor:'left',
         x:0.0,
@@ -2154,7 +2157,8 @@ if (SERVICE === "stock"){
       insidetextorientation: 'radial',
       marker: {
         opacity: 0.8
-      }
+      },
+      hoverinfo:'skip'
     }];
     Plotly.newPlot('plotly', data, layout, option);
   };
