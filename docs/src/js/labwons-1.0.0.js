@@ -558,8 +558,8 @@ if (SERVICE === "bubble"){
         yref: "paper",
         x: 0.97,
         y: 0.02,
-        sizex: 0.1,
-        sizey: 0.1,
+        sizex: __media__.isMobile ? 0.2:0.1,
+        sizey: __media__.isMobile ? 0.2:0.1,
         xanchor: "right",
         yanchor: "bottom",
         opacity: 0.3,
@@ -931,6 +931,19 @@ if (SERVICE === "macro"){
         yanchor:'top',
         y:1.0
       },
+      images: [{
+        source: "/src/img/logo-footer.png",
+        xref: "paper",
+        yref: "paper",
+        x: 0.97,
+        y: 0.02,
+        sizex: __media__.isMobile ? 0.2:0.1,
+        sizey: __media__.isMobile ? 0.2:0.1,
+        xanchor: "right",
+        yanchor: "bottom",
+        opacity: 0.3,
+        layer: "above"
+      }],
       xaxis:{
         autorange: false,
         fixedrange: true,
@@ -2159,8 +2172,8 @@ if (SERVICE === "stock"){
     const layout = {
       margin: {
         t:10,
-        r:10,
-        l:10,
+        r:40,
+        l:40,
         b:10
       },
       dragmode: false,    
@@ -2192,6 +2205,7 @@ if (SERVICE === "stock"){
       labels: srcProduct.label,
       values: srcProduct.value,
       textinfo: 'label+percent',
+      textfont: defaultLayout.font,
       insidetextorientation: 'radial',
       marker: {
         opacity: 0.8
