@@ -798,6 +798,18 @@ if (SERVICE === "bubble"){
     setBubble(currentX, currentY, currentSector);
   });
 
+  $bubbleSearchBar.on('select2:select', function(e){
+    let _ticker = srcTickers[e.params.data.id];
+    const update = {
+      annotation: [{
+        x:_ticker[currentX],
+        y:_ticker[currentY],
+        xref:'x', yref:'y'
+      }]
+    };
+    console.log(_ticker, _x, _y);
+  });
+
   $(document)
   .on('mousedown', function(e) {
     startDrag(e);
