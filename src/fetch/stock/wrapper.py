@@ -37,7 +37,7 @@ class CacheStock:
                 self.log = f'     ...FAILED TO FETCH OHLCV: {ticker} / {reason}'
 
             try:
-                marketCap[ticker] = krx.getMarketCap()["시가총액"]
+                marketCap[ticker] = krx.getMarketCap()
             except Exception as reason:
                 self.log = f'     ...FAILED TO FETCH MARKET CAP: {ticker} / {reason}'
 
