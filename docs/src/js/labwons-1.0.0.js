@@ -786,11 +786,13 @@ if (SERVICE === "bubble"){
   $x.on('change', function() {
     currentX = $(this).val();
     setBubble(currentX, currentY, currentSector);
+    $bubbleSearchBar.val(null).trigger('change');
   });
 
   $y.on('change', function() {
     currentY = $(this).val();
     setBubble(currentX, currentY, currentSector);
+    $bubbleSearchBar.val(null).trigger('change');
   });
   
   $sectors.on('change', function() {

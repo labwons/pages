@@ -342,14 +342,16 @@ if __name__ == "__main__":
 
 
 
-    baseline = MarketBaseline()
-    print(baseline.log)
-    baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
+    # baseline = MarketBaseline()
+    # print(baseline.log)
+    # baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
     # baseline.data.to_clipboard()
     # print(baseline.data)
     # print(baseline.data.columns)
 
-    # df = read_parquet(FILE.AFTER_MARKET, engine='pyarrow')
+    df = read_parquet(FILE.BASELINE, engine='pyarrow')
+    for index, value in df.loc['023910'].items():
+        print(index, ':', value)
     # df.to_clipboard()
     # print(df.columns)
     # Baseline.gaussian(df, 'turnoverRatio')

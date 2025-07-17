@@ -175,7 +175,7 @@ if __name__ == "__main__":
         context += [f"- [SUCCESS] BUILD MARKET BASELINE: ", baseline.log, ""]
     else:
         marketData = read_parquet(FILE.BASELINE, engine='pyarrow')
-        TRADING_DATE = "LOCAL"
+        TRADING_DATE = marketData.iloc[0]["date"]
         context += [f"- [PASSED] BUILD MARKET BASELINE:", "  >> READ ON LOCAL ENV.", ""]
 
     # ---------------------------------------------------------------------------------------
@@ -250,7 +250,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # DEPLOY STOCKS
     # ---------------------------------------------------------------------------------------
-    if GITHUB.CONFIG.STOCKDEPLOY:
+    if GITHUB.CONFIG.STOCKDEPLOY or True:
         stocks = Stocks()
         PATH.STOCKS = os.path.join(PATH.DOCS, r'stocks')
         os.makedirs(PATH.STOCKS, exist_ok=True)
@@ -262,6 +262,7 @@ if __name__ == "__main__":
                 "local": ENV == "local",
                 "title": "404" if ENV == "local" else f"LAB￦ONS: {stock.name}",
                 "nav": SYSTEM_NAV,
+                "tradingDate": f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900',
                 "ticker": ticker,
             }
             render.update(stock)

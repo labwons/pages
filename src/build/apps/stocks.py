@@ -61,6 +61,7 @@ class Stocks:
             __mem__[ticker] = dDict(
                 name=general['name'],
                 date=ohlcv.index.astype(str).tolist(),
+                spec=self.convertOverview(general),
                 xrange=[ohlcv.index.get_loc(xrange[0]), len(ohlcv) - 1],
                 ohlcv=self.convertOhlcv(ohlcv),
                 sma=self.convertSma(typical),
@@ -298,11 +299,15 @@ class Stocks:
             if data.empty:
                 obj[col] = {'empty': 'true'}
             obj[col] = {
-                'date': data.index.strftime("%Y-%m-%d").tolist(),
+                'date': 'srcDate' if col == "10년" else f'srcTrend["{col}"].x',
                 'data': round(data, 2).tolist(),
                 'empty': 'false'
             }
-        return dumps(obj).replace("NaN", "null")
+        return dumps(obj).replace(" ", "").replace("NaN", "null") \
+                         .replace('"srcDate"', 'srcDate') \
+                         .replace('"srcTrend', 'srcTrend') \
+                         .replace('].x"', '].x') \
+                         .replace('\\"', '"')
 
     @classmethod
     def convertPerBand(cls, perBand:DataFrame, general:Series) -> str:
@@ -367,6 +372,60 @@ class Stocks:
             return "null"
         obj = {'label': product.index.tolist(), 'value': product.values.tolist()}
         return dumps(obj).replace(" ", "").replace("NaN", "null")
+
+    @classmethod
+    def convertOverview(cls, baseline:Series) -> dict:
+        obj = {
+            'sector':  f'{baseline["sectorName"]}',
+            'industry': f'{baseline["industryName"]}',
+            'close': f'{baseline["close"]:,d}원',
+            'marketCap': f'{krw2currency(baseline["marketCap"])}원',
+            'volume': f'{baseline["volume"]:,d}주',
+            'foreignRate': f'{baseline["foreignRate"]:.2f}%',
+            'revenueType': f'{baseline["revenueType"]}',
+            'revenue': f'{krw2currency(1e8 * baseline["trailingRevenue"])}원',
+            'profit': f'{krw2currency(1e8 * baseline["trailingProfit"])}원',
+            'profitRate': f'{baseline["trailingProfitRate"]:.2f}%',
+            'estProfitRate': f'{baseline["estimatedProfitRate"]:.2f}%',
+            'h52': f'{int(baseline["fiftyTwoWeekHigh"]):,d}원',
+            'l52': f'{int(baseline["fiftyTwoWeekLow"]):,d}원',
+            'return1Day': f'{"▼" if baseline["return1Day"] < 0 else "▲"}{baseline["return1Day"]:.2f}%',
+            'color1Day': '#1861A8' if baseline["return1Day"] < 0 else '#C92A2A',
+            'return1Week': f'{"▼" if baseline["return1Week"] < 0 else "▲"}{baseline["return1Week"]:.2f}%',
+            'color1Week': '#1861A8' if baseline["return1Week"] < 0 else '#C92A2A',
+            'return1Month': f'{"▼" if baseline["return1Month"] < 0 else "▲"}{baseline["return1Month"]:.2f}%',
+            'color1Month': '#1861A8' if baseline["return1Month"] < 0 else '#C92A2A',
+            'return3Month': f'{"▼" if baseline["return3Month"] < 0 else "▲"}{baseline["return3Month"]:.2f}%',
+            'color3Month': '#1861A8' if baseline["return3Month"] < 0 else '#C92A2A',
+            'return6Month': f'{"▼" if baseline["return6Month"] < 0 else "▲"}{baseline["return6Month"]:.2f}%',
+            'color6Month': '#1861A8' if baseline["return6Month"] < 0 else '#C92A2A',
+            'return1Year': f'{"▼" if baseline["return1Year"] < 0 else "▲"}{baseline["return1Year"]:.2f}%',
+            'color1Year': '#1861A8' if baseline["return1Year"] < 0 else '#C92A2A',
+            'eps': f'{int(baseline["trailingEps"]):,d}원',
+            'estEps': "미제공",
+            'bps': f'{int(baseline["recentBPS"]):,d}원',
+            'per': f'{baseline["trailingPE"]:.2f}',
+            'estPer': "미제공",
+            'pbr': f'{baseline["priceToBook"]:.2f}',
+        }
+        if obj["close"] == obj["h52"]:
+            obj['pct52h'] = "최고가"
+            obj['pct52hColor'] = '#C92A2A'
+        else:
+            obj['pct52h'] = f'▼{baseline["pctFiftyTwoWeekHigh"]:.2f}%'
+            obj['pct52hColor'] = '#1861A8'
+        if obj["close"] == obj["l52"]:
+            obj['pct52l'] = "최저가"
+            obj['pct52lColor'] = '#1861A8'
+        else:
+            obj['pct52l'] = f'▲{baseline["pctFiftyTwoWeekLow"]:.2f}%'
+            obj['pct52lColor'] = '#C92A2A'
+        if not baseline["estimatedProfitRate"]:
+            obj['estProfitRate'] = "미제공"
+        if (not baseline["estimatedEps"] is None) and (not isna(baseline["estimatedEps"])):
+            obj['estEps'] = f'{int(baseline["estimatedEps"]):,d}원'
+            obj['estPer'] = f'{baseline["estimatedPE"]:.2f}'
+        return obj
 
     def convertPer(self, baseline:Series) -> str:
         y = []
