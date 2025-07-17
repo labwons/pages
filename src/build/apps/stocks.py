@@ -69,7 +69,7 @@ class Stocks:
                 trend=self.convertTrend(trend),
                 macd=self.convertMacd(typical),
                 rsi=self.convertRsi(typical),
-                deviation=self.convertDeviation(typical, trend),
+                # deviation=self.convertDeviation(typical, trend),
                 sales_y=self.convertSales(annual, cap),
                 sales_q=self.convertSales(quarter, cap),
                 asset=self.convertAsset(annual, quarter),
