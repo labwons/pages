@@ -70,7 +70,7 @@ GITHUB.CONFIG = dDict(
     SECTOR = False,
     ECOS = False,
     FRED = False,
-    STOCKPRICE = True,
+    STOCKPRICE = False,
     STOCKDEPLOY = True,
 )
 def __RESET__():
@@ -81,6 +81,7 @@ GITHUB.CONFIG.RESET = __RESET__
 
 TICKERS = [
     "023910", # 대한약품
+    "144960", # 뉴파워프라즈마
 ]
 
 if __name__ == "__main__":
