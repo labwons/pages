@@ -74,6 +74,7 @@ class Stocks:
                 ohlcv=self.convertOhlcv(ohlcv),
                 sma=self.convertSma(typical),
                 bollinger=self.convertBollinger(typical),
+                envelope=self.convertEnvelope(ohlcv, typical),
                 trend=self.convertTrend(trend),
                 macd=self.convertMacd(typical),
                 rsi=self.convertRsi(typical),
@@ -85,7 +86,7 @@ class Stocks:
                 per=self.convertPer(general),
                 pbr=self.convertPbr(annual, general),
                 div=self.convertDiv(annual, general),
-                peg = self.convertPeg(annual, general),
+                peg = self.convertPeg(annual, general, annualClose),
                 perBand=self.convertPerBand(multipleBand, general),
                 foreignRate=self.convertForeignRate(foreignExhaustRate, general),
                 product=product
@@ -170,6 +171,22 @@ class Stocks:
         for key in obj:
             obj[key] = round(obj[key], 1).tolist()
         return dumps(obj).replace(" ", "").replace("NaN", "null")
+
+    @classmethod
+    def convertEnvelope(cls, ohlcv:DataFrame, typical:Series) -> str:
+        ma = typical.rolling(window=20).mean()
+        adr = (ohlcv["high"] - ohlcv["low"]).rolling(window=14).mean()
+        pct = 6 # [%]
+        obj = {
+            'adr': adr,
+            # 'upper': ma + 1.5 * adr,
+            # 'lower': ma - 1.5 * adr
+            'upper': ma * (1 + pct / 100),
+            'lower': ma * (1 - pct / 100)
+        }
+        for key in obj:
+            obj[key] = round(obj[key], 1).tolist()
+        return  dumps(obj).replace(" ", "").replace("NaN", "null")
 
     @classmethod
     def convertTrend(cls, trend:DataFrame) -> str:
@@ -383,7 +400,7 @@ class Stocks:
         return dumps(obj).replace("NaN", "null")
 
     @classmethod
-    def convertPeg(cls, yy:DataFrame, general:Series):
+    def convertPeg(cls, yy:DataFrame, general:Series, price:Series):
         yy = yy.dropna(how='all', axis=0)
         est = yy[yy.index.str.endswith('(E)')]
         yy = yy.drop(index=est.index)
@@ -411,10 +428,12 @@ class Stocks:
                     text.append(f'{r["적자"]}{r["성장"]}')
 
         recp['text'] = text
+        recp = recp.join(price)
         obj = {
             'x': recp.index.tolist(),
             'peg': recp["PEG"].tolist(),
-            'text': recp['text'].tolist()
+            'text': recp['text'].tolist(),
+            'close': recp['close'].tolist()
         }
         return dumps(obj).replace("NaN", "null")
 

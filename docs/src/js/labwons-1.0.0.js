@@ -1447,6 +1447,41 @@ if (SERVICE === "stock"){
         });
       }
 
+      if (chartSelected.techMain.includes('envelope')) {
+        data.push({
+          name:'앤밸로프(20,6)',
+          x:srcDate,
+          y:srcEnvelope.upper,
+          type: 'scatter',
+          mode: 'lines',
+          legendgroup:'envelope',
+          showlegend: true,
+          line: {
+            color: 'grey',
+            dash:'dash'
+          },
+          hovertemplate: '상단: %{y}원<extra></extra>',
+          xaxis: 'x',
+          yaxis: 'y'
+        });
+        data.push({
+          name:'',
+          x:srcDate,
+          y:srcEnvelope.lower,
+          type: 'scatter',
+          mode: 'lines',
+          legendgroup:'envelope',
+          showlegend: false,
+          line: {
+            color: 'grey',
+            dash:'dash'
+          },
+          hovertemplate: '하단: %{y}원<extra></extra>',
+          xaxis: 'x',
+          yaxis: 'y'
+        });
+      }
+
       if (chartSelected.techMain.includes('trend')) {
         Object.entries(srcTrend).forEach(([key, _data]) => {
           var _name = `${key} 추세`;
@@ -1744,6 +1779,23 @@ if (SERVICE === "stock"){
           });
           bmiddle.setData(srcDate.map((date, n) => ({time:date, value:srcBollinger.middle[n]})));
         }
+      }
+
+      if (chartSelected.techMain.includes('envelope')) {
+        const e_upper = chart.addLineSeries({
+          color: '#808080',
+          lineWidth: 1.2,
+          lineStyle: LightweightCharts.LineStyle.Dashed,
+          lastValueVisible: false,
+        });
+        const e_lower = chart.addLineSeries({
+          color: '#808080',
+          lineWidth: 1.2,
+          lineStyle: LightweightCharts.LineStyle.Dashed,
+          lastValueVisible: false,
+        });
+        e_upper.setData(srcDate.map((date, n) => ({time:date, value:srcEnvelope.upper[n]})));
+        e_lower.setData(srcDate.map((date, n) => ({time:date, value:srcEnvelope.lower[n]})));
       }
 
       if (chartSelected.techMain.includes('trend')) {
@@ -2619,7 +2671,7 @@ if (SERVICE === "stock"){
     const layout = {
       margin:{
         l:__media__.isMobile ? 30:50, 
-        r:10, 
+        r:__media__.isMobile ? 50:70, 
         t:10, 
         b:20
       }, 
@@ -2652,6 +2704,30 @@ if (SERVICE === "stock"){
         tickfont: defaultLayout.font,
         rangemode: 'tozero'
       },
+      yaxis2: {
+        autorange: false,
+        range:[0.8 * Math.min(...srcPeg.close), 1.2 * Math.max(...srcPeg.close)],
+        title: {
+          text: '종가[원]',
+          font: {
+            family: __fonts__,
+            size: __media__.isMobile ? 9: 12,
+            color: 'royalblue'
+          }
+        },
+        tickfont: {
+          family: __fonts__,
+          size: __media__.isMobile ? 9:12,
+          color:'royalblue'
+        },
+        overlaying: 'y',
+        side: 'right',
+        showgrid: false,
+        zeroline: false,
+        showticklabels: true,
+        tickformat: ',',
+      },
+      
     };
     const option = {
       doubleClick: false,
@@ -2671,14 +2747,33 @@ if (SERVICE === "stock"){
       textposition: 'outside',
       texttemplate: '%{text}',
       textfont: defaultLayout.font,
-      showlegend: false,
+      showlegend: true,
       type: 'bar',
+      yaxis: 'y1',
       marker: { color:'lightblue', opacity:0.8 },
       hoverinfo: 'skip'
       // hovertemplate: 'PBR: %{y:.2f}<extra></extra>'
     };
 
-    Plotly.newPlot('plotly', [peg], layout, option)
+    const price = {
+      x: srcPeg.x,
+      y:srcPeg.close,
+      name: '종가',
+      textposition: 'bottom center',
+      texttemplate: '%{y:,d}원',
+      textfont: defaultLayout.font,
+      type:'scatter',
+      mode:'lines+markers+text',
+      yaxis: 'y2',
+      line: {
+        color:'royalblue'
+      },
+      marker: {
+        color:'royalblue'
+      }
+    }
+
+    Plotly.newPlot('plotly', [peg, price], layout, option)
   };
 
   setForienRateChart = function() {
@@ -2706,7 +2801,11 @@ if (SERVICE === "stock"){
         y:1.02
       },
       xaxis: {
-        tickfont: defaultLayout.font,
+        tickfont: {
+          size: __media__.isMobile ? 9 : 12,
+          color: 'black',
+          family: __fonts__
+        },
         tickangle: 0,
         tickformat: '%Y-%m-%d',
       },
@@ -2716,7 +2815,11 @@ if (SERVICE === "stock"){
         },
         autorange: true,
         tickformat: ',',
-        tickfont: defaultLayout.font,
+        tickfont: {
+          size: __media__.isMobile ? 9 : 12,
+          color: 'black',
+          family: __fonts__
+        },
       },
       yaxis2: {
         title: {
@@ -2725,7 +2828,11 @@ if (SERVICE === "stock"){
         showgrid: false,
         overlaying: 'y',
         side: 'right',
-        tickfont: defaultLayout.font,
+        tickfont: {
+          size: __media__.isMobile ? 9 : 12,
+          color: 'royalblue',
+          family: __fonts__
+        },
       },
     };
     const option = {
@@ -2773,7 +2880,9 @@ if (SERVICE === "stock"){
         hovertemplate: '비중: %{y:.2f}%<extra></extra>'
       });
     });
-
+    layout.xaxis.tickfont.color = 'black';
+    layout.yaxis.tickfont.color = 'black';    
+    layout.yaxis2.tickfont.color = 'royalblue';
     Plotly.newPlot('plotly', data, layout, option);
   };
 
