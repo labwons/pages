@@ -85,9 +85,9 @@ TICKERS = [
 ]
 
 if __name__ == "__main__":
-    print(CLOCK())
-    print(ENV)
-    print(FILE.BASELINE)
+    # print(CLOCK())
+    # print(ENV)
+    # print(FILE.BASELINE)
     # print(FILE.GROUP)
     # print(FILE.ANNUAL_STATEMENT)
     # print(GITHUB.CONFIG)

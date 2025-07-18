@@ -9,7 +9,7 @@ except ImportError:
 from datetime import datetime
 from numpy import nan
 from pandas import DataFrame, Series
-from pandas import concat, read_parquet
+from pandas import concat, read_parquet, isna
 from time import perf_counter
 from typing import List
 
@@ -258,6 +258,8 @@ class MarketBaseline:
         merge['trailingPS'] = (merge['marketCap'] / 1e+8) / merge['trailingRevenue']
         merge['trailingPE'] = merge['close'] / merge['trailingEps'].apply(lambda x: x if x > 0 else nan)
         merge['turnoverRatio'] = 100 * merge['volume'] / (merge['shares'] * merge['floatShares'] / 100)
+        merge['PEG'] = merge['trailingPE'] / merge['estimatedEpsGrowth']
+        merge['PEG'] = merge['PEG'].apply(lambda x: x if x > 0 else nan)
         return merge
 
     @classmethod
@@ -342,16 +344,16 @@ if __name__ == "__main__":
 
 
 
-    # baseline = MarketBaseline()
-    # print(baseline.log)
-    # baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
+    baseline = MarketBaseline()
+    print(baseline.log)
+    baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
     # baseline.data.to_clipboard()
     # print(baseline.data)
     # print(baseline.data.columns)
 
-    df = read_parquet(FILE.BASELINE, engine='pyarrow')
-    for index, value in df.loc['023910'].items():
-        print(index, ':', value)
+    # df = read_parquet(FILE.BASELINE, engine='pyarrow')
+    # for index, value in df.loc['023910'].items():
+    #     print(index, ':', value)
     # df.to_clipboard()
     # print(df.columns)
     # Baseline.gaussian(df, 'turnoverRatio')

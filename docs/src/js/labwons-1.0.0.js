@@ -1180,6 +1180,7 @@ let setDivChart;
 let setPbrChart;
 let setPerChart;
 let setPerBandChart;
+let setPegChart;
 let setForienRateChart;
 let calcXrange;
 let calcYrange;
@@ -2611,9 +2612,73 @@ if (SERVICE === "stock"){
         from: srcPerBand.x[0],
         to: srcPerBand.x.at(-1)
       })
-
     }
+  };
+
+  setPegChart = function() {
+    const layout = {
+      margin:{
+        l:__media__.isMobile ? 30:50, 
+        r:10, 
+        t:10, 
+        b:20
+      }, 
+      dragmode: false,
+      hovermode: 'x unified',      
+      legend: {
+        font: defaultLayout.font,
+        bgcolor:'rgba(0,0,0,0)',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'left',
+        x:0.0,
+        yanchor:'top',
+        y:1.02
+      },
+      xaxis: {
+        tickfont: defaultLayout.font,
+        tickangle: 0,
+      },
+      yaxis: {
+        autorange: false,
+        range:[0, 1.2 * Math.max(...srcPeg.peg)],
+        title: {
+          text: 'PEG[-]',
+          font: defaultLayout.font
+        },
+        tickfont: defaultLayout.font,
+        rangemode: 'tozero'
+      },
+    };
+    const option = {
+      doubleClick: false,
+      doubleTap: false,
+      showTips:false,
+      responsive:true,
+      displayModeBar:false,
+      displaylogo:false,
+      scrollZoom: false
+    };
     
+    const peg = {
+      x: srcPeg.x,
+      y: srcPeg.peg,
+      name: 'PEG',
+      text: srcPeg.text,
+      textposition: 'outside',
+      texttemplate: '%{text}',
+      textfont: defaultLayout.font,
+      showlegend: false,
+      type: 'bar',
+      marker: { color:'lightblue', opacity:0.8 },
+      hoverinfo: 'skip'
+      // hovertemplate: 'PBR: %{y:.2f}<extra></extra>'
+    };
+
+    Plotly.newPlot('plotly', [peg], layout, option)
   };
 
   setForienRateChart = function() {
@@ -2621,7 +2686,7 @@ if (SERVICE === "stock"){
     const layout = {
       margin:{
         l:__media__.isMobile ? 30:50, 
-        r:__media__.isMobile ? 10:30, 
+        r:__media__.isMobile ? 20:40, 
         t:10, 
         b:20
       }, 
@@ -2739,6 +2804,8 @@ if (SERVICE === "stock"){
         setProductChart();
       } else if (_val === "div") {
         setDivChart();
+      } else if (_val === "peg") {
+        setPegChart();
       }
 
       chartSelected.standalone = [_val];

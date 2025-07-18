@@ -52,12 +52,20 @@ class Stocks:
             general = basis.loc[ticker]
             ohlcv = price[ticker].dropna().astype(int)
             typical = (ohlcv.close + ohlcv.high + ohlcv.low) / 3
+            monthlyClose = ohlcv["close"].resample('M').nearest()
+            monthlyClose.index = monthlyClose.index.strftime("%Y/%m")
+            annualClose = monthlyClose[
+                monthlyClose.index.str.endswith('/12') | \
+                (monthlyClose.index == monthlyClose.index[-1])
+            ].rename(index={monthlyClose.index[-1]:f'{monthlyClose.index[-1][:4]}/현재'})
+
             trend = self.calcTrend(typical)
             annual = astat[ticker].map(str2num)
             quarter = qstat[ticker].map(str2num)
             cap = mcap[ticker]
             multipleBand = band[ticker] if ticker in band else DataFrame()
             foreignExhaustRate = foreignRate[ticker] if ticker in foreignRate else DataFrame()
+
             __mem__[ticker] = dDict(
                 name=general['name'],
                 date=ohlcv.index.astype(str).tolist(),
@@ -77,6 +85,7 @@ class Stocks:
                 per=self.convertPer(general),
                 pbr=self.convertPbr(annual, general),
                 div=self.convertDiv(annual, general),
+                peg = self.convertPeg(annual, general),
                 perBand=self.convertPerBand(multipleBand, general),
                 foreignRate=self.convertForeignRate(foreignExhaustRate, general),
                 product=product
@@ -344,7 +353,7 @@ class Stocks:
         yy = yy.dropna(how='all', axis=0)[['PBR(배)', 'BPS(원)']]
         est = yy[yy.index.str.endswith('(E)')]
         yy = yy.drop(index=est.index)
-        yy.loc[f'{general["date"][:4]}/(현재)'] = [general["close"]/general["recentBPS"], general["recentBPS"]]
+        yy.loc[f'{general["date"][:4]}/현재'] = [general["close"]/general["recentBPS"], general["recentBPS"]]
         yy = yy.iloc[-4:]
         if not est.empty:
             yy.loc[est.index.values[0]] = [general["close"]/est.iloc[0]['BPS(원)'], est.iloc[0]['BPS(원)']]
@@ -372,6 +381,43 @@ class Stocks:
         if not est.empty:
             obj['meta'][-1] += '<br>* 최근 종가 대비 추정 DPS'
         return dumps(obj).replace("NaN", "null")
+
+    @classmethod
+    def convertPeg(cls, yy:DataFrame, general:Series):
+        yy = yy.dropna(how='all', axis=0)
+        est = yy[yy.index.str.endswith('(E)')]
+        yy = yy.drop(index=est.index)
+
+        pe = yy["PER(배)"]
+        epsR = 100 * yy["EPS(원)"].pct_change().shift(-1)
+        recp = concat([pe, epsR], axis=1)
+        if not est.empty:
+            recp.iloc[-1, -1] = 100 * (est.iloc[0]['EPS(원)'] - yy.iloc[-1]['EPS(원)']) / yy.iloc[-1]['EPS(원)']
+        recp["PEG"] = recp.apply(lambda r: r["PER(배)"]/r["EPS(원)"] if r["EPS(원)"] > 0 else None, axis=1)
+        recp.loc[f'{general["date"][:4]}/현재'] = [general["trailingPE"], general["estimatedEpsGrowth"], general["PEG"]]
+        recp = round(recp.iloc[-5:], 2)
+
+        recp["적자"] = recp["PER(배)"].apply(lambda x: "적자" if isna(x) else "")
+        recp["성장"] = recp["EPS(원)"].apply(lambda x: "미제공" if isna(x) else "역성장" if x <= 0 else "")
+
+        text = []
+        for n, r in recp.iterrows():
+            if not isna(r["PEG"]):
+                text.append(r["PEG"])
+            else:
+                if r["적자"] and r["성장"]:
+                    text.append(f'{r["적자"]}/{r["성장"]}')
+                else:
+                    text.append(f'{r["적자"]}{r["성장"]}')
+
+        recp['text'] = text
+        obj = {
+            'x': recp.index.tolist(),
+            'peg': recp["PEG"].tolist(),
+            'text': recp['text'].tolist()
+        }
+        return dumps(obj).replace("NaN", "null")
+
 
     @classmethod
     def convertProduct(cls, product: DataFrame) -> str:

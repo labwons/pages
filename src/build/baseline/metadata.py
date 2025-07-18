@@ -1006,6 +1006,15 @@ METADATA = dDict(
         limit=False,
         # Adder
     ),
+    PEG=dDict(
+        label='PEG',
+        unit='',
+        dtype=float,
+        digit=2,
+        origin='',
+        limit=False,
+        # Adder
+    ),
 )
 METADATA.RENAME = dDict(**{item.origin: key for key, item in METADATA if item.origin})
 
@@ -1294,7 +1303,7 @@ BUBBLES = dDict(
         'trailingEps',
         'estimatedEpsGrowth', 'estimatedEpsState',
         'averageEpsGrowth',
-        'beta', 'yoyEps', 'yoyEpsState',
+        'beta', 'yoyEps', 'yoyEpsState', 'PEG',
 
         # 기타
         'revenueType', 'name', 'sectorCode'
