@@ -76,6 +76,7 @@ class Stocks:
                 growth=self.convertGrowth(annual),
                 per=self.convertPer(general),
                 pbr=self.convertPbr(annual, general),
+                div=self.convertDiv(annual, general),
                 perBand=self.convertPerBand(multipleBand, general),
                 foreignRate=self.convertForeignRate(foreignExhaustRate, general),
                 product=product
@@ -352,6 +353,24 @@ class Stocks:
             'pbr': yy['PBR(배)'].tolist(),
             'bps': yy['BPS(원)'].tolist()
         }
+        return dumps(obj).replace("NaN", "null")
+
+    @classmethod
+    def convertDiv(cls, yy:DataFrame, general:Series) -> str:
+        yy = yy.dropna(how='all', axis=0)[['배당수익률(%)', 'DPS(원)']]
+        est = yy[yy.index.str.endswith('(E)')]
+        yy = yy.drop(index=est.index)
+        if not est.empty:
+            yy.loc[est.index.values[0]] = [round(100 * est.iloc[0]['DPS(원)']/general["close"], 2), est.iloc[0]['DPS(원)']]
+
+        obj = {
+            'x': yy.index.tolist(),
+            'div': yy['배당수익률(%)'].tolist(),
+            'dps': yy['DPS(원)'].tolist(),
+            'meta': ('배당수익률: ' + yy['배당수익률(%)'].astype(str) + '%').tolist(),
+        }
+        if not est.empty:
+            obj['meta'][-1] += '<br>* 최근 종가 대비 추정 DPS'
         return dumps(obj).replace("NaN", "null")
 
     @classmethod

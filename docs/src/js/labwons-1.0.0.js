@@ -1176,6 +1176,7 @@ let setSalesChart;
 let setAssetChart;
 let setGrowthChart;
 let setProductChart;
+let setDivChart;
 let setPbrChart;
 let setPerChart;
 let setPerBandChart;
@@ -2217,6 +2218,103 @@ if (SERVICE === "stock"){
     Plotly.newPlot('plotly', data, layout, option);
   };
 
+  setDivChart = function() {
+    const layout = {
+      margin:{
+        l:__media__.isMobile ? 30:50, 
+        r:__media__.isMobile ? 40:60, 
+        t:10, 
+        b:20
+      }, 
+      dragmode: false,
+      hovermode: 'x unified',      
+      legend: {
+        font: defaultLayout.font,
+        bgcolor:'rgba(0,0,0,0)',
+        borderwidth:0,
+        itemclick:'toggle',
+        itemdoubleclick:'toggleothers',
+        orientation:'h',
+        valign:'middle',
+        xanchor:'left',
+        x:0.0,
+        yanchor:'top',
+        y:1.02
+      },
+      xaxis: {
+        tickfont: defaultLayout.font,
+        tickangle: 0,
+      },
+      yaxis: {
+        autorange: false,
+        range:[0, 1.2 * Math.max(...srcDiv.div)],
+        title: {
+          text: '배당수익률[%]',
+          font: defaultLayout.font
+        },
+        tickfont: defaultLayout.font,
+        rangemode: 'tozero'
+      },
+      yaxis2: {
+        title: {
+          text: 'DPS[원]',
+          font: defaultLayout.font
+        },
+        autorange: false,
+        range:[0, 1.2 * Math.max(...srcDiv.dps)],
+        overlaying: 'y',
+        side: 'right',
+        showgrid: false,
+        zeroline: false,
+        showticklabels: true,
+        tickformat: ',',
+        tickfont: defaultLayout.font,
+        rangemode: 'tozero'
+      },
+    };
+    const option = {
+      doubleClick: false,
+      doubleTap: false,
+      showTips:false,
+      responsive:true,
+      displayModeBar:false,
+      displaylogo:false,
+      scrollZoom: false
+    };
+    
+    const div = {
+      x: srcDiv.x,
+      y: srcDiv.div,
+      name: '배당수익률',
+      textposition: 'inside',
+      texttemplate: '%{y}%',
+      textfont: defaultLayout.font,
+      showlegend: true,
+      meta:srcDiv.meta,
+      type: 'bar',
+      yaxis: 'y1',
+      marker: { color:'lightgreen', opacity:0.8 },
+      hovertemplate: '%{meta}<extra></extra>'
+    };
+
+    const dps = {
+      x: srcDiv.x,
+      y: srcDiv.dps,
+      name: 'DPS(원)',
+      yaxis: 'y2',
+      textposition: 'top center',
+      texttemplate: '%{y:,d}원',
+      textfont: defaultLayout.font,
+      showlegend: true,
+      mode: 'lines+markers+text',
+      type: 'scatter',
+      marker: {opacity: 0.7},
+      hovertemplate: 'DPS: %{y:,d}원<extra></extra>'
+    };
+
+    Plotly.newPlot('plotly', [div, dps], layout, option)
+  };
+
   setPbrChart = function() {
     const layout = {
       margin:{
@@ -2291,7 +2389,7 @@ if (SERVICE === "stock"){
       showlegend: true,
       type: 'bar',
       yaxis: 'y1',
-      marker: { color:'skyblue', opacity:0.8 },
+      marker: { color:'lightpink', opacity:0.8 },
       hovertemplate: 'PBR: %{y:.2f}<extra></extra>'
     };
 
@@ -2639,6 +2737,8 @@ if (SERVICE === "stock"){
         setGrowthChart();
       } else if (_val === "product") {
         setProductChart();
+      } else if (_val === "div") {
+        setDivChart();
       }
 
       chartSelected.standalone = [_val];
