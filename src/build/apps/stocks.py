@@ -485,7 +485,7 @@ class Stocks:
             'color6Month': '#1861A8' if baseline["return6Month"] < 0 else '#C92A2A',
             'return1Year': f'{"▼" if baseline["return1Year"] < 0 else "▲"}{baseline["return1Year"]:.2f}%',
             'color1Year': '#1861A8' if baseline["return1Year"] < 0 else '#C92A2A',
-            'eps': f'{int(baseline["trailingEps"]):,d}원',
+            'eps': '미제공' if isna(baseline["trailingEps"]) else f'{int(baseline["trailingEps"]):,d}원',
             'estEps': "미제공",
             'bps': f'{int(baseline["recentBPS"]):,d}원',
             'per': f'{baseline["trailingPE"]:.2f}',
