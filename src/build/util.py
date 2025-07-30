@@ -61,7 +61,7 @@ class eMail(MIMEMultipart):
 
 def navigate(root:str) -> List[Dict[str, Union[str, dict]]]:
     CONTENT_NAMES = {
-        "bubble": "종목 분포",
+        "bubble": "종목 발굴",
         "macro": "경제 지표",
     }
     nav: List[Dict] = [{"href": f"/", "content": "시장 지도"}]

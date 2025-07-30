@@ -437,7 +437,7 @@
         <p class="sub-title">{{ tradingDate }}</p>
       </div>
 
-      <div class="container container-content" style="max-height: 500px; overflow: auto !important;">
+      <div class="container container-content" style="max-height: 500px; overflow: auto !important; padding:0 !important;">
         <table>
           <thead>
             <tr>{% for key in labels %}
@@ -453,6 +453,31 @@
             </tr>{% endfor %}            
           </tbody>
         </table>        
+      </div>
+    </section>
+
+    <section class="section section-flow">
+      <div class="container container-title">
+        <h2 class="main-title">LAB￦ONS Tracking</h2>
+        <p class="sub-title">{{ tradingDate }}</p>
+      </div>
+
+      <div class="container container-content" style="max-height: 500px; overflow: auto !important; padding:0 !important;">
+        <table>
+          <thead>
+            <tr>{% for key in labels %}
+              <th>{{ key }}</th>{% endfor %}
+            </tr>
+          </thead>
+          <tbody>{% for special in specials %}
+            <tr>{% for sd in special[1:] %}
+              {% if loop.index0 == 0 %}
+              <td class="to-stock" data-ticker="{{ special[0] }}">{{ sd }}</td>
+              {% else %}
+              <td>{{ sd }}</td>{% endif %}{% endfor %}
+            </tr>{% endfor %}
+          </tbody>
+        </table>
       </div>
     </section>
 {% endblock %}
