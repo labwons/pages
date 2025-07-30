@@ -39,8 +39,7 @@ class Stocks:
         ]
 
         __mem__ = dDict()
-        # for ticker in tickers:
-        for ticker in ["062040"]:
+        for ticker in tickers:
             if not ticker in basis.index:
                 self.log = f'     ...TICKER NOT FOUND IN BASELINE: {ticker}'
                 continue
