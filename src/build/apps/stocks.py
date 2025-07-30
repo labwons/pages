@@ -39,7 +39,8 @@ class Stocks:
         ]
 
         __mem__ = dDict()
-        for ticker in tickers:
+        # for ticker in tickers:
+        for ticker in ["062040"]:
             if not ticker in basis.index:
                 self.log = f'     ...TICKER NOT FOUND IN BASELINE: {ticker}'
                 continue
@@ -509,13 +510,13 @@ class Stocks:
         if (not baseline["estimatedEps"] is None) and (not isna(baseline["estimatedEps"])):
             obj['estEps'] = f'{int(baseline["estimatedEps"]):,d}원'
             obj['estPer'] = f'{baseline["estimatedPE"]:.2f}'
-        if isna(obj['revenue']):
+        if isna(baseline['trailingRevenue']):
             obj['revenue'] = f'{krw2currency(1e8 * baseline["fiscalRevenue"])}원'
-        if isna(obj['profit']):
+        if isna(baseline['trailingProfit']):
             obj['profit'] = f'{krw2currency(1e8 * baseline["fiscalProfit"])}원'
-        if isna(obj['profitRate']):
+        if isna(baseline['trailingProfitRate']):
             obj['profitRate'] = f'{baseline["fiscalProfitRate"]:.2f}%'
-        if isna(obj['per']):
+        if isna(baseline['trailingPE']):
             obj['per'] =  f'{baseline["fiscalPE"]:.2f}'
         return obj
 
@@ -580,6 +581,6 @@ if __name__ == "__main__":
 
 
     stocks = Stocks()
-    # for ticker, stock in stocks:
-    #     print(stock.perBand)
+    for ticker, stock in stocks:
+        print(stock.spec)
 
