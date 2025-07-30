@@ -187,7 +187,20 @@ if (SERVICE === "marketmap"){
         zeroline: false,
         showticklabels: false
       },
-      dragmode: false
+      dragmode: false,
+      images: [{
+        source: "/src/img/logo-footer.png",
+        xref: "paper",
+        yref: "paper",
+        x: 0.97,
+        y: 0.02,
+        sizex: __media__.isMobile ? 0.2:0.1,
+        sizey: __media__.isMobile ? 0.2:0.1,
+        xanchor: "right",
+        yanchor: "bottom",
+        opacity: 0.3,
+        layer: "above"
+      }]
     };
     var option = {
       scrollZoom: false,

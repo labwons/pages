@@ -509,6 +509,14 @@ class Stocks:
         if (not baseline["estimatedEps"] is None) and (not isna(baseline["estimatedEps"])):
             obj['estEps'] = f'{int(baseline["estimatedEps"]):,d}원'
             obj['estPer'] = f'{baseline["estimatedPE"]:.2f}'
+        if isna(obj['revenue']):
+            obj['revenue'] = f'{krw2currency(1e8 * baseline["fiscalRevenue"])}원'
+        if isna(obj['profit']):
+            obj['profit'] = f'{krw2currency(1e8 * baseline["fiscalProfit"])}원'
+        if isna(obj['profitRate']):
+            obj['profitRate'] = f'{baseline["fiscalProfitRate"]:.2f}%'
+        if isna(obj['per']):
+            obj['per'] =  f'{baseline["fiscalPE"]:.2f}'
         return obj
 
     def convertPer(self, baseline:Series) -> str:
