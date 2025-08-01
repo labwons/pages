@@ -469,7 +469,7 @@
               <th>{{ key }}</th>{% endfor %}
             </tr>
           </thead>
-          <tbody>{% for special in specials %}
+          <tbody>{% for special in labwonsSpecials %}
             <tr>{% for sd in special[1:] %}
               {% if loop.index0 == 0 %}
               <td class="to-stock" data-ticker="{{ special[0] }}">{{ sd }}</td>

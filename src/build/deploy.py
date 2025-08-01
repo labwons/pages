@@ -220,8 +220,9 @@ if __name__ == "__main__":
                     "srcTickers": marketBubble.data.to_json(orient='index'),
                     "srcSectors": marketBubble.sectors.to_json(orient='index'),
                     "srcIndicatorOpt": dumps(marketBubble.meta),
-                    "labels": marketBubble.todaySpecialLabel(),
-                    "specials": marketBubble.todaySpecial()
+                    "labels": marketBubble.specialSLabel,
+                    "specials": marketBubble.selectSpecials(marketBubble.todaySpecials),
+                    "labwonsSpecials": marketBubble.selectSpecials(TICKERS)
                 })
             )
 

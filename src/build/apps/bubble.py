@@ -1,7 +1,9 @@
 try:
+    from ...common.env import TICKERS
     from ...common.util import krw2currency
     from ..baseline.metadata import METADATA, BUBBLES
 except ImportError:
+    from src.common.env import TICKERS
     from src.common.util import krw2currency
     from src.build.baseline.metadata import METADATA, BUBBLES
 from datetime import datetime
@@ -138,17 +140,20 @@ class MarketBubble:
             specials = specials[:20]
         return specials
 
-    def todaySpecial(self) -> list:
-        filtered = self.data.loc[self.todaySpecials][self.specials]
+    @property
+    def specialSLabel(self) -> list:
+        return [
+            f"{self.meta[key]['label']}({self.meta[key]['unit']})" if not key == "name" else f"{self.meta[key]['label']}"
+            for key in self.specials]
+
+    def selectSpecials(self, tickers:list) -> list:
+        filtered = self.data.loc[tickers][self.specials]
         rows = []
         for row in filtered.itertuples(index=True):
             row = list(row)
             row[1] = f'{row[1]}<br>({row[0]})'
             rows.append(row)
         return rows
-
-    def todaySpecialLabel(self) -> list:
-        return [f"{self.meta[key]['label']}({self.meta[key]['unit']})" if not key == "name" else f"{self.meta[key]['label']}" for key in self.specials]
 
 
 if __name__ == "__main__":
@@ -163,4 +168,3 @@ if __name__ == "__main__":
     # print(marketBubble.data.columns)
     # print(marketBubble.sectors)
     # print(marketBubble.meta)
-    marketBubble.todaySpecial()
