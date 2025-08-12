@@ -12,15 +12,9 @@ from typing import List
 class CacheStock:
 
     _log: List[str] = []
-    def __init__(self, *tickers:str, user:List=None):
+    def __init__(self, *tickers:str):
         self.log = f'  >> RUN [CACHING STOCK DATA]: '
         stime = perf_counter()
-
-        tickers = list(tickers)
-        for _ticker in user:
-            if not _ticker in tickers:
-                tickers.append(_ticker)
-
         ohlcv = {}
         marketCap = {}
         perBand = {}

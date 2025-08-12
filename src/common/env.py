@@ -65,13 +65,13 @@ if ENV == "local":
 GITHUB = dDict()
 GITHUB.EVENT = os.environ.get("GITHUB_EVENT_NAME", "local")
 GITHUB.CONFIG = dDict(
-    AFTERMARKET = True,
+    AFTERMARKET = False,
     STATEMENT = False,
     SECTOR = False,
     ECOS = False,
     FRED = False,
-    STOCKPRICE = False,
-    STOCKDEPLOY = False,
+    STOCKPRICE = True,
+    STOCKDEPLOY = True,
 )
 def __RESET__():
     for key, val in GITHUB.CONFIG:
@@ -80,9 +80,6 @@ def __RESET__():
 GITHUB.CONFIG.RESET = __RESET__
 
 TICKERS = [
-    "023910", # 대한약품
-    "062040", # 산일전기
-    "214180", # 헥토이노베이션
     "012450", # 한화에어로스페이스
     "079550", # LIG넥스원
     "064350", # 현대로템
