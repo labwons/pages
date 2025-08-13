@@ -65,32 +65,35 @@ class Stocks:
             cap = mcap[ticker]
             multipleBand = band[ticker] if ticker in band else DataFrame()
             foreignExhaustRate = foreignRate[ticker] if ticker in foreignRate else DataFrame()
-
-            __mem__[ticker] = dDict(
-                name=general['name'],
-                date=ohlcv.index.astype(str).tolist(),
-                spec=self.convertOverview(general),
-                xrange=[ohlcv.index.get_loc(xrange[0]), len(ohlcv) - 1],
-                ohlcv=self.convertOhlcv(ohlcv),
-                sma=self.convertSma(typical),
-                bollinger=self.convertBollinger(typical),
-                envelope=self.convertEnvelope(ohlcv, typical),
-                trend=self.convertTrend(trend),
-                macd=self.convertMacd(typical),
-                rsi=self.convertRsi(typical),
-                # deviation=self.convertDeviation(typical, trend),
-                sales_y=self.convertSales(annual, cap),
-                sales_q=self.convertSales(quarter, cap),
-                asset=self.convertAsset(annual, quarter),
-                growth=self.convertGrowth(annual),
-                per=self.convertPer(general),
-                pbr=self.convertPbr(annual, general),
-                div=self.convertDiv(annual, general),
-                peg = self.convertPeg(annual, general, annualClose),
-                perBand=self.convertPerBand(multipleBand, general),
-                foreignRate=self.convertForeignRate(foreignExhaustRate, general),
-                product=product
-            )
+            try:
+                __mem__[ticker] = dDict(
+                    name=general['name'],
+                    date=ohlcv.index.astype(str).tolist(),
+                    spec=self.convertOverview(general),
+                    xrange=[ohlcv.index.get_loc(xrange[0]), len(ohlcv) - 1],
+                    ohlcv=self.convertOhlcv(ohlcv),
+                    sma=self.convertSma(typical),
+                    bollinger=self.convertBollinger(typical),
+                    envelope=self.convertEnvelope(ohlcv, typical),
+                    trend=self.convertTrend(trend),
+                    macd=self.convertMacd(typical),
+                    rsi=self.convertRsi(typical),
+                    # deviation=self.convertDeviation(typical, trend),
+                    sales_y=self.convertSales(annual, cap),
+                    sales_q=self.convertSales(quarter, cap),
+                    asset=self.convertAsset(annual, quarter),
+                    growth=self.convertGrowth(annual),
+                    per=self.convertPer(general),
+                    pbr=self.convertPbr(annual, general),
+                    div=self.convertDiv(annual, general),
+                    peg = self.convertPeg(annual, general, annualClose),
+                    perBand=self.convertPerBand(multipleBand, general),
+                    foreignRate=self.convertForeignRate(foreignExhaustRate, general),
+                    product=product
+                )
+            except Exception as reason:
+                print(f'Error while collecting: {ticker}, {reason}')
+                continue
         self.__mem__ = __mem__
 
         self._log[0] += f'{len(tickers):,d} items @{price.index.astype(str).values[-1]}'.replace("-", "/")
