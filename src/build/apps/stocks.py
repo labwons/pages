@@ -62,7 +62,7 @@ class Stocks:
             trend = self.calcTrend(typical)
             annual = astat[ticker].map(str2num)
             quarter = qstat[ticker].map(str2num)
-            cap = mcap[ticker]
+            cap = mcap[ticker] if ticker in mcap else DataFrame()
             multipleBand = band[ticker] if ticker in band else DataFrame()
             foreignExhaustRate = foreignRate[ticker] if ticker in foreignRate else DataFrame()
             _xrange = xrange[0]
