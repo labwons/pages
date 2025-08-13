@@ -784,6 +784,10 @@ class fnguide:
         json = web.json(self.url.cdn.products)
         head = DataFrame(json['chart_H'])[['ID', 'NAME']].set_index(keys='ID').to_dict()['NAME']
         head.update({'PRODUCT_DATE': '기말'})
+        values = list(head.values())
+        for n, (key, value) in enumerate(head.items()):
+            if value in values[:n]:
+                head[key] = f'{value}_Copy'
         data = DataFrame(json['chart']).rename(columns=head).set_index(keys='기말')
         data = data.drop(columns=[c for c in data.columns if data[c].astype(float).sum() == 0])
 

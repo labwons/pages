@@ -447,6 +447,7 @@ class Stocks:
     @classmethod
     def convertProduct(cls, product: DataFrame) -> str:
         product = product.iloc[-1]
+        product.index = [v.replace("_Copy", "") for v in product.index]
         product = product[product != 0]
         etc = product[product.index.str.contains("기타(계)")]
         if len(etc) == 1 and etc.sum() < 0:
