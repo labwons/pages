@@ -65,12 +65,15 @@ class Stocks:
             cap = mcap[ticker]
             multipleBand = band[ticker] if ticker in band else DataFrame()
             foreignExhaustRate = foreignRate[ticker] if ticker in foreignRate else DataFrame()
+            _xrange = xrange[0]
+            if not _xrange in ohlcv.index:
+                _xrange = ohlcv.index[0]
             try:
                 __mem__[ticker] = dDict(
                     name=general['name'],
                     date=ohlcv.index.astype(str).tolist(),
                     spec=self.convertOverview(general),
-                    xrange=[ohlcv.index.get_loc(xrange[0]), len(ohlcv) - 1],
+                    xrange=[ohlcv.index.get_loc(_xrange), len(ohlcv) - 1],
                     ohlcv=self.convertOhlcv(ohlcv),
                     sma=self.convertSma(typical),
                     bollinger=self.convertBollinger(typical),

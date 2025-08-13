@@ -36,7 +36,7 @@ class _web(object):
     def json(self, url:str) -> json:
         attr = f"_json_{url}_"
         if not hasattr(self, attr):
-            data = json.loads(urlopen(url=url).read().decode('utf-8-sig', 'replace'))
+            data = json.loads(urlopen(url=url).read().decode('utf-8-sig', 'replace').replace(" ", "").replace("\t", ""))
             self.__setattr__(attr, data)
         return self.__getattribute__(attr)
 
