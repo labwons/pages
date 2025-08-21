@@ -21,10 +21,10 @@ if "USERDOMAIN" in os.environ:
     DOMAIN = os.environ["USERDOMAIN"]
 
 # ROOT DIRECTORY
-ROOT = "https://raw.githubusercontent.com/labwons/pages/main/"
+ROOT = "https://raw.githubusercontent.com/labwons/labwons/main/"
 if not ENV == 'google_colab':
     ROOT = os.path.dirname(__file__)
-    while not ROOT.endswith('pages'):
+    while not ROOT.endswith('labwons'):
         ROOT = os.path.dirname(ROOT)
 
 # DEPLOYMENT DIRECTORY
