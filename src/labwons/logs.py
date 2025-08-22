@@ -1,6 +1,6 @@
 from labwons.path import PATH
 from labwons.util import DATETIME
-import logging, os, time
+import logging, os, time, sys
 
 
 def create_logger(file:str):
@@ -20,7 +20,7 @@ def create_logger(file:str):
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(formatter)
 
-    console_handler = logging.StreamHandler()
+    console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(formatter)
 
@@ -29,6 +29,13 @@ def create_logger(file:str):
         logger.addHandler(console_handler)
 
     return logger
+
+def read_log(*names) -> str:
+    logs = []
+    for name in names:
+        with open(os.path.join(PATH.LOGS, rf'{name}_{DATETIME.TODAY}.log'), 'r', encoding='utf-8') as f:
+            logs.append(f.read())
+    return "\n".join(logs)
 
 
 os.makedirs(os.path.join(PATH.LOGS), exist_ok=True)

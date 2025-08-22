@@ -1,8 +1,12 @@
 from labwons.deco import classproperty
 from datetime import datetime, timedelta, timezone
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from pykrx.stock import get_nearest_business_day_in_a_week
+from smtplib import SMTP
 from time import sleep
 import pprint
+
 
 class DATETIME:
 
@@ -35,6 +39,59 @@ class DATETIME:
             except (IndexError, Exception):
                 setattr(cls, '__td__', None)
         return getattr(cls, '__td__')
+
+
+
+class Mail(MIMEMultipart):
+
+    _content:str = ''
+
+    def __init__(self):
+        super().__init__()
+        self['From'] = 'snob.labwons@gmail.com'
+        self['To'] = 'jhlee_0319@naver.com'
+        return
+
+    @property
+    def subject(self) -> str:
+        return self['Subject']
+
+    @subject.setter
+    def subject(self, subject:str):
+        self['Subject'] = subject
+
+    @property
+    def sender(self):
+        return self['From']
+
+    @sender.setter
+    def sender(self, sender:str):
+        self['From'] = sender
+
+    @property
+    def receiver(self):
+        return self['To']
+
+    @receiver.setter
+    def receiver(self, receiver:str):
+        self['To'] = receiver
+
+    @property
+    def content(self) -> str:
+        return self._content
+
+    @content.setter
+    def content(self, content:str):
+        self._content = content
+
+    def send(self):
+        self.attach(MIMEText(self.content))
+        with SMTP('smtp.gmail.com', 587) as server:
+            server.ehlo()
+            server.starttls()
+            server.login(self.sender, "puiz yxql tnoe ivaa")
+            server.send_message(self)
+        return
 
 
 class DataDictionary(dict):
