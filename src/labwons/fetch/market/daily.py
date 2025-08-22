@@ -1,7 +1,7 @@
 from labwons.logs import fetch_logger as logger
 from labwons.util import DATETIME
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from io import StringIO
 from pandas import DataFrame, Series
 from pykrx.stock import (
@@ -116,7 +116,7 @@ class DailyMarket:
         self.data:DataFrame = merged.sort_values(by='시가총액', ascending=False)
         self.data['date'] = f'{DATETIME.TRADING}{time}'
         self.status = "OK"
-        logger.info(f'END [FETCH AFTER MARKET PYKRX DATA] {len(self.data)} ITEMS: {perf_counter() - stime:.2f}s')
+        logger.info(f'END [FETCH PYKRX DATA] {len(self.data)} ITEMS: {perf_counter() - stime:.2f}s')
         return
 
     @classmethod
@@ -156,9 +156,4 @@ class DailyMarket:
         returns.update(pd.concat(objs=objs, axis=1))
         return round(100 * returns, 2)
 
-
-if __name__ == "__main__":
-    afterMarket = AfterMarket()
-
-    print(afterMarket.log)
 

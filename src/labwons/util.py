@@ -1,11 +1,21 @@
 from labwons.deco import classproperty
-from datetime import datetime, timedelta, timezone
+
+from bs4 import BeautifulSoup
+from datetime import datetime, time, timedelta, timezone
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from json import JSONDecoder
+from pandas import DataFrame
 from pykrx.stock import get_nearest_business_day_in_a_week
 from smtplib import SMTP
 from time import sleep
-import pprint
+from typing import Dict, Union
+from urllib.request import urlopen
+
+import numpy as np
+import pandas as pd
+import pprint, warnings, json, requests
+warnings.filterwarnings("ignore")
 
 
 class DATETIME:
@@ -24,7 +34,7 @@ class DATETIME:
         return cls.CLOCK().date()
 
     @classmethod
-    def TIME(cls) -> str:
+    def TIME(cls) -> time:
         return cls.CLOCK().time()
     
     @classproperty
@@ -39,7 +49,6 @@ class DATETIME:
             except (IndexError, Exception):
                 setattr(cls, '__td__', None)
         return getattr(cls, '__td__')
-
 
 
 class Mail(MIMEMultipart):
@@ -135,8 +144,133 @@ class DataDictionary(dict):
         return pprint.pformat(self)
 
 
+class DataProcessing:
+
+    @classmethod
+    def krw2currency(cls, krw: int) -> Union[str, float]:
+        """
+        KRW (원화) 입력 시 화폐 표기 법으로 변환(자동 계산)
+        @krw 단위는 원 일 것
+        """
+        if pd.isna(krw) or np.isnan(krw):
+            return np.nan
+        if krw >= 1e+12:
+            krw /= 1e+8
+            currency = f'{int(krw // 10000)}조'
+            if int(krw % 10000):
+                currency += f' {int(krw % 10000)}억'
+            return currency
+
+        if krw >= 1e+10:
+            krw /= 1e+4
+            currency = f'{int(krw // 10000)}억'
+            return currency
+
+        if krw >= 1e+8:
+            krw /= 1e+4
+            currency = f'{int(krw // 10000)}억'
+            if int(krw % 10000):
+                currency += f' {int(krw % 10000)}만'
+            return currency
+        return f'{int(krw // 10000)}만'
+
+    @classmethod
+    def str2num(cls, src: str) -> int or float:
+        if isinstance(src, float):
+            return src
+        if src is None:
+            return np.nan
+        src = "".join([char for char in src if char.isdigit() or char == "."])
+        if not src or src == ".":
+            return np.nan
+        if "." in src:
+            return float(src)
+        return int(src)
+
+    @classmethod
+    def deleteKeysFromString(cls, string:str, *keys) -> str:
+        for key in keys:
+            string = string.replace(key, '')
+        return string
+
+    # @classmethod
+    # def cutString(cls, string: str, deleter: list) -> str:
+    #     _deleter = deleter.copy()
+    #     while _deleter:
+    #         string = string.replace(_deleter.pop(0), '')
+    #     return string
+
+
+class multiframes(DataFrame):
+
+    __mem__ = {}
+    def __init__(self, frames:Dict[str, DataFrame]):
+        base = list(frames.values())[0]
+        self.__mem__ = frames.copy()
+        super().__init__(data=base.values, index=base.index, columns=base.columns)
+        return
+
+    def __getattr__(self, item):
+        if item in self.__mem__:
+            return self.__mem__[item]
+        return super().__getattr__(name=item)
+
+
+class _web(object):
+
+    def req(self, url:str):
+        attr = f"_req_{url}_"
+        if not hasattr(self, attr):
+            req = requests.get(url, verify=False)
+            if not req.status_code == 200:
+                raise ConnectionError
+            self.__setattr__(attr, req)
+        return self.__getattribute__(attr)
+
+    def html(self, url:str, parser:str="") -> BeautifulSoup:
+        attr = f"_html_{url}_"
+        if not hasattr(self, attr):
+            parser = parser if parser else 'xml' if url.endswith('.xml') else 'lxml'
+            self.__setattr__(attr, BeautifulSoup(self.req(url).text, parser))
+        return self.__getattribute__(attr)
+
+    def list(self, url:str, encoding:str='utf-8', displayed_only:bool=False) -> list:
+        attr = f"_list_{url}_"
+        if not hasattr(self, attr):
+            encoding = "euc-kr" if "naver" in url else encoding
+            self.__setattr__(attr, pd.read_html(io=url, header=0, encoding=encoding, displayed_only=displayed_only))
+        return self.__getattribute__(attr)
+
+    def json(self, url:str) -> JSONDecoder:
+        attr = f"_json_{url}_"
+        if not hasattr(self, attr):
+            data = json.loads(urlopen(url=url).read().decode('utf-8-sig', 'replace').replace(" ", "").replace("\t", ""))
+            self.__setattr__(attr, data)
+        return self.__getattribute__(attr)
+
+    def data(self, url:str, key:str=""):
+        if url.endswith('.json'):
+            return DataFrame(self.json(url)[key] if key else self.json(url))
+        elif url.endswith('.csv'):
+            return pd.read_csv(url, encoding='utf-8')
+        elif url.endswith('.pkl'):
+            return pd.read_pickle(url)
+        else:
+            raise KeyError(f"Unknown data type: {url}")
+
 # Alias
 dD = DD = dDict = DataDictionary
+dP = DP = dProc = DataProcessing
+web = _web()
+
 
 if __name__ == "__main__":
-    print(DATETIME.TRADING)
+    # print(DP.krw2currency(21234659857382)) # 21조 2346억
+    # print(DP.krw2currency( 1234659857382)) #  1조 2346억
+    print(DP.krw2currency(  234659857382)) #      2346억
+    print(DP.krw2currency(   34659857382)) #       346억
+    print(DP.krw2currency(    4659857382)) #
+    print(DP.krw2currency(     659857382)) #
+    print(DP.krw2currency(      59857382)) #
+    print(DP.krw2currency(       9857382)) #
+    print(DP.krw2currency(        857382)) #
