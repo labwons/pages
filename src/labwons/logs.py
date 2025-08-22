@@ -1,5 +1,5 @@
 from labwons.path import PATH
-from datetime import datetime
+from labwons.util import DATETIME
 import logging, os, time
 
 
@@ -32,6 +32,5 @@ def create_logger(file:str):
 
 
 os.makedirs(os.path.join(PATH.LOGS), exist_ok=True)
-today = datetime.today().strftime("%Y-%m-%d")
-build_logger = create_logger(os.path.join(PATH.LOGS, rf'build_{today}.log'))
-fetch_logger = create_logger(os.path.join(PATH.LOGS, rf'fetch_{today}.log'))
+build_logger = create_logger(os.path.join(PATH.LOGS, rf'build_{DATETIME.TODAY}.log'))
+fetch_logger = create_logger(os.path.join(PATH.LOGS, rf'fetch_{DATETIME.TODAY}.log'))
