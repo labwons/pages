@@ -41,7 +41,6 @@ jobs:
         jupyter nbconvert \
           --to notebook \
           --execute src/actions/run.ipynb \
-          --output /run_executed.ipynb \
           --ExecutePreprocessor.timeout=900
 
     - name: Commit and Push changes
