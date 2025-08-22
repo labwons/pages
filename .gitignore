@@ -200,6 +200,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*.nbconvert.ipynb
 
 # IPython
 profile_default/

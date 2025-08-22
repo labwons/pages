@@ -1,4 +1,6 @@
 from labwons.logs import fetch_logger as logger
+from labwons.util import DATETIME
+
 from datetime import datetime, timedelta, timezone
 from io import StringIO
 from pandas import DataFrame, Series

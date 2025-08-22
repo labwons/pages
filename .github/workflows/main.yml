@@ -42,6 +42,7 @@ jobs:
           --to notebook \
           --execute src/actions/run.ipynb \
           --ExecutePreprocessor.timeout=900
+          --log-level=DEBUG
 
     - name: Commit and Push changes
       env:
