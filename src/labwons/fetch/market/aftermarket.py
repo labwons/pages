@@ -27,41 +27,45 @@ class AfterMarket:
         self.status = "FAILED"
         self.fname = "AFTERMARKET"
 
-        logger.info("RUN [FETCH AFTER MARKET PYKRX DATA]")
+        logger.info("RUN [FETCH PYKRX DATA]")
+
+        if DATETIME.TRADING is None:
+            logger.error(f'- FAILED TO FETCH TRADING DATE')
+            return
 
         try:
             date = get_nearest_business_day_in_a_week()
             time = datetime.now(timezone(timedelta(hours=9)))
             time = "15:30" if time.hour >= 15 and time.minute >= 30 else time.strftime("%H:%M")
         except Exception as reason:
-            logger.error(f'>>> FAILED TO FETCH TRADING DATE: {reason}')
+            logger.error(f'- FAILED TO FETCH TRADING DATE: {reason}')
             return
 
         try:
-            marketCap = get_market_cap_by_ticker(date=date, market='ALL', alternative=True)
+            marketCap = get_market_cap_by_ticker(date=DATETIME.TRADING, market='ALL', alternative=True)
             if marketCap.empty:
                 raise Exception(f'Empty {{Market Cap}} DataFrame')
-            logger.info(f'>>> SUCCEED IN FETCHING MARKET CAP')
+            logger.info(f'- SUCCEED IN FETCHING MARKET CAP')
         except Exception as reason:
-            logger.error(f'>>> FAILED TO FETCH MARKET CAP: {reason}')
+            logger.error(f'- FAILED TO FETCH MARKET CAP: {reason}')
             return
 
         try:
-            multiples = get_market_fundamental(date=date, market='ALL', alternative=True)
+            multiples = get_market_fundamental(date=DATETIME.TRADING, market='ALL', alternative=True)
             if multiples.empty:
                 raise Exception(f'Empty {{Multiples}} DataFrame')
-            logger.info(f'>>> SUCCEED IN FETCHING MULTIPLES')
+            logger.info(f'- SUCCEED IN FETCHING MULTIPLES')
         except Exception as reason:
-            logger.error(f'>>> FAILED TO FETCH MULTIPLES: {reason}')
+            logger.error(f'- FAILED TO FETCH MULTIPLES: {reason}')
             return
 
         try:
-            foreignRate = get_exhaustion_rates_of_foreign_investment(date=date, market='ALL')
+            foreignRate = get_exhaustion_rates_of_foreign_investment(date=DATETIME.TRADING, market='ALL')
             if foreignRate.empty:
                 raise Exception(f'Empty {{Foreign Rate}} DataFrame')
-            logger.info(f'>>> SUCCEED IN FETCHING FOREIGN EXHAUST RATE')
+            logger.info(f'- SUCCEED IN FETCHING FOREIGN EXHAUST RATE')
         except Exception as reason:
-            logger.error(f'>>> FAILED TO FETCH FOREIGN EXHAUST RATE: {reason}')
+            logger.error(f'- FAILED TO FETCH FOREIGN EXHAUST RATE: {reason}')
             return
 
         try:
@@ -70,34 +74,34 @@ class AfterMarket:
                 encoding='euc-kr'
             )[0].set_index(keys='종목코드')
             ipo.index = ipo.index.astype(str).str.zfill(6)
-            logger.info(f'>>> SUCCEED IN FETCHING IPO LIST')
+            logger.info(f'- SUCCEED IN FETCHING IPO LIST')
         except Exception as reason:
-            logger.error(f'>>> FAILED TO FETCH IPO LIST: {reason}')
+            logger.error(f'- FAILED TO FETCH IPO LIST: {reason}')
             return
 
         try:
-            ks = Series(index=get_market_ticker_list(date=date, market='KOSPI')).fillna('KOSPI')
-            kq = Series(index=get_market_ticker_list(date=date, market='KOSDAQ')).fillna('KOSDAQ')
+            ks = Series(index=get_market_ticker_list(date=DATETIME.TRADING, market='KOSPI')).fillna('KOSPI')
+            kq = Series(index=get_market_ticker_list(date=DATETIME.TRADING, market='KOSDAQ')).fillna('KOSDAQ')
             marketType = pd.concat([ks, kq], axis=0)
             marketType.name = "market"
-            logger.info(f'>>> SUCCEED IN FETCHING MARKET TYPE')
+            logger.info(f'- SUCCEED IN FETCHING MARKET TYPE')
         except Exception as reason:
-            logger.error(f'>>> FAILED TO FETCH MARKET TYPE: {reason}')
+            logger.error(f'- FAILED TO FETCH MARKET TYPE: {reason}')
             return
 
         try:
             index = get_index_portfolio_deposit_file('2203') + get_index_portfolio_deposit_file('1028')
             largeCap = Series(index=index, data=['largeCap'] * len(index), name='capGroup')
-            logger.info(f'>>> SUCCEED IN FETCHING LARGE CAPS')
+            logger.info(f'- SUCCEED IN FETCHING LARGE CAPS')
         except Exception as reason:
-            logger.error(f'>>> FAILED TO FETCH LARGE CAPS: {reason}')
+            logger.error(f'- FAILED TO FETCH LARGE CAPS: {reason}')
             return
 
         merged = pd.concat([marketCap, multiples, foreignRate], axis=1)
         merged = merged.loc[:, ~merged.columns.duplicated(keep='first')]
 
         c_active_ipo = merged.index.isin(ipo.index)
-        c_no_konex = ~merged.index.isin(get_market_cap_by_ticker(date=date, market='KONEX').index)
+        c_no_konex = ~merged.index.isin(get_market_cap_by_ticker(date=DATETIME.TRADING, market='KONEX').index)
         c_active_trade = merged['거래량'] > 0
         c_market_cap = merged['시가총액'] >= merged['시가총액'].median()
 
@@ -108,11 +112,11 @@ class AfterMarket:
         merged.index.name = 'ticker'
 
         try:
-            returns = self.fetchReturns(date, merged.index)
+            returns = self.fetchReturns(DATETIME.TRADING, merged.index)
             merged = merged.join(returns, how='left')
-            logger.info(f'>>> SUCCEED IN FETCHING PERIODIC RETURNS')
+            logger.info(f'- SUCCEED IN FETCHING PERIODIC RETURNS')
         except Exception as reason:
-            logger.error(f'>>> FAILED TO FETCH PERIODIC RETURNS: {reason}')
+            logger.error(f'- FAILED TO FETCH PERIODIC RETURNS: {reason}')
             return
         
         self.data = merged = merged.sort_values(by='시가총액', ascending=False)
