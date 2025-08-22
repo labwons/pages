@@ -1,25 +1,48 @@
+from labwons.logs import fetch_logger as logger
+
 from pandas import DataFrame, concat
 from re import compile
 from requests import get, Session
-from time import sleep, time
+from time import sleep, perf_counter
 from typing import Dict, List
 
 
 SECTOR_CODE:Dict[str, str] = {
-    'WI100': '에너지', 'WI110': '화학',
-    'WI200': '비철금속', 'WI210': '철강', 'WI220': '건설', 'WI230': '기계', 'WI240': '조선', 'WI250': '상사,자본재', 'WI260': '운송',
-    'WI300': '자동차', 'WI310': '화장품,의류', 'WI320': '호텔,레저', 'WI330': '미디어,교육', 'WI340': '소매(유통)',
-    'WI400': '필수소비재', 'WI410': '건강관리',
-    'WI500': '은행', 'WI510': '증권', 'WI520': '보험',
-    'WI600': '소프트웨어', 'WI610': 'IT하드웨어', 'WI620': '반도체', 'WI630': 'IT가전', 'WI640': '디스플레이',
+    'WI100': '에너지', 
+    'WI110': '화학',
+    'WI200': '비철금속', 
+    'WI210': '철강', 
+    'WI220': '건설', 
+    'WI230': '기계', 
+    'WI240': '조선', 
+    'WI250': '상사,자본재', 
+    'WI260': '운송',
+    'WI300': '자동차', 
+    'WI310': '화장품,의류', 
+    'WI320': '호텔,레저', 
+    'WI330': '미디어,교육', 
+    'WI340': '소매(유통)',
+    'WI400': '필수소비재', 
+    'WI410': '건강관리',
+    'WI500': '은행', 
+    'WI510': '증권', 
+    'WI520': '보험',
+    'WI600': '소프트웨어', 
+    'WI610': 'IT하드웨어', 
+    'WI620': '반도체', 
+    'WI630': 'IT가전', 
+    'WI640': '디스플레이',
     'WI700': '통신서비스',
     'WI800': '유틸리티'
 }
 
 CODE_LABEL:Dict[str, str] = {
-    'CMP_CD': 'ticker', 'CMP_KOR': 'name',
-    'SEC_CD': 'sectorCode', 'SEC_NM_KOR': 'sectorName',
-    'IDX_CD': 'industryCode', 'IDX_NM_KOR': 'industryName',
+    'CMP_CD': 'ticker', 
+    'CMP_KOR': 'name',
+    'SEC_CD': 'sectorCode', 
+    'SEC_NM_KOR': 'sectorName',
+    'IDX_CD': 'industryCode', 
+    'IDX_NM_KOR': 'industryName',
 }
 
 REITS_CODE:Dict[str, str] = {
@@ -77,31 +100,33 @@ EXCEPTIONALS = {
 
 class SectorComposition:
 
-    _log:List[str] = []
-    state:str = "SUCCESS"
     def __init__(self):
-        stime = time()
+        stime = perf_counter()
 
-        self.log = f'RUN [Update Sector Composition]'
+        self.status = "FAILED"
+        self.fname = "SECTORS"
+        logger.info('RUN [FETCH SECTOR COMPOSITION]')
         try:
             date = compile(r"var\s+dt\s*=\s*'(\d{8})'") \
                    .search(get('https://www.wiseindex.com/Index/Index#/G1010.0.Components').text) \
                    .group(1)
         except Exception as reason:
-            self.log = f'- {reason}'
-            self.log = f'END [Update Sector Composition] / Elapsed: {time() - stime:.2f}s'
-            self.state = "FAILED"
+            logger.error(f'- FAILED TO FETCH SECTOR COMPOSITION DATE: {reason}')
             return
 
         objs, size = [], len(SECTOR_CODE) + 1
         for n, (code, name) in enumerate(SECTOR_CODE.items()):
-            self.log = f"... {str(n + 1).zfill(2)} / {size} : {code} {name} :: "
-            objs.append(self.fetchWiseGroup(code, date))
+            logger.info(f"- {str(n + 1).zfill(2)} / {size} : {code} {name}")
+            sector = self.fetchWiseGroup(code, date)
+            if sector.empty:
+                logger.error(f'- FAILED TO FETCH: {code} {name}')
+                return
+            objs.append(sector)
 
         reits = DataFrame(data={'CMP_KOR': REITS_CODE.values(), 'CMP_CD':REITS_CODE.keys()})
         reits[['SEC_CD', 'IDX_CD', 'SEC_NM_KOR', 'IDX_NM_KOR']] = ['G99', 'WI999', '리츠', '리츠']
         objs.append(reits)
-        self.log = f"... {size} / {size} : WI999 리츠 :: SUCCESS"
+        logger.info(f"- {size} / {size} : WI999 리츠 :: SUCCESS")
 
         data = concat(objs, axis=0, ignore_index=True)
 
@@ -127,18 +152,10 @@ class SectorComposition:
         exceptionals = DataFrame(adder).T
         self.data = concat(objs=[data, exceptionals], axis=0)
         self.data['date'] = date
-        self.log = f'END [Update Sector Composition] / {len(data)} Stocks / Elapsed: {time() - stime:.2f}s'
-        if "FAIL" in self.log:
-            self.state = "FAILED"
+        
+        logger.info(f'- END [FETCH SECTOR COMPOSITION] {len(data):,d} ITEMS: {perf_counter() - stime:.2f}')
+        self.status = "OK"
         return
-
-    @property
-    def log(self) -> str:
-        return "\n".join(self._log)
-
-    @log.setter
-    def log(self, log:str):
-        self._log.append(log)
 
     @classmethod
     def fetchWiseGroup(cls, code:str, date:str="", countdown:int=5) -> DataFrame:
@@ -155,24 +172,19 @@ class SectorComposition:
                 url=f'http://www.wiseindex.com/Index/GetIndexComponets?ceil_yn=0&dt={date}&sec_cd={code}',
                 # proxies=proxies
             )
-        except Exception as reason:
-            cls._log[-1] += "FAILED: "
-            cls._log.append(f'-  {reason}')
+        except (Exception, TypeError):
             return DataFrame()
 
         if not resp.status_code == 200:
             if countdown == 0:
-                cls._log[-1] += "FAILED: "
-                cls._log.append(f'- response status: {resp.status_code} for {code} / {SECTOR_CODE[code]}')
                 return DataFrame()
             else:
                 sleep(5)
                 return cls.fetchWiseGroup(code, date, countdown - 1)
         if "hmg-corp" in resp.text:
-            cls._log[-1] += "FAILED: BLOCKED"
             return DataFrame()
-        cls._log[-1] += "SUCCESS"
         return DataFrame(resp.json()['list'])
+    
 
 if __name__ == "__main__":
     sector = SectorComposition()

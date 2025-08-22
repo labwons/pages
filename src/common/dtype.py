@@ -46,6 +46,10 @@ class DataDictionary(dict):
                 value = DataDictionary(**value)
             self[key] = value
 
+    def __iter__(self):
+        for key, value in self.items():
+            yield key, value
+
     def __getattr__(self, attr):
         if attr in self:
             return self[attr]

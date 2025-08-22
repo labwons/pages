@@ -1,4 +1,4 @@
-name: BD LABWONS
+name: LABWONS
 on:
   schedule:
     - cron: '31 6 * * 1-5'  # KST 3:31 PM

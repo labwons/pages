@@ -13,7 +13,10 @@ def create_logger(file:str):
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
 
-    formatter = logging.Formatter(f"%(asctime)s [{name.upper()}][%(levelname)s] %(message)s")
+    formatter = logging.Formatter(
+        fmt=f"%(asctime)s [{name.upper()}] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
     formatter.converter = kst
 
     file_handler = logging.FileHandler(file, encoding="utf-8")
