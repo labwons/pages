@@ -1,23 +1,40 @@
+from labwons.deco import classproperty
+from datetime import datetime, timedelta, timezone
+from pykrx.stock import get_nearest_business_day_in_a_week
+from time import sleep
 import pprint
 
+class DATETIME:
 
-class metaClass(type):
-    """
-    클래스 자체의 던더 메소드 정의를 위한 메타 클래스
-    메타 클래스로 지정할 경우 하위 클래스 변수를 명시적으로 지정해주어야 함.
-    """
-    __iterable__ = None
-    __string__ = None
+    @classmethod
+    def pause(cls, sec:int):
+        sleep(sec)
+        return
 
-    def __iter__(cls) -> iter:
-        if cls.__iterable__ is None:
-            raise TypeError('Not Iterable: {cls.__iterable__} is not defined')
-        return iter(cls.__iterable__)
+    @classmethod
+    def CLOCK(cls) -> datetime:
+        return datetime.now(timezone(timedelta(hours=9)))
+    
+    @classmethod
+    def DATE(cls):
+        return cls.CLOCK().date()
 
-    def __str__(cls) -> str:
-        if cls.__string__ is None:
-            raise TypeError('Not Printable: {cls.__string__} is not defined')
-        return str(cls.__string__)
+    @classmethod
+    def TIME(cls) -> str:
+        return cls.CLOCK().time()
+    
+    @classproperty
+    def TODAY(cls) -> str:
+        return cls.CLOCK().strftime("%Y%m%d")
+    
+    @classproperty
+    def TRADING(cls) -> str:
+        if not hasattr(cls, '__td__'):
+            try:
+                setattr(cls, '__td__', get_nearest_business_day_in_a_week())
+            except (IndexError, Exception):
+                setattr(cls, '__td__', None)
+        return getattr(cls, '__td__')
 
 
 class DataDictionary(dict):
@@ -62,4 +79,7 @@ class DataDictionary(dict):
 
 
 # Alias
-dD = dDict = DataDictionary
+dD = DD = dDict = DataDictionary
+
+if __name__ == "__main__":
+    print(DATETIME.TRADING)
