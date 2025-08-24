@@ -141,5 +141,9 @@ class FinancialStatement:
 if __name__ == "__main__":
     from src.common.env import FILE
 
-    fs = FinancialStatement(*FinancialStatement.checkTickers(FILE.BASELINE))
-    print(fs.log)
+    # fs = FinancialStatement(*FinancialStatement.checkTickers(FILE.BASELINE))
+    # print(fs.log)
+    ov = read_parquet(FILE.STATEMENT_OVERVIEW, engine='pyarrow')
+    # an = read_parquet(FILE.ANNUAL_STATEMENT, engine='pyarrow')
+    # qu = read_parquet(FILE.QUARTER_STATEMENT, engine='pyarrow')
+    ov.to_clipboard()

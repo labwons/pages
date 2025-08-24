@@ -193,12 +193,10 @@ class DataProcessing:
             string = string.replace(key, '')
         return string
 
-    # @classmethod
-    # def cutString(cls, string: str, deleter: list) -> str:
-    #     _deleter = deleter.copy()
-    #     while _deleter:
-    #         string = string.replace(_deleter.pop(0), '')
-    #     return string
+    @classmethod
+    def delKeys(cls, string:str, *keys) -> str:
+        return cls.deleteKeysFromString(string=string, *keys)
+
 
 
 class multiframes(DataFrame):

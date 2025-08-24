@@ -25,7 +25,7 @@ class DailyMarket:
     def __init__(self):
         stime = perf_counter()
         self.status = "FAILED"
-        self.fname = "MARKETDAILY"
+        self.fname = "DAILYMARKET"
 
         logger.info("RUN [FETCH PYKRX DATA]")
 
