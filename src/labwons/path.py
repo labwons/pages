@@ -3,7 +3,7 @@ import os
 
 PROJECT_NAME = 'labwons'
 class PATH:
-    if os.environ.get("GITHUB_EVENT_NAME", "localhost") == "localhost":
+    if not os.environ.get("GITHUB_EVENT_NAME", ""):
         find = os.path.dirname(__file__).split(os.sep).index(PROJECT_NAME)
         ROOT = os.sep.join(os.path.dirname(__file__).split(os.sep)[:find + 1])
     else:
@@ -17,19 +17,50 @@ class PATH:
     TEMPLATE = os.path.join(DATA, r'template')
 
 
-class FILE:
-    AFTER_MARKET = os.path.join(PATH.ARCHIVE, 'aftermarket.parquet')
-    ANNUAL_STATEMENT = os.path.join(PATH.ARCHIVE, 'annualstatement.parquet')
-    BASELINE = os.path.join(PATH.ARCHIVE, 'baseline.parquet')
-    SECTOR_COMPOSITION = os.path.join(PATH.ARCHIVE, 'sectorcomposition.parquet')
-    STATEMENT_OVERVIEW = os.path.join(PATH.ARCHIVE, 'statementoverview.parquet')
-    QUARTER_STATEMENT = os.path.join(PATH.ARCHIVE, 'quarterstatement.parquet')
+class Archive:
+    
+    ROOT = PATH.ARCHIVE
+
+    def __init__(self, date:str=''):
+        if not date:
+            date = f"{max(int(date) for date in os.listdir(self.ROOT))}"
+
+        self.LATEST = latest = os.path.join(self.ROOT, date)
+        self.MARKET_BASELINE = os.path.join(latest, 'MARKET_BASELINE.parquet')
+        self.MARKET_DAILY = os.path.join(latest, 'MARKET_DAILY.parquet')
+        self.MARKET_OVERVIEW = os.path.join(latest, 'MARKET_OVERVIEW.parquet')
+        self.MARKET_SECTORS = os.path.join(latest, 'MARKET_SECTORS.parquet')
+        self.STATEMENT_A = os.path.join(latest, 'STATEMENT_A.parquet')
+        self.STATEMENT_Q = os.path.join(latest, 'STATEMENT_Q.parquet')
+        return
+
+    def create_by_today(self):
+        from datetime import datetime
+
+        today = datetime.today().strftime("%Y%m%d")
+        os.makedirs(os.path.join(self.ROOT, today), exist_ok=True)
+        self.__init__(today)
+        return
+
+    def replace_by_date(self, date:str):
+        path = os.path.join(self.ROOT, date)
+        if not os.path.isdir(path):
+            raise FileExistsError
+        self.__init__(date)
+        return
+    
+    @property
+    def recentBaseline(self) -> str:
+        for _dir in sorted((int(date) for date in os.listdir(self.ROOT)), reverse=True):
+            baseline = os.path.join(self.ROOT, str(_dir), 'MARKET_BASELINE.parquet')
+            if os.path.isfile(baseline):
+                return baseline
+        return ""
+        
+
+# Alias
+ARCHIVE = Archive()
 
 if __name__ == "__main__":
-    # print(PROJECT_NAME)
-    print(os.getcwd())
-    print(PATH.ROOT)
-    print(PATH.ARCHIVE)
-    print(PATH.LOGS)
-    print(os.path.isdir(PATH.ARCHIVE))
-    print(os.path.join(PATH.ARCHIVE, f"{max(int(date) for date in os.listdir(PATH.ARCHIVE))}/BASELINE.parquet"))
+    print(PROJECT_NAME)
+    print(ARCHIVE.recentBaseline)
