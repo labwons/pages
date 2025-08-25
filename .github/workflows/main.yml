@@ -42,12 +42,11 @@ jobs:
         pip install -e .
 
     - name: Build Artifacts
-      working-directory: ${{ github.workspace }}
       run: |        
         jupyter nbconvert \
           --to notebook \
           --execute src/actions/run.ipynb \
-          --ExecutePreprocessor.timeout=900
+          --ExecutePreprocessor.timeout=900 \
 
     - name: Commit and Push changes
       env:

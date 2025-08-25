@@ -3,13 +3,7 @@ import os
 
 PROJECT_NAME = 'labwons'
 class PATH:
-    # es = []
-    # for e in os.path.dirname(__file__).split(os.sep):
-    #     es.append(e)
-    #     if e == PROJECT_NAME:
-    #         break
-    # ROOT = os.sep.join(es)
-    ROOT = os.getcwd()
+    ROOT = os.environ.get("GITHUB_WORKSPACE", os.getcwd())
 
     DOCS = os.path.join(ROOT, r'docs')
     SRC = os.path.join(ROOT, r'src')
