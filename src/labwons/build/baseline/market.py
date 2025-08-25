@@ -15,5 +15,9 @@ class BaselineMarket:
         stime = perf_counter()
         self.status = "FAILED"
 
-        logger.info(f'RUN [BUILD MARKET BASELINE]')
+        # logger.info(f'RUN [BUILD MARKET BASELINE]')
 
+
+
+if __name__ == "__main__":
+    baseline = BaselineMarket()
