@@ -17,4 +17,3 @@ class BaselineMarket:
 
         logger.info(f'RUN [BUILD MARKET BASELINE]')
 
-        

@@ -56,6 +56,21 @@ class FinancialStatement:
             self.status = "OK"
         return
 
+    def fetchOverview(self, path:str):
+        if self.status == "OK":
+            self.overview.to_parquet(path, engine='pyarrow')
+        return
+
+    def fetchAnnualStatement(self, path:str):
+        if self.status == "OK":
+            self.annual.to_parquet(path, engine='pyarrow')
+        return
+
+    def fetchQuarterStatement(self, path:str):
+        if self.status == "OK":
+            self.quarter.to_parquet(path, engine='pyarrow')
+        return
+
     @classmethod
     def _statement(cls, xml: Element, tag: str) -> DataFrame:
         # TO MINIMIZE MEMORY USAGE, SOME COLUMN KEYS ARE TO BE DROPPED.

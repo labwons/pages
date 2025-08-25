@@ -4,7 +4,7 @@ from pandas import DataFrame, concat
 from re import compile
 from requests import get, Session
 from time import sleep, perf_counter
-from typing import Dict, List
+from typing import Dict
 
 
 SECTOR_CODE:Dict[str, str] = {
@@ -98,18 +98,17 @@ EXCEPTIONALS = {
     }
 }
 
-class SectorComposition:
+class MarketSectors:
 
-    def __init__(self):
+    @classmethod
+    def fetch(cls, path:str):
+        logger.info('RUN [FETCH SECTOR COMPOSITION]')
         stime = perf_counter()
 
-        self.status = "FAILED"
-        self.fname = "SECTORS"
-        logger.info('RUN [FETCH SECTOR COMPOSITION]')
         try:
             date = compile(r"var\s+dt\s*=\s*'(\d{8})'") \
-                   .search(get('https://www.wiseindex.com/Index/Index#/G1010.0.Components').text) \
-                   .group(1)
+                .search(get('https://www.wiseindex.com/Index/Index#/G1010.0.Components').text) \
+                .group(1)
         except Exception as reason:
             logger.error(f'- FAILED TO FETCH SECTOR COMPOSITION DATE: {reason}')
             return
@@ -117,13 +116,13 @@ class SectorComposition:
         objs, size = [], len(SECTOR_CODE) + 1
         for n, (code, name) in enumerate(SECTOR_CODE.items()):
             logger.info(f"- {str(n + 1).zfill(2)} / {size} : {code} {name}")
-            sector = self.fetchWiseGroup(code, date)
+            sector = cls.fetchWiseGroup(code, date)
             if sector.empty:
                 logger.error(f'- FAILED TO FETCH: {code} {name}')
                 return
             objs.append(sector)
 
-        reits = DataFrame(data={'CMP_KOR': REITS_CODE.values(), 'CMP_CD':REITS_CODE.keys()})
+        reits = DataFrame(data={'CMP_KOR': REITS_CODE.values(), 'CMP_CD': REITS_CODE.keys()})
         reits[['SEC_CD', 'IDX_CD', 'SEC_NM_KOR', 'IDX_NM_KOR']] = ['G99', 'WI999', '리츠', '리츠']
         objs.append(reits)
         logger.info(f"- {size} / {size} : WI999 리츠 :: SUCCESS")
@@ -150,11 +149,11 @@ class SectorComposition:
             if not key in data.index:
                 adder[key] = EXCEPTIONALS[key]
         exceptionals = DataFrame(adder).T
-        self.data = concat(objs=[data, exceptionals], axis=0)
-        self.data['date'] = date
-        
+        data = concat(objs=[data, exceptionals], axis=0)
+        data['date'] = date
+        data.to_parquet(path, engine='pyarrow')
+
         logger.info(f'- END [FETCH SECTOR COMPOSITION] {len(data):,d} ITEMS: {perf_counter() - stime:.2f}')
-        self.status = "OK"
         return
 
     @classmethod
@@ -185,8 +184,3 @@ class SectorComposition:
             return DataFrame()
         return DataFrame(resp.json()['list'])
     
-
-if __name__ == "__main__":
-    sector = SectorComposition()
-    print(sector.state)
-    print(sector.log)

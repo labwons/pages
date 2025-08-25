@@ -20,13 +20,11 @@ import pandas as pd
 
 
 pd.set_option('future.no_silent_downcasting', True)
-class DailyMarket:
+class MarketDaily:
 
-    def __init__(self):
+    @classmethod
+    def fetch(cls, path:str):
         stime = perf_counter()
-        self.status = "FAILED"
-        self.fname = "DAILYMARKET"
-
         logger.info("RUN [FETCH PYKRX DATA]")
 
         if DATETIME.TRADING is None:
@@ -104,7 +102,7 @@ class DailyMarket:
         merged.index.name = 'ticker'
 
         try:
-            returns = self.fetchReturns(DATETIME.TRADING, merged.index)
+            returns = cls.fetchReturns(DATETIME.TRADING, merged.index)
             merged = merged.join(returns, how='left')
             logger.info(f'- SUCCEED IN FETCHING PERIODIC RETURNS')
         except Exception as reason:
@@ -113,11 +111,13 @@ class DailyMarket:
 
         clock = DATETIME.CLOCK()
         time = "15:30" if clock.hour >= 15 and clock.minute >= 30 else clock.strftime("%H:%M")
-        self.data:DataFrame = merged.sort_values(by='시가총액', ascending=False)
-        self.data['date'] = f'{DATETIME.TRADING}{time}'
-        self.status = "OK"
-        logger.info(f'END [FETCH PYKRX DATA] {len(self.data)} ITEMS: {perf_counter() - stime:.2f}s')
-        return
+        data: DataFrame = merged.sort_values(by='시가총액', ascending=False)
+        data['date'] = f'{DATETIME.TRADING}{time}'
+        data.to_parquet(path=path, engine='pyarrow')
+
+        logger.info(f'END [FETCH PYKRX DATA] {len(data)} ITEMS: {perf_counter() - stime:.2f}s')
+        return 
+
 
     @classmethod
     def fetchReturns(cls, date: str, tickers: Iterable = None) -> DataFrame:
