@@ -4,9 +4,9 @@ on:
     - cron: '31 6 * * 1-5'  # KST 3:31 PM
     - cron: '0 13 * * 1-5' # KST 10:00 PM
   workflow_dispatch:
-  # push:
-  #   paths:
-  #     - '**/run.ipynb'
+  push:
+    paths:
+      - '**/run.ipynb'
 
 permissions:
   contents: write
@@ -42,11 +42,13 @@ jobs:
         pip install -e .
 
     - name: Build Artifacts
-      run: |        
-        jupyter nbconvert \
-          --to notebook \
-          --execute src/actions/run.ipynb \
-          --ExecutePreprocessor.timeout=900 \
+      run: |   
+        jupyter nbconvert --to script src/actions/run.ipynb
+        python src/actions/run.py     
+        # jupyter nbconvert \
+        #   --to notebook \
+        #   --execute src/actions/run.ipynb \
+        #   --ExecutePreprocessor.timeout=900 \
 
     - name: Commit and Push changes
       env:

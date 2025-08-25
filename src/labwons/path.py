@@ -3,7 +3,11 @@ import os
 
 PROJECT_NAME = 'labwons'
 class PATH:
-    ROOT = os.environ.get("GITHUB_WORKSPACE", os.getcwd())
+    if os.environ.get("GITHUB_EVENT_NAME", "localhost") == "localhost":
+        find = os.path.dirname(__file__).split(os.sep).index(PROJECT_NAME)
+        ROOT = os.sep.join(os.path.dirname(__file__).split(os.sep)[:find + 1])
+    else:
+        ROOT = os.environ.get("GITHUB_WORKSPACE", os.getcwd())
 
     DOCS = os.path.join(ROOT, r'docs')
     SRC = os.path.join(ROOT, r'src')

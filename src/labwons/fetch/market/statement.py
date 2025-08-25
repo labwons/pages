@@ -48,9 +48,8 @@ class FinancialStatement:
         if len(date) == 1:
             logger.info(f'- RESOURCE DATE: {date.index[0]}')
         else:
-            report = '\n'.join(f'     {line}' for line in str(date).split('\n')[1:-1])
-            logger.warn(f'- RESOURCE DATE: LOW RELIABILITY')
-            logger.warn(f'{report}')
+            report = '/'.join(f'{line}' for line in str(date).split('\n')[1:-1])
+            logger.warn(f'- RESOURCE DATE: LOW RELIABILITY :: {report}')
         logger.info(f'END [FETCH FNGUIDE DATA] {len(tickers):,d} ITEMS: {perf_counter() - stime:.2f}s')
 
         if self.status == "FAILED":

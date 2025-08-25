@@ -7,7 +7,7 @@ import pandas as pd
 import requests
 
 
-class naver:
+class Naver:
     """
     Fetch source data from Naver
     """

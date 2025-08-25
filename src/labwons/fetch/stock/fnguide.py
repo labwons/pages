@@ -84,7 +84,7 @@ class urls:
 
 
 
-class fnguide:
+class FnGuide:
     """
     Fetch source data from fnguide
     """
