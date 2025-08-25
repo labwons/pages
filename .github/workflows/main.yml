@@ -42,7 +42,8 @@ jobs:
         pip install -e .
 
     - name: Build Artifacts
-      run: |
+      working-directory: ${{ github.workspace }}
+      run: |        
         jupyter nbconvert \
           --to notebook \
           --execute src/actions/run.ipynb \

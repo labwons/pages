@@ -29,4 +29,7 @@ class FILE:
 if __name__ == "__main__":
     # print(PROJECT_NAME)
     print(PATH.ROOT)
+    print(PATH.ARCHIVE)
     print(PATH.LOGS)
+    print(os.path.isdir(PATH.ARCHIVE))
+    print(os.path.join(PATH.ARCHIVE, f"{max(int(date) for date in os.listdir(PATH.ARCHIVE))}/BASELINE.parquet"))
