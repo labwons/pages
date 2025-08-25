@@ -34,15 +34,15 @@ class Archive:
         self.STATEMENT_Q = os.path.join(latest, 'STATEMENT_Q.parquet')
         return
 
-    def create_by_today(self):
-        from datetime import datetime
-
-        today = datetime.today().strftime("%Y%m%d")
-        os.makedirs(os.path.join(self.ROOT, today), exist_ok=True)
-        self.__init__(today)
+    def create(self, date:str=''):
+        if not date:
+            from datetime import datetime
+            date = datetime.today().strftime("%Y%m%d")
+        os.makedirs(os.path.join(self.ROOT, date), exist_ok=True)
+        self.__init__(date)
         return
 
-    def replace_by_date(self, date:str):
+    def replace_to(self, date:str):
         path = os.path.join(self.ROOT, date)
         if not os.path.isdir(path):
             raise FileExistsError
