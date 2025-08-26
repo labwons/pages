@@ -2,8 +2,6 @@ import os
 
 
 PROJECT_NAME = 'labwons'
-GITHUB_TOKEN = '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'
-GITHUB_REMOTE = f'https://{GITHUB_TOKEN}@github.com/labwons/labwons.git'
 class PATH:
     if not os.environ.get("GITHUB_EVENT_NAME", ""):
         find = os.path.dirname(__file__).split(os.sep).index(PROJECT_NAME)

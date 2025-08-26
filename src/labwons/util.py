@@ -187,7 +187,7 @@ class DataProcessing:
         return f'{int(krw // 10000)}만'
 
     @classmethod
-    def str2num(cls, src: str) -> int or float:
+    def str2num(cls, src: str) -> Union[int, float]:
         if isinstance(src, float):
             return src
         if src is None:
