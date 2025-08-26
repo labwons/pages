@@ -1,4 +1,5 @@
 from labwons.logs import fetch_logger as logger
+from labwons.util import DATETIME
 
 from pandas import DataFrame, concat
 from re import compile
@@ -102,16 +103,14 @@ class MarketSectors:
 
     @classmethod
     def fetch(cls, path:str):
-        logger.info('RUN [FETCH SECTOR COMPOSITION]')
         stime = perf_counter()
-
-        try:
-            date = compile(r"var\s+dt\s*=\s*'(\d{8})'") \
-                .search(get('https://www.wiseindex.com/Index/Index#/G1010.0.Components').text) \
-                .group(1)
-        except Exception as reason:
-            logger.error(f'- FAILED TO FETCH SECTOR COMPOSITION DATE: {reason}')
+        logger.info('RUN [FETCH SECTOR COMPOSITION]')
+        date = DATETIME.WISE
+        if date is None:
+            logger.error(f'- FAILED TO FETCH SECTOR COMPOSITION DATE')
             return
+
+        logger.info(f'- BASE TRADING DATE: {date}')
 
         objs, size = [], len(SECTOR_CODE) + 1
         for n, (code, name) in enumerate(SECTOR_CODE.items()):
@@ -149,6 +148,7 @@ class MarketSectors:
             if not key in data.index:
                 adder[key] = EXCEPTIONALS[key]
         exceptionals = DataFrame(adder).T
+
         data = concat(objs=[data, exceptionals], axis=0)
         data['date'] = date
         data.to_parquet(path, engine='pyarrow')

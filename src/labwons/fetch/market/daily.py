@@ -115,7 +115,7 @@ class MarketDaily:
         data['date'] = f'{DATETIME.TRADING}{time}'
         data.to_parquet(path=path, engine='pyarrow')
 
-        logger.info(f'END [FETCH PYKRX DATA] {len(data)} ITEMS: {perf_counter() - stime:.2f}s')
+        logger.info(f'END [FETCH PYKRX DATA] {len(data):,d} ITEMS: {perf_counter() - stime:.2f}s')
         return 
 
 

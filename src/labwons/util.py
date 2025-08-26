@@ -14,7 +14,7 @@ from urllib.request import urlopen
 
 import numpy as np
 import pandas as pd
-import pprint, warnings, json, requests
+import pprint, warnings, json, re, requests
 warnings.filterwarnings("ignore")
 
 
@@ -47,8 +47,20 @@ class DATETIME:
             try:
                 setattr(cls, '__td__', get_nearest_business_day_in_a_week())
             except (IndexError, Exception):
-                setattr(cls, '__td__', None)
+                return None
         return getattr(cls, '__td__')
+
+    @classproperty
+    def WISE(cls) -> str:
+        if not hasattr(cls, '__wi__'):
+            try:
+                date = re.compile(r"var\s+dt\s*=\s*'(\d{8})'") \
+                    .search(requests.get('https://www.wiseindex.com/Index/Index#/G1010.0.Components').text) \
+                    .group(1)
+                setattr(cls, '__wi__', date)
+            except (IndexError, Exception):
+                return None
+        return getattr(cls, '__wi__')
 
 
 class Mail(MIMEMultipart):

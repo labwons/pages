@@ -35,6 +35,9 @@ class Archive:
         self.STATEMENT_A = os.path.join(latest, 'STATEMENT_A.parquet')
         self.STATEMENT_Q = os.path.join(latest, 'STATEMENT_Q.parquet')
         return
+    
+    def __call__(self, date:str):
+        return Archive(date)
 
     def create(self, date:str=''):
         if not date:
@@ -44,7 +47,7 @@ class Archive:
         self.__init__(date)
         return
 
-    def replace_to(self, date:str):
+    def switch_to(self, date:str):
         path = os.path.join(self.ROOT, date)
         if not os.path.isdir(path):
             raise FileExistsError
@@ -52,7 +55,7 @@ class Archive:
         return
     
     @property
-    def recentBaseline(self) -> str:
+    def latestBaseline(self) -> str:
         for _dir in sorted((int(date) for date in os.listdir(self.ROOT)), reverse=True):
             baseline = os.path.join(self.ROOT, str(_dir), 'MARKET_BASELINE.parquet')
             if os.path.isfile(baseline):
@@ -66,3 +69,4 @@ ARCHIVE = Archive()
 if __name__ == "__main__":
     print(PROJECT_NAME)
     print(ARCHIVE.recentBaseline)
+    print(ARCHIVE('20250822').MARKET_BASELINE)
