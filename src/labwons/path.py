@@ -1,3 +1,5 @@
+from labwons.deco import classproperty
+from labwons.util import DD
 import os
 
 
@@ -17,54 +19,58 @@ class PATH:
     TEMPLATE = os.path.join(DATA, r'template')
 
 
-class Archive:
-    
-    ROOT = PATH.ARCHIVE
+class ARCHIVE:
 
-    def __init__(self, date:str=''):
-        if not date:
-            date = f"{max(int(date) for date in os.listdir(self.ROOT))}"
-
-        self.LATEST = latest = os.path.join(self.ROOT, date)
-        self.MARKET_BASELINE = os.path.join(latest, 'MARKET_BASELINE.parquet')
-        self.MARKET_DAILY = os.path.join(latest, 'MARKET_DAILY.parquet')
-        self.MARKET_OVERVIEW = os.path.join(latest, 'MARKET_OVERVIEW.parquet')
-        self.MARKET_SECTORS = os.path.join(latest, 'MARKET_SECTORS.parquet')
-        self.STATEMENT_A = os.path.join(latest, 'STATEMENT_A.parquet')
-        self.STATEMENT_Q = os.path.join(latest, 'STATEMENT_Q.parquet')
-        return
-    
-    def __call__(self, date:str):
-        return Archive(date)
-
-    def create(self, date:str=''):
-        if not date:
-            from datetime import datetime
-            date = datetime.today().strftime("%Y%m%d")
-        os.makedirs(os.path.join(self.ROOT, date), exist_ok=True)
-        self.__init__(date)
+    __slots__ = [
+        "MACRO_FRED",
+        "MARKET_BASELINE",
+        "MARKET_DAILY",
+        "MARKET_OVERVIEW",
+        "MARKET_SECTORS",
+        "STATEMENT_A",
+        "STATEMENT_Q",
+    ]
+    def __init__(self, date:str):
+        for __slot__ in self.__slots__:
+            setattr(self, __slot__, os.path.join(PATH.ARCHIVE, date, f'{__slot__}.parquet'))
         return
 
-    def switch_to(self, date:str):
-        path = os.path.join(self.ROOT, date)
-        if not os.path.isdir(path):
-            raise FileExistsError
-        self.__init__(date)
-        return
-    
-    @property
-    def latestBaseline(self) -> str:
-        for _dir in sorted((int(date) for date in os.listdir(self.ROOT)), reverse=True):
-            baseline = os.path.join(self.ROOT, str(_dir), 'MARKET_BASELINE.parquet')
-            if os.path.isfile(baseline):
-                return baseline
-        return ""
-        
+    @classmethod
+    def _get_latest_file(cls, file:str):
+        for _date in sorted(os.listdir(PATH.ARCHIVE), reverse=True):
+            _path = os.path.join(PATH.ARCHIVE, _date)
+            if file in os.listdir(_path):
+                return os.path.join(_path, file)
+        raise FileNotFoundError
 
-# Alias
-ARCHIVE = Archive()
+    @classmethod
+    def read(cls, date:str) -> DD:
+        """
+        입력 날짜 기준, 가장 최신 파일 경로 부여
+        """
+        return DD(**{key: cls._get_latest_file(f'{key}.parquet') for key in cls.__slots__})
+
+    @classmethod
+    def write(cls, date:str) -> DD:
+        """
+        입력 날짜 기준, 파일 존재 여부와 무관하게 파일 경로 부여
+        """
+        path = os.path.join(PATH.ARCHIVE, date)
+        os.makedirs(path, exist_ok=True)
+        return DD(**{key: os.path.join(path, f'{key}.parquet') for key in cls.__slots__})
+
+    @classmethod
+    def push(cls, date:str) -> DD:
+        return cls.write(date)
+
+    @classproperty
+    def LATEST(cls) -> DD:
+        return cls.read(sorted(os.listdir(PATH.ARCHIVE), reverse=True)[0])
+
 
 if __name__ == "__main__":
-    print(PROJECT_NAME)
-    print(ARCHIVE.recentBaseline)
-    print(ARCHIVE('20250822').MARKET_BASELINE)
+    print(ARCHIVE.push("20250830"))
+    print(ARCHIVE.read('20250830'))
+    print(ARCHIVE.LATEST)
+    print(ARCHIVE("20250801").MARKET_SECTORS)
+

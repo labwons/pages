@@ -5,11 +5,11 @@ from datetime import datetime, time, timedelta, timezone
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from json import JSONDecoder
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from pykrx.stock import get_nearest_business_day_in_a_week
 from smtplib import SMTP
 from time import sleep
-from typing import Dict, Union
+from typing import Dict, Union, List
 from urllib.request import urlopen
 
 import numpy as np
@@ -209,6 +209,45 @@ class DataProcessing:
     def delKeys(cls, string:str, *keys) -> str:
         return cls.deleteKeysFromString(string=string, *keys)
 
+    @classmethod
+    def typeCast(cls, value):
+        value = str(value).lower().replace(",", "")
+        if value in ['separate', 'consolidated']:
+            return value
+        if "n" in value:
+            return np.nan
+        if not any([char.isdigit() for char in value]):
+            return np.nan
+        return float(value) if "." in value or "-" in value else int(value)
+
+    @classmethod
+    def profitGrowth(cls, profit: Series, debug: bool = False) -> List:
+        prev = profit.values[0]
+        if -1 <= prev <= 1:
+            prev = np.nan
+        value, label = [], []
+        for curr in profit.iloc[1:]:
+            if -1 <= curr <= 1:
+                curr = np.nan
+            if prev is None or pd.isna(prev) or pd.isna(curr) or np.isnan(prev) or np.isnan(curr):
+                value.append(np.nan)
+                label.append(np.nan)
+            elif prev < 0 <= curr:
+                value.append(np.nan)
+                label.append("흑자 전환")
+            elif curr < 0 <= prev:
+                value.append(np.nan)
+                label.append("적자 전환")
+            else:
+                value.append(100 * (curr - prev) / abs(prev))
+                label.append(np.nan)
+            prev = curr
+        values = Series(value)
+        average = values.mean() if len(values.dropna()) >= 2 else np.nan
+        if debug:
+            print(values)
+            print(average)
+        return [value[-1], label[-1], average]
 
 
 class multiframes(DataFrame):

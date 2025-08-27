@@ -73,3 +73,22 @@ class classproperty:
 
     def __get__(self, instance, owner):
         return self.func(owner)
+
+
+class metaclass(type):
+    """
+    클래스 자체의 던더 메소드 정의를 위한 메타 클래스
+    메타 클래스로 지정할 경우 하위 클래스 변수를 명시적으로 지정해주어야 함.
+    """
+    _iter_ = None
+    _str_ = None
+
+    def __iter__(cls) -> iter:
+        if cls._iter_ is None:
+            raise TypeError('Not Iterable: {cls._iter_} is not defined')
+        return iter(cls._iter_)
+
+    def __str__(cls) -> str:
+        if cls._str_ is None:
+            raise TypeError('Not Printable: {cls._str_} is not defined')
+        return str(cls._str_)

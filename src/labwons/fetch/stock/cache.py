@@ -1,4 +1,4 @@
-from labwons.logs import fetch_logger as logger
+from labwons.logs import logger
 from labwons.fetch.stock.fnguide import FnGuide
 from labwons.fetch.stock.krx import PyKrx
 

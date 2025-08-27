@@ -1,4 +1,4 @@
-from labwons.logs import fetch_logger as logger
+from labwons.logs import logger
 from pandas import concat, DataFrame, read_json, read_parquet, Series
 from re import DOTALL, sub
 from requests import get
@@ -48,7 +48,7 @@ class FinancialStatement:
         if len(date) == 1:
             logger.info(f'- RESOURCE DATE: {date.index[0]}')
         else:
-            report = '/'.join(f'{line}' for line in str(date).split('\n')[1:-1])
+            report = ", ".join([f'{d}({n})' for d, n in date.items()])
             logger.warn(f'- RESOURCE DATE: LOW RELIABILITY :: {report}')
         logger.info(f'END [FETCH FNGUIDE DATA] {len(tickers):,d} ITEMS: {perf_counter() - stime:.2f}s')
 

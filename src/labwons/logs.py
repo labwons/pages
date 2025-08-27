@@ -42,5 +42,4 @@ def read_log(*names) -> str:
 
 
 os.makedirs(os.path.join(PATH.LOGS), exist_ok=True)
-build_logger = create_logger(os.path.join(PATH.LOGS, rf'build_{DATETIME.TODAY}.log'))
-fetch_logger = create_logger(os.path.join(PATH.LOGS, rf'fetch_{DATETIME.TODAY}.log'))
+logger = create_logger(os.path.join(PATH.LOGS, rf'{DATETIME.TODAY}.log'))

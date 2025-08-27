@@ -1,5 +1,6 @@
 from labwons.logs import build_logger as logger
 from labwons.path import ARCHIVE
+from labwons.util import DD, DP
 from labwons.build.schema import FIELD
 
 from datetime import datetime
@@ -9,73 +10,78 @@ from pandas import concat, read_parquet
 from time import perf_counter
 
 
+FIELD_RENAME = DD(**{item.origin: key for key, item in FIELD.items() if item.origin})
 class MarketBaseline:
 
-    def __init__(self):
-        self.status = "FAILED"
+    BASELINE_DATE:str = ''
 
-        logger.info('>>> RUN [BUILD MARKET BASELINE]')
+    @classmethod
+    def build(cls, path:str="", stdout:bool=False, to_clipboard:bool=False):
         stime = perf_counter()
 
-        number = read_parquet(FILE.AFTER_MARKET, engine="pyarrow")
-        n_date = datetime.strptime(str(number.pop('date').values[-1]), "%Y%m%d%H:%M")
-        number = self.number(number)
-        number['date'] = n_date.strftime("%Y-%m-%d")
-        logger.info(f'>>> READ AFTER MARKET: {str(n_date).replace("-", "/")}')
+        logger.info('RUN [BUILD MARKET BASELINE]')
 
-        overview = read_parquet(FILE.STATEMENT_OVERVIEW, engine="pyarrow")
+        number = read_parquet(ARCHIVE.MARKET_DAILY, engine="pyarrow")
+        n_date = datetime.strptime(str(number.pop('date').values[-1]), "%Y%m%d%H:%M")
+        number = cls.number(number)
+        number['date'] = n_date.strftime("%Y-%m-%d")
+        cls.BASELINE_DATE = n_date.strftime("%Y/%m/%d")
+        logger.info(f'- READ AFTER MARKET: {cls.BASELINE_DATE}')
+
+        overview = read_parquet(ARCHIVE.MARKET_OVERVIEW, engine="pyarrow")
         overview_date = overview.pop('date').value_counts(dropna=False)
         statement_yy = overview.pop('reportYears')
         statement_qq = overview.pop('reportQuarters')
         if len(overview_date) == 1:
-            logger.info(f'>>> READ STATEMENT OVERVIEW: {overview_date.index[0]}')
+            logger.info(f'- READ STATEMENT OVERVIEW: {overview_date.index[0]}')
         else:
-            report = ", ".join([f'{d}({n})'for d, n in overview_date.items()])
-            logger.info(f'>>> READ STATEMENT OVERVIEW: LOW RELIABILITY')
-            logger.info(f'    {report}')
-        overview = self.overview(overview)
+            report = ", ".join([f'{d}({n})' for d, n in overview_date.items()])
+            logger.info(f'- READ STATEMENT OVERVIEW: LOW RELIABILITY :: {report}')
+        overview = cls.overview(overview)
         # print(overview)
 
-        statementA = read_parquet(FILE.ANNUAL_STATEMENT, engine="pyarrow")
-        logger.info(f'>>> READ ANNUAL STATEMENT')
-        statementA = self.statementA(statementA, statement_yy)
+        statementA = read_parquet(ARCHIVE.STATEMENT_A, engine="pyarrow")
+        logger.info(f'- READ ANNUAL STATEMENT')
+        statementA = cls.statementA(statementA, statement_yy)
         # # print(statementA)
 
-        statementQ = read_parquet(FILE.QUARTER_STATEMENT, engine="pyarrow")
-        logger.info(f'>>> READ QUARTER STATEMENT')
-        statementQ = self.statementQ(statementQ, statement_qq)
+        statementQ = read_parquet(ARCHIVE.STATEMENT_Q, engine="pyarrow")
+        logger.info(f'- READ QUARTER STATEMENT')
+        statementQ = cls.statementQ(statementQ, statement_qq)
         # print(statementQ)
 
-        sector = read_parquet(FILE.SECTOR_COMPOSITION, engine="pyarrow")
+        sector = read_parquet(ARCHIVE.LATEST.MARKET_SECTORS, engine="pyarrow")
         s_date = datetime.strptime(str(sector.pop('date').values[-1]), "%Y%m%d").strftime("%Y/%m/%d")
-        logger.info(f'>>> READ SECTOR COMPOSITION: {s_date}')
-        sector = self.sector(sector)
+        logger.info(f'- READ SECTOR COMPOSITION: {s_date}')
+        sector = cls.sector(sector)
         # print(sector)
 
-        merge = self.merge(number, overview, statementA, statementQ, sector)
-        self.checkMetadata(merge)
-        self.data = merge
+        merge = cls.merge(number, overview, statementA, statementQ, sector)
+        cls.checkMetadata(merge)
 
-        # print(merge)
-        # merge.to_clipboard()
-        self.status = "OK"
-        self.tradingDate = n_date.strftime("%Y/%m/%d")
-        logger.info(f'>>> END [BUILD MARKET BASELINE] {len(merge):,d} ITEMS: {perf_counter() - stime:.2f}s')
+        if path:
+            merge.to_parquet(path, engine='pyarrow')
+        if stdout:
+            print(merge)
+        if to_clipboard:
+            merge.to_clipboard()
+
+        logger.info(f'END [BUILD MARKET BASELINE] {len(merge):,d} ITEMS: {perf_counter() - stime:.2f}s')
         return
 
     @classmethod
     def number(cls, number:DataFrame) -> DataFrame:
         # RENAME AND DROP
-        number = number.rename(columns={p: c for p, c in METADATA.RENAME.items() if p in number.columns})
-        number = number.drop(columns=[col for col in number if not col in METADATA])
+        number = number.rename(columns={p: c for p, c in FIELD_RENAME.items() if p in number.columns})
+        number = number.drop(columns=[col for col in number if not col in FIELD])
         return number
 
     @classmethod
     def overview(cls, overview:DataFrame) -> DataFrame:
-        overview = overview.rename(columns={p: c for p, c in METADATA.RENAME.items() if p in overview.columns})
-        overview = overview.drop(columns=[col for col in overview if not col in METADATA])
+        overview = overview.rename(columns={p: c for p, c in FIELD_RENAME.items() if p in overview.columns})
+        overview = overview.drop(columns=[col for col in overview if not col in FIELD])
         typecast = overview.columns.difference(['stockSplitDate', 'statementType'])
-        overview[typecast] = overview[typecast].map(typeCast)
+        overview[typecast] = overview[typecast].map(DP.typeCast)
         return overview
 
     @classmethod
@@ -90,7 +96,7 @@ class MarketBaseline:
         for ticker in tickers:
             statement = statementA[ticker].loc[yy[ticker].split(",")]
             statement = statement.dropna(how='all', axis=0)
-            statement = statement.map(typeCast)
+            statement = statement.map(DP.typeCast)
             statement = statement.drop(columns=['BPS(원)', 'DPS(원)'])
             estimated = statement[statement.index.str.contains('\\(E\\)')].copy()
             provision = statement[statement.index.str.contains('\\(P\\)')].copy()
@@ -114,11 +120,11 @@ class MarketBaseline:
                 obj['averageRevenueGrowth'] = revenueGrowth.mean()
                 pg = Series(
                     index=['fiscalProfitGrowth', 'fiscalProfitState', 'averageProfitGrowth'],
-                    data=profitGrowth(statement['영업이익(억원)'])
+                    data=DP.profitGrowth(statement['영업이익(억원)'])
                 )
                 eg = Series(
                     index=['fiscalEpsGrowth', 'fiscalEpsState', 'averageEpsGrowth'],
-                    data= profitGrowth(statement['EPS(원)'])
+                    data= DP.profitGrowth(statement['EPS(원)'])
                 )
                 obj = concat([obj, pg, eg])
 
@@ -127,7 +133,7 @@ class MarketBaseline:
                 # ESTIMATIONG FOR GROWTH IS ONLY USED FOR REVENUE, PROFIT, AND EPS.
 
                 est = concat([recentStatement, estimated.iloc[0]], axis=1).T
-                est = est.rename(columns={p: c.replace("fiscal", "estimated") for p, c in METADATA.RENAME.items() if p in est})
+                est = est.rename(columns={p: c.replace("fiscal", "estimated") for p, c in FIELD_RENAME.items() if p in est})
                 est = est.rename(columns={est.columns[0]:'estimatedRevenue'})
                 obj['estimatedDate'] = est.index[-1]
                 obj = concat([obj, est.iloc[-1]])
@@ -137,11 +143,11 @@ class MarketBaseline:
                 else:
                     obj['estimatedRevenueGrowth'] = 100 * est.pct_change(fill_method=None).iloc[-1]['estimatedRevenue']
 
-                pg = profitGrowth(est['estimatedProfit'])
+                pg = DP.profitGrowth(est['estimatedProfit'])
                 obj['estimatedProfitGrowth'] = pg[0]
                 obj['estimatedProfitState'] = pg[1]
 
-                eg = profitGrowth(est['estimatedEps'])
+                eg = DP.profitGrowth(est['estimatedEps'])
                 obj['estimatedEpsGrowth'] = eg[0]
                 obj['estimatedEpsState'] = eg[1]
 
@@ -157,7 +163,7 @@ class MarketBaseline:
             objs.append(obj)
 
         merge = concat(objs=objs, axis=1).T
-        merge = merge.rename(columns={p: c for p, c in METADATA.RENAME.items() if p in merge.columns})
+        merge = merge.rename(columns={p: c for p, c in FIELD_RENAME.items() if p in merge.columns})
         return merge
 
     @classmethod
@@ -169,7 +175,7 @@ class MarketBaseline:
         for ticker in tickers:
             statement = statementQ[ticker].loc[qq[ticker].split(",")]
             statement = statement.dropna(how='all', axis=0)
-            statement = statement.map(typeCast)
+            statement = statement.map(DP.typeCast)
             statement = statement.drop(columns=['BPS(원)', 'DPS(원)'])
             estimated = statement[statement.index.str.contains('\\(E\\)')].copy()
             provision = statement[statement.index.str.contains('\\(P\\)')].copy()
@@ -211,11 +217,11 @@ class MarketBaseline:
             if not yearAgo.empty:
                 frm = concat([yearAgo.iloc[0], recentQuarter], axis=1).T
                 yoy = 100 * frm.pct_change(fill_method=None)
-                yoy = yoy.rename(columns={p: c.replace("fiscal", "yoy") for p, c in METADATA.RENAME.items() if p in yoy})
+                yoy = yoy.rename(columns={p: c.replace("fiscal", "yoy") for p, c in FIELD_RENAME.items() if p in yoy})
                 yoy = yoy.rename(columns={yoy.columns[0]: "yoyRevenue"})
                 obj = concat([obj, yoy.iloc[-1]], axis=0)
-                ps = profitGrowth(frm['영업이익(억원)'])
-                es = profitGrowth(frm['EPS(원)'])
+                ps = DP.profitGrowth(frm['영업이익(억원)'])
+                es = DP.profitGrowth(frm['EPS(원)'])
                 obj['yoyProfit'] = ps[0]
                 obj['yoyProfitState'] = ps[1]
                 obj['yoyEps'] = es[0]
@@ -248,9 +254,9 @@ class MarketBaseline:
 
     @classmethod
     def checkMetadata(cls,base:DataFrame):
-        ndef = [c for c in base if c not in METADATA]
+        ndef = [c for c in base if c not in FIELD]
         if ndef:
-            print("METADATA 미정의 항목")
+            print("FIELD 미정의 항목")
             for c in ndef:
                 print(f'{c}=dDict(')
                 print(f"\tlabel='label',")
@@ -262,9 +268,9 @@ class MarketBaseline:
                 print(f"\t# Adder")
                 print(f"),")
 
-        ddef = [m for m, v in METADATA.items() if m not in base and not "RENAME" == m]
+        ddef = [m for m, v in FIELD.items() if m not in base and not "RENAME" == m]
         if ddef:
-            print("불필요 METADATA 항목")
+            print("불필요 FIELD 항목")
             for m in ddef:
                 print(m)
         return
@@ -326,16 +332,8 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
 
-
-    baseline = MarketBaseline()
-    baseline.data.to_parquet(FILE.BASELINE, engine='pyarrow')
-    # baseline.data.to_clipboard()
-    # print(baseline.data)
-    # print(baseline.data.columns)
-
-    # df = read_parquet(FILE.BASELINE, engine='pyarrow')
-    # for index, value in df.loc['023910'].items():
-    #     print(index, ':', value)
-    # df.to_clipboard()
-    # print(df.columns)
-    # Baseline.gaussian(df, 'turnoverRatio')
+    MarketBaseline.build(
+        save=False,
+        stdout=False,
+        to_clipboard=True
+    )

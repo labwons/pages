@@ -1,4 +1,4 @@
-from labwons.logs import fetch_logger as logger
+from labwons.logs import logger
 from labwons.util import DATETIME
 
 from datetime import datetime, timedelta
@@ -23,7 +23,7 @@ pd.set_option('future.no_silent_downcasting', True)
 class MarketDaily:
 
     @classmethod
-    def fetch(cls, path:str):
+    def saveAs(cls, path:str):
         stime = perf_counter()
         logger.info("RUN [FETCH PYKRX DATA]")
 

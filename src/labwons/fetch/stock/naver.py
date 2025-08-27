@@ -1,5 +1,4 @@
 from labwons.util import DP
-from labwons.logs import fetch_logger as logger
 from bs4 import BeautifulSoup
 from pandas import DataFrame, Series
 from typing import Union
@@ -12,11 +11,9 @@ class Naver:
     Fetch source data from Naver
     """
 
-    def __init__(self, ticker:str, log:bool=True, ignore_error:bool=False):
+    def __init__(self, ticker:str, ignore_error:bool=False):
         self._req = _req = requests.get(f"https://finance.naver.com/item/main.naver?code={ticker}", verify=False)
         if not _req.status_code == 200:
-            if log:
-                logger.error(f'Connection Error: {ticker}')
             if not ignore_error:
                 raise ConnectionError(f'Connection Error: {ticker}')
             return
