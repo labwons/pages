@@ -33,12 +33,10 @@ def create_logger(file:str):
 
     return logger
 
+
 def read_log() -> str:
-    logs = []
-    for name in names:
-        with open(os.path.join(PATH.LOGS, rf'{DATETIME.TODAY}.log'), 'r', encoding='utf-8') as f:
-            logs.append(f.read())
-    return "\n".join(logs)
+    with open(os.path.join(PATH.LOGS, rf'{DATETIME.TODAY}.log'), 'r', encoding='utf-8') as f:
+        return f.read()
 
 
 os.makedirs(os.path.join(PATH.LOGS), exist_ok=True)
