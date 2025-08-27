@@ -1,0 +1,59 @@
+# TODO
+# 일정 기간이 지난 날짜의 아카이브 폴더는 드라이브로 백업하는 코드 작성: Clean-UP
+# HISTORY로 인한 용량 증대는 수동으로 처리해야 함 --> ASK GPT
+name: Backup and Cleanup Archive
+
+on:
+  # schedule:
+  #   - cron: "0 20 * * 1-5"   # 한국시간 새벽 5시 (UTC 20시)
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 전체 history 접근 가능 (BFG 등 고려시 필요)
+
+      - name: Setup rclone
+        run: |
+          mkdir -p ~/.config/rclone
+          echo "${{ secrets.RCLONE_CONF }}" > ~/.config/rclone/rclone.conf
+
+      - name: Find old folders (>7 days)
+        id: find_old
+        run: |
+          cutoff=$(date -d "7 days ago" +%Y%m%d)
+          echo "Cutoff: $cutoff"
+          old_folders=$(find src/data/archive -maxdepth 1 -type d -printf "%f\n" \
+                        | grep -E "^[0-9]{8}$" \
+                        | awk -v c=$cutoff '$1 < c')
+          echo "OLD_FOLDERS<<EOF" >> $GITHUB_ENV
+          echo "$old_folders" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Upload to Google Drive
+        if: env.OLD_FOLDERS != ''
+        run: |
+          for f in $OLD_FOLDERS; do
+            echo "Uploading $f..."
+            rclone copy src/data/archive/$f gdrive:labwons_backup/$f --progress
+          done
+
+      - name: Remove old folders locally
+        if: env.OLD_FOLDERS != ''
+        run: |
+          for f in $OLD_FOLDERS; do
+            rm -rf src/data/archive/$f
+          done
+
+      - name: Commit and push changes
+        if: env.OLD_FOLDERS != ''
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: remove old archive folders ($(date +'%Y-%m-%d'))" || echo "No changes"
+          git push

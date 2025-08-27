@@ -26,8 +26,8 @@ class MarketBaseline:
         number = read_parquet(ARCHIVE.MARKET_DAILY, engine="pyarrow")
         n_date = datetime.strptime(str(number.pop('date').values[-1]), "%Y%m%d%H:%M")
         number = cls.number(number)
-        number['date'] = n_date.strftime("%Y-%m-%d")
-        logger.info(f'- READ AFTER MARKET: {cls.BASELINE_DATE}')
+        number['date'] = trading_date = n_date.strftime("%Y-%m-%d")
+        logger.info(f'- READ AFTER MARKET: {trading_date}')
 
         overview = read_parquet(ARCHIVE.MARKET_OVERVIEW, engine="pyarrow")
         overview_date = overview.pop('date').value_counts(dropna=False)
