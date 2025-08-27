@@ -1,7 +1,7 @@
 from labwons.util import DD
 
 
-ECOSMETA = DD(**{
+FIELD_ECOS = DD(**{
 	'한국은행 기준금리': DD(
 		symbol='722Y001',
 		code='0101000',
@@ -929,56 +929,3 @@ KRXMETA = DD(
     ),
 )
 
-MACRO = DD(
-    STATUS=DD(**{
-        '1001':DD(
-            icon='bi-graph-up',
-            digit=2,
-        ),
-        '2001':DD(
-            icon='bi-graph-up',
-            digit=2,
-        ),
-        '731Y0030000003':DD(
-            icon='bi-currency-exchange',  # 원/달러 환율
-            digit=1,
-        ),
-        '817Y002010195000':DD(
-            icon='bi-percent',  # 국고채2년
-            digit=3,
-        ),
-        '817Y002010210000':DD(
-            icon='bi-percent',  # 국고채10년
-            digit=3,
-        ),
-        '901Y056S23A':DD(
-            icon='bi-piggy-bank-fill',  # 증시예탁금
-            digit=0,
-        ),
-        '901Y056S23E':DD(
-            icon='bi-cash-stack',  # 신용융자잔고
-            digit=0,
-        ),
-        '901Y056S23F':DD(
-            icon='bi-credit-card',  # 신용대주잔고
-            digit=0,
-        ),
-        '403Y001*AA':DD(
-            icon='bi-truck',  # 수출지수
-            digit=2,
-        ),
-        '901Y062P63AC':DD(
-            icon='bi-house-up-fill',  # KB부동산매매지수(아파트, 전국)
-            digit=2,
-        ),
-        '901Y063P64AC':DD(
-            icon='bi-house-up-fill',  # KB부동산전세지수(아파트, 전국)
-            digit=2,
-        ),
-        '901Y067I16E':DD(
-            icon='bi-graph-up-arrow',  # 경기선행지수순환변동
-            digit=1,
-        ),
-
-    })
-)

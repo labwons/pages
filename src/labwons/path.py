@@ -19,58 +19,90 @@ class PATH:
     TEMPLATE = os.path.join(DATA, r'template')
 
 
-class ARCHIVE:
+class ARCHIVING(DD):
 
     __slots__ = [
-        "MACRO_FRED",
         "MARKET_BASELINE",
         "MARKET_DAILY",
         "MARKET_OVERVIEW",
         "MARKET_SECTORS",
         "STATEMENT_A",
         "STATEMENT_Q",
+        "DATE",
+        "PATH",
     ]
-    def __init__(self, date:str):
+
+    def __init__(self, date:str='', alloc:bool=False):
+        super().__init__()
+
+        if not date:
+            date = sorted(os.listdir(PATH.ARCHIVE), reverse=True)[0]
+        self["DATE"] = date
+        self["PATH"] = path = os.path.join(PATH.ARCHIVE, date)
+
+        if alloc:
+            os.makedirs(path, exist_ok=True)
+
         for __slot__ in self.__slots__:
-            setattr(self, __slot__, os.path.join(PATH.ARCHIVE, date, f'{__slot__}.parquet'))
+            if __slot__ in self:
+                continue
+            if alloc:
+                self[__slot__] = os.path.join(path, f'{__slot__}.parquet')
+            else:
+                self[__slot__] = self._get_latest_file(date, f'{__slot__}.parquet')
         return
 
+    def __call__(self, date:str):
+        return self.at(date)
+
     @classmethod
-    def _get_latest_file(cls, file:str):
-        for _date in sorted(os.listdir(PATH.ARCHIVE), reverse=True):
+    def _get_latest_file(cls, date:str, file:str):
+        dates = sorted(os.listdir(PATH.ARCHIVE), reverse=True)
+        if not date in dates:
+            raise FileExistsError(f'ARCHIVE HAS NO DATA FOR {date}')
+
+        dates = dates[dates.index(date):]
+        for _date in dates:
             _path = os.path.join(PATH.ARCHIVE, _date)
             if file in os.listdir(_path):
                 return os.path.join(_path, file)
         raise FileNotFoundError
 
-    @classmethod
-    def read(cls, date:str) -> DD:
-        """
-        입력 날짜 기준, 가장 최신 파일 경로 부여
-        """
-        return DD(**{key: cls._get_latest_file(f'{key}.parquet') for key in cls.__slots__})
+    def read(self, date:str):
+        return ARCHIVING(date)
 
-    @classmethod
-    def write(cls, date:str) -> DD:
-        """
-        입력 날짜 기준, 파일 존재 여부와 무관하게 파일 경로 부여
-        """
-        path = os.path.join(PATH.ARCHIVE, date)
-        os.makedirs(path, exist_ok=True)
-        return DD(**{key: os.path.join(path, f'{key}.parquet') for key in cls.__slots__})
+    def at(self, date:str):
+        return ARCHIVING(date)
 
-    @classmethod
-    def push(cls, date:str) -> DD:
-        return cls.write(date)
+    def switch_to(self, date:str, alloc:bool):
+        self.__init__(date, alloc)
 
-    @classproperty
-    def LATEST(cls) -> DD:
-        return cls.read(sorted(os.listdir(PATH.ARCHIVE), reverse=True)[0])
+    def refresh(self):
+        self.__init__()
 
+    def write(self, date:str):
+        return ARCHIVING(date, True)
+
+    def new(self, date:str):
+        return ARCHIVING(date, True)
+
+    def push(self, date:str):
+        return ARCHIVING(date, True)
+
+    def alloc(self, date:str):
+        return ARCHIVING(date, True)
+
+
+
+# Alias
+ARCHIVE = ARCHIVING()
 
 if __name__ == "__main__":
-    print(ARCHIVE.push("20250830"))
-    print(ARCHIVE.read('20250830'))
-    print(ARCHIVE.LATEST)
-    print(ARCHIVE("20250801").MARKET_SECTORS)
+    print(ARCHIVE)
+    print(ARCHIVE.new('20250827'))
+    print(ARCHIVE.at('20250825'))
+    # print(ARCHIVE.push("20250830"))
+    # print(ARCHIVE.read('20250830'))
+    # print(ARCHIVE.LATEST)
+    # print(ARCHIVE("20250801").MARKET_SECTORS)
 

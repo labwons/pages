@@ -14,7 +14,7 @@ def create_logger(file:str):
     logger.propagate = False
 
     formatter = logging.Formatter(
-        fmt=f"%(asctime)s [{name.upper()}] %(message)s",
+        fmt=f"%(asctime)s %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S"
     )
     formatter.converter = kst

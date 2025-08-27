@@ -1,4 +1,3 @@
-from labwons.logs import logger
 from labwons.fetch.macro.schema import FIELD_FRED
 
 from datetime import datetime, timedelta
@@ -13,26 +12,17 @@ from typing import List
 class MacroFred:
 
     @classmethod
-    def saveAs(cls, path:str):
-        logger.info('RUN [CACHE MACRO FRED]')
-        stime = perf_counter()
-
+    def merge(cls) -> DataFrame:
         objs = {}
         for label, meta in FIELD_FRED.items():
             objs[meta.symbol] = series = cls.fetch(meta.symbol)
             if series.empty:
-                logger.error(f'- FAILED TO FETCH: {label}')
+                print(f'- FAILED TO FETCH: {label}')
                 del objs[meta.symbol]
-
-        data = concat(objs=objs, axis=0)
-        data = data.reset_index()
-        data.columns = ['symbol', 'date', 'value']
-        data.to_parquet(path, engine='pyarrow', compression='zstd')
-        logger.info(f'END [CACHE MACRO FRED]: {perf_counter() - stime:.2f}s')
-        return
+        return concat(objs=objs, axis=1)
 
     @classmethod
-    def fetch(cls, symbol: str, period:int=10, fs:int=5) -> Series:
+    def fetch(cls, symbol: str, period:int=50, fs:int=5) -> Series:
         while fs > 0:
             try:
                 fetched = get_data_fred(
@@ -48,4 +38,4 @@ class MacroFred:
 
 
 if __name__ == "__main__":
-    print(len(FIELD_FRED))
+    print(MacroFred.merge())

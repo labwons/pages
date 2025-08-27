@@ -1,4 +1,4 @@
-from labwons.logs import build_logger as logger
+from labwons.logs import logger
 from labwons.path import ARCHIVE
 from labwons.util import DD, DP
 from labwons.build.schema import FIELD
@@ -16,16 +16,17 @@ class MarketBaseline:
     BASELINE_DATE:str = ''
 
     @classmethod
-    def build(cls, path:str="", stdout:bool=False, to_clipboard:bool=False):
-        stime = perf_counter()
+    def build(cls, stdout:bool=False, to_clipboard:bool=False):
+        ARCHIVE.refresh()
 
+        stime = perf_counter()
         logger.info('RUN [BUILD MARKET BASELINE]')
+        logger.info(f'- FROM ARCHIVE @{ARCHIVE.DATE}')
 
         number = read_parquet(ARCHIVE.MARKET_DAILY, engine="pyarrow")
         n_date = datetime.strptime(str(number.pop('date').values[-1]), "%Y%m%d%H:%M")
         number = cls.number(number)
         number['date'] = n_date.strftime("%Y-%m-%d")
-        cls.BASELINE_DATE = n_date.strftime("%Y/%m/%d")
         logger.info(f'- READ AFTER MARKET: {cls.BASELINE_DATE}')
 
         overview = read_parquet(ARCHIVE.MARKET_OVERVIEW, engine="pyarrow")
@@ -50,7 +51,7 @@ class MarketBaseline:
         statementQ = cls.statementQ(statementQ, statement_qq)
         # print(statementQ)
 
-        sector = read_parquet(ARCHIVE.LATEST.MARKET_SECTORS, engine="pyarrow")
+        sector = read_parquet(ARCHIVE.MARKET_SECTORS, engine="pyarrow")
         s_date = datetime.strptime(str(sector.pop('date').values[-1]), "%Y%m%d").strftime("%Y/%m/%d")
         logger.info(f'- READ SECTOR COMPOSITION: {s_date}')
         sector = cls.sector(sector)
@@ -59,12 +60,14 @@ class MarketBaseline:
         merge = cls.merge(number, overview, statementA, statementQ, sector)
         cls.checkMetadata(merge)
 
-        if path:
-            merge.to_parquet(path, engine='pyarrow')
+        merge.to_parquet(ARCHIVE.write(ARCHIVE.DATE).MARKET_BASELINE, engine='pyarrow')
+
         if stdout:
             print(merge)
         if to_clipboard:
             merge.to_clipboard()
+
+        cls.BASELINE_DATE = n_date.strftime("%Y/%m/%d")
 
         logger.info(f'END [BUILD MARKET BASELINE] {len(merge):,d} ITEMS: {perf_counter() - stime:.2f}s')
         return
