@@ -22,7 +22,6 @@
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-*/run.py
 
 # AWS User-specific
 .idea/**/aws.xml

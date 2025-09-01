@@ -133,27 +133,32 @@ class DataDictionary(dict):
     """
     def __init__(self, data=None, **kwargs):
         super().__init__()
+        self._methods = {}
 
         data = data or {}
         data.update(kwargs)
         for key, value in data.items():
-            if isinstance(value, dict):
-                value = DataDictionary(**value)
-            self[key] = value
+            self.__setattr__(key, value)
 
     def __getattr__(self, attr):
         if attr in self:
             return self[attr]
+        if attr in self._methods:
+            return self._methods[attr]
         return super().__getattribute__(attr)
 
     def __setattr__(self, attr, value):
-        if isinstance(value, dict):
+        if attr.startswith("_"):
+            return super().__setattr__(attr, value)
+        if callable(value) and not value in [int, float, str, datetime]:
+            self._methods[attr] = value
+        elif isinstance(value, dict):
             self[attr] = DataDictionary(**value)
         else:
             self[attr] = value
 
-    def __str__(self) -> str:
-        return pprint.pformat(self)
+    def __str__(self):
+        return pprint.pformat(dict(self))
 
 
 class DataProcessing:

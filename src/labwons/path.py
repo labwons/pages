@@ -19,13 +19,14 @@ class PATH:
     TEMPLATE = os.path.join(DATA, r'template')
 
 
-class ARCHIVING(DD):
+class Archive(DD):
 
     __slots__ = [
         "MARKET_BASELINE",
         "MARKET_DAILY",
         "MARKET_OVERVIEW",
         "MARKET_SECTORS",
+        "MARKET_MAP",
         "STATEMENT_A",
         "STATEMENT_Q",
         "DATE",
@@ -52,8 +53,8 @@ class ARCHIVING(DD):
                 self[__slot__] = self._get_latest_file(date, f'{__slot__}.parquet')
         return
 
-    def __call__(self, date:str):
-        return self.at(date)
+    def __call__(self, date:str, alloc:bool):
+        self.__init__(date, alloc)
 
     @classmethod
     def _get_latest_file(cls, date:str, file:str):
@@ -66,36 +67,26 @@ class ARCHIVING(DD):
             _path = os.path.join(PATH.ARCHIVE, _date)
             if file in os.listdir(_path):
                 return os.path.join(_path, file)
-        raise FileNotFoundError
+        raise FileNotFoundError(f'File: {file} @{date}')
 
-    def read(self, date:str):
-        return ARCHIVING(date)
+    def dateof(self, fullpath:str) -> str:
+        return [sp for sp in fullpath.split(os.sep) if len(sp) == 8 and sp.startswith('20')][0]
 
     def at(self, date:str):
-        return ARCHIVING(date)
-
-    def switch_to(self, date:str, alloc:bool):
-        self.__init__(date, alloc)
+        if date.lower() == "latest":
+            date = ''
+        return Archive(date)
 
     def refresh(self):
         self.__init__()
 
-    def write(self, date:str):
-        return ARCHIVING(date, True)
-
-    def new(self, date:str):
-        return ARCHIVING(date, True)
-
-    def push(self, date:str):
-        return ARCHIVING(date, True)
-
-    def alloc(self, date:str):
-        return ARCHIVING(date, True)
+    def to(self, date:str=""):
+        return Archive(date, True)
 
 
 
 # Alias
-ARCHIVE = ARCHIVING()
+ARCHIVE = Archive()
 
 if __name__ == "__main__":
     print(ARCHIVE)
