@@ -181,8 +181,8 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # DEPLOY MARKET MAP
     # ---------------------------------------------------------------------------------------
-    marketMap = MarketMap(marketData)
     try:
+        marketMap = MarketMap(marketData)
         with open(file=os.path.join(PATH.DOCS, 'index.html'), mode='w', encoding='utf-8') as file:
             file.write(
                 Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
@@ -205,8 +205,8 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # DEPLOY BUBBLE
     # ---------------------------------------------------------------------------------------
-    marketBubble = MarketBubble(marketData)
     try:
+        marketBubble = MarketBubble(marketData)
         with open(file=os.path.join(PATH.DOCS, r'bubble/index.html'), mode='w', encoding='utf-8') as file:
             file.write(
                 Environment(loader=FileSystemLoader(PATH.TEMPLATES)) \
