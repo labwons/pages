@@ -258,7 +258,10 @@ class MarketBaseline:
         merge['trailingPS'] = (merge['marketCap'] / 1e+8) / merge['trailingRevenue']
         merge['trailingPE'] = merge['close'] / merge['trailingEps'].apply(lambda x: x if x > 0 else nan)
         merge['turnoverRatio'] = 100 * merge['volume'] / (merge['shares'] * merge['floatShares'] / 100)
-        merge['PEG'] = merge['trailingPE'] / merge['estimatedEpsGrowth']
+        try:
+            merge['PEG'] = merge['trailingPE'] / merge['estimatedEpsGrowth']
+        except (ZeroDivisionError, Exception):
+            merge['PEG'] = nan
         merge['PEG'] = merge['PEG'].apply(lambda x: x if x > 0 else nan)
         return merge
 

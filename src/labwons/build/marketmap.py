@@ -90,6 +90,14 @@ class MarketMap:
                 base.loc[(base[key] == 'nan%') | (base[key] == 'nan'), key] = '미제공'
             base.loc[["WS0000", "NS0000"], key] = ""
 
+        ingredient = ['estimatedProfitState', 'estimatedEpsState', 'yoyProfitState', 'yoyEpsState', 'trailingEps']
+        base = base.join(baseline[ingredient])
+        base['estimatedProfitGrowth'] = base['estimatedProfitState'].combine_first(base['estimatedProfitGrowth'])
+        base['estimatedEpsGrowth'] = base['estimatedEpsState'].combine_first(base['estimatedEpsGrowth'])
+        base['trailingPE'] = base.apply(lambda r: '적자' if r.trailingEps <= 0 else r.trailingPE , axis=1)
+        base['yoyProfit'] = base['yoyProfitState'].combine_first(base['yoyProfit'])
+        base['yoyEps'] = base['yoyEpsState'].combine_first(base['yoyEps'])
+
         # advance = ['estimatedProfitState', 'estimatedEpsState', 'trailingEps',
         #            'yoyProfitState', 'yoyEpsState']
         # refactor = refactor.join(resource[advance])
@@ -116,7 +124,7 @@ class MarketMap:
         #
         # self.stat = self.minmax(base)
 
-        base.to_parquet(archive.to(archive.DATE).MARKET_MAP, engine='pyarrow')
+        base.to_parquet(archive.to().MARKET_MAP, engine='pyarrow')
 
         logger.info(f'END [BUILD MARKET MAP] {len(base):,d} ITEMS: {perf_counter() - stime:.2f}s')
         return
