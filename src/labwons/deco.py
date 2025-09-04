@@ -74,6 +74,17 @@ class classproperty:
     def __get__(self, instance, owner):
         return self.func(owner)
 
+    def __set__(self, instance, value):
+        if self.fset is None:
+            raise AttributeError("can't set attribute (no setter defined)")
+        # instance는 None (클래스 접근)일 때가 많음
+        owner = instance if instance is not None else type(instance)
+        return self.fset(owner, value)
+
+    def setter(self, func):
+        self.fset = func
+        return self
+
 
 class metaclass(type):
     """

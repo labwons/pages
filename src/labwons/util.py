@@ -50,6 +50,10 @@ class DATETIME:
                 return None
         return getattr(cls, '__td__')
 
+    @TRADING.setter
+    def TRADING(cls, date:str):
+        setattr(cls, '__td__', date)
+
     @classproperty
     def WISE(cls) -> str:
         if not hasattr(cls, '__wi__'):
@@ -321,10 +325,14 @@ web = _web()
 if __name__ == "__main__":
     # print(DP.krw2currency(21234659857382)) # 21조 2346억
     # print(DP.krw2currency( 1234659857382)) #  1조 2346억
-    print(DP.krw2currency(  234659857382)) #      2346억
-    print(DP.krw2currency(   34659857382)) #       346억
-    print(DP.krw2currency(    4659857382)) #
-    print(DP.krw2currency(     659857382)) #
-    print(DP.krw2currency(      59857382)) #
-    print(DP.krw2currency(       9857382)) #
-    print(DP.krw2currency(        857382)) #
+    # print(DP.krw2currency(  234659857382)) #      2346억
+    # print(DP.krw2currency(   34659857382)) #       346억
+    # print(DP.krw2currency(    4659857382)) #
+    # print(DP.krw2currency(     659857382)) #
+    # print(DP.krw2currency(      59857382)) #
+    # print(DP.krw2currency(       9857382)) #
+    # print(DP.krw2currency(        857382)) #
+
+    print(DATETIME.TRADING)
+    DATETIME.TRADING = '20250903'
+    print(DATETIME.TRADING)

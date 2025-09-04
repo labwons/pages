@@ -234,6 +234,7 @@ class MarketBaseline:
         merge = base.join(concat(list(dataframes), axis=1))
         merge = merge[~merge['name'].isna()]
         merge = merge.dropna(how='all', axis=1)
+        merge.loc[merge['estimatedEpsGrowth'] == 0, 'estimatedEpsGrowth'] = nan
 
         # CUSTOMIZE SECTION
         merge['fiftyTwoWeekHigh'] = merge[['close', 'fiftyTwoWeekHigh']].max(axis=1)
@@ -330,7 +331,7 @@ if __name__ == "__main__":
 
 
     MarketBaseline.build(
-        save=False,
+        archive=Archive(),
         stdout=False,
         to_clipboard=True
     )
