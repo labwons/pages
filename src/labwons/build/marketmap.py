@@ -71,7 +71,6 @@ class MarketMap:
 
         base = concat([b, ws_industry, ns_industry, ws_sector, ns_sector, ws_top, ns_top], axis=0)
         base = base[SELECTOR.MARKET_MAP]
-        base = base.join(cls.paint(base), how='left')
 
         # CONVERT BASE DATA TO DISPLAYABLE FORMAT: HOVER, STATIC TEXT
         for key, meta in FIELD.items():
@@ -97,6 +96,10 @@ class MarketMap:
         base['trailingPE'] = base.apply(lambda r: '적자' if r.trailingEps <= 0 else r.trailingPE , axis=1)
         base['yoyProfit'] = base['yoyProfitState'].combine_first(base['yoyProfit'])
         base['yoyEps'] = base['yoyEpsState'].combine_first(base['yoyEps'])
+        base = base.drop(columns=ingredient)
+
+        # COLORING
+        base = base.join(cls.paint(base), how='left')
 
         # advance = ['estimatedProfitState', 'estimatedEpsState', 'trailingEps',
         #            'yoyProfitState', 'yoyEpsState']
