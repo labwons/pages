@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>404 오류</title>
+    <style type="text/css">
+		.error-section {
+			width: 800px;
+			color: #222;
+			align-content: center;
+			vertical-align: middle;
+			text-align: center;
+			padding-top: 100px;
+			font-family: Malgun Gothic, '맑은고딕';
+			font-size: .9rem;
+			min-height: 500px;
+			margin: 0 auto;
+		}
+		#searchResult .error-section {
+			display: none;
+		}
+		.error-section .error-title, .error-section .error-title span {
+			text-align: center;
+			font-size: 28px;
+			font-weight: 700;
+			padding-bottom: 20px
+		}
+		.error-section .error-detail {
+			font-size: 14px
+		}
+		.error-section .bred {
+			color: #c85b5a
+		}
+		.error-section .call {
+			font-weight: 700;
+			color: #d14c39
+		}
+	</style>
+</head>
+<body>
+    <div class="error-section">
+        <div class="error-title">
+            <span class="tit">호출하신 <span class="bred">페이지</span>가 없습니다. </span>
+        </div>
+        <div class="error-detail">
+            관리자에게 문의하세요.<br />
+            감사합니다.
+        </div>
+    </div>
+</body>
+</html>

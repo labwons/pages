@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<xml>
+<price>
+<date>2025/09/04</date>
+<close_val>4,730</close_val>
+<bef_close_val_calc>40</bef_close_val_calc>
+<high52week>4,760</high52week>
+<low52week>4,045</low52week>
+<change_1month>5.58</change_1month>
+<change_3month>8.49</change_3month>
+<change_6month>13.16</change_6month>
+<change_12month>5.58</change_12month>
+<change_36month>5.70</change_36month>
+<market_sum>4,391</market_sum>
+<listed_stock_1>92,834,331</listed_stock_1>
+<listed_stock_2>0</listed_stock_2>
+<deal_cnt>23,637</deal_cnt>
+<deal_amt>1</deal_amt>
+<frgn_rate>2.92</frgn_rate>
+<beta>0.26238</beta>
+<face_value>0</face_value>
+<face_value_unit>원</face_value_unit>
+<face_value_chg_dt></face_value_chg_dt>
+<dividend_rate></dividend_rate>
+<tot_dividend_rate>5.58</tot_dividend_rate>
+</price>
+</xml>

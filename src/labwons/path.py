@@ -24,14 +24,12 @@ class Archive(DD):
     __slots__ = [
         "MARKET_BASELINE",
         "MARKET_DAILY",
-        "MARKET_OVERVIEW",
         "MARKET_SECTORS",
         "MARKET_MAP",
-        "STATEMENT_A",
-        "STATEMENT_Q",
         "DATE",
         "PATH",
     ]
+    REPORTS:str=os.path.join(PATH.ARCHIVE, 'reports')
 
     def __init__(self, date:str='', alloc:bool=False):
         super().__init__()
@@ -79,6 +77,12 @@ class Archive(DD):
 
     def refresh(self):
         self.__init__()
+
+    def report(self, ticker:str) -> str:
+        file = os.path.join(self.REPORTS, f'{ticker}.xml')
+        if not os.path.isfile(file):
+            raise FileNotFoundError(f'NO Report for ticker: {ticker}')
+        return file
 
     def to(self, date:str=""):
         return Archive(date, True)
