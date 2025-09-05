@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>404 ¿À·ù</title>
+    <title>404 ì˜¤ë¥˜</title>
     <style type="text/css">
 		.error-section {
 			width: 800px;
@@ -11,7 +11,7 @@
 			vertical-align: middle;
 			text-align: center;
 			padding-top: 100px;
-			font-family: Malgun Gothic, '¸¼Àº°íµñ';
+			font-family: Malgun Gothic 'ë§‘ì€ê³ ë”•';
 			font-size: .9rem;
 			min-height: 500px;
 			margin: 0 auto;
@@ -19,7 +19,7 @@
 		#searchResult .error-section {
 			display: none;
 		}
-		.error-section .error-title, .error-section .error-title span {
+		.error-section .error-title .error-section .error-title span {
 			text-align: center;
 			font-size: 28px;
 			font-weight: 700;
@@ -40,11 +40,11 @@
 <body>
     <div class="error-section">
         <div class="error-title">
-            <span class="tit">È£ÃâÇÏ½Å <span class="bred">ÆäÀÌÁö</span>°¡ ¾ø½À´Ï´Ù. </span>
+            <span class="tit">í˜¸ì¶œí•˜ì‹  <span class="bred">í˜ì´ì§€</span>ê°€ ì—†ìŠµë‹ˆë‹¤. </span>
         </div>
         <div class="error-detail">
-            °ü¸®ÀÚ¿¡°Ô ¹®ÀÇÇÏ¼¼¿ä.<br />
-            °¨»çÇÕ´Ï´Ù.
+            ê´€ë¦¬ìì—ê²Œ ë¬¸ì˜í•˜ì„¸ìš”.<br />
+            ê°ì‚¬í•©ë‹ˆë‹¤.
         </div>
     </div>
 </body>

@@ -33,7 +33,7 @@ class FinancialStatement:
             with open(
                 file=os.path.join(ARCHIVE.REPORTS, f'{ticker}.xml'), 
                 mode='w',
-                encoding='euc-kr'
+                encoding='utf-8'
             ) as f:
                 f.write(report)
         logger.info(f'END [FETCH FNGUIDE REPORT] {len(tickers):,d} ITEMS: {perf_counter() - stime:.2f}s')
@@ -58,7 +58,7 @@ class FinancialStatement:
             'upjong_A', 'upjong_B', 'upjong_C', 'upjong_D'
         ]:
             text = re.sub(rf'<{erase}>.*?</{erase}>', '', text, flags=re.DOTALL)
-
+        text = text.replace(", 억원", "").replace(",", "")
         if return_type == 'str':
             return "\n".join([line for line in text.splitlines() if line.strip()])
         if return_type == 'xml':
