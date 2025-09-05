@@ -66,6 +66,10 @@ class DATETIME:
                 return None
         return getattr(cls, '__wi__')
 
+    @WISE.setter
+    def WISE(cls, date:str):
+      setattr(cls, '__wi__', date)
+
 
 class Mail(MIMEMultipart):
 

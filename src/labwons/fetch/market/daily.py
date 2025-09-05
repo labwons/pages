@@ -1,5 +1,6 @@
 from labwons.logs import logger
 from labwons.util import DATETIME
+from labwons.path import ARCHIVE
 
 from datetime import datetime, timedelta
 from io import StringIO
@@ -23,16 +24,18 @@ pd.set_option('future.no_silent_downcasting', True)
 class MarketDaily:
 
     @classmethod
-    def saveAs(cls, path:str):
+    def fetch(cls, date:str):
         stime = perf_counter()
         logger.info("RUN [FETCH PYKRX DATA]")
 
-        if DATETIME.TRADING is None:
+        date = date if date else DATETIME.TRADING
+        if date is None:
             logger.error(f'- FAILED TO FETCH TRADING DATE')
             return
+        logger.info(f'- MARKED RESOURCE DATE: {date}')
 
         try:
-            marketCap = get_market_cap_by_ticker(date=DATETIME.TRADING, market='ALL', alternative=True)
+            marketCap = get_market_cap_by_ticker(date=date, market='ALL', alternative=True)
             if marketCap.empty:
                 raise Exception(f'Empty {{Market Cap}} DataFrame')
             logger.info(f'- SUCCEED IN FETCHING MARKET CAP')
@@ -41,7 +44,7 @@ class MarketDaily:
             return
 
         try:
-            multiples = get_market_fundamental(date=DATETIME.TRADING, market='ALL', alternative=True)
+            multiples = get_market_fundamental(date=date, market='ALL', alternative=True)
             if multiples.empty:
                 raise Exception(f'Empty {{Multiples}} DataFrame')
             logger.info(f'- SUCCEED IN FETCHING MULTIPLES')
@@ -50,7 +53,7 @@ class MarketDaily:
             return
 
         try:
-            foreignRate = get_exhaustion_rates_of_foreign_investment(date=DATETIME.TRADING, market='ALL')
+            foreignRate = get_exhaustion_rates_of_foreign_investment(date=date, market='ALL')
             if foreignRate.empty:
                 raise Exception(f'Empty {{Foreign Rate}} DataFrame')
             logger.info(f'- SUCCEED IN FETCHING FOREIGN EXHAUST RATE')
@@ -70,8 +73,8 @@ class MarketDaily:
             return
 
         try:
-            ks = Series(index=get_market_ticker_list(date=DATETIME.TRADING, market='KOSPI')).fillna('KOSPI')
-            kq = Series(index=get_market_ticker_list(date=DATETIME.TRADING, market='KOSDAQ')).fillna('KOSDAQ')
+            ks = Series(index=get_market_ticker_list(date=date, market='KOSPI')).fillna('KOSPI')
+            kq = Series(index=get_market_ticker_list(date=date, market='KOSDAQ')).fillna('KOSDAQ')
             marketType = pd.concat([ks, kq], axis=0)
             marketType.name = "market"
             logger.info(f'- SUCCEED IN FETCHING MARKET TYPE')
@@ -91,7 +94,7 @@ class MarketDaily:
         merged = merged.loc[:, ~merged.columns.duplicated(keep='first')]
 
         c_active_ipo = merged.index.isin(ipo.index)
-        c_no_konex = ~merged.index.isin(get_market_cap_by_ticker(date=DATETIME.TRADING, market='KONEX').index)
+        c_no_konex = ~merged.index.isin(get_market_cap_by_ticker(date=date, market='KONEX').index)
         c_active_trade = merged['거래량'] > 0
         c_market_cap = merged['시가총액'] >= merged['시가총액'].median()
 
@@ -102,7 +105,7 @@ class MarketDaily:
         merged.index.name = 'ticker'
 
         try:
-            returns = cls.fetchReturns(DATETIME.TRADING, merged.index)
+            returns = cls.fetchReturns(date, merged.index)
             merged = merged.join(returns, how='left')
             logger.info(f'- SUCCEED IN FETCHING PERIODIC RETURNS')
         except Exception as reason:
@@ -112,8 +115,8 @@ class MarketDaily:
         clock = DATETIME.CLOCK()
         time = "15:30" if clock.hour >= 15 and clock.minute >= 30 else clock.strftime("%H:%M")
         data: DataFrame = merged.sort_values(by='시가총액', ascending=False)
-        data['date'] = f'{DATETIME.TRADING}{time}'
-        data.to_parquet(path=path, engine='pyarrow')
+        data['date'] = f'{date}{time}'
+        data.to_parquet(path=ARCHIVE.to(date).MARKET_DAILY, engine='pyarrow')
 
         logger.info(f'END [FETCH PYKRX DATA] {len(data):,d} ITEMS: {perf_counter() - stime:.2f}s')
         return 

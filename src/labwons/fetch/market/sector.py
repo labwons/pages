@@ -1,5 +1,6 @@
 from labwons.logs import logger
 from labwons.util import DATETIME
+from labwons.path import ARCHIVE
 
 from pandas import DataFrame, concat
 from re import compile
@@ -102,29 +103,30 @@ EXCEPTIONALS = {
 class MarketSectors:
 
     @classmethod
-    def saveAs(cls, path:str):
+    def fetch(cls, date:str=None):
         stime = perf_counter()
         logger.info('RUN [FETCH SECTOR COMPOSITION]')
-        date = DATETIME.WISE
+
+        date = date if date else DATETIME.WISE
         if date is None:
             logger.error(f'- FAILED TO FETCH SECTOR COMPOSITION DATE')
             return
 
-        logger.info(f'- BASE TRADING DATE: {date}')
+        logger.info(f'- MARKED RESOURCE DATE: {date}')
 
         objs, size = [], len(SECTOR_CODE) + 1
         for n, (code, name) in enumerate(SECTOR_CODE.items()):
-            logger.info(f"- {str(n + 1).zfill(2)} / {size} : {code} {name}")
+            logger.info(f"- SUCCEED IN FETCHING ({str(n + 1).zfill(2)}/{size}): {code} {name}")
             sector = cls.fetchWiseGroup(code, date)
             if sector.empty:
-                logger.error(f'- FAILED TO FETCH: {code} {name}')
+                logger.error(f'- FAILED TO FETCH ({str(n + 1).zfill(2)}/{size}): {code} {name}')
                 return
             objs.append(sector)
 
         reits = DataFrame(data={'CMP_KOR': REITS_CODE.values(), 'CMP_CD': REITS_CODE.keys()})
         reits[['SEC_CD', 'IDX_CD', 'SEC_NM_KOR', 'IDX_NM_KOR']] = ['G99', 'WI999', '리츠', '리츠']
         objs.append(reits)
-        logger.info(f"- {size} / {size} : WI999 리츠 :: SUCCESS")
+        logger.info(f"- SUCCEED IN FETCHING ({size}/{size}): WI999 리츠")
 
         data = concat(objs, axis=0, ignore_index=True)
 
@@ -151,9 +153,9 @@ class MarketSectors:
 
         data = concat(objs=[data, exceptionals], axis=0)
         data['date'] = date
-        data.to_parquet(path, engine='pyarrow')
+        data.to_parquet(ARCHIVE.to(date).MARKET_SECTORS, engine='pyarrow')
 
-        logger.info(f'- END [FETCH SECTOR COMPOSITION] {len(data):,d} ITEMS: {perf_counter() - stime:.2f}')
+        logger.info(f'END [FETCH SECTOR COMPOSITION] {len(data):,d} ITEMS: {perf_counter() - stime:.2f}')
         return
 
     @classmethod
