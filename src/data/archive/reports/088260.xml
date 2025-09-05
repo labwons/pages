@@ -19,7 +19,7 @@
 <frgn_rate>0.73</frgn_rate>
 <beta>0.22277</beta>
 <face_value>500</face_value>
-<face_value_unit>ì›</face_value_unit>
+<face_value_unit>¿ø</face_value_unit>
 <face_value_chg_dt></face_value_chg_dt>
 <dividend_rate>3.84</dividend_rate>
 <tot_dividend_rate>-9.98</tot_dividend_rate>
@@ -37,30 +37,30 @@
 <financial_highlight_ifrs_B>
 <financial_highlight_annual>
 <title>Recent A. 2026/06(E)</title>
-<field>ë§¤ì¶œì•¡(ì–µì›)</field>
-<field>ì˜ì—…ì´ìµ(ì–µì›)</field>
-<field>ì˜ì—…ì´ìµ(ë°œí‘œê¸°ì¤€)</field>
-<field>ë‹¹ê¸°ìˆœì´ìµ(ì–µì›)</field>
-<field>ìžì‚°ì´ê³„(ì–µì›)</field>
-<field>ë¶€ì±„ì´ê³„(ì–µì›)</field>
-<field>ìžë³¸ì´ê³„(ì–µì›)</field>
-<field>ìžë³¸ê¸ˆ(ì–µì›)</field>
-<field>ë¶€ì±„ë¹„ìœ¨(%)</field>
-<field>ìœ ë³´ìœ¨(%)</field>
-<field>ì˜ì—…ì´ìµë¥ (%)</field>
-<field>ìˆœì´ìµë¥ (%)</field>
+<field>¸ÅÃâ¾×(¾ï¿ø)</field>
+<field>¿µ¾÷ÀÌÀÍ(¾ï¿ø)</field>
+<field>¿µ¾÷ÀÌÀÍ(¹ßÇ¥±âÁØ)</field>
+<field>´ç±â¼øÀÌÀÍ(¾ï¿ø)</field>
+<field>ÀÚ»êÃÑ°è(¾ï¿ø)</field>
+<field>ºÎÃ¤ÃÑ°è(¾ï¿ø)</field>
+<field>ÀÚº»ÃÑ°è(¾ï¿ø)</field>
+<field>ÀÚº»±Ý(¾ï¿ø)</field>
+<field>ºÎÃ¤ºñÀ²(%)</field>
+<field>À¯º¸À²(%)</field>
+<field>¿µ¾÷ÀÌÀÍ·ü(%)</field>
+<field>¼øÀÌÀÍ·ü(%)</field>
 <field>ROA(%)</field>
 <field>ROE(%)</field>
-<field>EPS(ì›)</field>
-<field>BPS(ì›)</field>
-<field>DPS(ì›)</field>
-<field>PER(ë°°)</field>
-<field>PBR(ë°°)</field>
-<field>ë°œí–‰ì£¼ì‹ìˆ˜(ì²œì£¼)</field>
-<field>ë°°ë‹¹ìˆ˜ìµë¥ (%)</field>
+<field>EPS(¿ø)</field>
+<field>BPS(¿ø)</field>
+<field>DPS(¿ø)</field>
+<field>PER(¹è)</field>
+<field>PBR(¹è)</field>
+<field>¹ßÇàÁÖ½Ä¼ö(ÃµÁÖ)</field>
+<field>¹è´ç¼öÀÍ·ü(%)</field>
 <record>
 <date>2022/12</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value>188</value>
 <value>152</value>
 <value>152</value>
@@ -85,7 +85,7 @@
 </record>
 <record>
 <date>2023/06</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value>190</value>
 <value>154</value>
 <value>154</value>
@@ -110,7 +110,7 @@
 </record>
 <record>
 <date>2023/12</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value>195</value>
 <value>158</value>
 <value>158</value>
@@ -135,7 +135,7 @@
 </record>
 <record>
 <date>2024/06</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value>195</value>
 <value>159</value>
 <value>159</value>
@@ -160,7 +160,7 @@
 </record>
 <record>
 <date>2024/12</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value>180</value>
 <value>143</value>
 <value>143</value>
@@ -185,7 +185,7 @@
 </record>
 <record>
 <date>2025/06(P)</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value></value>
 <value></value>
 <value></value>
@@ -210,7 +210,7 @@
 </record>
 <record>
 <date>2026/06(E)</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value></value>
 <value></value>
 <value></value>
@@ -235,7 +235,7 @@
 </record>
 <record>
 <date>2027/06(E)</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value></value>
 <value></value>
 <value></value>
@@ -261,30 +261,30 @@
 </financial_highlight_annual>
 <financial_highlight_quarter>
 <title>Recent Q. 2025/09(E)</title>
-<field>ë§¤ì¶œì•¡(ì–µì›)</field>
-<field>ì˜ì—…ì´ìµ(ì–µì›)</field>
-<field>ì˜ì—…ì´ìµ(ë°œí‘œê¸°ì¤€)</field>
-<field>ë‹¹ê¸°ìˆœì´ìµ(ì–µì›)</field>
-<field>ìžì‚°ì´ê³„(ì–µì›)</field>
-<field>ë¶€ì±„ì´ê³„(ì–µì›)</field>
-<field>ìžë³¸ì´ê³„(ì–µì›)</field>
-<field>ìžë³¸ê¸ˆ(ì–µì›)</field>
-<field>ë¶€ì±„ë¹„ìœ¨(%)</field>
-<field>ìœ ë³´ìœ¨(%)</field>
-<field>ì˜ì—…ì´ìµë¥ (%)</field>
-<field>ìˆœì´ìµë¥ (%)</field>
+<field>¸ÅÃâ¾×(¾ï¿ø)</field>
+<field>¿µ¾÷ÀÌÀÍ(¾ï¿ø)</field>
+<field>¿µ¾÷ÀÌÀÍ(¹ßÇ¥±âÁØ)</field>
+<field>´ç±â¼øÀÌÀÍ(¾ï¿ø)</field>
+<field>ÀÚ»êÃÑ°è(¾ï¿ø)</field>
+<field>ºÎÃ¤ÃÑ°è(¾ï¿ø)</field>
+<field>ÀÚº»ÃÑ°è(¾ï¿ø)</field>
+<field>ÀÚº»±Ý(¾ï¿ø)</field>
+<field>ºÎÃ¤ºñÀ²(%)</field>
+<field>À¯º¸À²(%)</field>
+<field>¿µ¾÷ÀÌÀÍ·ü(%)</field>
+<field>¼øÀÌÀÍ·ü(%)</field>
 <field>ROA(%)</field>
 <field>ROE(%)</field>
-<field>EPS(ì›)</field>
-<field>BPS(ì›)</field>
-<field>DPS(ì›)</field>
-<field>PER(ë°°)</field>
-<field>PBR(ë°°)</field>
-<field>ë°œí–‰ì£¼ì‹ìˆ˜(ì²œì£¼)</field>
-<field>ë°°ë‹¹ìˆ˜ìµë¥ (%)</field>
+<field>EPS(¿ø)</field>
+<field>BPS(¿ø)</field>
+<field>DPS(¿ø)</field>
+<field>PER(¹è)</field>
+<field>PBR(¹è)</field>
+<field>¹ßÇàÁÖ½Ä¼ö(ÃµÁÖ)</field>
+<field>¹è´ç¼öÀÍ·ü(%)</field>
 <record>
 <date>2024/03</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value>76</value>
 <value>58</value>
 <value>58</value>
@@ -309,7 +309,7 @@
 </record>
 <record>
 <date>2024/06</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value></value>
 <value></value>
 <value>0</value>
@@ -334,7 +334,7 @@
 </record>
 <record>
 <date>2024/09</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value>77</value>
 <value>58</value>
 <value>58</value>
@@ -359,7 +359,7 @@
 </record>
 <record>
 <date>2024/12</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value></value>
 <value></value>
 <value>0</value>
@@ -384,7 +384,7 @@
 </record>
 <record>
 <date>2025/03</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value>78</value>
 <value>60</value>
 <value>60</value>
@@ -409,7 +409,7 @@
 </record>
 <record>
 <date>2025/06(P)</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value></value>
 <value></value>
 <value></value>
@@ -434,7 +434,7 @@
 </record>
 <record>
 <date>2025/09(E)</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value></value>
 <value></value>
 <value></value>
@@ -459,7 +459,7 @@
 </record>
 <record>
 <date>2025/12(E)</date>
-<fs_nm>IFRS(ë³„ë„)</fs_nm>
+<fs_nm>IFRS(º°µµ)</fs_nm>
 <value></value>
 <value></value>
 <value></value>
@@ -487,34 +487,34 @@
 <financial_highlight_ifrs_D>
 <financial_highlight_annual>
 <title>Recent A. 2026/06(E)</title>
-<field>ë§¤ì¶œì•¡(ì–µì›)</field>
-<field>ì˜ì—…ì´ìµ(ì–µì›)</field>
-<field>ì˜ì—…ì´ìµ(ë°œí‘œê¸°ì¤€)</field>
-<field>ë‹¹ê¸°ìˆœì´ìµ(ì–µì›)</field>
-<field>  ì§€ë°°ì£¼ì£¼ìˆœì´ìµ(ì–µì›)</field>
-<field>  ë¹„ì§€ë°°ì£¼ì£¼ìˆœì´ìµ(ì–µì›)</field>
-<field>ìžì‚°ì´ê³„(ì–µì›)</field>
-<field>ë¶€ì±„ì´ê³„(ì–µì›)</field>
-<field>ìžë³¸ì´ê³„(ì–µì›)</field>
-<field>  ì§€ë°°ì£¼ì£¼ì§€ë¶„(ì–µì›)</field>
-<field>  ë¹„ì§€ë°°ì£¼ì£¼ì§€ë¶„(ì–µì›)</field>
-<field>ìžë³¸ê¸ˆ(ì–µì›)</field>
-<field>ë¶€ì±„ë¹„ìœ¨(%)</field>
-<field>ìœ ë³´ìœ¨(%)</field>
-<field>ì˜ì—…ì´ìµë¥ (%)</field>
-<field>ì§€ë°°ì£¼ì£¼ìˆœì´ìµë¥ (%)</field>
+<field>¸ÅÃâ¾×(¾ï¿ø)</field>
+<field>¿µ¾÷ÀÌÀÍ(¾ï¿ø)</field>
+<field>¿µ¾÷ÀÌÀÍ(¹ßÇ¥±âÁØ)</field>
+<field>´ç±â¼øÀÌÀÍ(¾ï¿ø)</field>
+<field>  Áö¹èÁÖÁÖ¼øÀÌÀÍ(¾ï¿ø)</field>
+<field>  ºñÁö¹èÁÖÁÖ¼øÀÌÀÍ(¾ï¿ø)</field>
+<field>ÀÚ»êÃÑ°è(¾ï¿ø)</field>
+<field>ºÎÃ¤ÃÑ°è(¾ï¿ø)</field>
+<field>ÀÚº»ÃÑ°è(¾ï¿ø)</field>
+<field>  Áö¹èÁÖÁÖÁöºÐ(¾ï¿ø)</field>
+<field>  ºñÁö¹èÁÖÁÖÁöºÐ(¾ï¿ø)</field>
+<field>ÀÚº»±Ý(¾ï¿ø)</field>
+<field>ºÎÃ¤ºñÀ²(%)</field>
+<field>À¯º¸À²(%)</field>
+<field>¿µ¾÷ÀÌÀÍ·ü(%)</field>
+<field>Áö¹èÁÖÁÖ¼øÀÌÀÍ·ü(%)</field>
 <field>ROA(%)</field>
 <field>ROE(%)</field>
-<field>EPS(ì›)</field>
-<field>BPS(ì›)</field>
-<field>DPS(ì›)</field>
-<field>PER(ë°°)</field>
-<field>PBR(ë°°)</field>
-<field>ë°œí–‰ì£¼ì‹ìˆ˜(ì²œì£¼)</field>
-<field>ë°°ë‹¹ìˆ˜ìµë¥ (%)</field>
+<field>EPS(¿ø)</field>
+<field>BPS(¿ø)</field>
+<field>DPS(¿ø)</field>
+<field>PER(¹è)</field>
+<field>PBR(¹è)</field>
+<field>¹ßÇàÁÖ½Ä¼ö(ÃµÁÖ)</field>
+<field>¹è´ç¼öÀÍ·ü(%)</field>
 <record>
 <date>2022/12</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value>217</value>
 <value>167</value>
 <value>167</value>
@@ -543,7 +543,7 @@
 </record>
 <record>
 <date>2023/06</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value>218</value>
 <value>168</value>
 <value>168</value>
@@ -572,7 +572,7 @@
 </record>
 <record>
 <date>2023/12</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value>223</value>
 <value>173</value>
 <value>173</value>
@@ -601,7 +601,7 @@
 </record>
 <record>
 <date>2024/06</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value>224</value>
 <value>174</value>
 <value>174</value>
@@ -630,7 +630,7 @@
 </record>
 <record>
 <date>2024/12</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value>228</value>
 <value>176</value>
 <value>176</value>
@@ -659,7 +659,7 @@
 </record>
 <record>
 <date>2025/06(P)</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value>229</value>
 <value>178</value>
 <value>178</value>
@@ -688,7 +688,7 @@
 </record>
 <record>
 <date>2026/06(E)</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value></value>
 <value></value>
 <value></value>
@@ -717,7 +717,7 @@
 </record>
 <record>
 <date>2027/06(E)</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value></value>
 <value></value>
 <value></value>
@@ -747,34 +747,34 @@
 </financial_highlight_annual>
 <financial_highlight_quarter>
 <title>Recent Q. 2025/09(E)</title>
-<field>ë§¤ì¶œì•¡(ì–µì›)</field>
-<field>ì˜ì—…ì´ìµ(ì–µì›)</field>
-<field>ì˜ì—…ì´ìµ(ë°œí‘œê¸°ì¤€)</field>
-<field>ë‹¹ê¸°ìˆœì´ìµ(ì–µì›)</field>
-<field>  ì§€ë°°ì£¼ì£¼ìˆœì´ìµ(ì–µì›)</field>
-<field>  ë¹„ì§€ë°°ì£¼ì£¼ìˆœì´ìµ(ì–µì›)</field>
-<field>ìžì‚°ì´ê³„(ì–µì›)</field>
-<field>ë¶€ì±„ì´ê³„(ì–µì›)</field>
-<field>ìžë³¸ì´ê³„(ì–µì›)</field>
-<field>  ì§€ë°°ì£¼ì£¼ì§€ë¶„(ì–µì›)</field>
-<field>  ë¹„ì§€ë°°ì£¼ì£¼ì§€ë¶„(ì–µì›)</field>
-<field>ìžë³¸ê¸ˆ(ì–µì›)</field>
-<field>ë¶€ì±„ë¹„ìœ¨(%)</field>
-<field>ìœ ë³´ìœ¨(%)</field>
-<field>ì˜ì—…ì´ìµë¥ (%)</field>
-<field>ì§€ë°°ì£¼ì£¼ìˆœì´ìµë¥ (%)</field>
+<field>¸ÅÃâ¾×(¾ï¿ø)</field>
+<field>¿µ¾÷ÀÌÀÍ(¾ï¿ø)</field>
+<field>¿µ¾÷ÀÌÀÍ(¹ßÇ¥±âÁØ)</field>
+<field>´ç±â¼øÀÌÀÍ(¾ï¿ø)</field>
+<field>  Áö¹èÁÖÁÖ¼øÀÌÀÍ(¾ï¿ø)</field>
+<field>  ºñÁö¹èÁÖÁÖ¼øÀÌÀÍ(¾ï¿ø)</field>
+<field>ÀÚ»êÃÑ°è(¾ï¿ø)</field>
+<field>ºÎÃ¤ÃÑ°è(¾ï¿ø)</field>
+<field>ÀÚº»ÃÑ°è(¾ï¿ø)</field>
+<field>  Áö¹èÁÖÁÖÁöºÐ(¾ï¿ø)</field>
+<field>  ºñÁö¹èÁÖÁÖÁöºÐ(¾ï¿ø)</field>
+<field>ÀÚº»±Ý(¾ï¿ø)</field>
+<field>ºÎÃ¤ºñÀ²(%)</field>
+<field>À¯º¸À²(%)</field>
+<field>¿µ¾÷ÀÌÀÍ·ü(%)</field>
+<field>Áö¹èÁÖÁÖ¼øÀÌÀÍ·ü(%)</field>
 <field>ROA(%)</field>
 <field>ROE(%)</field>
-<field>EPS(ì›)</field>
-<field>BPS(ì›)</field>
-<field>DPS(ì›)</field>
-<field>PER(ë°°)</field>
-<field>PBR(ë°°)</field>
-<field>ë°œí–‰ì£¼ì‹ìˆ˜(ì²œì£¼)</field>
-<field>ë°°ë‹¹ìˆ˜ìµë¥ (%)</field>
+<field>EPS(¿ø)</field>
+<field>BPS(¿ø)</field>
+<field>DPS(¿ø)</field>
+<field>PER(¹è)</field>
+<field>PBR(¹è)</field>
+<field>¹ßÇàÁÖ½Ä¼ö(ÃµÁÖ)</field>
+<field>¹è´ç¼öÀÍ·ü(%)</field>
 <record>
 <date>2024/03</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value>112</value>
 <value>87</value>
 <value>87</value>
@@ -803,7 +803,7 @@
 </record>
 <record>
 <date>2024/06</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value></value>
 <value></value>
 <value>0</value>
@@ -832,7 +832,7 @@
 </record>
 <record>
 <date>2024/09</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value>113</value>
 <value>88</value>
 <value>88</value>
@@ -861,7 +861,7 @@
 </record>
 <record>
 <date>2024/12</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value></value>
 <value></value>
 <value>0</value>
@@ -890,7 +890,7 @@
 </record>
 <record>
 <date>2025/03</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value>114</value>
 <value>89</value>
 <value>89</value>
@@ -919,7 +919,7 @@
 </record>
 <record>
 <date>2025/06(P)</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value></value>
 <value></value>
 <value></value>
@@ -948,7 +948,7 @@
 </record>
 <record>
 <date>2025/09(E)</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value></value>
 <value></value>
 <value></value>
@@ -977,7 +977,7 @@
 </record>
 <record>
 <date>2025/12(E)</date>
-<fs_nm>IFRS(ì—°ê²°)</fs_nm>
+<fs_nm>IFRS(¿¬°á)</fs_nm>
 <value></value>
 <value></value>
 <value></value>
@@ -1136,8 +1136,8 @@
 <record>
 <alloc_std_dt>2025/06/30</alloc_std_dt>
 <divid_dt></divid_dt>
-<stk_kind>ë³´í†µì£¼</stk_kind>
-<increase_cap_cd>í˜„ê¸ˆë°°ë‹¹</increase_cap_cd>
+<stk_kind>º¸ÅëÁÖ</stk_kind>
+<increase_cap_cd>Çö±Ý¹è´ç</increase_cap_cd>
 <stk_divid_amt_min>174</stk_divid_amt_min>
 <par_val>500</par_val>
 <divid_par_val>34.80</divid_par_val>
@@ -1145,8 +1145,8 @@
 <record>
 <alloc_std_dt>2024/12/31</alloc_std_dt>
 <divid_dt>2025/03/28</divid_dt>
-<stk_kind>ë³´í†µì£¼</stk_kind>
-<increase_cap_cd>í˜„ê¸ˆë°°ë‹¹</increase_cap_cd>
+<stk_kind>º¸ÅëÁÖ</stk_kind>
+<increase_cap_cd>Çö±Ý¹è´ç</increase_cap_cd>
 <stk_divid_amt_min>176</stk_divid_amt_min>
 <par_val>500</par_val>
 <divid_par_val>35.20</divid_par_val>
@@ -1154,8 +1154,8 @@
 <record>
 <alloc_std_dt>2024/06/30</alloc_std_dt>
 <divid_dt>2024/09/30</divid_dt>
-<stk_kind>ë³´í†µì£¼</stk_kind>
-<increase_cap_cd>í˜„ê¸ˆë°°ë‹¹</increase_cap_cd>
+<stk_kind>º¸ÅëÁÖ</stk_kind>
+<increase_cap_cd>Çö±Ý¹è´ç</increase_cap_cd>
 <stk_divid_amt_min>186</stk_divid_amt_min>
 <par_val>500</par_val>
 <divid_par_val>37.20</divid_par_val>
@@ -1163,8 +1163,8 @@
 <record>
 <alloc_std_dt>2023/12/31</alloc_std_dt>
 <divid_dt>2024/03/29</divid_dt>
-<stk_kind>ë³´í†µì£¼</stk_kind>
-<increase_cap_cd>í˜„ê¸ˆë°°ë‹¹</increase_cap_cd>
+<stk_kind>º¸ÅëÁÖ</stk_kind>
+<increase_cap_cd>Çö±Ý¹è´ç</increase_cap_cd>
 <stk_divid_amt_min>204</stk_divid_amt_min>
 <par_val>500</par_val>
 <divid_par_val>40.80</divid_par_val>
@@ -1172,8 +1172,8 @@
 <record>
 <alloc_std_dt>2023/06/30</alloc_std_dt>
 <divid_dt>2023/09/27</divid_dt>
-<stk_kind>ë³´í†µì£¼</stk_kind>
-<increase_cap_cd>í˜„ê¸ˆë°°ë‹¹</increase_cap_cd>
+<stk_kind>º¸ÅëÁÖ</stk_kind>
+<increase_cap_cd>Çö±Ý¹è´ç</increase_cap_cd>
 <stk_divid_amt_min>200</stk_divid_amt_min>
 <par_val>500</par_val>
 <divid_par_val>40.00</divid_par_val>
@@ -1181,8 +1181,8 @@
 <record>
 <alloc_std_dt>2022/12/31</alloc_std_dt>
 <divid_dt>2023/03/31</divid_dt>
-<stk_kind>ë³´í†µì£¼</stk_kind>
-<increase_cap_cd>í˜„ê¸ˆë°°ë‹¹</increase_cap_cd>
+<stk_kind>º¸ÅëÁÖ</stk_kind>
+<increase_cap_cd>Çö±Ý¹è´ç</increase_cap_cd>
 <stk_divid_amt_min>190</stk_divid_amt_min>
 <par_val>500</par_val>
 <divid_par_val>38.00</divid_par_val>
@@ -1190,8 +1190,8 @@
 <record>
 <alloc_std_dt>2022/12/31</alloc_std_dt>
 <divid_dt>2023/03/31</divid_dt>
-<stk_kind>ë³´í†µì£¼</stk_kind>
-<increase_cap_cd>í˜„ê¸ˆë°°ë‹¹</increase_cap_cd>
+<stk_kind>º¸ÅëÁÖ</stk_kind>
+<increase_cap_cd>Çö±Ý¹è´ç</increase_cap_cd>
 <stk_divid_amt_min>5</stk_divid_amt_min>
 <par_val>500</par_val>
 <divid_par_val>1.00</divid_par_val>
@@ -1199,8 +1199,8 @@
 <record>
 <alloc_std_dt>2022/06/30</alloc_std_dt>
 <divid_dt>2022/09/29</divid_dt>
-<stk_kind>ë³´í†µì£¼</stk_kind>
-<increase_cap_cd>í˜„ê¸ˆë°°ë‹¹</increase_cap_cd>
+<stk_kind>º¸ÅëÁÖ</stk_kind>
+<increase_cap_cd>Çö±Ý¹è´ç</increase_cap_cd>
 <stk_divid_amt_min>210</stk_divid_amt_min>
 <par_val>500</par_val>
 <divid_par_val>42.00</divid_par_val>
@@ -1208,8 +1208,8 @@
 <record>
 <alloc_std_dt>2021/12/31</alloc_std_dt>
 <divid_dt>2022/03/31</divid_dt>
-<stk_kind>ë³´í†µì£¼</stk_kind>
-<increase_cap_cd>í˜„ê¸ˆë°°ë‹¹</increase_cap_cd>
+<stk_kind>º¸ÅëÁÖ</stk_kind>
+<increase_cap_cd>Çö±Ý¹è´ç</increase_cap_cd>
 <stk_divid_amt_min>204</stk_divid_amt_min>
 <par_val>500</par_val>
 <divid_par_val>40.80</divid_par_val>

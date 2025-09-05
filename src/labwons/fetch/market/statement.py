@@ -33,7 +33,7 @@ class FinancialStatement:
             with open(
                 file=os.path.join(ARCHIVE.REPORTS, f'{ticker}.xml'), 
                 mode='w',
-                encoding='utf-8'
+                encoding='euc-kr'
             ) as f:
                 f.write(report)
         logger.info(f'END [FETCH FNGUIDE REPORT] {len(tickers):,d} ITEMS: {perf_counter() - stime:.2f}s')
@@ -47,6 +47,10 @@ class FinancialStatement:
         except Exception as reason:
             logger.error(f'- FAILED TO FETCH TICKER: {ticker} / {reason}')
             return
+        
+        if "404 오류" in resp.text:
+            return
+
         text = resp.text.replace("<![CDATA[", "").replace("]]>", "")
         for erase in [
             'business_summary', 
